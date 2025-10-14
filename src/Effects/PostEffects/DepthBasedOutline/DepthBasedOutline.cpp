@@ -18,8 +18,7 @@ void DepthBasedOutline::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"DepthBasedOutlineRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_DepthBasedOutline");
 
     // レンダーテクスチャのSRVを生成
     this->CreateSRV();
@@ -82,9 +81,9 @@ const DepthBasedOutlineMaterial& DepthBasedOutline::GetMaterial() const
 void DepthBasedOutline::Apply()
 {
     auto dsResource = pDx12_->GetDepthStencilResource();
-    dsResource->ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    dsResource->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
-    dsResource->ChangeState(commandList_, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+    dsResource->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
 void DepthBasedOutline::Finalize()
@@ -94,7 +93,7 @@ void DepthBasedOutline::Finalize()
 void DepthBasedOutline::Setting()
 {
     // レンダーテクスチャをレンダーターゲット状態に変更
-    this->ToRenderTargetState();
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
@@ -125,8 +124,7 @@ void DepthBasedOutline::OnResizeBefore()
 void DepthBasedOutline::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"DepthBasedOutlineRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_DepthBasedOutline");
 
     // レンダーテクスチャのSRVを生成
     this->CreateSRV();
@@ -135,7 +133,7 @@ void DepthBasedOutline::OnResizedBuffers()
 void DepthBasedOutline::ToShaderResourceState()
 {
     // 完成したレンダーテクスチャをシェーダーリソース状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void DepthBasedOutline::DebugOverlay()
@@ -216,7 +214,7 @@ void DepthBasedOutline::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -227,13 +225,6 @@ void DepthBasedOutline::CreatePipelineStateObject()
         Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, _e.what());
         assert(false);
     }
-    return;
-}
-
-void DepthBasedOutline::ToRenderTargetState()
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void DepthBasedOutline::CreateResourceCBuffer()
@@ -254,7 +245,7 @@ void DepthBasedOutline::CreateSRV()
     auto sm = SRVManager::GetInstance();
 
     srvIndexDepth_ = sm->Allocate();
-    sm->CreateForTexture2D(srvIndexDepth_, pDx12_->GetDepthStencilResource()->resource.Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS, 1);
+    sm->CreateForTexture2D(srvIndexDepth_, pDx12_->GetDepthStencilResource()->GetResource().Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS, 1);
     depthGpuHandle_ = sm->GetGPUDescriptorHandle(srvIndexDepth_);
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 }

@@ -18,11 +18,10 @@ void LuminanceOutput::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    outputTexture_.resource->SetName(L"LuminanceOutputRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "RT_LuminanceOutput");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(outputTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -31,7 +30,7 @@ void LuminanceOutput::Initialize()
     this->CreatePipelineStateObject();
 
     // 設定用リソースの生成と初期化
-    this->_CreateResourceCBuffer();
+    this->CreateResourceCBuffer();
 }
 
 void LuminanceOutput::Enable(bool _flag)
@@ -80,8 +79,21 @@ void LuminanceOutput::Finalize()
 
 void LuminanceOutput::Setting()
 {
-    this->_ToRenderTargetState(outputTexture_);
-    this->_Setting(inputGpuHandle_, rtvHandleCpu_);
+    outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
+    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+
+    // PSOとルートシグネチャを設定
+    commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+    commandList_->SetPipelineState(pso_.Get());
+
+    // 入力テクスチャのSRVを設定する（自分が所有するテクスチャのSRVではないため注意)
+    commandList_->SetGraphicsRootDescriptorTable(0, inputGpuHandle_);
+
+    commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
 void LuminanceOutput::OnResizeBefore()
@@ -93,16 +105,15 @@ void LuminanceOutput::OnResizeBefore()
 void LuminanceOutput::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    outputTexture_.resource->SetName(L"LuminanceOutputRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "LuminanceOutputRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(outputTexture_);
 }
 
 void LuminanceOutput::ToShaderResourceState()
 {
-    this->_ToShaderResourceState(outputTexture_);
+    outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void LuminanceOutput::DebugOverlay()
@@ -182,7 +193,7 @@ void LuminanceOutput::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &outputTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &outputTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -197,39 +208,11 @@ void LuminanceOutput::CreatePipelineStateObject()
     return;
 }
 
-void LuminanceOutput::_ToRenderTargetState(ResourceStateTracker& _resource)
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
-}
-
-void LuminanceOutput::_ToShaderResourceState(ResourceStateTracker& _resource)
-{
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-}
-
-void LuminanceOutput::_CreateResourceCBuffer()
+void LuminanceOutput::CreateResourceCBuffer()
 {
     optionResource_ = DX12Helper::CreateBufferResource(device_, sizeof(LuminanceOutputOption));
     optionResource_->Map(0, nullptr, reinterpret_cast<void**>(&pOption_));
 
     // 初期化
     pOption_->threshold = 1.0f; // カーネルサイズの初期値
-}
-
-void LuminanceOutput::_Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle)
-{
-    // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
-
-    // PSOとルートシグネチャを設定
-    commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-    commandList_->SetPipelineState(pso_.Get());
-
-    // 入力テクスチャのSRVを設定する（自分が所有するテクスチャのSRVではないため注意)
-    commandList_->SetGraphicsRootDescriptorTable(0, _inputGpuHandle);
-
-    commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }

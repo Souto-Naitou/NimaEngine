@@ -29,14 +29,17 @@ public:
     void SetMaxValue(float _max) { maxValue_ = _max; }
     void SetCurrentValue(float _current) { currentValue_ = _current; }
 
+    float GetCurrentValue() const { return currentValue_; }
+    float GetMaxValue() const { return maxValue_; }
+
     void operator=(const float& _val) { currentValue_ = _val; }
     float& operator+=(const float& _val) { currentValue_ += _val; return currentValue_; }
 
 private:
     using NumberImage = std::pair<uint32_t, std::unique_ptr<Sprite>>;
 
-    static constexpr char PATH_BAR[] = "white.png";
-    static constexpr char PATH_DECORATION[] = "white.png";
+    static constexpr char PATH_BAR[] = "white1x1.png";
+    static constexpr char PATH_DECORATION[] = "white1x1.png";
 
     static const RGBA COLOR_BAR_NORMAL;
     static const RGBA COLOR_BAR_LOW;

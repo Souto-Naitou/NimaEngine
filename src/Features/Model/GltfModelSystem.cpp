@@ -1,6 +1,6 @@
 #include "GltfModelSystem.h"
 #include <Core/DirectX12/RootParameters/RootParameters.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/DirectX12/Helper/DX12Helper.h>
 
 void GltfModelSystem::Initialize()
 {

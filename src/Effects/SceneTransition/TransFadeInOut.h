@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Features/SceneTransition/TransBase.h"
+#include <Effects/SceneTransition/TransBase.h>
 #include <string>
 #include <Features/Sprite/Sprite.h>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
 
 
 class TransFadeInOut : public TransBase
@@ -18,9 +17,6 @@ public:
 
 private:
 
-    uint32_t screenWidth_ = 1280;
-    uint32_t screenHeight_ = 720;
-
     std::string name_;
 
     float opacity_ = 0.0f;
@@ -32,5 +28,4 @@ private:
 
     std::string sceneName_;
     std::unique_ptr<Sprite> sprite_;
-    std::unordered_map<std::string, TimeMeasurer> fadeTimers_;
 };

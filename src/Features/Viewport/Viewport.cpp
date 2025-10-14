@@ -6,6 +6,7 @@
 #include <d3dcompiler.h>
 
 #include <cassert>
+#include <config/EngineSetting.h>
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -128,16 +129,16 @@ void Viewport::CreatePSO()
 void Viewport::CreateSRV()
 {
     inputSRVIndex_ = pSRVManager_->Allocate();
-    pSRVManager_->CreateForTexture2D(inputSRVIndex_, inputTexture_->resource.Get(), DirectX12::kRenderTargetFormat_, 1);
+    pSRVManager_->CreateForTexture2D(inputSRVIndex_, inputTexture_->GetResource().Get(), NimaEngine::Config::kRenderTargetFormat, 1);
 
     outputSRVIndex_ = pSRVManager_->Allocate();
-    pSRVManager_->CreateForTexture2D(outputSRVIndex_, outputTexture_->resource.Get(), DirectX12::kRenderTargetFormat_, 1);
+    pSRVManager_->CreateForTexture2D(outputSRVIndex_, outputTexture_->GetResource().Get(), NimaEngine::Config::kRenderTargetFormat, 1);
 }
 
 void Viewport::CreateUAV()
 {
     outputUAVIndex_ = pSRVManager_->Allocate();
-    pSRVManager_->CreateUAV(outputUAVIndex_, outputTexture_->resource.Get(), DirectX12::kRenderTargetFormat_);
+    pSRVManager_->CreateUAV(outputUAVIndex_, outputTexture_->GetResource().Get(), NimaEngine::Config::kRenderTargetFormat);
 }
 
 void Viewport::Compute()
@@ -145,9 +146,9 @@ void Viewport::Compute()
     #ifdef _DEBUG
 
     /// ステートの変更
-    outputTexture_->ChangeState(commandList_, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    outputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-    inputTexture_->ChangeState(commandList_, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    inputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 
     commandList_->SetPipelineState(pipelineState_.Get());
     commandList_->SetComputeRootSignature(rootSignature_.Get());
@@ -169,10 +170,10 @@ void Viewport::Compute()
         1
     );
 
-    inputTexture_->ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    inputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     /// ステートの変更
-    outputTexture_->ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    outputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     #endif // _DEBUG
 }

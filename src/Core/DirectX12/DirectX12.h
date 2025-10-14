@@ -5,7 +5,7 @@
 #include <DebugTools/ReakChecker.h>
 #include <DebugTools/Logger/Logger.h>
 #include "./RTVHeapCounter.h"
-#include "./ResourceStateTracker/ResourceStateTracker.h"
+#include "./DX12Resource/DX12Resource.h"
 
 
 #include <wrl.h>
@@ -31,9 +31,6 @@ class SRVManager;
 class DirectX12
 {
 public:
-    // スワップチェーン用
-    constexpr static DXGI_FORMAT kRenderTargetFormat_ = DXGI_FORMAT_R8G8B8A8_UNORM;
-
     // ポストエフェクトや合成用
     constexpr static DXGI_FORMAT kHDRFormat_ = DXGI_FORMAT_R16G16B16A16_FLOAT;
 
@@ -91,11 +88,10 @@ public: /// Getter
     ID2D1Bitmap1*                                           GetD2D1RenderTarget(uint32_t _index)        { return d2dRenderTargets_[_index].Get(); }
     ID3D11On12Device*                                       GetD3D11On12Device()                        { return d3d11On12Device_.Get(); }
     ID3D11DeviceContext*                                    GetD3D11On12DeviceContext()                 { return d3d11On12DeviceContext_.Get(); }
-    ResourceStateTracker*                                   GetGameScreenResource()                     { return &gameScreenResource_; }
-    ResourceStateTracker*                                   GetGameScreenComputed()                     { return &gameScreenComputed_; }
+    DX12Resource*                                           GetGameScreenResource()                     { return &gameScreenResource_; }
+    DX12Resource*                                           GetGameScreenComputed()                     { return &gameScreenComputed_; }
     const D3D12_RECT&                                       GetScissorRect() const                      { return scissorRect_; }
-    const Vector4&                                          GetEditorBGColor() const                    { return editorBG_; }
-    ResourceStateTracker*                                   GetDepthStencilResource()                   { return &depthStencilResource_; }
+    DX12Resource*                                           GetDepthStencilResource()                   { return &depthStencilResource_; }
 
 public:
     void SetGameWindowRect(D3D12_VIEWPORT _viewport);
@@ -119,14 +115,14 @@ private:
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator>          commandAllocator_               = nullptr;      // コマンドアロケータ
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>       commandList_                    = nullptr;      // コマンドアロケータ
     Microsoft::WRL::ComPtr<IDXGISwapChain4>                 swapChain_                      = nullptr;      // スワップチェーン
-    ResourceStateTracker                                    swapChainResources_[2]          = {};           // スワップチェーンリソース
+    DX12Resource                                            swapChainResources_[2]          = {};           // スワップチェーンリソース
     Microsoft::WRL::ComPtr<ID3D12Fence>                     fence_                          = nullptr;      // フェンス
     std::unique_ptr<RTVHeapCounter>                         rtvHeapCounter_                 = nullptr;      // RTVヒープカウンタ
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>            dsvDescriptorHeap_              = nullptr;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>            descriptorHeaps_                = nullptr;
-    ResourceStateTracker                                    depthStencilResource_           = {};           // 深度ステンシルリソース
-    ResourceStateTracker                                    gameScreenResource_             = {};           // ゲーム画面(ImGuiを含まない)リソース
-    ResourceStateTracker                                    gameScreenComputed_             = {};           // ゲーム画面(コンピュートシェーダー後)リソース
+    DX12Resource                                            depthStencilResource_           = {};           // 深度ステンシルリソース
+    DX12Resource                                            gameScreenResource_             = {};           // ゲーム画面(ImGuiを含まない)リソース
+    DX12Resource                                            gameScreenComputed_             = {};           // ゲーム画面(コンピュートシェーダー後)リソース
     Microsoft::WRL::ComPtr<IDxcUtils>                       dxcUtils_                       = nullptr;
     Microsoft::WRL::ComPtr<IDxcCompiler3>                   dxcCompiler_                    = nullptr;
     Microsoft::WRL::ComPtr<IDxcIncludeHandler>              includeHandler_                 = nullptr;
@@ -158,7 +154,6 @@ private:
     uint32_t                                                gameWndSrvIndex_                = 0;
     uint32_t                                                gameWndSrvIndexComputed_        = 0;
     float                                                   clearColor_[4]                  = { 0.2f, 0.2f, 0.4f, 1.0f };
-    Vector4                                                 editorBG_                       = { 0.03f, 0.03f, 0.03f, 1.0f };
     uint32_t                                                backBufferIndex_                = 0u;
     uint32_t                                                kDescriptorSizeSRV              = 0u;
     uint32_t                                                kDescriptorSizeRTV              = 0u;

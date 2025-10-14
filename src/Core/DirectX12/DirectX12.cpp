@@ -11,6 +11,7 @@
 
 
 #include <cassert>
+#include <config/EngineSetting.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -125,13 +126,13 @@ void DirectX12::OnResizedWindow()
 void DirectX12::NewFrame()
 {
     // リソースバリアの設定
-    swapChainResources_[backBufferIndex_].ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     /// 描画先のRTV/DSVの設定
     commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, nullptr);
 
     // 画面全体のクリア
-    commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &editorBG_.x, 0, nullptr);
+    commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // 指定した深度で画面全体をクリア (ポストエフェクト用リソースで行うため現在無効)
     // commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -148,7 +149,7 @@ void DirectX12::CommandExecute()
         commandList_end = commandLists_.back();
     }
 
-    swapChainResources_[backBufferIndex_].ChangeState(commandList_end, D3D12_RESOURCE_STATE_PRESENT);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList_end, D3D12_RESOURCE_STATE_PRESENT);
 
     /// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseする
     hr_ = commandList_->Close();
@@ -213,18 +214,18 @@ void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
     #ifdef _DEBUG
 
     /// レンダーターゲットからコピー元状態にする
-    swapChainResources_[backBufferIndex_].ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
-    gameScreenResource_.ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_DEST);
+    gameScreenResource_.GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_DEST);
 
 
     D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
-    srcLocation.pResource        = swapChainResources_[backBufferIndex_].resource.Get();
+    srcLocation.pResource        = swapChainResources_[backBufferIndex_].GetResource().Get();
     srcLocation.Type             = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
     srcLocation.SubresourceIndex = 0; // コピーするサブリソースインデックス
 
     D3D12_TEXTURE_COPY_LOCATION dstLocation = {};
-    dstLocation.pResource        = gameScreenResource_.resource.Get();
+    dstLocation.pResource        = gameScreenResource_.GetResource().Get();
     dstLocation.Type             = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
     dstLocation.SubresourceIndex = 0;
 
@@ -240,12 +241,12 @@ void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
     _commandList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, &srcBox);
 
     /// バリアを戻す
-    swapChainResources_[backBufferIndex_].ChangeState(_commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    gameScreenResource_.ChangeState(_commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    gameScreenResource_.GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     /// rtvのクリア
-    _commandList->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &editorBG_.x, 0, nullptr);
+    _commandList->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     #else
 

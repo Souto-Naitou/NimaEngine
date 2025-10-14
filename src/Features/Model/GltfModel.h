@@ -40,7 +40,7 @@ public:
 private:
     Microsoft::WRL::ComPtr<ID3D12Resource>  vertexResource_         = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>  indexResource_          = nullptr;  //< インデックスバッファリソース
-    ResourceStateTracker                    resourceSkinned_        = {};
+    DX12Resource                            resourceSkinned_        = {};
     ModelData                               modelData_              = {};
     Skeleton                                skeleton_;                          //< スケルトンデータ
     Animation                               animationData_          = {};

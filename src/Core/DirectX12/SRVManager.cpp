@@ -1,5 +1,5 @@
 #include "SRVManager.h"
-#include <Core/DirectX12/Helper/DX12Helper.h>
+#include <Core/DirectX12/Helper/DX12HeapHelper.h>
 
 #ifdef _DEBUG
 #include <DebugTools/DebugManager/DebugManager.h>
@@ -15,7 +15,7 @@ void SRVManager::Initialize(DirectX12* _pDx12)
     name_ = "SRVManager";
 
     pDx12_ = _pDx12;
-    pDescHeap_ = DX12Helper::CreateDescriptorHeap(
+    pDescHeap_ = DX12HeapHelper::CreateDescriptorHeap(
         pDx12_->GetDevice(),
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
         kMaxSRVCount_,

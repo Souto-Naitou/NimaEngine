@@ -46,10 +46,13 @@ void Bar2d::Update()
 {
     this->UpdateTransform();
 
-    float t = currentValue_ - 0.1f / maxValue_ + 0.1f;
-    if (t > 1.0f) t = 1.0f;
-    if (t < 0.0f) t = 0.0f;
-
+    if (maxValue_ != 0.0f)
+    {
+        float t = (currentValue_ - 0.1f) / (maxValue_ + 0.1f);
+        if (t > 1.0f) t = 1.0f;
+        if (t < 0.0f) t = 0.0f;
+    }
+    
     this->UpdateColor();
 
     if (bar_) bar_->Update();

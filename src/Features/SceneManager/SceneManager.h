@@ -2,7 +2,7 @@
 
 #include <Scene/SceneBase.h>
 #include <Interfaces/ISceneFactory.h>
-#include <Features/SceneTransition/SceneTransitionManager.h>
+#include <Effects/SceneTransition/SceneTransitionManager.h>
 #include <Features/Model/ModelManager.h>
 #include <memory>
 #include <Interfaces/ISceneArgs.h>

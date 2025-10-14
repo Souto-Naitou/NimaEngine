@@ -60,8 +60,8 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "SeparatedGaussianFilter";
-    ResourceStateTracker                                horizontalGaussTexture_ = {};
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        horizontalGaussTexture_ = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
@@ -77,6 +77,8 @@ private:
     uint32_t                                            horizontalSrvHeapIndex_ = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/SeparatedGaussianFilter.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/SeparatedGaussianFilter.PS.hlsl";
+    constexpr static const char*                        kNameHorizontal         = "RT_SeparatedGaussianFilter(Horizontal)";
+    constexpr static const char*                        kNameVertical           = "RT_SeparatedGaussianFilter(Vertical)";
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_             = nullptr;
@@ -92,9 +94,7 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    _ToRenderTargetState(ResourceStateTracker& _resource);
-    void    _ToShaderResourceState(ResourceStateTracker& _resource);
     void    CreateResourceCBuffer();
-    void    _Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource);
+    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource);
     void    CreateKernel();
 };

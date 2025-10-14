@@ -147,6 +147,7 @@
     <ClCompile Include="Core\DirectX12\DirectX12_Impl.cpp" />
     <ClCompile Include="Core\DirectX12\Framerate.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp" />
+    <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp" />
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp" />
     <ClCompile Include="Core\DirectX12\PostEffect.cpp" />
     <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp" />
@@ -154,7 +155,7 @@
     <ClCompile Include="Core\DirectX12\SRVManager.cpp" />
     <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp" />
     <ClCompile Include="Core\DirectX12\TextureManager.cpp" />
-    <ClCompile Include="Core\DirectX12\TextureResource\TextureResource.cpp" />
+    <ClCompile Include="Core\DirectX12\DX12Resource\DX12Resource.cpp" />
     <ClCompile Include="Core\Win32\WinSystem.cpp" />
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp" />
     <ClCompile Include="DebugTools\EventTimer\EventTimer.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\Vignette\Vignette.cpp" />
+    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp" />
     <ClCompile Include="Features\Audio\Audio.cpp" />
     <ClCompile Include="Features\Audio\AudioManager.cpp" />
     <ClCompile Include="Features\Bar2d\Bar2d.cpp" />
@@ -223,8 +225,8 @@
     <ClCompile Include="Features\Primitive\OBB.cpp" />
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp" />
     <ClCompile Include="Features\SceneManager\SceneManager.cpp" />
-    <ClCompile Include="Features\SceneTransition\SceneTransitionManager.cpp" />
-    <ClCompile Include="Features\SceneTransition\TransFadeInOut.cpp" />
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionManager.cpp" />
+    <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp" />
     <ClCompile Include="Features\Sprite\Sprite.cpp" />
     <ClCompile Include="Features\Sprite\SpriteSystem.cpp" />
     <ClCompile Include="Features\Text\Text.cpp" />
@@ -248,12 +250,14 @@
     <ClInclude Include="Common\HRESULT_ASSERT.h" />
     <ClInclude Include="Common\SingletonPattern.h" />
     <ClInclude Include="Common\structs.h" />
+    <ClInclude Include="config\EngineSetting.h" />
     <ClInclude Include="Core\ConfigManager\ConfigManager.h" />
     <ClInclude Include="Core\ConfigManager\ConfigType.h" />
     <ClInclude Include="Core\DirectX12\BlendDesc.h" />
     <ClInclude Include="Core\DirectX12\DirectX12.h" />
     <ClInclude Include="Core\DirectX12\Framerate.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h" />
+    <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
     <ClInclude Include="Core\DirectX12\PostEffect.h" />
     <ClInclude Include="Core\DirectX12\IPostEffect.h" />
@@ -263,7 +267,7 @@
     <ClInclude Include="Core\DirectX12\SRVManager.h" />
     <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h" />
     <ClInclude Include="Core\DirectX12\TextureManager.h" />
-    <ClInclude Include="Core\DirectX12\TextureResource\TextureResource.h" />
+    <ClInclude Include="Core\DirectX12\DX12Resource\DX12Resource.h" />
     <ClInclude Include="Core\Localization\LanguageData.h" />
     <ClInclude Include="Core\Win32\WinSystem.h" />
     <ClInclude Include="DebugTools\DebugEntry\DebugEntry.h" />
@@ -286,6 +290,7 @@
     <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h" />
     <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h" />
+    <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
     <ClInclude Include="Features\Animation\AnimationTimeline.h" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
@@ -308,6 +313,7 @@
     <ClInclude Include="Features\IContainer\ListContainer.h" />
     <ClInclude Include="Features\IContainer\VectorContainer.h" />
     <ClInclude Include="Features\Input\Input.h" />
+    <ClInclude Include="Features\Layer\Canvas.h" />
     <ClInclude Include="Features\LevelLoader\ISceneObjects.h" />
     <ClInclude Include="Features\LevelLoader\LevelData.h" />
     <ClInclude Include="Features\LevelLoader\LevelHelper.h" />
@@ -347,9 +353,9 @@
     <ClInclude Include="Features\Primitive\OBB.h" />
     <ClInclude Include="Features\RandomGenerator\RandomGenerator.h" />
     <ClInclude Include="Features\SceneManager\SceneManager.h" />
-    <ClInclude Include="Features\SceneTransition\SceneTransitionManager.h" />
-    <ClInclude Include="Features\SceneTransition\TransBase.h" />
-    <ClInclude Include="Features\SceneTransition\TransFadeInOut.h" />
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionManager.h" />
+    <ClInclude Include="Effects\SceneTransition\TransBase.h" />
+    <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h" />
     <ClInclude Include="Features\Sprite\Sprite.h" />
     <ClInclude Include="Features\Sprite\SpriteSystem.h" />
     <ClInclude Include="Features\Text\Text.h" />

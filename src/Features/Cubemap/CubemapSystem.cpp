@@ -2,6 +2,8 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/BlendDesc.h>
+#include <Core/DirectX12/Helper/DX12Helper.h>
+#include <config/EngineSetting.h>
 
 void CubemapSystem::Initialize()
 {
@@ -102,7 +104,7 @@ void CubemapSystem::_CreatePSO()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &DirectX12::kRenderTargetFormat_, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &NimaEngine::Config::kRenderTargetFormat, DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)

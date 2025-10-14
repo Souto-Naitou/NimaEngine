@@ -3,6 +3,8 @@
 #include <DebugTools/Logger/Logger.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/Win32/WinSystem.h>
+#include <config/EngineSetting.h>
+#include <Core/DirectX12/Helper/DX12HeapHelper.h>
 
 void LineSystem::Initialize()
 {
@@ -121,7 +123,7 @@ void LineSystem::CreatePipelineState()
     pipelineStateDesc.RasterizerState = rasterizerDesc; // RasterizerState
     // 書き込むRTVの情報
     pipelineStateDesc.NumRenderTargets = 1;
-    pipelineStateDesc.RTVFormats[0] = DirectX12::kRenderTargetFormat_;
+    pipelineStateDesc.RTVFormats[0] = NimaEngine::Config::kRenderTargetFormat;
     // 利用するトポロジ（形状）のタイプ。ライン
     pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
     // どのように画面に色を打ち込むかの設定
@@ -186,7 +188,7 @@ void LineSystem::SetDSVDesc()
     // DespStencilResource
     depthStencilResource_ = DX12Helper::CreateDepthStencilTextureResource(device_, clientWidth, clientHeight);
     // DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないため、ShaderVisibleはfalse
-    dsvDescriptorHeap_ = DX12Helper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+    dsvDescriptorHeap_ = DX12HeapHelper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
     /// DSVの設定
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};

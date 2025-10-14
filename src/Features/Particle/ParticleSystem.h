@@ -40,8 +40,6 @@ public:
 public: /// Setter
     void SetGlobalEye(GameEye* _pGameEye) { pGlobalEye_ = _pGameEye; }
     void AddCommandListData(CommandListData& _pData) { commandListDatas_.emplace_back(_pData); }
-    void SetRTVHandle(D3D12_CPU_DESCRIPTOR_HANDLE* _rtvHandle) { rtvHandle_ = _rtvHandle; }
-
 
 public: /// Getter
     GameEye** GetGlobalEye() { return &pGlobalEye_; }
@@ -56,7 +54,6 @@ private: /// メンバ変数
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Particle.PS.hlsl";
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle_ = nullptr;
 
     std::list<CommandListData> commandListDatas_;
 

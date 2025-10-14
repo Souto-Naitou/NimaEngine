@@ -26,9 +26,12 @@ void TextureManager::LoadTexture(const std::string& _filePath)
     std::string fullPath = pathResolver_.GetFilePath(_filePath);
 
     /// すでに読み込まれている場合は読み込まない
-    if (textureDataMap_.contains(fullPath))
+    for (auto& [key, value] : textureDataMap_)
     {
-        return;
+        if (std::filesystem::equivalent(key, std::filesystem::path(fullPath)))
+        {
+            return;
+        }
     }
 
     assert(!srvManager_->IsFull() && "SRVがいっぱいです");
@@ -64,7 +67,13 @@ void TextureManager::LoadTexture(const std::string& _filePath)
     auto cl = pDx12_->GetCommandList();
 
     textureData.metadata = metadata;
-    textureData.textureResource.SetResource(DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata));
+    auto tempResource = DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata);
+    textureData.textureResource.Initialize(
+        tempResource,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        textureData.metadata.format,
+        fullPath
+    );
     
     resourcesIntermediate_.push_back(
         DX12Helper::UploadTextureData(
@@ -111,11 +120,21 @@ void TextureManager::UnloadTexture(const std::string& _filePath)
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& _filePath)
 {
     std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    const TextureData& textureData = textureDataMap_[fullPath];
-    return textureData.textureResource.GetSRVHandleGPU();
+    std::filesystem::path fsFull(fullPath);
+
+    for (auto& [key, value] : textureDataMap_)
+    {
+        if (std::filesystem::equivalent(key, fsFull))
+        {
+            return value.textureResource.GetSRVHandleGPU();
+        }
+    }
+
+    assert(false && "テクスチャが見つかりません");
+    return {};
 }
 
-const TextureResource& TextureManager::GetTextureResource(const std::string& _filePath)
+const DX12Resource& TextureManager::GetTextureResource(const std::string& _filePath)
 {
     std::string fullPath = pathResolver_.GetFilePath(_filePath);
     const TextureData& textureData = textureDataMap_[fullPath];
@@ -157,7 +176,7 @@ void TextureManager::CreateSRV(TextureType _type, const TextureData& _textureDat
         case TextureType::kDDS:
             srvManager_->CreateForCubemap(
                 _textureData.textureResource.GetSRVIndex(),
-                _textureData.textureResource.GetResource(),
+                _textureData.textureResource.GetResource().Get(),
                 _textureData.metadata.format,
                 UINT32_MAX
             );
@@ -165,7 +184,7 @@ void TextureManager::CreateSRV(TextureType _type, const TextureData& _textureDat
         case TextureType::kWIC:
             srvManager_->CreateForTexture2D(
                 _textureData.textureResource.GetSRVIndex(),
-                _textureData.textureResource.GetResource(),
+                _textureData.textureResource.GetResource().Get(),
                 _textureData.metadata.format,
                 static_cast<UINT>(_textureData.metadata.mipLevels)
             );

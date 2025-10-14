@@ -49,7 +49,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "GaussianFilter";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;

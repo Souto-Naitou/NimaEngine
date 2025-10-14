@@ -16,11 +16,10 @@ void Grayscale::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"GrayscaleRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Grayscale");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -66,7 +65,7 @@ void Grayscale::Finalize()
 void Grayscale::Setting()
 {
     // レンダーテクスチャをレンダーターゲット状態に変更
-    this->ToRenderTargetState();
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
@@ -84,23 +83,22 @@ void Grayscale::Setting()
 void Grayscale::OnResizeBefore()
 {
     SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
-    renderTexture_.resource.Reset();
-    renderTexture_.state = D3D12_RESOURCE_STATE_PRESENT;
+    renderTexture_.GetResource().Reset();
+    renderTexture_.GetStateTracker().Reset();
 }
 
 void Grayscale::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"GrayscaleRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Grayscale");
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 }
 
 void Grayscale::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void Grayscale::CreateRootSignature()
@@ -169,7 +167,7 @@ void Grayscale::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -182,10 +180,4 @@ void Grayscale::CreatePipelineStateObject()
         assert(false);
     }
     return;
-}
-
-void Grayscale::ToRenderTargetState()
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }

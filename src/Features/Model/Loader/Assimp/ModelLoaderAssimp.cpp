@@ -2,6 +2,8 @@
 
 #include <Utility/FileSystem/fsutl.h>
 
+#include <Core/DirectX12/Helper/DX12Helper.h>
+
 #include <Assimp/Importer.hpp>
 #include <Assimp/postprocess.h>
 #include <Features/Model/ObjModel.h>

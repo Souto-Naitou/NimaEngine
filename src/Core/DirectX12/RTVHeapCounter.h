@@ -1,11 +1,10 @@
 #pragma once
 
-#include <Core/DirectX12/Helper/DX12Helper.h>
-
 #include <wrl/client.h>
 #include <d3d12.h>
 #include <cstdint>
 #include <vector>
+#include <string>
 
 
 class RTVHeapCounter

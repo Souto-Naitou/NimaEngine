@@ -8,6 +8,7 @@
 #ifdef _DEBUG
 #include <imgui.h>
 #endif //_DEBUG
+#include <config/EngineSetting.h>
 
 void PostEffectExecuter::Initialize()
 {
@@ -18,11 +19,10 @@ void PostEffectExecuter::Initialize()
     CreateCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, rtvHandle_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"PureRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, "PureRenderTexture");
 
     // SRVの生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     CreateRootSignature();
@@ -50,9 +50,9 @@ void PostEffectExecuter::ApplyPostEffects()
     rtvHandleSwapChain_ = pDx12_->GetRTVHandle()[indexBackbuffer];
     DX12Helper::CommandListCommonSetting(pDx12_, commandListForDraw_.Get(), &rtvHandleSwapChain_);
 
-    renderTexture_.ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
-    outputHandleGpu_ = rtvHandleGpu_;
+    outputHandleGpu_ = renderTexture_.GetSRVHandleGPU();
 
     for (auto it = postEffects_.begin(); it != postEffects_.end(); ++it)
     {
@@ -85,7 +85,7 @@ void PostEffectExecuter::Draw()
     commandListForDraw_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandListForDraw_->DrawInstanced(3, 1, 0, 0);
 
-    renderTexture_.ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    renderTexture_.GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void PostEffectExecuter::NewFrame()
@@ -94,10 +94,10 @@ void PostEffectExecuter::NewFrame()
 
     /// 描画先のRTV/DSVの設定
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
-    commandListMain_->OMSetRenderTargets(1, &rtvHandle_, false, &dsvHandle);
+    commandListMain_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), false, &dsvHandle);
 
     // 画面全体のクリア
-    commandListMain_->ClearRenderTargetView(rtvHandle_, &editorBG_.x, 0, nullptr);
+    commandListMain_->ClearRenderTargetView(renderTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // 指定した深度で画面全体をクリア
     commandListMain_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -116,16 +116,14 @@ void PostEffectExecuter::PostDraw()
 void PostEffectExecuter::OnResize()
 {
     pSRVManager_->Deallocate(srvHeapIndex_);
-    renderTexture_.resource.Reset();
-    renderTexture_.state = D3D12_RESOURCE_STATE_PRESENT;
+    renderTexture_.Reset();
     for (auto& posteffect : postEffects_) posteffect->OnResizeBefore();
 }
 
 void PostEffectExecuter::OnResizedBuffers()
 {
-    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, rtvHandle_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"PureRenderTexture");
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, "RT_Pure");
+    Helper::CreateSRV(renderTexture_);
     for (auto& posteffect : postEffects_) posteffect->OnResizedBuffers();
 }
 
@@ -283,7 +281,6 @@ void PostEffectExecuter::ObtainInstances()
     commandListMain_ = pDx12_->GetCommandList();
     dsvHeap_ = pDx12_->GetDSVDescriptorHeap();
     rtvHeap_ = pDx12_->GetRTVDescriptorHeap();
-    editorBG_ = pDx12_->GetEditorBGColor();
 }
 
 void PostEffectExecuter::CreateRootSignature()
@@ -388,7 +385,7 @@ void PostEffectExecuter::CreatePipelineState()
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;    // RasterizerState
     // 書き込むRTVの情報
     graphicsPipelineStateDesc.NumRenderTargets = 1;
-    graphicsPipelineStateDesc.RTVFormats[0] = DirectX12::kRenderTargetFormat_;
+    graphicsPipelineStateDesc.RTVFormats[0] = NimaEngine::Config::kRenderTargetFormat;
     // 利用するトポロジ（形状）のタイプ。三角形
     graphicsPipelineStateDesc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;

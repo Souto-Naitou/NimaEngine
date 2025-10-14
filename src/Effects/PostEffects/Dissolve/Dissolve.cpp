@@ -18,11 +18,10 @@ void Dissolve::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"DissolveRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -49,7 +48,7 @@ bool Dissolve::Enabled() const
     return isEnabled_;
 }
 
-void Dissolve::SetTextureResource(const TextureResource& _texResource)
+void Dissolve::SetTextureResource(const DX12Resource& _texResource)
 {
     maskTexture_ = _texResource;
 }
@@ -88,7 +87,7 @@ void Dissolve::Setting()
     this->CheckValidation();
 
     // レンダーテクスチャをレンダーターゲット状態に変更
-    this->ToRenderTargetState();
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
@@ -110,24 +109,23 @@ void Dissolve::Setting()
 void Dissolve::OnResizeBefore()
 {
     SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
-    renderTexture_.resource.Reset();
-    renderTexture_.state = D3D12_RESOURCE_STATE_PRESENT;
+    renderTexture_.GetResource().Reset();
+        renderTexture_.GetStateTracker().Reset();
 }
 
 void Dissolve::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"DissolveRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 }
 
 void Dissolve::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void Dissolve::DebugOverlay()
@@ -211,7 +209,7 @@ void Dissolve::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -223,13 +221,6 @@ void Dissolve::CreatePipelineStateObject()
         Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, _e.what());
         assert(false);
     }
-    return;
-}
-
-void Dissolve::ToRenderTargetState()
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void Dissolve::CreateResourceCBuffer()
@@ -273,7 +264,7 @@ void Dissolve::CheckValidation() const
         );
         assert(false);
     }
-    if (renderTexture_.resource == nullptr)
+    if (renderTexture_.GetResource() == nullptr)
     {
         Logger::GetInstance()->LogError(
             __FILE__,

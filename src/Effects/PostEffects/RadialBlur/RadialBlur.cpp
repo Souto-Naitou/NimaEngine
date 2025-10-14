@@ -17,11 +17,10 @@ void RadialBlur::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"RadialBlurRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RadialBlur");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -80,7 +79,7 @@ void RadialBlur::Finalize()
 void RadialBlur::Setting()
 {
     // レンダーテクスチャをレンダーターゲット状態に変更
-    this->ToRenderTargetState();
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
@@ -100,22 +99,22 @@ void RadialBlur::Setting()
 void RadialBlur::OnResizeBefore()
 {
     SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
-    renderTexture_.resource.Reset();
-    renderTexture_.state = D3D12_RESOURCE_STATE_PRESENT;
+    renderTexture_.GetResource().Reset();
+        renderTexture_.GetStateTracker().Reset();
 }
 
 void RadialBlur::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"RadialBlurRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RadialBlur");
+
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(renderTexture_);
 }
 
 void RadialBlur::ToShaderResourceState()
 {
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void RadialBlur::DebugOverlay()
@@ -197,7 +196,7 @@ void RadialBlur::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -210,12 +209,6 @@ void RadialBlur::CreatePipelineStateObject()
         assert(false);
     }
     return;
-}
-
-void RadialBlur::ToRenderTargetState()
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    renderTexture_.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void RadialBlur::CreateResourceCBuffer()

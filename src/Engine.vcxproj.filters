@@ -130,15 +130,6 @@
     <Filter Include="Feature\Shape\OBB">
       <UniqueIdentifier>{4490bcaf-3130-4655-9eca-14949ee03dde}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\SceneTransition">
-      <UniqueIdentifier>{18b88b04-4484-4566-97ff-989e4dca9e4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\SceneTransition\FadeInOut">
-      <UniqueIdentifier>{e60ca308-66bf-4877-bedd-8da0a9c1c1dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\SceneTransition\Manager">
-      <UniqueIdentifier>{a8bd3d85-68b2-4d21-9e41-d119dee47a7a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Feature\Collision">
       <UniqueIdentifier>{8b3b583a-7857-484a-b311-3a30cccc93f5}</UniqueIdentifier>
     </Filter>
@@ -349,6 +340,24 @@
     <Filter Include="Feature\Collision\CellBasedFiltering">
       <UniqueIdentifier>{fc1f23c8-4070-41e3-8122-d17c37ddd352}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Feature\Layer">
+      <UniqueIdentifier>{977f525f-1f0e-479a-be89-aa18886e41ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{061d370c-d860-4bb7-b62c-b7870b912c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\SceneTransition">
+      <UniqueIdentifier>{242f8ca1-959d-469a-b191-7900d166de53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\SceneTransition\FadeInOut">
+      <UniqueIdentifier>{e60ca308-66bf-4877-bedd-8da0a9c1c1dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\SceneTransition\Manager">
+      <UniqueIdentifier>{a8bd3d85-68b2-4d21-9e41-d119dee47a7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\SceneTransition\Shutter">
+      <UniqueIdentifier>{45350fa5-48c0-46e5-a4aa-2e9a2994621c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -456,11 +465,11 @@
     <ClCompile Include="Features\Primitive\OBB.cpp">
       <Filter>Feature\Shape\OBB</Filter>
     </ClCompile>
-    <ClCompile Include="Features\SceneTransition\TransFadeInOut.cpp">
-      <Filter>Feature\SceneTransition\FadeInOut</Filter>
+    <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
+      <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClCompile>
-    <ClCompile Include="Features\SceneTransition\SceneTransitionManager.cpp">
-      <Filter>Feature\SceneTransition\Manager</Filter>
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionManager.cpp">
+      <Filter>Effect\SceneTransition\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Features\Collision\Manager\CollisionManager.cpp">
       <Filter>Feature\Collision\Manager</Filter>
@@ -564,7 +573,7 @@
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp">
       <Filter>Effect\PostEffect\.Helper</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\TextureResource\TextureResource.cpp">
+    <ClCompile Include="Core\DirectX12\DX12Resource\DX12Resource.cpp">
       <Filter>Core\DirectX12\TextureResource</Filter>
     </ClCompile>
     <ClCompile Include="Utility\Debug\dbgutl.cpp">
@@ -660,6 +669,10 @@
     <ClCompile Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.cpp">
       <Filter>Feature\Collision\CellBasedFiltering</Filter>
     </ClCompile>
+    <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp">
+      <Filter>Core\DirectX12\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -791,14 +804,11 @@
     <ClInclude Include="Features\Primitive\OBB.h">
       <Filter>Feature\Shape\OBB</Filter>
     </ClInclude>
-    <ClInclude Include="Features\SceneTransition\TransBase.h">
-      <Filter>Feature\SceneTransition</Filter>
+    <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
+      <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClInclude>
-    <ClInclude Include="Features\SceneTransition\TransFadeInOut.h">
-      <Filter>Feature\SceneTransition\FadeInOut</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\SceneTransition\SceneTransitionManager.h">
-      <Filter>Feature\SceneTransition\Manager</Filter>
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionManager.h">
+      <Filter>Effect\SceneTransition\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Features\Collision\Manager\CollisionManager.h">
       <Filter>Feature\Collision\Manager</Filter>
@@ -917,7 +927,7 @@
     <ClInclude Include="Effects\PostEffects\Dissolve\Dissolve.h">
       <Filter>Effect\PostEffect\Dissolve</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\TextureResource\TextureResource.h">
+    <ClInclude Include="Core\DirectX12\DX12Resource\DX12Resource.h">
       <Filter>Core\DirectX12\TextureResource</Filter>
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h">
@@ -1061,6 +1071,19 @@
     <ClInclude Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.h">
       <Filter>Feature\Collision\CellBasedFiltering</Filter>
     </ClInclude>
+    <ClInclude Include="Features\Layer\Canvas.h">
+      <Filter>Feature\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h">
+      <Filter>Core\DirectX12\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="config\EngineSetting.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\TransBase.h">
+      <Filter>Effect\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

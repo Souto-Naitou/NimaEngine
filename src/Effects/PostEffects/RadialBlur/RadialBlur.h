@@ -61,7 +61,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "RadialBlur";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
@@ -82,6 +82,5 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    ToRenderTargetState();
     void    CreateResourceCBuffer();
 };

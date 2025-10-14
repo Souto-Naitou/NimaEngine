@@ -4,7 +4,7 @@
 #include "SRVManager.h"
 
 #include <wrl/client.h>
-#include "ResourceStateTracker/ResourceStateTracker.h"
+#include "DX12Resource/DX12Resource.h"
 #include "IPostEffect.h"
 #include <vector>
 #include <functional>
@@ -57,12 +57,12 @@ public:
 
     ID3D12Resource* GetRenderTexture() const
     {
-        return renderTexture_.resource.Get();
+        return renderTexture_.GetResource().Get();
     }
 
-    D3D12_CPU_DESCRIPTOR_HANDLE* GetRTVHandle()
+    const D3D12_CPU_DESCRIPTOR_HANDLE* GetRTVHandle()
     {
-        return &rtvHandle_;
+        return &renderTexture_.GetRTVHandle();
     }
 
     ID3D12GraphicsCommandList* GetCommandList()
@@ -82,10 +82,8 @@ private:
 
     static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     uint32_t                                            srvHeapIndex_           = 0;
-    uint32_t                                            rtvHeapIndex_           = 0;
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandle_              = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         outputHandleGpu_        = {};
     D3D12_INPUT_LAYOUT_DESC                             inputLayoutDesc_        = {};
@@ -118,5 +116,4 @@ private:
     ID3D12DescriptorHeap*                   dsvHeap_            = {};
     ID3D12DescriptorHeap*                   rtvHeap_            = {};
     D3D12_CPU_DESCRIPTOR_HANDLE             rtvHandleSwapChain_ = {};
-    Vector4                                 editorBG_           = {};
 };

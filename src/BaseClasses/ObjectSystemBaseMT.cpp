@@ -26,7 +26,7 @@ void ObjectSystemBaseMT::SetGlobalEye(GameEye* _pGameEye)
     pGlobalEye_ = _pGameEye;
 }
 
-void ObjectSystemBaseMT::SetRTVHandle(D3D12_CPU_DESCRIPTOR_HANDLE* _handle)
+void ObjectSystemBaseMT::SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE* _handle)
 {
     rtvHandle_ = _handle;
 }

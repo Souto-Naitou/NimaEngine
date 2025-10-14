@@ -3,6 +3,7 @@
 #include <Core/DirectX12/TextureManager.h>
 #include <Features/Model/Helper/AnimationHelper.h>
 #include <stdexcept>
+#include <Core/DirectX12/Helper/DX12Helper.h>
 
 GltfModel::~GltfModel()
 {
@@ -164,7 +165,7 @@ void GltfModel::DispatchSkinning()
     auto cl = pDx12_->GetCommandList();
 
     // リソースの状態を更新
-    resourceSkinned_.ChangeState(cl, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    resourceSkinned_.GetStateTracker().ChangeState(cl, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
     // 準備
     ID3D12DescriptorHeap* ppHeaps[] = { srvManager_->GetDescriptorHeap() };
@@ -182,7 +183,7 @@ void GltfModel::DispatchSkinning()
     );
 
     // リソースの状態を更新
-    resourceSkinned_.ChangeState(cl, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+    resourceSkinned_.GetStateTracker().ChangeState(cl, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 }
 
 D3D12_VERTEX_BUFFER_VIEW GltfModel::GetVertexBufferView() const
@@ -252,14 +253,14 @@ void GltfModel::CreateIndexResource()
 
 void GltfModel::CreateSkinnedResource()
 {
-    resourceSkinned_.resource = DX12Helper::CreateBufferResource(
+    resourceSkinned_.GetResource() = DX12Helper::CreateBufferResource(
         pDx12_->GetDevice(),
         sizeof(VertexData) * modelData_.vertices.size(),
         D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS
     );
 
     /// 頂点バッファービューを初期化
-    vertexBufferView_.BufferLocation = resourceSkinned_.resource->GetGPUVirtualAddress();
+    vertexBufferView_.BufferLocation = resourceSkinned_.GetResource()->GetGPUVirtualAddress();
     vertexBufferView_.SizeInBytes = static_cast<uint32_t>(sizeof(VertexData) * modelData_.vertices.size());
     vertexBufferView_.StrideInBytes = sizeof(VertexData);
 }
@@ -409,7 +410,7 @@ void GltfModel::CreateUAV()
 
     srvManager_->CreateUAV4Buffer(
         srvIndexSkinned_,
-        resourceSkinned_.resource.Get(),
+        resourceSkinned_.GetResource().Get(),
         DXGI_FORMAT_UNKNOWN,
         static_cast<uint32_t>(modelData_.vertices.size()),
         sizeof(VertexData)

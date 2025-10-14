@@ -10,7 +10,6 @@
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
-#include <Math/Functions.hpp>
 
 void GaussianBloom::Initialize()
 {
@@ -18,11 +17,10 @@ void GaussianBloom::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    outputTexture_.resource->SetName(L"GaussianBloomRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(outputTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -31,11 +29,11 @@ void GaussianBloom::Initialize()
     this->CreatePipelineStateObject();
     
     // 設定用リソースの生成と初期化
-    this->_CreateResourceCBuffer();
+    this->CreateResourceCBuffer();
 
     // 内部エフェクトの初期化
-    this->_InitializeLuminanceOutputFilter();
-    this->_InitializeSeparatedGaussianFilter();
+    this->InitializeLuminanceOutputFilter();
+    this->InitializeSeparatedGaussianFilter();
 }
 
 void GaussianBloom::Enable(bool _flag)
@@ -96,12 +94,12 @@ const LuminanceOutput* GaussianBloom::GetLuminanceOutputFilter() const
 void GaussianBloom::Apply()
 {
     D3D12_GPU_DESCRIPTOR_HANDLE outputHandleLuminance = {};
-    outputHandleLuminance = this->_ApplyFilter(inputGpuHandle_, pLuminanceOutput_.get());
+    outputHandleLuminance = this->ApplyFilter(inputGpuHandle_, pLuminanceOutput_.get());
     D3D12_GPU_DESCRIPTOR_HANDLE outputHandleGaussian = {};
-    outputHandleGaussian = this->_ApplyFilter(outputHandleLuminance, pSeparatedGaussianFilter_.get());
+    outputHandleGaussian = this->ApplyFilter(outputHandleLuminance, pSeparatedGaussianFilter_.get());
 
-    this->_ToRenderTargetState(outputTexture_);
-    this->_Setting(outputHandleGaussian, rtvHandleCpu_);
+    outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    this->PreDrawSetting(outputHandleGaussian, rtvHandleCpu_);
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
 }
 
@@ -126,11 +124,10 @@ void GaussianBloom::OnResizeBefore()
 void GaussianBloom::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    outputTexture_.resource->SetName(L"GaussianBloomRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(outputTexture_);
 
     // 内部エフェクトのリサイズ
     pLuminanceOutput_->OnResizedBuffers();
@@ -139,7 +136,7 @@ void GaussianBloom::OnResizedBuffers()
 
 void GaussianBloom::ToShaderResourceState()
 {
-    this->_ToShaderResourceState(outputTexture_);
+    outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void GaussianBloom::DebugOverlay()
@@ -225,7 +222,7 @@ void GaussianBloom::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &outputTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &outputTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -240,18 +237,7 @@ void GaussianBloom::CreatePipelineStateObject()
     return;
 }
 
-void GaussianBloom::_ToRenderTargetState(ResourceStateTracker& _resource)
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
-}
-
-void GaussianBloom::_ToShaderResourceState(ResourceStateTracker& _resource)
-{
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-}
-
-void GaussianBloom::_Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle)
+void GaussianBloom::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle)
 {
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
@@ -268,7 +254,7 @@ void GaussianBloom::_Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void GaussianBloom::_InitializeLuminanceOutputFilter()
+void GaussianBloom::InitializeLuminanceOutputFilter()
 {
     // LuminanceOutputFilterの初期化
     pLuminanceOutput_ = std::make_unique<LuminanceOutput>();
@@ -277,7 +263,7 @@ void GaussianBloom::_InitializeLuminanceOutputFilter()
     pLuminanceOutput_->Enable(true);
 }
 
-void GaussianBloom::_InitializeSeparatedGaussianFilter()
+void GaussianBloom::InitializeSeparatedGaussianFilter()
 {
     // SeparatedGaussianFilterの初期化
     pSeparatedGaussianFilter_ = std::make_unique<SeparatedGaussianFilter>();
@@ -286,7 +272,7 @@ void GaussianBloom::_InitializeSeparatedGaussianFilter()
     pSeparatedGaussianFilter_->Enable(true);
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::_ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect)
+D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect)
 {
     _pEffect->SetInputTextureHandle(_inputGpuHandle);
     _pEffect->Setting();
@@ -295,7 +281,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::_ApplyFilter(D3D12_GPU_DESCRIPTOR_HAN
     return _pEffect->GetOutputTextureHandle();
 }
 
-void GaussianBloom::_CreateResourceCBuffer()
+void GaussianBloom::CreateResourceCBuffer()
 {
     cbOptionResorce_ = DX12Helper::CreateBufferResource(device_, sizeof(GaussianBloomOption));
     cbOptionResorce_->Map(0, nullptr, reinterpret_cast<void**>(&cbOptionData_));

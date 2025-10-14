@@ -21,8 +21,8 @@ public:
     GameEye**                       GetGlobalEye();     // Get the GameEye for global use
 
     // Setters
-    void    SetGlobalEye(GameEye* _pGameEye);                       // Set the GameEye for global use
-    void    SetRTVHandle(D3D12_CPU_DESCRIPTOR_HANDLE* _rtvHandle);  // Set the render target view handle
+    void    SetGlobalEye(GameEye* _pGameEye);                               // Set the GameEye for global use
+    void    SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE* _rtvHandle);    // Set the render target view handle
 
 protected:
     template <typename T>
@@ -38,5 +38,5 @@ protected:
 
     // Pointers
     GameEye*                            pGlobalEye_         = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE*        rtvHandle_          = nullptr;
+    const D3D12_CPU_DESCRIPTOR_HANDLE*  rtvHandle_          = nullptr;
 };

@@ -17,6 +17,8 @@
 
 #include <dxcapi.h>
 #include <Core/Win32/WinSystem.h>
+#include <config/EngineSetting.h>
+#include "Helper/DX12HeapHelper.h"
 #pragma comment(lib, "dxcompiler.lib")
 
 const uint32_t DirectX12::kMaxSRVCount_ = 512ui32;
@@ -117,13 +119,13 @@ void DirectX12::CreateSwapChainAndResource()
 {
     /// スワップチェーンの設定
     swapChainDesc_ = {};
-    swapChainDesc_.Width            = WinSystem::clientWidth;               // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
-    swapChainDesc_.Height           = WinSystem::clientHeight;              // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
-    swapChainDesc_.Format           = DirectX12::kRenderTargetFormat_;           // 色の形式
-    swapChainDesc_.SampleDesc.Count = 1;                                    // マルチサンプルしない
-    swapChainDesc_.BufferUsage      = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // 描画のターゲットとして利用する
-    swapChainDesc_.BufferCount      = 2;                                    // ダブルバッファ
-    swapChainDesc_.SwapEffect       = DXGI_SWAP_EFFECT_FLIP_DISCARD;        // モニタにうつしたら、中身を破棄
+    swapChainDesc_.Width            = WinSystem::clientWidth;                   // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
+    swapChainDesc_.Height           = WinSystem::clientHeight;                  // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+    swapChainDesc_.Format           = NimaEngine::Config::kRenderTargetFormat; // 色の形式
+    swapChainDesc_.SampleDesc.Count = 1;                                        // マルチサンプルしない
+    swapChainDesc_.BufferUsage      = DXGI_USAGE_RENDER_TARGET_OUTPUT;          // 描画のターゲットとして利用する
+    swapChainDesc_.BufferCount      = 2;                                        // ダブルバッファ
+    swapChainDesc_.SwapEffect       = DXGI_SWAP_EFFECT_FLIP_DISCARD;            // モニタにうつしたら、中身を破棄
 
 
     /// 生成
@@ -150,18 +152,21 @@ void DirectX12::CreateSwapChainAndResource()
 
     /// ディスクリプタヒープの生成も行う
     rtvHeapCounter_->Initialize(device_.Get(), 64);
-    dsvDescriptorHeap_ = DX12Helper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+    dsvDescriptorHeap_ = DX12HeapHelper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 
     /// SwapChainからResourceを引っ張ってくる
-    hr_ = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResources_[0].resource));
+
+    Microsoft::WRL::ComPtr<ID3D12Resource> tempResources[2] = {};
+
+    hr_ = swapChain_->GetBuffer(0, IID_PPV_ARGS(&tempResources[0]));
     if (FAILED(hr_))
     {
         pLogger_->LogError(__FILE__, __FUNCTION__, "Failed to get resource from swap chain [0]");
         assert(false && "Failed to get resource from swap chain [0]");
         return;
     }
-    hr_ = swapChain_->GetBuffer(1, IID_PPV_ARGS(&swapChainResources_[1].resource));
+    hr_ = swapChain_->GetBuffer(1, IID_PPV_ARGS(&tempResources[1]));
     if (FAILED(hr_))
     {
         pLogger_->LogError(__FILE__, __FUNCTION__, "Failed to get resource from swap chain [1]");
@@ -172,9 +177,8 @@ void DirectX12::CreateSwapChainAndResource()
 
     swapChain_->SetColorSpace1(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709);
 
-
     /// RTVの設定
-    rtvDesc_.Format = DirectX12::kRenderTargetFormat_;
+    rtvDesc_.Format = NimaEngine::Config::kRenderTargetFormat;
     rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 
@@ -187,11 +191,11 @@ void DirectX12::CreateSwapChainAndResource()
     rtvHandles_[1] = rtvHeapCounter_->GetRTVHandle(rtvHeapIndex_[1]);
 
     // 2つのRTVを作成
-    device_->CreateRenderTargetView(swapChainResources_[0].resource.Get(), &rtvDesc_, rtvHandles_[0]);
-    device_->CreateRenderTargetView(swapChainResources_[1].resource.Get(), &rtvDesc_, rtvHandles_[1]);
+    device_->CreateRenderTargetView(tempResources[0].Get(), &rtvDesc_, rtvHandles_[0]);
+    device_->CreateRenderTargetView(tempResources[1].Get(), &rtvDesc_, rtvHandles_[1]);
 
-    swapChainResources_[0].resource->SetName(L"SwapchainResource0");
-    swapChainResources_[1].resource->SetName(L"SwapchainResource1");
+    swapChainResources_[0].Initialize(tempResources[0], D3D12_RESOURCE_STATE_PRESENT, NimaEngine::Config::kRenderTargetFormat, "SwapchainResource0");
+    swapChainResources_[1].Initialize(tempResources[1], D3D12_RESOURCE_STATE_PRESENT, NimaEngine::Config::kRenderTargetFormat, "SwapchainResource1");
 }
 
 void DirectX12::CreateGameScreenResource()
@@ -202,7 +206,7 @@ void DirectX12::CreateGameScreenResource()
     resourceDesc.Height           = static_cast<UINT>(viewport_.Height);        // 高さ
     resourceDesc.MipLevels        = 1;                                          // mipmapの数
     resourceDesc.DepthOrArraySize = 1;                                          // 奥行き or 配列Textureの配列数
-    resourceDesc.Format           = DirectX12::kRenderTargetFormat_;            // フォーマット
+    resourceDesc.Format           = NimaEngine::Config::kRenderTargetFormat;    // フォーマット
     resourceDesc.SampleDesc.Count = 1;                                          // サンプリング数
     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE2D;         // 2DTexture
     resourceDesc.Flags            = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS; // UAVを使うためのフラグ
@@ -211,22 +215,29 @@ void DirectX12::CreateGameScreenResource()
     D3D12_HEAP_PROPERTIES heapProperties{};
     heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;                          // VRAMに
 
-    device_->CreateCommittedResource(
-        &heapProperties,
-        D3D12_HEAP_FLAG_NONE,
-        &resourceDesc,
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        nullptr,
-        IID_PPV_ARGS(&gameScreenResource_.resource)
-    );
-    gameScreenResource_.state = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    gameScreenResource_.resource->SetName(L"GameScreenResource");
+    {
+        Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
 
+        device_->CreateCommittedResource(
+            &heapProperties,
+            D3D12_HEAP_FLAG_NONE,
+            &resourceDesc,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+            nullptr,
+            IID_PPV_ARGS(tempResource.GetAddressOf())
+        );
+
+        gameScreenResource_.Initialize(tempResource,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+            NimaEngine::Config::kRenderTargetFormat,
+            "GameScreenResource"
+        );
+    }
 
     /// SRVの生成
     SRVManager* psrvm = SRVManager::GetInstance();
     gameWndSrvIndex_ = psrvm->Allocate();
-    psrvm->CreateForTexture2D(gameWndSrvIndex_, gameScreenResource_.resource.Get(), DirectX12::kRenderTargetFormat_, 1);
+    psrvm->CreateForTexture2D(gameWndSrvIndex_, gameScreenResource_.GetResource().Get(), NimaEngine::Config::kRenderTargetFormat, 1);
 
     /// UAVの生成
     D3D12_RESOURCE_DESC textureDesc = {};
@@ -236,7 +247,7 @@ void DirectX12::CreateGameScreenResource()
     textureDesc.Height             = static_cast<UINT>(viewport_.Height);
     textureDesc.DepthOrArraySize   = 1;
     textureDesc.MipLevels          = 1;
-    textureDesc.Format             = DirectX12::kRenderTargetFormat_;
+    textureDesc.Format             = NimaEngine::Config::kRenderTargetFormat;
     textureDesc.SampleDesc.Count   = 1;
     textureDesc.SampleDesc.Quality = 0;
     textureDesc.Layout             = D3D12_TEXTURE_LAYOUT_UNKNOWN;
@@ -245,38 +256,43 @@ void DirectX12::CreateGameScreenResource()
     D3D12_HEAP_PROPERTIES heapPropertiesUAV = {};
     heapPropertiesUAV.Type = D3D12_HEAP_TYPE_DEFAULT;
 
+    Microsoft::WRL::ComPtr<ID3D12Resource> tempUAVResource = nullptr;
+
     device_->CreateCommittedResource(
         &heapPropertiesUAV,
         D3D12_HEAP_FLAG_NONE,
         &textureDesc,
         D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
         nullptr,
-        IID_PPV_ARGS(&gameScreenComputed_.resource)
+        IID_PPV_ARGS(tempUAVResource.GetAddressOf())
     );
-    gameScreenComputed_.state = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-    gameScreenComputed_.resource->SetName(L"GameScreenComputed");
 
+    gameScreenComputed_.Initialize(
+        tempUAVResource,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+        NimaEngine::Config::kRenderTargetFormat,
+        "GameScreenComputed"
+    );
 }
 
 void DirectX12::CreateDSVAndSettingState()
 {
     /// リソースの生成
-    depthStencilResource_.resource = DX12Helper::CreateDepthStencilTextureResource(device_, WinSystem::clientWidth, WinSystem::clientHeight);
-    depthStencilResource_.state = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+    Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
+    tempResource = DX12Helper::CreateDepthStencilTextureResource(device_, WinSystem::clientWidth, WinSystem::clientHeight);
+
+    depthStencilResource_.Initialize(
+        tempResource,
+        D3D12_RESOURCE_STATE_DEPTH_WRITE,
+        DXGI_FORMAT_D24_UNORM_S8_UINT,
+        "DepthStencilResource"
+    );
 
     /// DSVの生成
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
     dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // フォーマット
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2DTexture
-    device_->CreateDepthStencilView(depthStencilResource_.resource.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
-
-
-    /// DepthStencilStateの設定
-    D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-    depthStencilDesc.DepthEnable    = true;                             // 深度テストを有効化
-    depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;       // 深度書き込み
-    depthStencilDesc.DepthFunc      = D3D12_COMPARISON_FUNC_LESS_EQUAL; // 深度テストの比較条件式（近ければ描画）
-    depthStencilDesc.StencilEnable  = true;                             // ステンシルテストを有効
+    device_->CreateDepthStencilView(depthStencilResource_.GetResource().Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
 void DirectX12::CreateFenceAndEvent()
@@ -432,9 +448,9 @@ void DirectX12::CreateD2DRenderTarget()
     {
         Microsoft::WRL::ComPtr<ID3D11Resource> wrappedBackBuffer = nullptr;
         hr_ = d3d11On12Device_->CreateWrappedResource(
-            swapChainResources_[i].resource.Get(),
+            swapChainResources_[i].GetResource().Get(),
             &d3d11Flags,
-            swapChainResources_[i].state,
+            swapChainResources_[i].GetStateTracker().GetState(),
             D3D12_RESOURCE_STATE_PRESENT,
             IID_PPV_ARGS(wrappedBackBuffer.ReleaseAndGetAddressOf())
         );
@@ -500,7 +516,7 @@ void DirectX12::ResizeBuffers()
     {
         d2dRenderTargets_[i].Reset();
         d3d11WrappedBackBuffers_[i].Reset();
-        swapChainResources_[i].resource.Reset();
+        swapChainResources_[i].GetResource().Reset();
     }
 
     depthStencilResource_.Reset();
@@ -530,10 +546,12 @@ void DirectX12::ResizeBuffers()
 
     for (UINT i = 0; i < 2; ++i)
     {
-        swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResources_[i].resource));
-        device_->CreateRenderTargetView(swapChainResources_[i].resource.Get(), nullptr, rtvHandles_[i]);
-        swapChainResources_[i].resource->SetName(ConvertString("SwapchainResource" + std::to_string(i)).c_str());
-        swapChainResources_[i].state = D3D12_RESOURCE_STATE_PRESENT;
+        Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
+        swapChain_->GetBuffer(i, IID_PPV_ARGS(&tempResource));
+
+        std::string name = "SwapchainResource" + std::to_string(i);
+        swapChainResources_[i].Initialize(tempResource, D3D12_RESOURCE_STATE_PRESENT, desc.Format, name);
+        device_->CreateRenderTargetView(swapChainResources_[i].GetResource().Get(), nullptr, rtvHandles_[i]);
     }
 
     backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();

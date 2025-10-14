@@ -88,7 +88,7 @@ private:
 
     // =============================================
     // [Final Output Begin]
-    ResourceStateTracker                                outputTexture_              = {};
+    DX12Resource                                        outputTexture_              = {};
     D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_               = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_               = {};
     uint32_t                                            rtvHeapIndex_               = 0;
@@ -113,11 +113,9 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    _ToRenderTargetState(ResourceStateTracker& _resource);
-    void    _ToShaderResourceState(ResourceStateTracker& _resource);
-    void    _Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle);
-    void    _InitializeLuminanceOutputFilter();
-    void    _InitializeSeparatedGaussianFilter();
-    void    _CreateResourceCBuffer();
-    D3D12_GPU_DESCRIPTOR_HANDLE     _ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect);
+    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle);
+    void    InitializeLuminanceOutputFilter();
+    void    InitializeSeparatedGaussianFilter();
+    void    CreateResourceCBuffer();
+    D3D12_GPU_DESCRIPTOR_HANDLE     ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect);
 };

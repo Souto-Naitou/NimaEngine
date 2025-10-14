@@ -1,9 +1,11 @@
 #include "SpriteSystem.h"
 #include <Core/DirectX12/Helper/DX12Helper.h>
+#include <Core/DirectX12/Helper/DX12HeapHelper.h>
 #include <DebugTools/Logger/Logger.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/Win32/WinSystem.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
+#include <config/EngineSetting.h>
 
 void SpriteSystem::Initialize()
 {
@@ -187,7 +189,7 @@ void SpriteSystem::CreatePipelineState()
     // DespStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);
     // DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないため、ShaderVisibleはfalse
-    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = DX12Helper::CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+    Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = DX12HeapHelper::CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
     // DSVの設定
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
     dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Format。基本的にはResourceに合わせる
@@ -215,7 +217,7 @@ void SpriteSystem::CreatePipelineState()
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;	// RasterizerState
     // 書き込むRTVの情報
     graphicsPipelineStateDesc.NumRenderTargets = 1;
-    graphicsPipelineStateDesc.RTVFormats[0] = DirectX12::kRenderTargetFormat_;
+    graphicsPipelineStateDesc.RTVFormats[0] = NimaEngine::Config::kRenderTargetFormat;
     // 利用するトポロジ（形状）のタイプ。三角形
     graphicsPipelineStateDesc.PrimitiveTopologyType =
         D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;

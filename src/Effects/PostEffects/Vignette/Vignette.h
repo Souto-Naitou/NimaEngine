@@ -59,7 +59,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "Vignette";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     PipelineStateObject                                 pso_                    = {};
@@ -80,6 +80,5 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    ToRenderTargetState();
     void    CreateResourceCBuffer();
 };

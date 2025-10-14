@@ -7,7 +7,7 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <string>
-#include <Core/DirectX12/TextureResource/TextureResource.h>
+#include <Core/DirectX12/DX12Resource/DX12Resource.h>
 #include <Vector4.h>
 
 struct alignas(16) DissolveOption
@@ -32,7 +32,7 @@ public:
     void    Enable(bool _flag) override;
     bool    Enabled() const override;
 
-    void    SetTextureResource(const TextureResource& _texResource);
+    void    SetTextureResource(const DX12Resource& _texResource);
 
     void    Apply() override;
     void    Setting() override;
@@ -56,7 +56,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "Dissolve";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
@@ -68,7 +68,7 @@ private:
     uint32_t                                            srvHeapIndex_           = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Dissolve.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Dissolve.PS.hlsl";
-    TextureResource                                     maskTexture_            = {};
+    DX12Resource                                        maskTexture_            = {};
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
@@ -77,7 +77,6 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    ToRenderTargetState();
     void    CreateResourceCBuffer();
     void    CheckValidation() const;
 };

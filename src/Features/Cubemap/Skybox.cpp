@@ -2,6 +2,7 @@
 #include <cstring>
 #include <imgui.h>
 #include <DebugTools/DebugManager/DebugManager.h>
+#include <Core/DirectX12/Helper/DX12Helper.h>
 
 void Skybox::Initialize(CubemapSystem* _cms)
 {

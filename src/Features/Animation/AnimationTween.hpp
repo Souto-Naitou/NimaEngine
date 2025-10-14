@@ -19,10 +19,21 @@ public:
 
     ~AnimationTween() = default;
 
+    void Reset()
+    {
+        isCalledOnFinished_ = false;
+    }
+
     // 補間関数を設定
     inline void SetTransitionFunction(const std::function<float(float)>& func)
     {
         transitionFunction_ = func;
+    }
+
+    // アニメーション終了時のコールバック関数を設定
+    inline void SetOnFinished(const std::function<void()>& func)
+    {
+        onFinished_ = func;
     }
 
     // アニメーションの開始時間を取得
@@ -41,20 +52,25 @@ public:
     void ImGui(const std::string& name);
 
 private:
-    float           startSec_       = 0.0f;
-    float           durationSec_    = 0.0f;
-    const ValueType targetValue_    = {};
-    const ValueType startValue_     = {};
+    float           startSec_           = 0.0f;
+    float           durationSec_        = 0.0f;
+    const ValueType targetValue_        = {};
+    const ValueType startValue_         = {};
+    bool            isCalledOnFinished_ = false;
 
     // 補間関数
     std::function<float(float)> transitionFunction_ = nullptr;
+    // コールバック関数
+    std::function<void()> onFinished_ = nullptr;
 };
 
 template<typename ValueType>
 inline void AnimationTween<ValueType>::Update(float currentTime, ValueType& currentValue)
 {
+    // アニメーションが開始していない場合は何もしない
     if (currentTime < startSec_) return;
 
+    // 経過時間に基づいて補間係数を計算
     float t = (currentTime - startSec_) / durationSec_;
     if (t > 1.0f) t = 1.0f;
 
@@ -65,6 +81,14 @@ inline void AnimationTween<ValueType>::Update(float currentTime, ValueType& curr
     }
 
     currentValue = startValue_ + (targetValue_ - startValue_) * t; // ここでは単純な線形補間を仮定
+
+    // アニメーションが終了している。かつ、まだコールバックを呼び出していないとき
+    // コールバックを呼び出す (ただし続行する)
+    if (this->IsFinished(currentTime) && !isCalledOnFinished_)
+    {
+        onFinished_ ? onFinished_() : void();
+        isCalledOnFinished_ = true;
+    }
 }
 
 template<typename ValueType>

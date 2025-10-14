@@ -5,7 +5,7 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/DX12Resource/DX12Resource.h>
 
 /// <グレースケール>
 
@@ -41,7 +41,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "Grayscale";
-    ResourceStateTracker                                renderTexture_          = {};
+    DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
@@ -57,5 +57,4 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    ToRenderTargetState();
 };

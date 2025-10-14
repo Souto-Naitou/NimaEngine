@@ -6,6 +6,7 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
+#include <config/EngineSetting.h>
 
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
@@ -30,7 +31,7 @@ void ImGuiManager::Initialize()
     ImGui_ImplDX12_Init(
         device,
         swapChainDesc.BufferCount,
-        DirectX12::kRenderTargetFormat_,
+        NimaEngine::Config::kRenderTargetFormat,
         srvDescHeap_,
         cpuHandle,
         gpuHandle

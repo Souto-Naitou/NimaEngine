@@ -1,5 +1,4 @@
 #include "TransFadeInOut.h"
-#include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #include <Features/SceneManager/SceneManager.h>
@@ -10,13 +9,10 @@ void TransFadeInOut::Initialize(const std::string& _sceneName)
 {
     sceneName_ = _sceneName;
 
-    screenWidth_ = WinSystem::clientWidth;
-    screenHeight_ = WinSystem::clientHeight;
-
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("white1x1.png");
     sprite_->SetColor({ 0,0,0,0 });
-    sprite_->SetSize({ screenWidth_, screenHeight_ });
+    sprite_->SetSize({ WinSystem::clientWidth, WinSystem::clientHeight });
     timer_.Start();
     DebugManager::GetInstance()->SetComponent(
         "Transition", name_, std::bind(&TransFadeInOut::ImGui, this));

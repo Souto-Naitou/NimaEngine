@@ -63,7 +63,7 @@ private:
     IDxcCompiler3*              dxcCompiler_    = nullptr;
     IDxcIncludeHandler*         includeHandler_ = nullptr;
     ID3D12GraphicsCommandList*  commandList_    = nullptr;
-    ResourceStateTracker*       inputTexture_   = nullptr;
-    ResourceStateTracker*       outputTexture_  = nullptr;
+    DX12Resource*               inputTexture_   = nullptr;
+    DX12Resource*               outputTexture_  = nullptr;
     SRVManager*                 pSRVManager_    = nullptr;
 };

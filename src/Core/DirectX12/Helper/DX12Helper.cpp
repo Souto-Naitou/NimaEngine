@@ -5,12 +5,13 @@
 #include <cassert>
 #include <DebugTools/Logger/Logger.h>
 #include <format>
-#include <intsafe.h>
 #include <Utility/ConvertString/ConvertString.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Features/Model/ModelData.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <d3dx12.h>
+#include <config/EngineSetting.h>
+#include <Core/Win32/WinSystem.h>
 
 using namespace DX12Helper;
 
@@ -81,28 +82,6 @@ void DX12Helper::PauseError(ComPtr<ID3D12Device>& _device, ComPtr<ID3D12InfoQueu
 
 }
 //#endif // _DEBUG
-
-ComPtr<ID3D12DescriptorHeap> DX12Helper::CreateDescriptorHeap(const ComPtr<ID3D12Device>& _device, D3D12_DESCRIPTOR_HEAP_TYPE _heapType, UINT _numDescriptors, bool _shaderVisible)
-{
-    ComPtr<ID3D12DescriptorHeap> descriptorHeap = nullptr;
-    D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-    descriptorHeapDesc.Type           = _heapType;
-    descriptorHeapDesc.NumDescriptors = _numDescriptors;
-    descriptorHeapDesc.Flags          = _shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    HRESULT hr = _device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
-
-    if (FAILED(hr))
-    {
-        Logger::GetInstance()->LogError(
-            "DX12Helper",
-            __func__,
-            "Failed to create descriptor heap."
-        );
-        assert(false && "Failed to create descriptor heap");
-    }
-
-    return descriptorHeap;
-}
 
 ComPtr<ID3D12Resource> DX12Helper::CreateDepthStencilTextureResource(const ComPtr<ID3D12Device>& _device, int32_t _width, int32_t _height)
 {
@@ -329,6 +308,49 @@ ComPtr<ID3D12Resource> DX12Helper::CreateTextureResource(const ComPtr<ID3D12Devi
     return resource;
 }
 
+DX12Resource DX12Helper::CreateDX12ResourceForRender(
+    const ComPtr<ID3D12Device>& device,
+    RTVHeapCounter* rtvHeapCounter,
+    const std::string& name)
+{
+    DX12Resource result;
+
+    const auto kFormat = NimaEngine::Config::kRenderTargetFormat;
+
+    /// リソースの作成と初期化
+    {
+        auto temp = DX12Helper::CreateResourceForRenderTarget(
+            device,
+            WinSystem::clientWidth,
+            WinSystem::clientHeight,
+            kFormat,
+            NimaEngine::Config::kEditorBGColor
+        );
+
+        result.Initialize(temp, D3D12_RESOURCE_STATE_RENDER_TARGET, kFormat, name);
+    }
+
+    /// RTVの作成
+    D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+    rtvDesc.Format = kFormat;
+    rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+
+    if (result.GetRTVHandle().ptr == 0)
+    {
+        const auto rtvHandleIndex = rtvHeapCounter->Allocate("PostEffectRTV");
+        const auto rtvCPUHandle = rtvHeapCounter->GetRTVHandle(rtvHandleIndex);
+        result.SetRTV(rtvHandleIndex, rtvCPUHandle);
+    }
+
+    device->CreateRenderTargetView(
+        result.GetResource().Get(),
+        &rtvDesc,
+        result.GetRTVHandle()
+    );
+
+    return result;
+}
+
 ComPtr<ID3D12Resource> DX12Helper::UploadTextureData(
     const ComPtr<ID3D12Resource>& _texture,
     const DirectX::ScratchImage& _mipImages,
@@ -414,7 +436,7 @@ void DX12Helper::CommandListCommonSetting(const DirectX12* _pDx12, ID3D12Graphic
     return;
 }
 
-ComPtr<ID3D12Resource> DX12Helper::CreateRenderTextureResource(const ComPtr<ID3D12Device>& _device, int32_t _width, int32_t _height, DXGI_FORMAT _format, const Vector4& _clearColor)
+ComPtr<ID3D12Resource> DX12Helper::CreateResourceForRenderTarget(const ComPtr<ID3D12Device>& _device, int32_t _width, int32_t _height, DXGI_FORMAT _format, const Vector4& _clearColor)
 {
     ComPtr<ID3D12Resource> result = nullptr;
     D3D12_HEAP_PROPERTIES heapProps = {};
@@ -453,8 +475,6 @@ ComPtr<ID3D12Resource> DX12Helper::CreateRenderTextureResource(const ComPtr<ID3D
 
     return result;
 }
-
-
 
 D3D12_CPU_DESCRIPTOR_HANDLE DX12Helper::GetCPUDescriptorHandle(const ComPtr<ID3D12DescriptorHeap>& _descriptorHeap, uint32_t _descriptorSize, uint32_t _index)
 {

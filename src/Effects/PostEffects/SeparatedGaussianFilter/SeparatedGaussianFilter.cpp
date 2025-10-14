@@ -18,14 +18,12 @@ void SeparatedGaussianFilter::Initialize()
     commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, horizontalGaussTexture_, horizontalHandleCpu_, horizontalHeapIndex_);
-    horizontalGaussTexture_.resource->SetName(L"SeparatedGaussianFilterHorizontalGaussTexture");
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"SeparatedGaussianFilterRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, horizontalGaussTexture_, kNameHorizontal);
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, kNameVertical);
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(horizontalGaussTexture_, horizontalHandleGpu_, horizontalSrvHeapIndex_);
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(horizontalGaussTexture_);
+    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -83,9 +81,9 @@ void SeparatedGaussianFilter::Apply()
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
 
     // 縦方向のガウスフィルタを適用
-    this->_ToShaderResourceState(horizontalGaussTexture_);
-    this->_ToRenderTargetState(renderTexture_);
-    this->_Setting(horizontalHandleGpu_, rtvHandleCpu_, execInfoResourceVertical_.Get());
+    horizontalGaussTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    this->PreDrawSetting(horizontalHandleGpu_, rtvHandleCpu_, execInfoResourceVertical_.Get());
 
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
 }
@@ -96,8 +94,8 @@ void SeparatedGaussianFilter::Finalize()
 
 void SeparatedGaussianFilter::Setting()
 {
-    this->_ToRenderTargetState(horizontalGaussTexture_);
-    this->_Setting(inputGpuHandle_, horizontalHandleCpu_, execInfoResourceHorizontal_.Get());
+    horizontalGaussTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    this->PreDrawSetting(inputGpuHandle_, horizontalHandleCpu_, execInfoResourceHorizontal_.Get());
 }
 
 void SeparatedGaussianFilter::OnResizeBefore()
@@ -111,19 +109,17 @@ void SeparatedGaussianFilter::OnResizeBefore()
 void SeparatedGaussianFilter::OnResizedBuffers()
 {
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, horizontalGaussTexture_, horizontalHandleCpu_, horizontalHeapIndex_);
-    horizontalGaussTexture_.resource->SetName(L"SeparatedGaussianFilterHorizontalGaussTexture");
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, rtvHandleCpu_, rtvHeapIndex_);
-    renderTexture_.resource->SetName(L"SeparatedGaussianFilterRenderTexture");
+    Helper::CreateRenderTexture(pDx12_, device_, horizontalGaussTexture_, kNameHorizontal);
+    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, kNameVertical);
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(horizontalGaussTexture_, horizontalHandleGpu_, horizontalSrvHeapIndex_);
-    Helper::CreateSRV(renderTexture_, rtvHandleGpu_, srvHeapIndex_);
+    Helper::CreateSRV(horizontalGaussTexture_);
+    Helper::CreateSRV(renderTexture_);
 }
 
 void SeparatedGaussianFilter::ToShaderResourceState()
 {
-    this->_ToShaderResourceState(renderTexture_);
+    renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void SeparatedGaussianFilter::DebugOverlay()
@@ -220,7 +216,7 @@ void SeparatedGaussianFilter::CreatePipelineStateObject()
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.format, DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
@@ -232,18 +228,6 @@ void SeparatedGaussianFilter::CreatePipelineStateObject()
         Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, _e.what());
         assert(false);
     }
-    return;
-}
-
-void SeparatedGaussianFilter::_ToRenderTargetState(ResourceStateTracker& _resource)
-{
-    // レンダーテクスチャをレンダーターゲット状態に変更
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
-}
-
-void SeparatedGaussianFilter::_ToShaderResourceState(ResourceStateTracker& _resource)
-{
-    _resource.ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void SeparatedGaussianFilter::CreateResourceCBuffer()
@@ -269,7 +253,7 @@ void SeparatedGaussianFilter::CreateResourceCBuffer()
     this->CreateKernel();
 }
 
-void SeparatedGaussianFilter::_Setting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource)
+void SeparatedGaussianFilter::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource)
 {
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);

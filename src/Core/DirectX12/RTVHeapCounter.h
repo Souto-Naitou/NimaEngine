@@ -6,7 +6,9 @@
 #include <vector>
 #include <string>
 
-
+/// <summary>
+/// RTVヒープインデックス計算クラス
+/// </summary>
 class RTVHeapCounter
 {
 public:

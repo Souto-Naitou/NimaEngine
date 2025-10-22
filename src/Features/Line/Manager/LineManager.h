@@ -1,5 +1,8 @@
 #pragma once
 
+/// <summary>
+/// ラインまとめ描画クラス
+/// </summary>
 class LineManager
 {
 public:

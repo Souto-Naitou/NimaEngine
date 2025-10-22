@@ -4,6 +4,9 @@
 #include <Common/SingletonPattern.h>
 #include <string>
 
+/// <summary>
+/// 設定ファイルの読み込み・保持をするクラス
+/// </summary>
 class ConfigManager : public SingletonPattern<ConfigManager>
 {
     friend class SingletonPattern<ConfigManager>;

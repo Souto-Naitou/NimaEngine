@@ -34,6 +34,7 @@ void NimaFramework::Initialize()
     pConfigManager_ = ConfigManager::GetInstance();
     pLogger_ = Logger::GetInstance();
     pDirectX_ = std::make_unique<DirectX12>();
+    pPostEffectExecuter_ = std::make_unique<PostEffectExecuter>();
 
     pDebugManager_ = DebugManager::GetInstance();
     pWinSystem_ = WinSystem::GetInstance();
@@ -50,7 +51,6 @@ void NimaFramework::Initialize()
     pTextSystem_ = TextSystem::GetInstance();
     pAudioManager_ = AudioManager::GetInstance();
     pEventTimer_ = EventTimer::GetInstance();
-    pPostEffectExecuter_ = PostEffectExecuter::GetInstance();
 
     #ifdef _DEBUG
     pImGuiManager_ = std::make_unique<ImGuiManager>();
@@ -172,12 +172,12 @@ void NimaFramework::Initialize()
     pDirectX_->AddCommandList(pLineSystem_->GetCommandList());
     pDirectX_->AddCommandList(pPostEffectExecuter_->GetCommandList());
 
-    pDirectX_->AddOnResize("PostEffect", std::bind(&PostEffectExecuter::OnResize, pPostEffectExecuter_));
+    pDirectX_->AddOnResize("PostEffect", std::bind(&PostEffectExecuter::OnResize, pPostEffectExecuter_.get()));
 
     /// デフォルトシーン引数の設定
     (*pSceneManager_)
         .AddInitialArg("DirectX12", pDirectX_.get())
-        .AddInitialArg("PostEffectExecuter", pPostEffectExecuter_)
+        .AddInitialArg("PostEffectExecuter", pPostEffectExecuter_.get())
         .AddInitialArg("Object3dSystem", pObject3dSystem_)
         .AddInitialArg("ParticleSystem", pParticleSystem_)
         .AddInitialArg("SpriteSystem", pSpriteSystem_)

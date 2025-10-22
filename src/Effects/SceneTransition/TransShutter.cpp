@@ -53,8 +53,14 @@ void TransShutter::AnimationInitialize()
         }
     };
 
+    auto easeInOutCubic = [](float t) {
+        return t < 0.5f ? 4.0f * t * t * t : 1.0f - std::powf(-2.0f * t + 2.0f, 3) / 2.0f;
+    };
+
     // 前半のアニメーションが終了したらシーンを切り替える
     tweenFirstHalf.SetOnFinished(changeScene);
+    tweenFirstHalf.SetTransitionFunction(easeInOutCubic);
+    tweenSecondHalf.SetTransitionFunction(easeInOutCubic);
 
     animDeltaY_.AddTween(tweenFirstHalf);
     animDeltaY_.AddTween(tweenSecondHalf);

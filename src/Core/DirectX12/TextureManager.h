@@ -12,6 +12,9 @@
 #include <wrl/client.h>
 #include <filesystem>
 
+/// <summary>
+/// テクスチャ管理クラス
+/// </summary>
 class TextureManager : public EngineFeature
 {
 public:
@@ -76,6 +79,7 @@ private:
     TextureType GetTextureType(const std::wstring& _filePath) const;
     HRESULT LoadImageFromFile(TextureType _type, const std::wstring& _filepath, DirectX::ScratchImage& _image);
     void CreateSRV(TextureType _type, const TextureData& _textureData);
+    std::string ResolveFilePath(const std::string& _filePath);
 
     std::unordered_map<std::filesystem::path, TextureData> textureDataMap_;
     PathResolver pathResolver_ = {};

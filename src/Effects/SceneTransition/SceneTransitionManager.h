@@ -4,6 +4,9 @@
 #include <memory>
 #include <string>
 
+/// <summary>
+/// シーン遷移管理クラス
+/// </summary>
 class SceneTransitionManager
 {
 public:

@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <memory>
 
+/// <summary>
+/// オーディオ読み込みクラス
+/// </summary>
 class AudioManager
 {
 public:

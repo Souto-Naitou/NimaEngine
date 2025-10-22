@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <functional>
 
+/// <summary>
+/// 実行時間計測クラス
+/// </summary>
 class EventTimer
 {
 public:

@@ -5,6 +5,9 @@
 #include <condition_variable>
 #include <functional>
 
+/// <summary>
+/// スレッドプールクラス
+/// </summary>
 class ThreadPool
 {
 public:

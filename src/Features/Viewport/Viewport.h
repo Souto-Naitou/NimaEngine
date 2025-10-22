@@ -8,7 +8,11 @@
 #ifdef _DEBUG
 #include <imgui.h>
 #endif //_DEBUG
+#include <Vector2.h>
 
+/// <summary>
+/// ImGui上にビューポートを表示するクラス
+/// </summary>
 class Viewport : public EngineFeature
 {
 public:

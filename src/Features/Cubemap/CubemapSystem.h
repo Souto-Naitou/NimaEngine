@@ -2,9 +2,11 @@
 
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
-#include <Common/structs.h>
 #include <Features/GameEye/GameEye.h>
 
+/// <summary>
+/// キューブマップ共通
+/// </summary>
 class CubemapSystem : public EngineFeature
 {
 public:

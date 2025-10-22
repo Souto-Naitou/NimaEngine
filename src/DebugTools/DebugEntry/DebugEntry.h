@@ -4,6 +4,10 @@
 #include <Utility/Debug/dbgutl.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 
+/// <summary>
+/// デバッグマネージャー登録補助クラス
+/// </summary>
+/// <typeparam name="MyType"></typeparam>
 template <typename MyType>
 class DebugEntry
 {

@@ -13,14 +13,13 @@ struct alignas(16) PrewittOutlineOption
     float padding[3] = {};
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class PrewittOutline : 
-    public IPostEffect,
-    public EngineFeature
+/// <summary>
+/// プレウィットアウトライン
+/// </summary>
+class PrewittOutline : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -46,6 +45,7 @@ public:
     // =============================================
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

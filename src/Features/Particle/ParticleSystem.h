@@ -6,6 +6,9 @@
 #include <BaseClasses/ObjectSystemBaseMT.h>
 #include <list>
 
+/// <summary>
+/// パーティクル描画共通
+/// </summary>
 class ParticleSystem : public ObjectSystemBaseMT
 {
 public:

@@ -4,11 +4,8 @@
 #include <Common/structs.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Utility/Debug/dbgutl.h>
-
 
 #if defined _DEBUG
-#include <DebugTools/DebugManager/DebugManager.h>
 #include <imgui.h>
 #endif // _DEBUG
 

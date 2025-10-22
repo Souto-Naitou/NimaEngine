@@ -5,6 +5,9 @@
 #include <list>
 #include <memory>
 
+/// <summary>
+/// パーティクル管理クラス
+/// </summary>
 class ParticleManager : public EngineFeature
 {
 public:

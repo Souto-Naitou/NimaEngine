@@ -358,6 +358,9 @@
     <Filter Include="Effect\SceneTransition\Shutter">
       <UniqueIdentifier>{45350fa5-48c0-46e5-a4aa-2e9a2994621c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect\PostEffect\.Factory">
+      <UniqueIdentifier>{40e3b035-9064-4e5e-91c1-d42e5242e461}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -477,13 +480,7 @@
     <ClCompile Include="Features\Collision\Collider\Collider.cpp">
       <Filter>Feature\Collision\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Easing\Manager\EasingManager.cpp">
-      <Filter>Feature\Easing\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Easing\Easing_impl.cpp">
-      <Filter>Feature\Easing</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Easing\Easing.cpp">
+    <ClCompile Include="Math\Easing.cpp">
       <Filter>Feature\Easing</Filter>
     </ClCompile>
     <ClCompile Include="Features\CSV\CSVLoader.cpp">
@@ -519,7 +516,7 @@
     <ClCompile Include="Features\NiGui\NiGuiDrawer.cpp">
       <Filter>Feature\NiGuiDerived</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\PostEffect.cpp">
+    <ClCompile Include="Core\DirectX12\PostEffectExecuter.cpp">
       <Filter>Core\DirectX12\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp">
@@ -672,7 +669,15 @@
     <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp">
       <Filter>Core\DirectX12\Helper</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp" />
+    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp">
+      <Filter>Effect\SceneTransition\Shutter</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Layer\Canvas.cpp">
+      <Filter>Feature\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp">
+      <Filter>Effect\PostEffect\.Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -819,10 +824,7 @@
     <ClInclude Include="Features\Collision\Shape.h">
       <Filter>Feature\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Easing\Manager\EasingManager.h">
-      <Filter>Feature\Easing\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Easing\Easing.h">
+    <ClInclude Include="Math\Easing.h">
       <Filter>Feature\Easing</Filter>
     </ClInclude>
     <ClInclude Include="Features\CSV\CSVLoader.h">
@@ -861,7 +863,7 @@
     <ClInclude Include="Features\NiGui\NiGuiDebug.h">
       <Filter>Feature\NiGuiDerived</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\PostEffect.h">
+    <ClInclude Include="Core\DirectX12\PostEffectExecuter.h">
       <Filter>Core\DirectX12\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h">
@@ -1083,7 +1085,12 @@
     <ClInclude Include="Effects\SceneTransition\TransBase.h">
       <Filter>Effect\SceneTransition</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
+    <ClInclude Include="Effects\SceneTransition\TransShutter.h">
+      <Filter>Effect\SceneTransition\Shutter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h">
+      <Filter>Effect\PostEffect\.Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1137,9 +1144,6 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\SampleProject\EngineResources\Shaders\Sprite.VS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Grayscale.VS.hlsl">

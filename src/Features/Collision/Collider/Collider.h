@@ -14,6 +14,9 @@
 
 class CollisionManager;
 
+/// <summary>
+/// コライダークラス
+/// </summary>
 class Collider
 {
 public:

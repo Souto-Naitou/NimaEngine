@@ -8,6 +8,9 @@
 #include <memory>
 #include <string>
 
+/// <summary>
+/// エミッタマネージャー
+/// </summary>
 class EmitterManager
 {
 public:

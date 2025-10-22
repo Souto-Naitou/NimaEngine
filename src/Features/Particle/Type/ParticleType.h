@@ -1,6 +1,5 @@
 #pragma once
 #include <Features/TimeMeasurer/TimeMeasurer.h>
-#include <Common/structs.h>
 #include <Range.h>
 #include <Vector3.h>
 #include <Vector4.h>
@@ -16,8 +15,8 @@ enum class ParticleDeleteCondition
 
 struct ParticleData
 {
-    TimeMeasurer                           timer_              = {};
-    EulerTransform                               transform_          = {};
+    TimeMeasurer                            timer_              = {};
+    EulerTransform                          transform_          = {};
     Range<Vector3>                          scaleRange_         = {};
     Vector3                                 acceleration_       = {};
     Vector4                                 currentColor_       = {};

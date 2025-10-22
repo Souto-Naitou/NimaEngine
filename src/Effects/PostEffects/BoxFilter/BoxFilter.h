@@ -5,7 +5,6 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
 struct BoxFilterOption
@@ -15,12 +14,10 @@ struct BoxFilterOption
 
 /// <ボックスフィルタ>
 /// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class BoxFilter :
-    public IPostEffect,
-    public EngineFeature
+class BoxFilter : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -43,6 +40,7 @@ public:
     const BoxFilterOption&          GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

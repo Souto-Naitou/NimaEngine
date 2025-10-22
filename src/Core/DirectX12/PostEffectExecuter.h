@@ -2,32 +2,26 @@
 
 #include "DirectX12.h"
 #include "SRVManager.h"
+#include "./IPostEffect.h"
+#include "DX12Resource/DX12Resource.h"
+#include <Effects/PostEffects/.Factory/PostEffectFactory.h>
 
 #include <wrl/client.h>
-#include "DX12Resource/DX12Resource.h"
-#include "IPostEffect.h"
 #include <vector>
 #include <functional>
+#include <DebugTools/DebugEntry/DebugEntry.h>
 
 /// <ポストエフェクトを実行するクラス>
 /// - 複数のポストエフェクトを順に適用するためにレンダーテクスチャのチェインを生成する
 /// - Bloom -> MotionBlur の順で実行する場合 MotionBlurにBloomのレンダーテクスチャを渡す
-
 class PostEffectExecuter : public EngineFeature
 {
 public:
-    PostEffectExecuter(const PostEffectExecuter&) = delete;
-    PostEffectExecuter& operator=(const PostEffectExecuter&) = delete;
-    PostEffectExecuter(PostEffectExecuter&&) = delete;
-    PostEffectExecuter& operator=(PostEffectExecuter&&) = delete;
+    /// ctor , dtor
+    PostEffectExecuter() = default;
+    ~PostEffectExecuter() = default;
 
-    static PostEffectExecuter* GetInstance()
-    {
-        static PostEffectExecuter instance;
-        return &instance;
-    }
-
-    void Initialize();
+    void Initialize(bool isRegisterDebugWindow = true);
     void Finalize();
     void ApplyPostEffects();
     void NewFrame();
@@ -77,13 +71,9 @@ public:
 
 
 private:
-    PostEffectExecuter() = default;
-    ~PostEffectExecuter() = default;
-
     static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
     DX12Resource                                        renderTexture_          = {};
-    uint32_t                                            srvHeapIndex_           = 0;
     D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         outputHandleGpu_        = {};
     D3D12_INPUT_LAYOUT_DESC                             inputLayoutDesc_        = {};
@@ -95,6 +85,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   commandListForDraw_     = nullptr;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      commandAllocator_       = nullptr;
+    std::unique_ptr<DebugEntry<PostEffectExecuter>>     pDebugEntry_            = nullptr;
+    std::unique_ptr<PostEffectFactory>                  pEffectFactory_         = nullptr;
 
     std::vector<IPostEffect*>                           postEffects_           = {};
 

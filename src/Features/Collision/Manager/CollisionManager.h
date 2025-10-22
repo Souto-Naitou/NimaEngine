@@ -8,6 +8,9 @@
 #include <Features/Primitive/AABB.h>
 #include <Features/Primitive/OBB.h>
 
+/// <summary>
+/// 衝突判定実行クラス   
+/// </summary>
 class CollisionManager
 {
 public:

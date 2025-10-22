@@ -3,6 +3,9 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
+/// <summary>
+/// パイプラインステートオブジェクトクラス
+/// </summary>
 class PipelineStateObject
 {
     using _me = PipelineStateObject;

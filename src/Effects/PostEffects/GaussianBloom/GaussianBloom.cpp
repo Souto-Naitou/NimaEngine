@@ -1,7 +1,6 @@
 #include "GaussianBloom.h"
 #include <cassert>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/PostEffect.h>
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
@@ -11,10 +10,12 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 
-void GaussianBloom::Initialize()
+void GaussianBloom::Initialize(const PostEffectInitDesc& desc)
 {
+    pDx12_ = desc.pDx12;
+    commandList_ = desc.pCommandList;
+
     device_ = pDx12_->GetDevice();
-    commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
@@ -258,8 +259,7 @@ void GaussianBloom::InitializeLuminanceOutputFilter()
 {
     // LuminanceOutputFilterの初期化
     pLuminanceOutput_ = std::make_unique<LuminanceOutput>();
-    pLuminanceOutput_->SetDirectX12(pDx12_);
-    pLuminanceOutput_->Initialize();
+    pLuminanceOutput_->Initialize({pDx12_, commandList_});
     pLuminanceOutput_->Enable(true);
 }
 
@@ -267,8 +267,7 @@ void GaussianBloom::InitializeSeparatedGaussianFilter()
 {
     // SeparatedGaussianFilterの初期化
     pSeparatedGaussianFilter_ = std::make_unique<SeparatedGaussianFilter>();
-    pSeparatedGaussianFilter_->SetDirectX12(pDx12_);
-    pSeparatedGaussianFilter_->Initialize();
+    pSeparatedGaussianFilter_->Initialize({pDx12_, commandList_});
     pSeparatedGaussianFilter_->Enable(true);
 }
 

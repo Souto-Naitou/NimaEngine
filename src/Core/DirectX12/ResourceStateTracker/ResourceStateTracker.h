@@ -1,10 +1,11 @@
 #pragma once
 #include <wrl/client.h>
 #include <d3d12.h>
-#include <string>
-#include <utility>
+#include <dxgiformat.h>
 
-
+/// <summary>
+/// リソースの状態を管理するクラス
+/// </summary>
 class ResourceStateTracker
 {
 public:

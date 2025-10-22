@@ -1,8 +1,6 @@
 #pragma once
 #include <memory>
 
-#include <Common/structs.h>
-
 #include <Vector4.h>
 #include <Vector3.h>
 #include <Features/Model/IModel.h>
@@ -18,6 +16,9 @@ struct alignas(16) PointLightForGPU
     float intensity         = 0.0f; //!< 輝度
 };
 
+/// <summary>
+/// ポイントライト
+/// </summary>
 class PointLight
 {
 public:

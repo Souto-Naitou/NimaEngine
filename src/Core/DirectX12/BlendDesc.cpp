@@ -61,6 +61,4 @@ void BlendDesc::ChangeMode(BlendModes _mode)
         assert(0 && "BlendModeにCOUNTが指定されています。");
         break;
     }
-
-    return;
 }

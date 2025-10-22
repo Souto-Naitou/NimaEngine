@@ -4,7 +4,9 @@
 #include <string>
 #include <Features/Sprite/Sprite.h>
 
-
+/// <summary>
+/// フェードイン・フェードアウト
+/// </summary>
 class TransFadeInOut : public TransBase
 {
 public:

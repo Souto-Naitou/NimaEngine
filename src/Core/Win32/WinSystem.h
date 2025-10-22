@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <string>
 
+/// <summary>
+/// Windowsアプリ統合
+/// </summary>
 class WinSystem
 {
 public:

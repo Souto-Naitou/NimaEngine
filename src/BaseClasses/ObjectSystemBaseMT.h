@@ -8,6 +8,9 @@
 // Forward declarations
 class GameEye;
 
+/// <summary>
+/// オブジェクトシステムの基底クラス(マルチスレッド)
+/// </summary>
 class ObjectSystemBaseMT : public EngineFeature
 {
 public:

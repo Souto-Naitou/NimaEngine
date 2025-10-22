@@ -19,14 +19,11 @@ struct alignas(16) DissolveOption
     Vector4 colorEdge;
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class Dissolve :
-    public IPostEffect,
-    public EngineFeature
+/// ディゾルブ
+class Dissolve : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -51,6 +48,7 @@ public:
     const DissolveOption&           GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

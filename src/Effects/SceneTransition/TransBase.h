@@ -3,6 +3,9 @@
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 
 
+/// <summary>
+/// シーン遷移の基底クラス
+/// </summary>
 class TransBase
 {
 public:

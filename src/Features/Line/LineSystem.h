@@ -6,7 +6,9 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <BaseClasses/ObjectSystemBaseMT.h>
 
-
+/// <summary>
+/// ライン共通
+/// </summary>
 class LineSystem : public ObjectSystemBaseMT
 {
 public:

@@ -25,14 +25,11 @@ struct GaussianBloomOption
 //   c. 結果を出力リソースに書き込む
 //   input -> luminance -> gaussian filter -> output
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class GaussianBloom :
-    public IPostEffect,
-    public EngineFeature
+/// ガウシアンブルーム
+class GaussianBloom : public IPostEffect
 {
 public:
-    void    Initialize()                override;
+    void    Initialize(const PostEffectInitDesc& desc)                override;
     void    Finalize()                  override;
     void    Enable(bool _flag)          override;
     bool    Enabled() const             override;
@@ -61,6 +58,7 @@ public:
 
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                     = nullptr;
     ID3D12GraphicsCommandList*                          commandList_                = nullptr;
     bool                                                isEnabled_                  = false;

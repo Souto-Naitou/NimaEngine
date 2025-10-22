@@ -1,5 +1,9 @@
 #pragma once
 
+/// <summary>
+/// シングルトンパターン
+/// </summary>
+/// <typeparam name="T">適用するクラス</typeparam>
 template <typename T>
 class SingletonPattern
 {

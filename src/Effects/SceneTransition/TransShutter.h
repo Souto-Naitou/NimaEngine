@@ -9,6 +9,9 @@
 #include <memory>
 
 
+/// <summary>
+/// シャッターのような上下から閉じるシーン遷移
+/// </summary>
 class TransShutter : public TransBase
 {
 public:
@@ -25,7 +28,7 @@ private:
 
     std::string name_;
     bool        isChangedScene_ = false;
-    float       duration_ = 0.25f;
+    float       duration_ = 2.0f;
 
 
     std::string sceneName_;

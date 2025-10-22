@@ -95,6 +95,12 @@ private:
     std::string logPayload_ = "";
     bool enableAutoScroll_ = true;
 
+    bool showDate_ = true;
+    bool showTime_ = true;
+    bool showFilename_ = true;
+    bool showAction_ = true;
+    bool showMessage_ = true;
+
 private:
     JSONIO* pJsonio_ = nullptr;
 

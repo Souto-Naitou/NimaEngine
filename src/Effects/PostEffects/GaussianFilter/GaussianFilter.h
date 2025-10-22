@@ -14,14 +14,11 @@ struct alignas(16) GaussianFilterOption
     float padding[2] = {};
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class GaussianFilter :
-    public IPostEffect,
-    public EngineFeature
+/// ガウシアンフィルタ
+class GaussianFilter : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -44,6 +41,7 @@ public:
     const GaussianFilterOption&     GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

@@ -3,6 +3,9 @@
 #include <chrono>
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 
+/// <summary>
+/// フレームレート管理クラス
+/// </summary>
 class FrameRate
 {
 public:

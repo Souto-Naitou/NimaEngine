@@ -1,6 +1,5 @@
 #include "ModelHelper.h"
 
-#include <Common/structs.h>
 #include <Features/Model/ModelData.h>
 #include <Vector4.h>
 #include <Vector3.h>

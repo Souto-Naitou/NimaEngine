@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Common/structs.h>
+#include <Windows.h>
 #include <dxcapi.h>
 #include <Vector4.h>
 #include <Vector3.h>

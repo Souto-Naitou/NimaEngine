@@ -11,6 +11,9 @@
 #include <string>
 #include <list>
 
+/// <summary>
+/// CSVローダークラス
+/// </summary>
 class CSVLoader{
 public:
     CSVLoader(const CSVLoader&) = delete;

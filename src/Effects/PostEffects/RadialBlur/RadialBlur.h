@@ -17,14 +17,11 @@ struct alignas(16) RadialBlurOption
     float blurWidth = 0.01f; // 幅 (0.0f ~ 1.0f)
 };
 
-/// <ラジアルブラー>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class RadialBlur : 
-    public IPostEffect,
-    public EngineFeature
+/// ラジアルブラー
+class RadialBlur : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -56,6 +53,7 @@ public:
 
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

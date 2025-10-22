@@ -16,6 +16,9 @@
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
 
+/// <summary>
+/// パーティクルクラス
+/// </summary>
 class Particle : public EngineFeature
 {
 public:

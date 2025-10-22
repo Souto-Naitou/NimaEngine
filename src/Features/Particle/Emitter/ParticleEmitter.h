@@ -14,6 +14,9 @@
 #include <cstdint>
 #include <Features/Particle/Emitter/EmitterData.h>
 
+/// <summary>
+/// パーティクルエミッタ
+/// </summary>
 class ParticleEmitter
 {
 public:

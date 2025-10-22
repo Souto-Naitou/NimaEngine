@@ -6,6 +6,9 @@
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 #include <Features/GameEye/GameEye.h>
 
+/// <summary>
+/// 3Dバー表示クラス
+/// </summary>
 class Bar3d
 {
 public:

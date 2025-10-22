@@ -12,6 +12,9 @@
 
 class DirectX12;
 
+/// <summary>
+/// ImGui管理クラス
+/// </summary>
 class ImGuiManager : public EngineFeature
 {
 public:

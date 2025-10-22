@@ -10,11 +10,8 @@
 #include <Vector4.h>
 #include <Vector3.h>
 
-/// <ビネット>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class Vignette : 
-    public IPostEffect,
-    public EngineFeature
+/// ビネット
+class Vignette : public IPostEffect
 {
 public:
     struct VignetteOption
@@ -27,7 +24,7 @@ public:
     };
 
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -54,6 +51,7 @@ public:
     const VignetteOption&           GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

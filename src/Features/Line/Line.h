@@ -4,12 +4,16 @@
 
 #include "LineSystem.h"
 #include <d3d12.h>
-#include <Common/structs.h>
-#include <wrl.h>
+#include <Matrix4x4.h>
+#include <Vector4.h>
+#include <wrl/client.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <vector>
 #include <Features/GameEye/GameEye.h>
 
+/// <summary>
+/// ライン描画クラス
+/// </summary>
 class Line
 {
 public:

@@ -6,6 +6,9 @@
 
 class DirectX12;
 
+/// <summary>
+/// ポストエフェクト用ヘルパー関数群
+/// </summary>
 namespace Helper
 {
     void CreateRenderTexture(

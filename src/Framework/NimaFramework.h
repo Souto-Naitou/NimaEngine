@@ -4,6 +4,7 @@
 #include <DebugTools/Logger/Logger.h>
 #include <Features/Audio/AudioManager.h>
 #include <Features/Input/Input.h>
+#include <Core/Win32/WinSystem.h>
 #include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
@@ -12,7 +13,6 @@
 #include <Features/Particle/ParticleSystem.h>
 #include <Features/Model/ModelManager.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/Win32/WinSystem.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Features/SceneManager/SceneManager.h>
 #include <Interfaces/ISceneFactory.h>
@@ -27,7 +27,7 @@
 #include <DebugTools/EventTimer/EventTimer.h>
 
 #include <memory> /// std::unique_ptr
-#include <Core/DirectX12/PostEffect.h>
+#include <Core/DirectX12/PostEffectExecuter.h>
 #include <Features/Model/GltfModelSystem.h>
 
 
@@ -62,6 +62,7 @@ protected:
     std::unique_ptr<NiGuiDebug>         pNiGuiDebug_                = nullptr;
     std::unique_ptr<GltfModelSystem>    pGltfModelSystem_           = nullptr;
     std::unique_ptr<CubemapSystem>      pCubemapSystem_             = nullptr;
+    std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_        = nullptr;
 
     #ifdef _DEBUG
     std::unique_ptr<ImGuiManager>   pImGuiManager_              = nullptr;
@@ -85,7 +86,6 @@ protected:
     RandomGenerator*                pRandomGenerator_           = nullptr;
     AudioManager*                   pAudioManager_              = nullptr;
     EventTimer*                     pEventTimer_                = nullptr;
-    PostEffectExecuter*             pPostEffectExecuter_        = nullptr;
 
     bool                                isExitProgram_          = false;
 

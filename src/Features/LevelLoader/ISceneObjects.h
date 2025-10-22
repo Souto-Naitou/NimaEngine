@@ -3,6 +3,9 @@
 #include <Features/Model/IModel.h>
 #include <d3d12.h>
 
+/// <summary>
+/// シーンオブジェクトインターフェース
+/// </summary>
 class ISceneObjects
 {
 public:

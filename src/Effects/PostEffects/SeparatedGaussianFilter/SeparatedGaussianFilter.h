@@ -24,14 +24,11 @@ struct alignas(16) SeparatedGaussianFilterExecInfo
     float padding[2]; // 16バイト境界に揃えるためのパディング
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class SeparatedGaussianFilter :
-    public IPostEffect,
-    public EngineFeature
+/// 分離式ガウシアンフィルタ
+class SeparatedGaussianFilter : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -55,6 +52,7 @@ public:
     const SeparatedGaussianFilterOption&    GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

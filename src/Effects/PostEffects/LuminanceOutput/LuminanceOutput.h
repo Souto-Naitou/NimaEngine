@@ -14,14 +14,11 @@ struct alignas(16) LuminanceOutputOption
     float padding[3]; // 16バイト境界に揃えるためのパディング
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class LuminanceOutput :
-    public IPostEffect,
-    public EngineFeature
+/// 輝度抽出エフェクト
+class LuminanceOutput : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -49,6 +46,7 @@ public:
 
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
     bool                                                isEnabled_              = false;

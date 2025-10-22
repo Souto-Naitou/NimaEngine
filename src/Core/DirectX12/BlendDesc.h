@@ -3,7 +3,7 @@
 #include <d3d12.h>
 
 /// <summary>
-/// ブレンドモード関連
+/// ブレンドモード
 /// </summary>
 class BlendDesc
 {

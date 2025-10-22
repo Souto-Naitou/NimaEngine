@@ -3,7 +3,21 @@
 #include <string>
 #include <memory>
 
+class DirectX12;
 
+/// <summary>
+/// ポストエフェクト初期化用構造体
+/// </summary>
+struct PostEffectInitDesc
+{
+    DirectX12* pDx12 = nullptr;
+    ID3D12GraphicsCommandList* pCommandList = nullptr;
+};
+
+
+/// <summary>
+/// ポストエフェクトインターフェース
+/// </summary>
 class IPostEffect
 {
 public:
@@ -12,7 +26,7 @@ public:
 
     // Initialize the post effect
     // Please use the "Helper::PostEffect::CreatePostEffect" function to create an instance.
-    virtual void    Initialize() = 0;
+    virtual void    Initialize(const PostEffectInitDesc& desc) = 0;
     // Release resources
     virtual void    Finalize() = 0;
 
@@ -36,18 +50,4 @@ public:
     virtual void    OnResizedBuffers() = 0;
     virtual void    DebugOverlay() = 0;
 };
-
-class DirectX12;
-namespace Helper::PostEffect
-{
-    template <typename T>
-    [[nodiscard]]
-    inline std::unique_ptr<T> CreatePostEffect(DirectX12* _pDx12)
-    {
-        auto pEffect = std::make_unique<T>();
-        pEffect->SetDirectX12(_pDx12);
-        pEffect->Initialize();
-        return pEffect;
-    }
-}
 

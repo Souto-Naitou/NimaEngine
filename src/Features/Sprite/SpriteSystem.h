@@ -7,6 +7,9 @@
 #include <BaseClasses/ObjectSystemBaseMT.h>
 #include <Common/SingletonPattern.h>
 
+/// <summary>
+/// スプライト描画共通
+/// </summary>
 class SpriteSystem : 
     public SingletonPattern<SpriteSystem>,
     public ObjectSystemBaseMT

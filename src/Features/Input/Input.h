@@ -7,6 +7,9 @@
 #include <cstdint>
 #include <Vector2.h>
 
+/// <summary>
+/// 入力管理クラス
+/// </summary>
 class Input
 {
 public:

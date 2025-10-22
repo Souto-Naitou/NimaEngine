@@ -2,6 +2,9 @@
 
 #include <random>
 
+/// <summary>
+/// 乱数生成補助クラス
+/// </summary>
 class RandomGenerator
 {
 public:

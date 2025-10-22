@@ -11,6 +11,9 @@
 
 #define rgba(r, g, b, a) NiVec4{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f}
 
+/// <summary>
+/// 2Dバー表示クラス
+/// </summary>
 class Bar2d
 {
 public:

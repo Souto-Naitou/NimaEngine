@@ -8,6 +8,9 @@
 #include <Interfaces/ISceneArgs.h>
 #include <unordered_map>
 
+/// <summary>
+/// シーン保守クラス
+/// </summary>
 class SceneManager
 {
 public:

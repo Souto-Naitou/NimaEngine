@@ -4,6 +4,9 @@
 #include <string>
 #include <Features/RandomGenerator/RandomGenerator.h>
 
+/// <summary>
+/// カメラクラス
+/// </summary>
 class GameEye
 {
 public:

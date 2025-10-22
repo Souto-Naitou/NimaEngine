@@ -1,11 +1,13 @@
 #pragma once
 
-#include <Interfaces/IObjectSystem.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <d3d12.h>
 #include <wrl/client.h>
 #include <dxcapi.h>
 
+/// <summary>
+/// GLTFモデル共通
+/// </summary>
 class GltfModelSystem : public EngineFeature
 {
 public:

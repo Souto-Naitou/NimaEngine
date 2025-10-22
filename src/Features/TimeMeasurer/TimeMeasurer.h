@@ -3,6 +3,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+/// <summary>
+/// 時間計測クラス
+/// </summary>
 class TimeMeasurer
 {
 public:

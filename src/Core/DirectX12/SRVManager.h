@@ -7,6 +7,9 @@
 #include <string>
 #include <array>
 
+/// <summary>
+/// SRV生成クラス 
+/// </summary>
 class SRVManager
 {
 public:

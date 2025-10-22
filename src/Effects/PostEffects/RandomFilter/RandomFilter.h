@@ -10,11 +10,8 @@
 #include <Vector4.h>
 #include <Vector3.h>
 
-/// <ビネット>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class RandomFilter : 
-    public IPostEffect,
-    public EngineFeature
+/// ランダムフィルタ
+class RandomFilter : public IPostEffect
 {
 public:
     struct RandomFilterOption
@@ -24,7 +21,7 @@ public:
     };
 
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -51,6 +48,7 @@ public:
     const RandomFilterOption&       GetOption() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 
@@ -61,17 +59,13 @@ private:
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     PipelineStateObject                                 pso_                    = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_           = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    uint32_t                                            rtvHeapIndex_           = 0;
-    uint32_t                                            srvHeapIndex_           = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/RandomFilter.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/RandomFilter.PS.hlsl";
 
     // Constant buffer view
-    Microsoft::WRL::ComPtr<ID3D12Resource>      optionResource_     = nullptr;
-    RandomFilterOption*                             pOption_            = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_     = nullptr;
+    RandomFilterOption*                                 pOption_            = nullptr;
 
 
     // Internal functions

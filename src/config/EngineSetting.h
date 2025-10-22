@@ -3,6 +3,9 @@
 #include <Vector4.h>
 #include <dxgiformat.h>
 
+/// <summary>
+/// NimaEngineのグローバル設定
+/// </summary>
 namespace NimaEngine::Config
 {
     inline constexpr DXGI_FORMAT kRenderTargetFormat = DXGI_FORMAT_R8G8B8A8_UNORM;

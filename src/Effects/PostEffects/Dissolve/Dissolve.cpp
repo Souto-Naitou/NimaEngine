@@ -11,7 +11,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <cfloat>
 
-void Dissolve::Initialize(const PostEffectInitDesc& desc)
+void Dissolve::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

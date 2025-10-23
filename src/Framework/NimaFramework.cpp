@@ -162,8 +162,7 @@ void NimaFramework::Initialize()
     pCubemapSystem_->Initialize();
 
     /// ポストエフェクトの初期化
-    pPostEffectExecuter_->SetDirectX12(pDirectX_.get());
-    pPostEffectExecuter_->Initialize();
+    pPostEffectExecuter_->Initialize(pDirectX_.get());
 
     /// コマンドリストを追加
     pDirectX_->AddCommandList(pObject3dSystem_->GetCommandList());
@@ -294,10 +293,19 @@ void NimaFramework::Draw()
     NiGui::DrawUI();
     pSpriteSystem_->DrawCall();
 
+    // Canvasに登録されているオブジェクトをCanvasに描画する
+    // pLayer_->DrawObjects();
+
     // 同期待ち
     pObject3dSystem_->Sync();
     pParticleSystem_->Sync();
     pSpriteSystem_->Sync();
+
+    // Canvasにポストエフェクトを適用する
+    // pLayer_->ApplyPostEffects();
+
+    // エフェクト適用後のCanvasを描画
+    // pLayer_->DrawCanvases();
 
     // ポストエフェクトの適用
     pPostEffectExecuter_->ApplyPostEffects();

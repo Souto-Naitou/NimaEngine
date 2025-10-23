@@ -10,7 +10,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
-void PrewittOutline::Initialize(const PostEffectInitDesc& desc)
+void PrewittOutline::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

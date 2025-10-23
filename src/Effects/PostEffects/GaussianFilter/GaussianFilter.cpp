@@ -10,7 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 
-void GaussianFilter::Initialize(const PostEffectInitDesc& desc)
+void GaussianFilter::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

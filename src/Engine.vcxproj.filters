@@ -1091,6 +1091,7 @@
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClInclude>
+    <ClInclude Include="Features\Layer\Layer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

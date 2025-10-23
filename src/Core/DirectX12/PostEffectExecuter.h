@@ -14,7 +14,7 @@
 /// <ポストエフェクトを実行するクラス>
 /// - 複数のポストエフェクトを順に適用するためにレンダーテクスチャのチェインを生成する
 /// - Bloom -> MotionBlur の順で実行する場合 MotionBlurにBloomのレンダーテクスチャを渡す
-class PostEffectExecuter : public EngineFeature
+class PostEffectExecuter
 {
 public:
     /// ctor , dtor
@@ -25,57 +25,53 @@ public:
     /// 実行に必要なリソース・パイプラインを初期化します。
     /// </summary>
     /// <param name="isRegisterDebugWindow">デバッグUIを登録するか。</param>
-    void Initialize(bool isRegisterDebugWindow = true);
+    void Initialize(DirectX12* pDx12, bool isRegisterDebugWindow = true);
+
     /// <summary>
     /// リソースを解放します。
     /// </summary>
     void Finalize();
+
     /// <summary>
     /// 登録されたポストエフェクトを順に適用します。
     /// </summary>
     void ApplyPostEffects();
+
     /// <summary>
     /// フレーム開始時の初期化処理を行います。
     /// </summary>
     void NewFrame();
+
     /// <summary>
     /// ポストエフェクト適用後の後処理を行います。
     /// </summary>
     void PostDraw();
+
     /// <summary>
     /// 最終出力の描画を行います。
     /// </summary>
     void Draw();
+
     /// <summary>
     /// クライアントサイズ変更時に呼び出し、リソース再作成を要求します。
     /// </summary>
     void OnResize();
+
     /// <summary>
     /// バッファ再作成後に呼び出し、ハンドル等を更新します。
     /// </summary>
     void OnResizedBuffers();
+
     /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
     void ImGui();
 
 
-public:
-    PostEffectExecuter& RegisterPostEffect(IPostEffect* postEffect)
-    {
-        postEffects_.emplace_back(postEffect);
-        return *this;
-    }
 
-    PostEffectExecuter& UnregisterPostEffect(IPostEffect* postEffect)
-    {
-        auto it = std::remove(postEffects_.begin(), postEffects_.end(), postEffect);
-        if (it != postEffects_.end())
-        {
-            postEffects_.erase(it, postEffects_.end());
-        }
-        return *this;
-    }
+public:
+    IPostEffect*    AddEffect(PostEffectClassName name);
+    bool            RemoveEffect(IPostEffect* pEffect);
 
     ID3D12Resource* GetRenderTexture() const
     {
@@ -101,6 +97,7 @@ public:
 private:
     static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
+    DirectX12*                                          pDx12_                  = nullptr;
     DX12Resource                                        renderTexture_          = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         outputHandleGpu_        = {};
@@ -116,7 +113,7 @@ private:
     std::unique_ptr<DebugEntry<PostEffectExecuter>>     pDebugEntry_            = nullptr;
     std::unique_ptr<PostEffectFactory>                  pEffectFactory_         = nullptr;
 
-    std::vector<IPostEffect*>                           postEffects_           = {};
+    std::vector<std::unique_ptr<IPostEffect>>           postEffects_           = {};
 
 
 private:

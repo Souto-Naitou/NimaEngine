@@ -9,7 +9,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
-void Grayscale::Initialize(const PostEffectInitDesc& desc)
+void Grayscale::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

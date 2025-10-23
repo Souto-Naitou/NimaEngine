@@ -111,11 +111,12 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>$(ProjectDir)Common\stdafx.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MinSpace</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <PreprocessToFile>false</PreprocessToFile>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -307,6 +308,7 @@
     <ClInclude Include="Features\Cubemap\CubemapSystem.h" />
     <ClInclude Include="Features\Cubemap\Skybox.h" />
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
+    <ClInclude Include="Features\Layer\Layer.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />
     <ClInclude Include="Features\GameEye\GameEye.h" />

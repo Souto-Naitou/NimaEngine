@@ -7,6 +7,13 @@
 #include <memory>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Core/DirectX12/PostEffectExecuter.h>
+#include <d3d12.h>
+
+struct CanvasInitParams
+{
+    std::string name = "Canvas";
+    DirectX12* pDx12 = nullptr;
+};
 
 /// <summary>
 /// キャンバスクラス
@@ -39,17 +46,20 @@ public:
     [[nodiscard]]
     inline bool IsEnabled() const { return isEnabled_; }
     [[nodiscard]]
-    inline const std::string& GetName() const { return name_; }
-    [[nodiscard]]
     inline const DX12Resource& GetResource() const { return resource_; }
     [[nodiscard]]
     inline PostEffectExecuter& GetPostEffectExecuter() const { return *pPostEffectExecuter_.get(); }
+    [[nodiscard]]
+    inline ID3D12GraphicsCommandList* GetCommandList() const
+    {
+        return pPostEffectExecuter_->GetCommandList();
+    }
 
     /// <summary>
     /// キャンバスを初期化し、内部リソースを確保します。
     /// </summary>
     /// <param name="name">キャンバス名。</param>
-    void Initialize(const std::string& name);
+    void Initialize(const CanvasInitParams& params);
     
     /// <summary>
     /// 登録されたスプライトとポストエフェクトを用いて描画します。
@@ -63,7 +73,6 @@ public:
 
 private:
     DX12Resource resource_;
-    std::string name_ = "Canvas";
     bool isEnabled_ = false;
 
     std::vector<Sprite*> sprites_;

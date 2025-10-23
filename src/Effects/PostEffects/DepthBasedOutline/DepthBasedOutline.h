@@ -23,7 +23,7 @@ struct alignas(16) DepthBasedOutlineMaterial
 class DepthBasedOutline : public IPostEffect
 {
 public:
-    void    Initialize(const PostEffectInitDesc& desc) override;
+    void    Initialize(const PostEffectInitParams& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;

@@ -11,7 +11,7 @@
 #include <imgui.h>
 #include <Math/Functions.hpp>
 
-void LuminanceOutput::Initialize(const PostEffectInitDesc& desc)
+void LuminanceOutput::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

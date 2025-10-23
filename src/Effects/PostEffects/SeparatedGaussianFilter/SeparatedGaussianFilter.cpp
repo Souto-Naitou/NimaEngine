@@ -11,7 +11,7 @@
 #include <imgui.h>
 #include <Math/Functions.hpp>
 
-void SeparatedGaussianFilter::Initialize(const PostEffectInitDesc& desc)
+void SeparatedGaussianFilter::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

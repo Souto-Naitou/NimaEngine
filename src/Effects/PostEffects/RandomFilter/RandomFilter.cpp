@@ -9,7 +9,7 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 
-void RandomFilter::Initialize(const PostEffectInitDesc& desc)
+void RandomFilter::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

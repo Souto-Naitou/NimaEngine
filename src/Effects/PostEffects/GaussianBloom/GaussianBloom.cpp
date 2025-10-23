@@ -10,7 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 
-void GaussianBloom::Initialize(const PostEffectInitDesc& desc)
+void GaussianBloom::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

@@ -10,8 +10,10 @@
 #endif //_DEBUG
 #include <config/EngineSetting.h>
 
-void PostEffectExecuter::Initialize(bool isRegisterDebugWindow)
+void PostEffectExecuter::Initialize(DirectX12* pDx12, bool isRegisterDebugWindow)
 {
+    pDx12_ = pDx12;
+
     // インスタンスの取得
     ObtainInstances();
 
@@ -60,7 +62,7 @@ void PostEffectExecuter::ApplyPostEffects()
 
     for (auto it = postEffects_.begin(); it != postEffects_.end(); ++it)
     {
-        auto postEffect = *it;
+        auto postEffect = it->get();
 
         if (!postEffect->Enabled()) continue;
 
@@ -274,6 +276,30 @@ void PostEffectExecuter::ImGui()
     }
 
     #endif //_DEBUG
+}
+
+IPostEffect* PostEffectExecuter::AddEffect(PostEffectClassName name)
+{
+    return postEffects_.emplace_back(pEffectFactory_->CreatePostEffect(name)).get();
+}
+
+bool PostEffectExecuter::RemoveEffect(IPostEffect* pEffect)
+{
+    auto it = std::find_if(
+        postEffects_.begin(), 
+        postEffects_.end(),
+        [pEffect](const std::unique_ptr<IPostEffect>& effectPtr)
+        {
+            return effectPtr.get() == pEffect;
+        }
+    );
+
+    if (it != postEffects_.end())
+    {
+        postEffects_.erase(it);
+        return true;
+    }
+    return false;
 }
 
 void PostEffectExecuter::ObtainInstances()

@@ -10,7 +10,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <DebugTools/Logger/Logger.h>
 
-void Vignette::Initialize(const PostEffectInitDesc& desc)
+void Vignette::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;

@@ -12,6 +12,9 @@
 
 #include <imgui.h>
 
+/// <summary>
+/// ImGuiテンプレート群
+/// </summary>
 namespace ImGuiTemplate
 {
     void VariableTable(const std::string& _stringID, std::function<void()> _function);

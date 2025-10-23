@@ -12,6 +12,9 @@
 #include <Features/GameEye/GameEye.h>
 #include <Common/structs.h>
 
+/// <summary>
+/// JSONから読み込んだシーンオブジェクト群を保持するクラス
+/// </summary>
 class SceneObjects : public ISceneObjects
 {
 public:

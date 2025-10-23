@@ -16,15 +16,33 @@
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
 
+/// <summary>
+/// パーティクルクラス
+/// </summary>
 class Particle : public EngineFeature
 {
 public:
     Particle() = default;
-
+    /// <summary>
+    /// パーティクルを初期化します。
+    /// </summary>
+    /// <param name="_pModel">使用するモデル。</param>
     void Initialize(IModel* _pModel);
+    /// <summary>
+    /// パーティクルの描画を行います。
+    /// </summary>
     void Draw();
+    /// <summary>
+    /// パーティクルの更新を行います。
+    /// </summary>
     void Update();
+    /// <summary>
+    /// リソースの解放を行います。
+    /// </summary>
     void Finalize();
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void ImGui();
 
 
@@ -84,18 +102,54 @@ private: /// 他クラスのインスタンス
 
 
 private:
+    /// <summary>
+    /// GPU向けインスタンシング用バッファを作成します。
+    /// </summary>
     void CreateParticleForGPUResource();
+    /// <summary>
+    /// SRV を作成します。
+    /// </summary>
     void CreateSRV();
+    /// <summary>
+    /// モデルの頂点情報などを取得します。
+    /// </summary>
     void GetModelData();
+    /// <summary>
+    /// 変換情報を初期化します。
+    /// </summary>
     void InitializeTransform();
+    /// <summary>
+    /// 1パーティクル分のデータを更新します。
+    /// </summary>
     void ParticleDataUpdate(std::vector<ParticleData>::iterator& _itr);
+    /// <summary>
+    /// イージング関数（EaseOutCubic）。
+    /// </summary>
     float EaseOutCubic(float t);
+    /// <summary>
+    /// イージング関数（EaseOutQuad）。
+    /// </summary>
     float EaseOutQuad(float t);
+    /// <summary>
+    /// 床との衝突による位置/速度の更新を行います。
+    /// </summary>
     bool UpdateByCollisionFloor(Vector3& _position, Vector3& _velocity, const v3::CollisionFloor& _floor, float _radius);
+    /// <summary>
+    /// 摩擦を適用します。
+    /// </summary>
     void ApplyFriction(Vector3& _velocity, bool _isGround, float _frictionCoef, float _deltaTime);
 
 private: /// delete condition
+    /// <summary>
+    /// パーティクル削除条件を判定します。
+    /// </summary>
     bool ParticleDeleteByCondition(std::vector<ParticleData>::iterator& _itr);
+    /// <summary>
+    /// 寿命によって削除するか判定します。
+    /// </summary>
     bool DeleteByLifeTime(std::vector<ParticleData>::iterator& _itr);
+    /// <summary>
+    /// 透明度が0になった場合に削除するか判定します。
+    /// </summary>
     bool DeleteByZeroAlpha(std::vector<ParticleData>::iterator& _itr);
 };

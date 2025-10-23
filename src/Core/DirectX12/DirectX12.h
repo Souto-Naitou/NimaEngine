@@ -1,18 +1,25 @@
 #pragma once
 
 #include "./Framerate.h"
-#include <Vector4.h>
 #include <DebugTools/ReakChecker.h>
 #include <DebugTools/Logger/Logger.h>
 #include "./RTVHeapCounter.h"
 #include "./DX12Resource/DX12Resource.h"
 
-
-#include <wrl.h>
 #include <d3d12.h>
 #include <d3d11.h>
 #include <dxgi1_6.h>
+
+#ifdef WINDOWS_LEAN_AND_MEAN
+
+#undef WINDOWS_LEAN_AND_MEAN
+
+#endif // WINDOWS_LEAN_AND_MEAN
+
+
+#include <Windows.h>
 #include <dxcapi.h>
+
 #include <d3d11on12.h>
 
 
@@ -28,6 +35,9 @@
 
 class SRVManager;
 
+/// <summary>
+/// DirectX12管理クラス
+/// </summary>
 class DirectX12
 {
 public:
@@ -82,7 +92,7 @@ public: /// Getter
     ID2D1Device2*                                           GetDirect2dDevice()                         { return d2dDevice_.Get(); }
     ID2D1DeviceContext2*                                    GetDirect2dDeviceContext()                  { return d2dDeviceContext_.Get(); }
     const D3D12_VIEWPORT&                                   GetViewport() const                         { return viewport_; }
-    uint32_t                                                GetGameWndSRVIndex() const                  { return gameWndSrvIndex_; }
+    uint32_t                                                GetGameWndSRVIndex() const                  { return gameScreenResource_.GetSRVIndex(); }
     uint32_t                                                GetBackBufferIndex() const                  { return backBufferIndex_; }
     ID3D11Resource*                                         GetD3D11WrappedBackBuffer(uint32_t _index)  { return d3d11WrappedBackBuffers_[_index].Get(); }
     ID2D1Bitmap1*                                           GetD2D1RenderTarget(uint32_t _index)        { return d2dRenderTargets_[_index].Get(); }
@@ -151,7 +161,6 @@ private:
     D3D12_RECT                                              scissorRect_                    = {};           // シザーレクト
     D3D12_CPU_DESCRIPTOR_HANDLE                             rtvHandles_[2]                  = {};           // RTVハンドル
     uint32_t                                                rtvHeapIndex_[2]                = {};           // RTVヒープインデックス
-    uint32_t                                                gameWndSrvIndex_                = 0;
     uint32_t                                                gameWndSrvIndexComputed_        = 0;
     float                                                   clearColor_[4]                  = { 0.2f, 0.2f, 0.4f, 1.0f };
     uint32_t                                                backBufferIndex_                = 0u;

@@ -1,4 +1,4 @@
-#include "PostEffect.h"
+#include "PostEffectExecuter.h"
 
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/Win32/WinSystem.h>
@@ -10,7 +10,7 @@
 #endif //_DEBUG
 #include <config/EngineSetting.h>
 
-void PostEffectExecuter::Initialize()
+void PostEffectExecuter::Initialize(bool isRegisterDebugWindow)
 {
     // インスタンスの取得
     ObtainInstances();
@@ -32,15 +32,19 @@ void PostEffectExecuter::Initialize()
 
     // デバッグウィンドウの登録
     #ifdef _DEBUG
-    DebugManager::GetInstance()->SetComponent("PostEffect", "EffectList", std::bind(&PostEffectExecuter::ImGui, this));
+    if (isRegisterDebugWindow)
+    {
+        pDebugEntry_ = std::make_unique<DebugEntry<PostEffectExecuter>>("PostEffect", "EffectList", this);
+    }
+    #else
+    isRegisterDebugWindow;
     #endif //_DEBUG
+
+    pEffectFactory_ = std::make_unique<PostEffectFactory>(pDx12_, commandListForDraw_.Get());
 }
 
 void PostEffectExecuter::Finalize()
 {
-    #ifdef _DEBUG
-    DebugManager::GetInstance()->DeleteComponent("PostEffect", "EffectList");
-    #endif //_DEBUG
 }
 
 void PostEffectExecuter::ApplyPostEffects()
@@ -115,7 +119,7 @@ void PostEffectExecuter::PostDraw()
 
 void PostEffectExecuter::OnResize()
 {
-    pSRVManager_->Deallocate(srvHeapIndex_);
+    pSRVManager_->Deallocate(renderTexture_.GetSRVIndex());
     renderTexture_.Reset();
     for (auto& posteffect : postEffects_) posteffect->OnResizeBefore();
 }
@@ -429,7 +433,7 @@ void PostEffectExecuter::EnableSolo(const size_t _index)
     }
 }
 
-void PostEffectExecuter::ImGuiCenterTable(const std::function<void()>& _fn)
+void PostEffectExecuter::ImGuiCenterTable(const std::function<void()>& fn)
 {
     #ifdef _DEBUG
 
@@ -440,14 +444,14 @@ void PostEffectExecuter::ImGuiCenterTable(const std::function<void()>& _fn)
         ImGui::TableSetupColumn("##right", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableNextColumn();
         ImGui::TableNextColumn();
-        _fn();
+        fn();
         ImGui::TableNextColumn();
         ImGui::EndTable();
     }
 
     #else
 
-    _fn;
+    fn;
 
     #endif //_DEBUG
 }

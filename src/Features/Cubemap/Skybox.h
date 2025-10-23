@@ -11,6 +11,9 @@
 #include <memory>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 
+/// <summary>
+/// スカイボックス
+/// </summary>
 class Skybox
 {
 public:

@@ -7,6 +7,9 @@
 
 namespace cfg
 {
+    /// <summary>
+    /// 設定データ (ファイルから読み込まれる)
+    /// </summary>
     struct ConfigData
     {
         std::string window_title;

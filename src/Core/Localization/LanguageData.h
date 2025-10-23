@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+/// <summary>
+/// デバッガーのローカライズデータ
+/// </summary>
 namespace Localization
 {
     struct _Common

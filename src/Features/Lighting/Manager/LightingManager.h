@@ -1,5 +1,8 @@
 #pragma once
 
+/// <summary>
+/// ライティング管理クラス
+/// </summary>
 class LightingManager
 {
 public:

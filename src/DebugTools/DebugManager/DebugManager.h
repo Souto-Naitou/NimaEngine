@@ -23,6 +23,9 @@
 #define UnregisterDebugWindowS(name)                                
 #endif // _DEBUG
 
+/// <summary>
+/// デバッグマネージャー
+/// </summary>
 class DebugManager : public EngineFeature
 {
     struct ComponentData

@@ -11,15 +11,36 @@
 
 #define rgba(r, g, b, a) NiVec4{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f}
 
+/// <summary>
+/// 2Dバー表示クラス
+/// </summary>
 class Bar2d
 {
 public:
     Bar2d() = default;
     ~Bar2d() = default;
 
+    /// <summary>
+    /// バー表示を初期化します。
+    /// </summary>
+    /// <param name="_nameTexturePath">名称テクスチャの相対パス。</param>
+    /// <param name="_barSize">バーのサイズ。</param>
+    /// <param name="_enable_smoothing_color">色補間を有効にするか。</param>
     void Initialize(const std::string& _nameTexturePath, const Vector2& _barSize, bool _enable_smoothing_color = true);
+    
+    /// <summary>
+    /// 値や見た目の更新を行います。
+    /// </summary>
     void Update();
+    
+    /// <summary>
+    /// 2D 描画を行います。
+    /// </summary>
     void Draw2D();
+    
+    /// <summary>
+    /// デバッグ用 UI を描画します。
+    /// </summary>
     void ImGui();
 
 public:

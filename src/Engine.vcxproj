@@ -149,7 +149,7 @@
     <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp" />
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp" />
-    <ClCompile Include="Core\DirectX12\PostEffect.cpp" />
+    <ClCompile Include="Core\DirectX12\PostEffectExecuter.cpp" />
     <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp" />
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp" />
     <ClCompile Include="Core\DirectX12\SRVManager.cpp" />
@@ -163,6 +163,7 @@
     <ClCompile Include="DebugTools\ImGuiManager\ImGuiThemes.cpp" />
     <ClCompile Include="DebugTools\ImGuiTemplates\ImGuiTemplates.cpp" />
     <ClCompile Include="DebugTools\Logger\Logger.cpp" />
+    <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.cpp" />
@@ -188,12 +189,11 @@
     <ClCompile Include="Features\Cubemap\CubemapSystem.cpp" />
     <ClCompile Include="Features\Cubemap\Skybox.cpp" />
     <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp" />
-    <ClCompile Include="Features\Easing\Easing.cpp" />
-    <ClCompile Include="Features\Easing\Easing_impl.cpp" />
-    <ClCompile Include="Features\Easing\Manager\EasingManager.cpp" />
+    <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
     <ClCompile Include="Features\GameEye\GameEye.cpp" />
     <ClCompile Include="Features\Input\Input.cpp" />
+    <ClCompile Include="Features\Layer\Canvas.cpp" />
     <ClCompile Include="Features\LevelLoader\LevelData.cpp" />
     <ClCompile Include="Features\LevelLoader\LevelHelper.cpp" />
     <ClCompile Include="Features\LevelLoader\SceneObjects.cpp" />
@@ -259,7 +259,7 @@
     <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
-    <ClInclude Include="Core\DirectX12\PostEffect.h" />
+    <ClInclude Include="Core\DirectX12\PostEffectExecuter.h" />
     <ClInclude Include="Core\DirectX12\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
     <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
@@ -277,6 +277,7 @@
     <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h" />
     <ClInclude Include="DebugTools\Logger\Logger.h" />
     <ClInclude Include="DebugTools\ReakChecker.h" />
+    <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h" />
     <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h" />
     <ClInclude Include="Effects\PostEffects\BoxFilter\BoxFilter.h" />
     <ClInclude Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.h" />
@@ -306,8 +307,7 @@
     <ClInclude Include="Features\Cubemap\CubemapSystem.h" />
     <ClInclude Include="Features\Cubemap\Skybox.h" />
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
-    <ClInclude Include="Features\Easing\Easing.h" />
-    <ClInclude Include="Features\Easing\Manager\EasingManager.h" />
+    <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />
     <ClInclude Include="Features\GameEye\GameEye.h" />
     <ClInclude Include="Features\IContainer\ListContainer.h" />
@@ -470,10 +470,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Line.VS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\SampleProject\EngineResources\Shaders\Sprite.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

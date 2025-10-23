@@ -5,6 +5,10 @@
 #include <list>
 #include <unordered_map>
 
+/// <summary>
+/// ルートパラメータ管理クラス
+/// </summary>
+/// <typeparam name="_Size"> ルートパラメータの数 </typeparam>
 template <int _Size>
 class RootParameters
 {

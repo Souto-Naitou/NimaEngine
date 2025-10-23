@@ -8,6 +8,9 @@
 #include <nlohmann/json.hpp>
 #include <Vector2.h>
 
+/// <summary>
+/// Blenderレベルデータ構造体群
+/// </summary>
 namespace BlenderLevel
 {
     void assign_from_json_vec3(const nlohmann::json& _j, Vector3& _vec);

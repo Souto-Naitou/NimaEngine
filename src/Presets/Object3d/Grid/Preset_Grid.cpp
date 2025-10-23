@@ -1,4 +1,5 @@
 #include "Preset_Grid.h"
+#include <DebugTools/Logger/Logger.h>
 
 std::unique_ptr<Object3d> presets::grid::Create(IModel* pModel)
 {

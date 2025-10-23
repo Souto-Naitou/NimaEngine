@@ -2,16 +2,14 @@
 
 #include "Object3dSystem.h"
 
-#include <wrl.h>
 #include <d3d12.h>
 #include <string>
-#include <Common/structs.h>
 #include <Features/Model/IModel.h>
-#include <Common/define.h>
 #include <Features/GameEye/GameEye.h>
 #include <Features/Lighting/PointLight/PointLight.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
+#include <common/structs.h>
 
 /// 前方宣言
 struct  DirectionalLight;

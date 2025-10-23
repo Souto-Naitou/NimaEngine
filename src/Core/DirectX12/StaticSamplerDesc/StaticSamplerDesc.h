@@ -2,6 +2,9 @@
 
 #include <d3d12.h>
 
+/// <summary>
+/// StaticSampler設定クラス
+/// </summary>
 class StaticSamplerDesc
 {
 private:

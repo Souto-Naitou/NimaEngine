@@ -1,7 +1,6 @@
 #include "Dissolve.h"
 #include <cassert>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/PostEffect.h>
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
@@ -12,10 +11,12 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <cfloat>
 
-void Dissolve::Initialize()
+void Dissolve::Initialize(const PostEffectInitDesc& desc)
 {
+    pDx12_ = desc.pDx12;
+    commandList_ = desc.pCommandList;
+
     device_ = pDx12_->GetDevice();
-    commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");

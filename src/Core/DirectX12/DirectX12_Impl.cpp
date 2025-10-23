@@ -235,9 +235,21 @@ void DirectX12::CreateGameScreenResource()
     }
 
     /// SRVの生成
-    SRVManager* psrvm = SRVManager::GetInstance();
-    gameWndSrvIndex_ = psrvm->Allocate();
-    psrvm->CreateForTexture2D(gameWndSrvIndex_, gameScreenResource_.GetResource().Get(), NimaEngine::Config::kRenderTargetFormat, 1);
+    {
+        SRVManager* psrvm = SRVManager::GetInstance();
+        auto gameWndSrvIndex = psrvm->Allocate();
+        psrvm->CreateForTexture2D(
+            gameWndSrvIndex,
+            gameScreenResource_.GetResource().Get(),
+            NimaEngine::Config::kRenderTargetFormat,
+            1
+        );
+
+        auto cpuHandle = psrvm->GetCPUDescriptorHandle(gameWndSrvIndex);
+        auto gpuHandle = psrvm->GetGPUDescriptorHandle(gameWndSrvIndex);
+
+        gameScreenResource_.SetSRV(gameWndSrvIndex, cpuHandle, gpuHandle);
+    }
 
     /// UAVの生成
     D3D12_RESOURCE_DESC textureDesc = {};
@@ -503,7 +515,7 @@ void DirectX12::ResizeBuffers()
         func();
     }
 
-    pSRVManager_->Deallocate(gameWndSrvIndex_);
+    pSRVManager_->Deallocate(gameScreenResource_.GetSRVIndex());
 
     d3d11Device_.Reset();
     d3d11On12DeviceContext_.Reset();
@@ -516,7 +528,7 @@ void DirectX12::ResizeBuffers()
     {
         d2dRenderTargets_[i].Reset();
         d3d11WrappedBackBuffers_[i].Reset();
-        swapChainResources_[i].GetResource().Reset();
+        swapChainResources_[i].Reset();
     }
 
     depthStencilResource_.Reset();

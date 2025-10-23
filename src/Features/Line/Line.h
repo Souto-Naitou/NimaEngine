@@ -4,21 +4,39 @@
 
 #include "LineSystem.h"
 #include <d3d12.h>
-#include <Common/structs.h>
-#include <wrl.h>
+#include <Matrix4x4.h>
+#include <Vector4.h>
+#include <wrl/client.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <vector>
 #include <Features/GameEye/GameEye.h>
 
+/// <summary>
+/// ライン描画クラス
+/// </summary>
 class Line
 {
 public:
     Line(size_t _lineCount) { vertices_.resize(_lineCount * 2); }
     ~Line();
-
+    /// <summary>
+    /// ライン描画に必要なGPUリソース等を初期化します。
+    /// </summary>
     void Initialize();
+    
+    /// <summary>
+    /// リソースの解放を行います。
+    /// </summary>
     void Finalize();
+    
+    /// <summary>
+    /// 行列や頂点など内部状態の更新を行います。
+    /// </summary>
     void Update();
+    
+    /// <summary>
+    /// ラインを描画します。
+    /// </summary>
     void Draw();
 
 public:
@@ -26,7 +44,15 @@ public:
 
 
 public:
+    /// <summary>
+    /// 頂点配列サイズを変更します（2頂点で1ライン）。
+    /// </summary>
+    /// <param name="_size">頂点数。</param>
     void Resize(size_t _size);
+    /// <summary>
+    /// ライン本数を変更します。
+    /// </summary>
+    /// <param name="_numLines">ライン数。</param>
     void ResizeLine(size_t _numLines);
     void SetColor(const Vector4& _color) { color_ = _color; }
     void SetGameEye(GameEye** _eye) { pGameEye_ = _eye; }
@@ -55,8 +81,19 @@ private:
     Vector4 color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 private:
+    /// <summary>
+    /// 頂点バッファ用のリソースを生成します。
+    /// </summary>
     void CreateVertexResource();
+    
+    /// <summary>
+    /// WVP 行列用のリソースを生成します。
+    /// </summary>
     void CreateWVPMatrixResource();
+    
+    /// <summary>
+    /// 色定数バッファ用のリソースを生成します。
+    /// </summary>
     void CreateColorResource();
 
 private:

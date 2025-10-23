@@ -3,6 +3,9 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <Features/Model/ModelData.h>
 
+/// <summary>
+/// モデルインターフェース
+/// </summary>
 class IModel : public EngineFeature
 {
 public:

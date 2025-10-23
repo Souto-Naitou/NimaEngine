@@ -1,7 +1,6 @@
 #include "RandomFilter.h"
 #include <cassert>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/PostEffect.h>
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
@@ -10,10 +9,11 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 
-void RandomFilter::Initialize()
+void RandomFilter::Initialize(const PostEffectInitDesc& desc)
 {
+    pDx12_ = desc.pDx12;
+    commandList_ = desc.pCommandList;
     device_ = pDx12_->GetDevice();
-    commandList_ = PostEffectExecuter::GetInstance()->GetCommandList();
 
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RandomFilter");
@@ -64,7 +64,7 @@ bool RandomFilter::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE RandomFilter::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return renderTexture_.GetSRVHandleGPU();
 }
 
 const std::string& RandomFilter::GetName() const
@@ -97,7 +97,7 @@ void RandomFilter::Setting()
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -113,9 +113,9 @@ void RandomFilter::Setting()
 
 void RandomFilter::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
+    SRVManager::GetInstance()->Deallocate(renderTexture_.GetSRVIndex());
     renderTexture_.GetResource().Reset();
-        renderTexture_.GetStateTracker().Reset();
+    renderTexture_.GetStateTracker().Reset();
 }
 
 void RandomFilter::OnResizedBuffers()

@@ -4,15 +4,33 @@
 #include <string>
 #include <Features/Sprite/Sprite.h>
 
-
+/// <summary>
+/// フェードイン・フェードアウト
+/// </summary>
 class TransFadeInOut : public TransBase
 {
 public:
     ~TransFadeInOut();
+    /// <summary>
+    /// フェードイン・アウトの初期化を行います。
+    /// </summary>
+    /// <param name="_sceneName">遷移先のシーン名。</param>
     void Initialize(const std::string& _sceneName) override;
+    /// <summary>
+    /// 状態を更新します。
+    /// </summary>
     void Update() override;
+    /// <summary>
+    /// エフェクトを描画します。
+    /// </summary>
     void Draw() override;
+    /// <summary>
+    /// 後始末を行います。
+    /// </summary>
     void Finalize() override;
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void ImGui() override;
 
 private:

@@ -25,42 +25,91 @@ struct GaussianBloomOption
 //   c. 結果を出力リソースに書き込む
 //   input -> luminance -> gaussian filter -> output
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class GaussianBloom :
-    public IPostEffect,
-    public EngineFeature
+/// ガウシアンブルーム
+class GaussianBloom : public IPostEffect
 {
 public:
-    void    Initialize()                override;
+    /// <summary>
+    /// エフェクトを初期化し、必要なリソースを確保します。
+    /// </summary>
+    /// <param name="desc">DX12 まわりの初期化情報。</param>
+    void    Initialize(const PostEffectInitDesc& desc)                override;
+    
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void    Finalize()                  override;
+    
+    /// <summary>
+    /// エフェクトの有効/無効を設定します。
+    /// </summary>
+    /// <param name="_flag">true で有効。</param>
     void    Enable(bool _flag)          override;
+    
+    /// <summary>
+    /// エフェクトが有効かどうかを返します。
+    /// </summary>
     bool    Enabled() const             override;
+    
+    /// <summary>
+    /// エフェクトを適用します。
+    /// </summary>
     void    Apply()                     override;
+    
+    /// <summary>
+    /// 描画のための設定を行います。
+    /// </summary>
     void    Setting()                   override;
+    
+    /// <summary>
+    /// リサイズ前の処理を行います。
+    /// </summary>
     void    OnResizeBefore()            override;
+    
+    /// <summary>
+    /// バッファリサイズ変更後の処理を行います。
+    /// </summary>
     void    OnResizedBuffers()          override;
+    
+    /// <summary>
+    /// レンダーターゲットをシェーダーリソース状態へ遷移させます。
+    /// </summary>
     void    ToShaderResourceState()     override;
+    
+    /// <summary>
+    /// デバッグオーバーレイを描画します。
+    /// </summary>
     void    DebugOverlay()              override;
 
     // Setters
+    /// <summary>
+    /// 入力テクスチャの GPU ハンドルを設定します。
+    /// </summary>
+    /// <param name="_gpuHandle">SRV ハンドル。</param>
     void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
 
     // =============================================
     // [Getter Begin]
     D3D12_GPU_DESCRIPTOR_HANDLE             GetOutputTextureHandle()        const override;
     const std::string&                      GetName()                       const override;
+    /// <summary>オプション（読み取り専用）を取得します。</summary>
     const GaussianBloomOption&              GetOption()                     const;
+    /// <summary>内部の分離ガウシアンフィルタ（読み取り専用）を取得します。</summary>
     const SeparatedGaussianFilter*          GetSeparatedGaussianFilter()    const;
+    /// <summary>内部の輝度抽出フィルタ（読み取り専用）を取得します。</summary>
     const LuminanceOutput*                  GetLuminanceOutputFilter()      const;
+    /// <summary>オプションへの参照を取得します。</summary>
     GaussianBloomOption&                    GetOption();
+    /// <summary>内部の分離ガウシアンフィルタへの参照を取得します。</summary>
     SeparatedGaussianFilter*                GetSeparatedGaussianFilter();
+    /// <summary>内部の輝度抽出フィルタへの参照を取得します。</summary>
     LuminanceOutput*                        GetLuminanceOutputFilter();
     // [Getter End]
     // =============================================
 
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                     = nullptr;
     ID3D12GraphicsCommandList*                          commandList_                = nullptr;
     bool                                                isEnabled_                  = false;

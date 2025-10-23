@@ -2,6 +2,9 @@
 
 #include <map>
 
+/// <summary>
+/// デルタタイム共有クラス
+/// </summary>
 class DeltaTimeManager
 {
 public:

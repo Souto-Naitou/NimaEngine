@@ -7,6 +7,9 @@
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <dxgiformat.h>
 
+/// <summary>
+/// ID3D12Resourceと各種DescriptorHandleをまとめたラッパークラス
+/// </summary>
 class DX12Resource
 {
 public:

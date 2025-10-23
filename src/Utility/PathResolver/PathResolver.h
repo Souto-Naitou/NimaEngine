@@ -10,7 +10,13 @@ public:
     PathResolver() = default;
     ~PathResolver() = default;
 
+    /// <summary>
+    /// パス解決に必要な初期化を行います。
+    /// </summary>
     void Initialize();
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void Finalize();
 
     /// <summary>

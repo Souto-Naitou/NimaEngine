@@ -4,6 +4,9 @@
 #include <Features/Input/Input.h>
 #include <Quaternion.h>
 
+/// <summary>
+/// フリールックカメラクラス
+/// </summary>
 class FreeLookEye : public GameEye
 {
 public:

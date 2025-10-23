@@ -2,6 +2,9 @@
 
 #include <Windows.h>
 
+/// <summary>
+/// 代入時にassertチェックを行うHRESULTラッパークラス
+/// </summary>
 class HRESULT_ASSERT
 {
 public:

@@ -7,15 +7,11 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/DX12Resource/DX12Resource.h>
 
-/// <グレースケール>
-
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class Grayscale : 
-    public IPostEffect,
-    public EngineFeature
+/// グレースケール
+class Grayscale : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -36,6 +32,7 @@ public:
     const std::string&              GetName() const override;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

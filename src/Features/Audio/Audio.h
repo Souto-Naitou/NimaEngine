@@ -36,6 +36,9 @@ struct SoundData
     DWORD bufferSize;
 };
 
+/// <summary>
+/// オーディオクラス (再生用ハンドラ)
+/// </summary>
 class Audio
 {
 public:

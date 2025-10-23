@@ -14,19 +14,50 @@
 #include <cstdint>
 #include <Features/Particle/Emitter/EmitterData.h>
 
+/// <summary>
+/// パーティクルエミッタ
+/// </summary>
 class ParticleEmitter
 {
 public:
     ParticleEmitter() = default;
     ~ParticleEmitter() = default;
 
+    /// <summary>
+    /// パーティクルエミッタを初期化します。
+    /// </summary>
+    /// <param name="_pModel">使用するパーティクルモデル。</param>
+    /// <param name="_jsonPath">エミッタ設定のJSONパス（任意）。</param>
     void Initialize(IModel* _pModel, const std::string& _jsonPath = {});
+
+    /// <summary>
+    /// 手動発生モードを有効にします。
+    /// </summary>
     void EnableManualMode();
+
+    /// <summary>
+    /// 手動発生モードを無効にします。
+    /// </summary>
     void DisableManualMode();
+
+    /// <summary>
+    /// エミッタの状態を更新します。
+    /// </summary>
     void Update();
+
+    /// <summary>
+    /// パーティクルの描画を行います。
+    /// </summary>
     void Draw();
+
+    /// <summary>
+    /// リソースの解放を行います。
+    /// </summary>
     void Finalize();
 
+    /// <summary>
+    /// 1回分のパーティクル発生を行います。
+    /// </summary>
     void Emit();
 
 public: /// Setter
@@ -60,10 +91,26 @@ private:
 
 
 private:
+    /// <summary>
+    /// 実際のパーティクル生成処理を行います。
+    /// </summary>
     void EmitParticle();
+
+    /// <summary>
+    /// 単位球上のランダムベクトルを生成します。
+    /// </summary>
+    /// <returns>ランダム方向ベクトル。</returns>
     Vector3 RandomUnitSphere();
 
 private:
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void ImGui();
+
+    /// <summary>
+    /// カメラ参照を更新します。
+    /// </summary>
+    /// <param name="_eye">GameEye のダブルポインタ。</param>
     void ModifyGameEye(GameEye** _eye);
 };

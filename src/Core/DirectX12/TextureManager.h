@@ -12,6 +12,9 @@
 #include <wrl/client.h>
 #include <filesystem>
 
+/// <summary>
+/// テクスチャ管理クラス
+/// </summary>
 class TextureManager : public EngineFeature
 {
 public:
@@ -21,9 +24,15 @@ public:
     TextureManager& operator=(const TextureManager&&) = delete;
 
     static TextureManager* GetInstance() { static TextureManager instance; return &instance;}
-
+    /// <summary>
+    /// テクスチャ管理を初期化します。
+    /// </summary>
+    /// <param name="_srvManager">SRV 管理クラス。</param>
     void Initialize(SRVManager* _srvManager);
 
+    /// <summary>
+    /// 中間リソース（アップロードバッファ等）を解放します。
+    /// </summary>
     void ReleaseIntermediateResources();
 
     /// <summary>
@@ -73,9 +82,35 @@ private:
         kDDS,      // DirectDraw Surface
     };
 
+    /// <summary>
+    /// ファイル拡張子からテクスチャ種別を判定します。
+    /// </summary>
+    /// <param name="_filePath">ファイルパス。</param>
+    /// <returns>テクスチャ種別。</returns>
     TextureType GetTextureType(const std::wstring& _filePath) const;
+    
+    /// <summary>
+    /// 画像ファイルを読み込みます。
+    /// </summary>
+    /// <param name="_type">テクスチャ種別。</param>
+    /// <param name="_filepath">ファイルパス。</param>
+    /// <param name="_image">読み込まれた画像データの出力先。</param>
+    /// <returns>HRESULT。</returns>
     HRESULT LoadImageFromFile(TextureType _type, const std::wstring& _filepath, DirectX::ScratchImage& _image);
+    
+    /// <summary>
+    /// SRV を作成します。
+    /// </summary>
+    /// <param name="_type">テクスチャ種別。</param>
+    /// <param name="_textureData">テクスチャデータ。</param>
     void CreateSRV(TextureType _type, const TextureData& _textureData);
+    
+    /// <summary>
+    /// 検索パスに基づきファイルパスを解決します。
+    /// </summary>
+    /// <param name="_filePath">元のファイルパス。</param>
+    /// <returns>解決済みファイルパス。</returns>
+    std::string ResolveFilePath(const std::string& _filePath);
 
     std::unordered_map<std::filesystem::path, TextureData> textureDataMap_;
     PathResolver pathResolver_ = {};

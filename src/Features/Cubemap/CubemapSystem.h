@@ -2,18 +2,29 @@
 
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
-#include <Common/structs.h>
 #include <Features/GameEye/GameEye.h>
 
+/// <summary>
+/// キューブマップ共通
+/// </summary>
 class CubemapSystem : public EngineFeature
 {
 public:
     CubemapSystem() = default;
     ~CubemapSystem() override = default;
 
+    /// <summary>
+    /// システムを初期化します。
+    /// </summary>
     void Initialize();
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void Finalize();
 
+    /// <summary>
+    /// キューブマップ描画のための設定を行います。
+    /// </summary>
     void DrawSetting();
 
     GameEye** GetGlobalEye() { return &pGlobalEye_; }

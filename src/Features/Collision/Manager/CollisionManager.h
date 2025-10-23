@@ -8,6 +8,9 @@
 #include <Features/Primitive/AABB.h>
 #include <Features/Primitive/OBB.h>
 
+/// <summary>
+/// 衝突判定実行クラス   
+/// </summary>
 class CollisionManager
 {
 public:
@@ -17,15 +20,51 @@ public:
     CollisionManager& operator=(const CollisionManager&&) = delete;
 
     static CollisionManager* GetInstance() { static CollisionManager instance; return &instance; }
-
+    /// <summary>
+    /// 衝突マネージャの初期化を行います。
+    /// </summary>
     void Initialize();
+    
+    /// <summary>
+    /// 終了処理を行います。
+    /// </summary>
     void Finalize();
+    
+    /// <summary>
+    /// 登録された全てのコライダーについて衝突判定を行います。
+    /// </summary>
     void CheckAllCollision();
+    
+    /// <summary>
+    /// コライダーを登録します。
+    /// </summary>
+    /// <param name="_collider">登録するコライダー。</param>
     void RegisterCollider(Collider* _collider);
+    
+    /// <summary>
+    /// コライダーを登録解除します。
+    /// </summary>
+    /// <param name="_collider">削除するコライダー。</param>
     void DeleteCollider(Collider* _collider);
+    
+    /// <summary>
+    /// すべてのコライダー登録をクリアします。
+    /// </summary>
     void ClearCollider();
+    
+    /// <summary>
+    /// 新しい属性値（ビット）を発行します。
+    /// </summary>
+    /// <param name="_id">属性名。</param>
+    /// <returns>割り当てられた属性ビット。</returns>
     uint32_t GetNewAttribute(std::string _id);
 
+    /// <summary>
+    /// 指定IDに対して衝突無視対象を加味したマスクを生成・登録します。
+    /// </summary>
+    /// <param name="_id">マスクのID。</param>
+    /// <param name="_ignoreNames">衝突を無視する属性名の可変引数。</param>
+    /// <returns>生成・登録されたマスク値へのポインタ。</returns>
     template <typename... Args>
     uint32_t* GetNewMask(std::string _id, Args... _ignoreNames)
     {

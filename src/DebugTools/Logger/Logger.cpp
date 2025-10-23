@@ -68,25 +68,75 @@ void Logger::Save()
 
 void Logger::DrawUI()
 {
-#ifdef _DEBUG
+    #ifdef _DEBUG
 
     ImGuiWindowFlags flag = {};
     flag |= ImGuiWindowFlags_HorizontalScrollbar;
-    if ( enableAutoScroll_ )
+    if (enableAutoScroll_)
     {
         flag = ImGuiWindowFlags_NoScrollWithMouse;
         flag |= ImGuiWindowFlags_NoScrollbar;
     }
 
-    if ( ImGui::Begin("Log", nullptr, flag) )
+    if (ImGui::Begin("Log", nullptr, flag))
     {
         ImGui::Checkbox("Auto Scroll", &enableAutoScroll_);
 
+        ImGui::Checkbox("Date", &showDate_);
+        ImGui::SameLine();
+        ImGui::Checkbox("Time", &showTime_);
+        ImGui::SameLine();
+        ImGui::Checkbox("Filename", &showFilename_);
+        ImGui::SameLine();
+        ImGui::Checkbox("Action", &showAction_);
+        ImGui::SameLine();
+        ImGui::Checkbox("Message", &showMessage_);
+
         ImGui::BeginChild("LogChild", ImVec2(-1, -1), ImGuiChildFlags_Border, flag);
 
-        ImGui::TextUnformatted(logPayload_.data());
+        // 🚀 ImGuiListClipperを使用して高速化
+        ImGuiListClipper clipper;
+        clipper.Begin(static_cast<int>(logData_.size()));
 
-        if ( enableAutoScroll_ )
+        while (clipper.Step())
+        {
+            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+            {
+                const auto& log = *(std::next(logData_.begin(), i));
+                std::string line;
+
+                if (showDate_)     line += "[" + log.date + "] ";
+                if (showTime_)     line += "[" + log.time + "] ";
+                if (showFilename_) line += "[" + log.filename + "] ";
+                if (showAction_)   line += "[" + log.action + "] ";
+
+                // ステータスに応じて色を設定
+                ImVec4 color = ImVec4(1, 1, 1, 1);
+                if (!log.status.empty())
+                {
+                    if (log.status == "Info")    color = ImVec4(0.6f, 0.8f, 1.0f, 1.0f);
+                    if (log.status == "Warning") color = ImVec4(1.0f, 0.8f, 0.4f, 1.0f);
+                    if (log.status == "Error")   color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f);
+
+                    ImGui::PushStyleColor(ImGuiCol_Text, color);
+                    ImGui::Text("[%s]", log.status.c_str());
+                    ImGui::PopStyleColor();
+
+                    ImGui::SameLine();
+                }
+
+                if (showMessage_)
+                    line += log.message;
+
+                // 一行全体を色付きで描画
+                ImGui::PushStyleColor(ImGuiCol_Text, color);
+                ImGui::TextUnformatted(line.c_str());
+                ImGui::PopStyleColor();
+            }
+        }
+        clipper.End();
+
+        if (enableAutoScroll_)
         {
             ImGui::SetScrollHereY(1.0f);
         }
@@ -95,7 +145,7 @@ void Logger::DrawUI()
     }
     ImGui::End();
 
-#endif // _DEBUG
+    #endif // _DEBUG
 }
 
 void Logger::LogError(const std::string& _filename, const std::string& _action, const std::string& _message)

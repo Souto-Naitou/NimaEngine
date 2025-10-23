@@ -2,6 +2,9 @@
 
 #include <NiGui/Interface/NiGui_IDebug.h>
 
+/// <summary>
+/// NiGuiデバッグクラス
+/// </summary>
 class NiGuiDebug : public INiGuiDebug
 {
 public:

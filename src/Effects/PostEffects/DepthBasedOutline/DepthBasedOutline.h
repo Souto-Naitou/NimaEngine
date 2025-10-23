@@ -5,7 +5,6 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <Matrix4x4.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
@@ -20,15 +19,11 @@ struct alignas(16) DepthBasedOutlineMaterial
     Matrix4x4 projectionInverse;
 };
 
-/// <ボックスフィルタ>
-/// - ApplyメソッドとSettingメソッドはPostEffectクラスで実行する
-class DepthBasedOutline : 
-    public IPostEffect,
-    public EngineFeature
-
+/// 深度ベースアウトライン
+class DepthBasedOutline : public IPostEffect
 {
 public:
-    void    Initialize() override;
+    void    Initialize(const PostEffectInitDesc& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -53,6 +48,7 @@ public:
     const DepthBasedOutlineMaterial&    GetMaterial() const;
 
 private:
+    DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 

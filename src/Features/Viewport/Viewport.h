@@ -8,17 +8,32 @@
 #ifdef _DEBUG
 #include <imgui.h>
 #endif //_DEBUG
+#include <Vector2.h>
 
+/// <summary>
+/// ImGui上にビューポートを表示するクラス
+/// </summary>
 class Viewport : public EngineFeature
 {
 public:
     Viewport() = default;
     ~Viewport() = default;
 
-
+    /// <summary>
+    /// 必要なリソースを生成し、ビューポート機能を初期化します。
+    /// </summary>
     void Initialize();
+    /// <summary>
+    /// 入力テクスチャからビューポート用に画像処理を行います。
+    /// </summary>
     void Compute();
+    /// <summary>
+    /// スワップチェイン等のリサイズに伴うリソースの再生成を行います。
+    /// </summary>
     void OnResizedBuffers();
+    /// <summary>
+    /// ImGui 上にビューポートウィンドウを描画します。
+    /// </summary>
     void DrawWindow();
 
 
@@ -29,9 +44,21 @@ public: /// Getter
 
 
 private:
+    /// <summary>
+    /// ルートシグネチャを作成します。
+    /// </summary>
     void CreateRootSignature();
+    /// <summary>
+    /// パイプラインステートオブジェクトを作成します。
+    /// </summary>
     void CreatePSO();
+    /// <summary>
+    /// SRV を作成します。
+    /// </summary>
     void CreateSRV();
+    /// <summary>
+    /// UAV を作成します。
+    /// </summary>
     void CreateUAV();
 
 

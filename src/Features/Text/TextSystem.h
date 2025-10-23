@@ -10,6 +10,9 @@
 #include <string>
 #include <utility>
 
+/// <summary>
+/// テキスト描画共通
+/// </summary>
 class TextSystem : public EngineFeature
 {
 public:

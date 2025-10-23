@@ -21,14 +21,14 @@ void TextureManager::ReleaseIntermediateResources()
     resourcesIntermediate_.clear();
 }
 
-void TextureManager::LoadTexture(const std::string& _filePath)
+void TextureManager::LoadTexture(const std::string& filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
+    std::string strPathResolved = this->ResolveFilePath(filePath);
 
     /// すでに読み込まれている場合は読み込まない
     for (auto& [key, value] : textureDataMap_)
     {
-        if (std::filesystem::equivalent(key, std::filesystem::path(fullPath)))
+        if (std::filesystem::equivalent(key, std::filesystem::path(strPathResolved)))
         {
             return;
         }
@@ -36,11 +36,11 @@ void TextureManager::LoadTexture(const std::string& _filePath)
 
     assert(!srvManager_->IsFull() && "SRVがいっぱいです");
 
-    TextureData& textureData = textureDataMap_[fullPath];
+    TextureData& textureData = textureDataMap_[strPathResolved];
 
     // ファイルから画像を読み込む
     DirectX::ScratchImage image{};
-    std::wstring filePathW = ConvertString(fullPath);
+    std::wstring filePathW = ConvertString(strPathResolved);
     TextureType textureType = this->GetTextureType(filePathW);
     HRESULT hr = this->LoadImageFromFile(textureType, filePathW, image);
 
@@ -72,7 +72,7 @@ void TextureManager::LoadTexture(const std::string& _filePath)
         tempResource,
         D3D12_RESOURCE_STATE_COPY_DEST,
         textureData.metadata.format,
-        fullPath
+        strPathResolved
     );
     
     resourcesIntermediate_.push_back(
@@ -98,10 +98,10 @@ void TextureManager::LoadTexture(const std::string& _filePath)
     this->CreateSRV(textureType, textureData);
 }
 
-void TextureManager::UnloadTexture(const std::string& _filePath)
+void TextureManager::UnloadTexture(const std::string& filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    auto it = textureDataMap_.find(fullPath);
+    std::string strPathResolved = this->ResolveFilePath(filePath);
+    auto it = textureDataMap_.find(strPathResolved);
     if (it == textureDataMap_.end())
     {
         return; // テクスチャが見つからない場合は何もしない
@@ -117,14 +117,14 @@ void TextureManager::UnloadTexture(const std::string& _filePath)
     textureDataMap_.erase(it); // マップから削除
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& _filePath)
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    std::filesystem::path fsFull(fullPath);
+    std::string strPathResolved = this->ResolveFilePath(filePath);
+    std::filesystem::path fsPathResolved(strPathResolved);
 
     for (auto& [key, value] : textureDataMap_)
     {
-        if (std::filesystem::equivalent(key, fsFull))
+        if (std::filesystem::equivalent(key, fsPathResolved))
         {
             return value.textureResource.GetSRVHandleGPU();
         }
@@ -136,8 +136,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& _
 
 const DX12Resource& TextureManager::GetTextureResource(const std::string& _filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    const TextureData& textureData = textureDataMap_[fullPath];
+    std::string resolvedPath = this->ResolveFilePath(_filePath);
+    const TextureData& textureData = textureDataMap_[resolvedPath];
     return textureData.textureResource;
 }
 
@@ -195,16 +195,29 @@ void TextureManager::CreateSRV(TextureType _type, const TextureData& _textureDat
     }
 }
 
-const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& _filePath)
+std::string TextureManager::ResolveFilePath(const std::string& filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    const TextureData& textureData = textureDataMap_[fullPath];
+    std::string result = pathResolver_.GetFilePath(filePath);
+    if (result.empty())
+    {
+        Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, "Missing file [" + filePath + "]");
+        // 見つからなかった場合はデフォルトテクスチャを返す
+        result = pathResolver_.GetFilePath("white1x1.png");
+    }
+
+    return result;
+}
+
+const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& filePath)
+{
+    std::string resolvedPath = this->ResolveFilePath(filePath);
+    const TextureData& textureData = textureDataMap_[resolvedPath];
     return textureData.metadata;
 }
 
-uint32_t TextureManager::GetSrvIndex(const std::string& _filePath)
+uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 {
-    std::string fullPath = pathResolver_.GetFilePath(_filePath);
-    const TextureData& textureData = textureDataMap_[fullPath];
+    std::string resolvedPath = this->ResolveFilePath(filePath);
+    const TextureData& textureData = textureDataMap_[resolvedPath];
     return textureData.textureResource.GetSRVIndex();
 }

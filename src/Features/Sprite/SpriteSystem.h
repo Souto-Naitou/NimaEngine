@@ -7,6 +7,9 @@
 #include <BaseClasses/ObjectSystemBaseMT.h>
 #include <Common/SingletonPattern.h>
 
+/// <summary>
+/// スプライト描画共通
+/// </summary>
 class SpriteSystem : 
     public SingletonPattern<SpriteSystem>,
     public ObjectSystemBaseMT
@@ -24,12 +27,28 @@ public:
     };
 
     // Common functions
+    /// <summary>
+    /// スプライト描画システムを初期化します。
+    /// </summary>
     void Initialize() override;
+    /// <summary>
+    /// バックバッファへの描画を実施します。
+    /// </summary>
     void PresentDraw();
+    /// <summary>
+    /// 累積した描画コマンドを発行します。
+    /// </summary>
     void DrawCall();
+    /// <summary>
+    /// GPU 完了を待機して同期します。
+    /// </summary>
     void Sync();
 
     // Setter
+    /// <summary>
+    /// 描画に必要なコマンドリストデータを追加します。
+    /// </summary>
+    /// <param name="_data">マテリアル、行列、VBV/IBV、SRV など。</param>
     void AddCommandListData(const CommandListData& _data);
 
 private:

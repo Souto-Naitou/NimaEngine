@@ -22,13 +22,43 @@ public:
 
 
 public:
+    /// <summary>
+    /// キーに対応する JSON への参照を取得（なければ生成）します。
+    /// </summary>
+    /// <param name="_key">キー。</param>
+    /// <returns>JSON 参照。</returns>
     json& operator[](const std::string& _key);
+    
+    /// <summary>
+    /// 先頭イテレータを取得します。
+    /// </summary>
     Iterator begin();
+    
+    /// <summary>
+    /// 終端イテレータを取得します。
+    /// </summary>
     Iterator end();
+    
+    /// <summary>
+    /// 指定キーの要素を削除します。
+    /// </summary>
+    /// <param name="_key">キー。</param>
+    /// <returns>削除件数。</returns>
     size_t erase(const std::string& _key);
 
 public:
+    /// <summary>
+    /// 指定キーの JSON 参照を取得します（存在しない場合は例外）。
+    /// </summary>
+    /// <param name="_key">キー。</param>
+    /// <returns>JSON 参照。</returns>
     json& at(const std::string& _key);
+    
+    /// <summary>
+    /// 指定キーのイテレータを取得します。
+    /// </summary>
+    /// <param name="_key">キー。</param>
+    /// <returns>該当要素のイテレータ、見つからなければ end()。</returns>
     Iterator find(const std::string& _key);
 
 
@@ -77,7 +107,24 @@ public:
     }
 
 
+    /// <summary>
+    /// JSON ファイルを読み込み、ストレージにキャッシュします。
+    /// </summary>
+    /// <param name="_path">ファイルパス。</param>
+    /// <returns>読み込んだ JSON 参照。</returns>
     const json& Load(const std::string& _path);
+    
+    /// <summary>
+    /// JSON データをファイルへ保存します。
+    /// </summary>
+    /// <param name="_path">保存先ファイルパス。</param>
+    /// <param name="_jsonData">保存する JSON。</param>
     void Save(const std::string& _path, const json& _jsonData);
+    
+    /// <summary>
+    /// 指定パスの JSON をストレージからアンロードします。
+    /// </summary>
+    /// <param name="_path">ファイルパス。</param>
+    /// <returns>アンロードできた場合は true。</returns>
     bool Unload(const std::string& _path);
 };

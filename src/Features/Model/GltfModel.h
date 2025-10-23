@@ -10,6 +10,9 @@
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 #include "SkinCluster.h"
 
+/// <summary>
+/// glTFモデル
+/// </summary>
 class GltfModel : public IModel 
 {
 public:

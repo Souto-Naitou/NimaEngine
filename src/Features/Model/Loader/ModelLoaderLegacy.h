@@ -1,11 +1,9 @@
 #pragma once
 #include "./IModelLoader.h"
 #include <Features/Model/IModel.h>
-#include <Common/structs.h>
 #include <Features/ThreadPool/ThreadPool.h>
 
 #include <mutex>
-#include <list>
 #include <memory>
 #include <Core/DirectX12/DirectX12.h>
 #include <queue>

@@ -5,6 +5,9 @@
 #include <Features/Sprite/Sprite.h>
 #include <NiGui/Type/NiGui_Type_Core.h>
 
+/// <summary>
+/// NiGui描画クラス 具象クラス
+/// </summary>
 class NiGuiDrawer : public INiGuiDrawer
 {
 public:

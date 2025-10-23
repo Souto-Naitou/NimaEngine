@@ -1,6 +1,9 @@
 #pragma once
 #include <Interfaces/ISceneArgs.h>
 
+/// <summary>
+/// シーン基底クラス
+/// </summary>
 class SceneBase
 {
 public:

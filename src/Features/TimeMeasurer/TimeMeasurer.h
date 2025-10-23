@@ -3,16 +3,31 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+/// <summary>
+/// 時間計測クラス
+/// </summary>
 class TimeMeasurer
 {
 public:
     TimeMeasurer();
     ~TimeMeasurer() {};
-
+    /// <summary>
+    /// 計測を開始します。
+    /// </summary>
     void Start();
+    /// <summary>
+    /// 計測を一時停止します。
+    /// </summary>
     void Stop();
+    /// <summary>
+    /// 計測値をリセットします。
+    /// </summary>
     void Reset();
     template <typename T>
+    /// <summary>
+    /// 開始からの経過時間を取得します。
+    /// </summary>
+    /// <returns>テンプレート型Tに変換された経過時間。</returns>
     T GetNow();
 
     bool GetIsStart() const { return isStart_; }

@@ -4,6 +4,10 @@
 #include "./AnimationTween.hpp"
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 
+/// <summary>
+/// タイムラインアニメーションクラス
+/// </summary>
+/// <typeparam name="ValueType">動きをつけたいデータの型</typeparam>
 template <typename ValueType>
 class AnimationTimeline
 {

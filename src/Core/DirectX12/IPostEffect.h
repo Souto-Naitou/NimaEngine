@@ -24,30 +24,66 @@ public:
     IPostEffect() = default;
     virtual ~IPostEffect() = default;
 
-    // Initialize the post effect
-    // Please use the "Helper::PostEffect::CreatePostEffect" function to create an instance.
+    /// <summary>
+    /// ポストエフェクトを初期化します。
+    /// Helper::PostEffect::CreatePostEffect を使用してインスタンスを生成してください。
+    /// </summary>
+    /// <param name="desc">初期化に必要な DX12 まわりの情報。</param>
     virtual void    Initialize(const PostEffectInitDesc& desc) = 0;
-    // Release resources
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     virtual void    Finalize() = 0;
 
+    /// <summary>
+    /// 有効・無効を設定します。
+    /// </summary>
+    /// <param name="_flag">true で有効。</param>
     virtual void    Enable(bool _flag) = 0;
+    /// <summary>
+    /// 有効かどうかを返します。
+    /// </summary>
+    /// <returns>true なら有効。</returns>
     virtual bool    Enabled() const = 0;
 
-    // Setter
+    /// <summary>
+    /// 入力テクスチャのハンドルを設定します。
+    /// </summary>
+    /// <param name="handle">SRV の GPU ディスクリプタハンドル。</param>
     virtual void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE handle) = 0;
-    // Getter
+    /// <summary>
+    /// 出力テクスチャのハンドルを取得します。
+    /// </summary>
+    /// <returns>SRV の GPU ディスクリプタハンドル。</returns>
     virtual D3D12_GPU_DESCRIPTOR_HANDLE GetOutputTextureHandle() const = 0;
+    /// <summary>
+    /// エフェクト名を取得します。
+    /// </summary>
     virtual const std::string& GetName() const = 0;
 
-    // Draw setting
+    /// <summary>
+    /// 描画のための設定を行います。
+    /// </summary>
     virtual void    Setting() = 0;
-    // Apply the post effect
+    /// <summary>
+    /// ポストエフェクトを適用します。
+    /// </summary>
     virtual void    Apply() = 0;
-    // Change the state of the render texture to shader resource state
+    /// <summary>
+    /// レンダーテクスチャの状態をシェーダーリソース状態へ遷移させます。
+    /// </summary>
     virtual void    ToShaderResourceState() = 0;
-    // On resize event
+    /// <summary>
+    /// リサイズイベントの事前処理を行います。
+    /// </summary>
     virtual void    OnResizeBefore() = 0;
+    /// <summary>
+    /// バッファリサイズ後の処理を行います。
+    /// </summary>
     virtual void    OnResizedBuffers() = 0;
+    /// <summary>
+    /// デバッグオーバーレイを描画します。
+    /// </summary>
     virtual void    DebugOverlay() = 0;
 };
 

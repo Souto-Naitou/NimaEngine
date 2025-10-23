@@ -24,11 +24,30 @@ class Text
 public:
     Text() = default;
     ~Text() = default;
-
+    
+    /// <summary>
+    /// テキスト描画に必要なリソースを初期化します。
+    /// </summary>
     void Initialize();
+    
+    /// <summary>
+    /// テキストの状態（位置・サイズなど）の更新を行います。
+    /// </summary>
     void Update();
+    
+    /// <summary>
+    /// テキストを描画します。
+    /// </summary>
     void Draw();
+    
+    /// <summary>
+    /// リソースの解放を行います。
+    /// </summary>
     void Finalize();
+    
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void ImGui();
 
 public: /// Getter
@@ -37,16 +56,32 @@ public: /// Getter
 
 public: /// Setter
     void SetName(const std::string& name) { if(pDebugEntry_) pDebugEntry_->SetName(name); }
+    /// <summary>
+    /// 表示する文字列を設定します。
+    /// </summary>
+    /// <param name="_text">文字列。</param>
     void SetText(const std::string& _text);
     void SetAnchorPoint(TextStandardPoint _anchor) { anchorPoint_ = _anchor; UpdatePosition(); }
     void SetPivot(TextStandardPoint _pivot) { pivot_ = _pivot; UpdatePosition(); }
+    
+    /// <summary>
+    /// 画面上の座標を設定します。
+    /// </summary>
+    /// <param name="_pos">座標（ピクセル）。</param>
     void SetPosition(const Vector2& _pos);
     void SetMaxSize(const Vector2& _maxsize) { maxsize_ = _maxsize; isChanged_ = true; }
     void SetFontFamily(const std::string& _fontFamily) { fontFamily_ = _fontFamily; isChanged_ = true; }
     void SetFontSize(float _fontSize) { fontSize_ = _fontSize; isChanged_ = true;}
     void SetColorName(const std::string& _key) { keyColor_ = _key; }
+    /// <summary>
+    /// 親テキストを設定します（相対位置計算に使用）。
+    /// </summary>
+    /// <param name="_parent">親となる Text。</param>
     void SetParent(Text* _parent);
 
+    /// <summary>
+    /// 現在の文字列・フォント設定からレイアウトを再生成します。
+    /// </summary>
     void CreateTextLayout();
 
 
@@ -86,7 +121,16 @@ private: /// デバッグ
     int                                         callCount_UpdatePosition_   = 0;
 
 private:
+    /// <summary>
+    /// 基準点から描画位置を算出します。
+    /// </summary>
+    /// <param name="_stdpoint">基準点。</param>
+    /// <returns>算出された座標。</returns>
     Vector2 ComputeStandardPosition(TextStandardPoint _stdpoint);
+    
+    /// <summary>
+    /// アンカー・ピボット・親子関係に基づき描画位置を更新します。
+    /// </summary>
     void UpdatePosition();
     void SetChild(Text* _child) { child_ = _child; }
 };

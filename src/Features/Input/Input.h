@@ -31,9 +31,22 @@ public:
         return &instance;
     }
 
+    /// <summary>
+    /// 入力システムを初期化します。
+    /// </summary>
+    /// <param name="_hInstance">アプリケーションインスタンス。</param>
+    /// <param name="_hwnd">ウィンドウハンドル。</param>
     void        Initialize(HINSTANCE _hInstance, HWND _hwnd);
+    /// <summary>
+    /// 入力状態を更新します。
+    /// キーボード/マウス/パッドの状態を取得して内部に反映します。
+    /// </summary>
     void        Update();
 
+    /// <summary>
+    /// 入力処理の有効/無効を切り替えます。
+    /// </summary>
+    /// <param name="_flag">trueで有効。</param>
     void        Enable(bool _flag);
 
     void        SetDeadZoneRange(float deadZoneRange) { deadZoneRange_ = deadZoneRange; }
@@ -58,10 +71,25 @@ private:
     
     // Internal functions
     static BOOL CALLBACK EnumJoystickCallback(const DIDEVICEINSTANCE* pdidInstance, void* context);
+    /// <summary>
+    /// 文字からDirectInputのキー番号へ変換します。
+    /// </summary>
     BYTE GetKeyNumber(char _key) const;
+    /// <summary>
+    /// デバイスの生入力から論理入力へマッピングします。
+    /// </summary>
     void MapInputData();
+    /// <summary>
+    /// ゲームパッドを初期化します。
+    /// </summary>
     void InitializePad(HWND hwnd);
+    /// <summary>
+    /// ゲームパッド状態を更新します。
+    /// </summary>
     void UpdatePad();
+    /// <summary>
+    /// 指定デバイスの状態を更新します。
+    /// </summary>
     void UpdateDeviceState(IDirectInputDevice8* pDevice, LPVOID out_state, size_t sizeState);
 
     // State

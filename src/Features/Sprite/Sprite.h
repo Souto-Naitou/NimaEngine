@@ -25,11 +25,31 @@ public:
 
     Sprite();
     ~Sprite();
-
+    
+    /// <summary>
+    /// スプライトを初期化します。
+    /// </summary>
+    /// <param name="_filepath">使用するテクスチャのパス。</param>
     void                Initialize(std::string _filepath);
+    
+    /// <summary>
+    /// スプライトの状態更新を行います。
+    /// </summary>
     void                Update();
+    
+    /// <summary>
+    /// スプライトを描画します。
+    /// </summary>
     void                Draw();
+    
+    /// <summary>
+    /// リソースの解放を行います。
+    /// </summary>
     void                Finalize();
+    
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void                ImGui();
 
 
@@ -54,6 +74,10 @@ public: /// Setter
     void                SetPosition(const Vector2& position)       { translate_ = position; }
     void                SetColor(const Vector4& color)             { materialData_->color = color; }
     void                SetSize(const Vector2& size)               { size_ = size; }
+    /// <summary>
+    /// 元サイズに対する倍率でサイズを設定します。
+    /// </summary>
+    /// <param name="factor">倍率。</param>
     void                SetSizeWithFactor(float factor);
     void                SetAnchorPoint(const Vector2& anchor)      { anchorPoint_ = anchor; }
     void                SetFlipX(const bool isFlipX)               { isFlipX_ = isFlipX; }
@@ -122,15 +146,48 @@ private: /// メンバ変数
     #endif
 
 private: /// メンバ関数
+    /// <summary>
+    /// 頂点バッファ用リソースを作成します。
+    /// </summary>
     void CreateVertexResource();
+    
+    /// <summary>
+    /// インデックスバッファ用リソースを作成します。
+    /// </summary>
     void CreateIndexResource();
+    
+    /// <summary>
+    /// 頂点バッファビューを作成します。
+    /// </summary>
     void CreateVertexBufferView();
+    
+    /// <summary>
+    /// インデックスバッファビューを作成します。
+    /// </summary>
     void CreateIndexBufferView();
 
+    /// <summary>
+    /// 頂点バッファをCPU側にマップします。
+    /// </summary>
     void MapVertexData();
+    
+    /// <summary>
+    /// インデックスバッファをCPU側にマップします。
+    /// </summary>
     void MapIndexData();
 
+    /// <summary>
+    /// マテリアル用定数バッファを作成します。
+    /// </summary>
     void CreateMaterialResource();
+    
+    /// <summary>
+    /// 変換行列用定数バッファを作成します。
+    /// </summary>
     void CreateTransformationMatrixResource();
+    
+    /// <summary>
+    /// テクスチャのアスペクトなどから適切なスプライトサイズに調整します。
+    /// </summary>
     void AdjustSpriteSize();
 };

@@ -20,15 +20,43 @@ public:
     /// ctor , dtor
     PostEffectExecuter() = default;
     ~PostEffectExecuter() = default;
-
+    
+    /// <summary>
+    /// 実行に必要なリソース・パイプラインを初期化します。
+    /// </summary>
+    /// <param name="isRegisterDebugWindow">デバッグUIを登録するか。</param>
     void Initialize(bool isRegisterDebugWindow = true);
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void Finalize();
+    /// <summary>
+    /// 登録されたポストエフェクトを順に適用します。
+    /// </summary>
     void ApplyPostEffects();
+    /// <summary>
+    /// フレーム開始時の初期化処理を行います。
+    /// </summary>
     void NewFrame();
+    /// <summary>
+    /// ポストエフェクト適用後の後処理を行います。
+    /// </summary>
     void PostDraw();
+    /// <summary>
+    /// 最終出力の描画を行います。
+    /// </summary>
     void Draw();
+    /// <summary>
+    /// クライアントサイズ変更時に呼び出し、リソース再作成を要求します。
+    /// </summary>
     void OnResize();
+    /// <summary>
+    /// バッファ再作成後に呼び出し、ハンドル等を更新します。
+    /// </summary>
     void OnResizedBuffers();
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
     void ImGui();
 
 
@@ -92,11 +120,36 @@ private:
 
 
 private:
+    /// <summary>
+    /// 必要なシステムインスタンスを取得します。
+    /// </summary>
     void ObtainInstances();
+    
+    /// <summary>
+    /// ルートシグネチャを作成します。
+    /// </summary>
     void CreateRootSignature();
+    
+    /// <summary>
+    /// パイプラインステートを作成します。
+    /// </summary>
     void CreatePipelineState();
+    
+    /// <summary>
+    /// 描画用コマンドリストを作成します。
+    /// </summary>
     void CreateCommandList();
+    
+    /// <summary>
+    /// 指定インデックスのエフェクトのみを単独実行するモードを切り替えます。
+    /// </summary>
+    /// <param name="_index">エフェクトのインデックス。</param>
     void EnableSolo(const size_t _index);
+    
+    /// <summary>
+    /// 中央寄せテーブルにUIを配置するヘルパ。
+    /// </summary>
+    /// <param name="_fn">描画関数。</param>
     void ImGuiCenterTable(const std::function<void()>& _fn);
 
 

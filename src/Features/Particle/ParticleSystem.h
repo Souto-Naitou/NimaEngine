@@ -33,10 +33,22 @@ public:
         return &instance;
     }
 
+    /// <summary>
+    /// パーティクル共通描画の初期化を行います。
+    /// </summary>
     void Initialize() override;
+    /// <summary>
+    /// フレーム終端での描画（リングバッファ切替など）を行います。
+    /// </summary>
     void PresentDraw();
 
+    /// <summary>
+    /// キューされた描画コマンドを発行します。
+    /// </summary>
     void DrawCall();
+    /// <summary>
+    /// マルチスレッド環境での同期を行います。
+    /// </summary>
     void Sync();
 
 
@@ -63,6 +75,12 @@ private: /// メンバ変数
 
 private: /// 非公開関数
     ParticleSystem() = default;
+    /// <summary>
+    /// ルートシグネチャを作成します。
+    /// </summary>
     void CreateRootSignature();
+    /// <summary>
+    /// パーティクル描画用パイプラインを作成します。
+    /// </summary>
     void CreatePipelineState();
 };

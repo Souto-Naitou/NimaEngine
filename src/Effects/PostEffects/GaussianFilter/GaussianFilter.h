@@ -18,26 +18,45 @@ struct alignas(16) GaussianFilterOption
 class GaussianFilter : public IPostEffect
 {
 public:
+    /// <summary>
+    /// エフェクトを初期化します。
+    /// </summary>
+    /// <param name="desc">DX12 初期化情報。</param>
     void    Initialize(const PostEffectInitDesc& desc) override;
+    
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void    Finalize() override;
 
+    /// <summary>有効・無効を設定します。</summary>
     void    Enable(bool _flag) override;
+    /// <summary>有効かどうかを返します。</summary>
     bool    Enabled() const override;
 
+    /// <summary>エフェクトを適用します。</summary>
     void    Apply() override;
+    /// <summary>描画設定を行います。</summary>
     void    Setting() override;
+    /// <summary>リサイズ前の処理を行います。</summary>
     void    OnResizeBefore() override;
+    /// <summary>リサイズ後の処理を行います。</summary>
     void    OnResizedBuffers() override;
+    /// <summary>レンダーターゲットをシェーダーリソース状態へ遷移させます。</summary>
     void    ToShaderResourceState() override;
+    /// <summary>デバッグオーバーレイを描画します。</summary>
     void    DebugOverlay() override;
 
     // Setters
+    /// <summary>入力テクスチャのハンドルを設定します。</summary>
     void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
 
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;
     const std::string&              GetName() const override;
+    /// <summary>オプションへの参照を取得します。</summary>
     GaussianFilterOption&           GetOption();
+    /// <summary>オプション（読み取り専用）を取得します。</summary>
     const GaussianFilterOption&     GetOption() const;
 
 private:

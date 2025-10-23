@@ -28,7 +28,11 @@ public:
     inline void SetEnable(bool enable) { isEnabled_ = enable; }
     void SetName(const std::string& name);
 
-    /// 描画オブジェクトの登録
+    /// <summary>
+    /// 描画対象のスプライトを登録します。
+    /// </summary>
+    /// <param name="sprite">登録するスプライト。</param>
+    /// <returns>自身への参照。</returns>
     Canvas& RegisterDrawable(Sprite* sprite);
 
     // Getters
@@ -41,8 +45,20 @@ public:
     [[nodiscard]]
     inline PostEffectExecuter& GetPostEffectExecuter() const { return *pPostEffectExecuter_.get(); }
 
+    /// <summary>
+    /// キャンバスを初期化し、内部リソースを確保します。
+    /// </summary>
+    /// <param name="name">キャンバス名。</param>
     void Initialize(const std::string& name);
+    
+    /// <summary>
+    /// 登録されたスプライトとポストエフェクトを用いて描画します。
+    /// </summary>
     void Draw() const;
+    
+    /// <summary>
+    /// デバッグ用 UI を描画します。
+    /// </summary>
     void ImGui();
 
 private:

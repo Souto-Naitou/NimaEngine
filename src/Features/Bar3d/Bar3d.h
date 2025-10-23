@@ -15,9 +15,26 @@ public:
     Bar3d() = default;
     ~Bar3d() = default;
   
+    /// <summary>
+    /// 3D バーを初期化します。
+    /// </summary>
+    /// <param name="colorContext">バー本体の色。</param>
+    /// <param name="colorBG">背景バーの色。</param>
     void Initialize(const RGBA& colorContext = 0xff0000ff, const RGBA& colorBG = 0x000000cc);
+    
+    /// <summary>
+    /// 値や内部状態を更新します。
+    /// </summary>
     void Update();
+    
+    /// <summary>
+    /// 2D としてバーを描画します。
+    /// </summary>
     void Draw2d();
+    /// <summary>
+    /// 一定時間バーを表示します。
+    /// </summary>
+    /// <param name="_sec">表示時間（秒）。</param>
     void Display(float _sec);
     void Display(bool flag) { isDisplay_ = flag; }
 
@@ -31,6 +48,14 @@ public:
 
 
 public:
+    /// <summary>
+    /// ワールド座標からスクリーン上のヘッドアップ位置を計算します。
+    /// </summary>
+    /// <param name="_targetPos">対象のワールド座標。</param>
+    /// <param name="_hpbarSize">バーサイズ。</param>
+    /// <param name="_camera">参照するカメラ。</param>
+    /// <param name="_offsetY">Y 方向のオフセット。</param>
+    /// <returns>スクリーン座標。</returns>
     static Vector2 GetHeadUpPositionOnScreen(
         const Vector3& _targetPos, 
         const Vector2& _hpbarSize,

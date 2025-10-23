@@ -23,7 +23,13 @@ public:
         return &instance;
     }
 
+    /// <summary>
+    /// ライン描画システムを初期化します。
+    /// </summary>
     void Initialize();
+    /// <summary>
+    /// バックバッファへの最終描画処理を行います。
+    /// </summary>
     void PresentDraw();
 
 
@@ -47,10 +53,25 @@ private: /// メンバ変数
     D3D12_DEPTH_STENCIL_DESC depthStencilDesc_ = {};
 
 private: /// 処理郡
+    /// <summary>
+    /// ルートシグネチャを作成します。
+    /// </summary>
     void CreateRootSignature();
+    /// <summary>
+    /// パイプラインステートを作成します。
+    /// </summary>
     void CreatePipelineState();
+    /// <summary>
+    /// 入力レイアウトを設定します。
+    /// </summary>
     void SetInputLayout();
+    /// <summary>
+    /// ブレンドステートを設定します。
+    /// </summary>
     void SetBlendDesc();
+    /// <summary>
+    /// 深度ステンシルビューの設定を行います。
+    /// </summary>
     void SetDSVDesc();
 
 private: /// 他クラスのインスタンス

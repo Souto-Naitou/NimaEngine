@@ -13,9 +13,18 @@ public:
     CubemapSystem() = default;
     ~CubemapSystem() override = default;
 
+    /// <summary>
+    /// システムを初期化します。
+    /// </summary>
     void Initialize();
+    /// <summary>
+    /// リソースを解放します。
+    /// </summary>
     void Finalize();
 
+    /// <summary>
+    /// キューブマップ描画のための設定を行います。
+    /// </summary>
     void DrawSetting();
 
     GameEye** GetGlobalEye() { return &pGlobalEye_; }

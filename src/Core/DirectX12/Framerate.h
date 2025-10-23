@@ -16,8 +16,17 @@ public:
 
     static FrameRate* GetInstance() { static FrameRate instance; return &instance; }
 
+    /// <summary>
+    /// フレームレート管理を初期化します。
+    /// </summary>
     void    Initialize();
+    /// <summary>
+    /// ターゲットフレームレートに合わせてスリープを行います。
+    /// </summary>
     void    FixFramerate();
+    /// <summary>
+    /// 一定間隔で FPS を測定します。
+    /// </summary>
     void    MeasureFPS();
 
     void    SetIntervalCalcurationFPS(double interval) { intervalCalcurationFPS_ = interval; }

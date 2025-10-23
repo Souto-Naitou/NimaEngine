@@ -35,19 +35,39 @@
 class NimaFramework
 {
 public:
+    /// <summary>
+    /// フレームワークのメインループを開始します。
+    /// </summary>
     void                            Run();
 
 
 public:
     virtual                         ~NimaFramework() {}
 
+    /// <summary>
+    /// システムとサブシステムの初期化を行います。
+    /// </summary>
     virtual void                    Initialize();
+    /// <summary>
+    /// 終了処理を行います。
+    /// </summary>
     virtual void                    Finalize();
+    /// <summary>
+    /// フレームごとの更新処理を行います。
+    /// </summary>
     virtual void                    Update();
+    /// <summary>
+    /// フレームごとの描画処理を行います。
+    /// </summary>
     virtual void                    Draw();
     virtual bool                    IsExitProgram() const { return isExitProgram_; }
-
+    /// <summary>
+    /// 描画前の共通前処理を行います。
+    /// </summary>
     void                            PreProcess();
+    /// <summary>
+    /// 描画後の共通後処理を行います。
+    /// </summary>
     void                            PostProcess();
 
 

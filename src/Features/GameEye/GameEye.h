@@ -12,11 +12,23 @@ class GameEye
 public:
     GameEye();
     virtual ~GameEye();
+    /// <summary>
+    /// カメラの行列や揺れ効果などの更新を行います。
+    /// </summary>
     virtual void        Update();
 
 
 public:
+    /// <summary>
+    /// 指定範囲でカメラをランダムシェイクさせます。
+    /// </summary>
+    /// <param name="_begin">シェイク範囲の最小値。</param>
+    /// <param name="_end">シェイク範囲の最大値。</param>
     void Shake(const Vector3& _begin, const Vector3& _end);
+    /// <summary>
+    /// 指定強度でカメラをシェイクさせます。
+    /// </summary>
+    /// <param name="_power">シェイク強度。</param>
     void Shake(float _power);
 
 public: /// Getter
@@ -54,9 +66,15 @@ private: /// メンバ変数
     float               farClip_        = 0.0f;
     Vector3             shakePositon_   = {};
 
+    /// <summary>
+    /// 焦点距離から視野角(FOV) を再計算します。
+    /// </summary>
     void _UpdateFovFromFocalLength();
 
 protected:
+    /// <summary>
+    /// カメラのデバッグUIを描画します。
+    /// </summary>
     virtual void ImGui();
 
 

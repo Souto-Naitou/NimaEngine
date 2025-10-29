@@ -32,6 +32,7 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
+#include <list>
 
 class SRVManager;
 
@@ -43,6 +44,15 @@ class DirectX12
 public:
     // ポストエフェクトや合成用
     constexpr static DXGI_FORMAT kHDRFormat_ = DXGI_FORMAT_R16G16B16A16_FLOAT;
+
+    enum class CommandListType
+    {
+        Common,
+        DrawableObject,
+        PostEffectExecuter,
+        Viewport,
+        ImGui,
+    };
 
 public:
     DirectX12() = default;
@@ -69,7 +79,7 @@ public:
 public: /// Getter
     ID3D12Device*                                           GetDevice() const                           { return device_.Get(); }
     ID3D12GraphicsCommandList*                              GetCommandList() const                      { return commandList_.Get(); }
-    ID3D12GraphicsCommandList*                              GetCommandListsLast() const                 { if (commandLists_.size()) return commandLists_.back(); else return commandList_.Get(); }
+    ID3D12GraphicsCommandList*                              GetCommandListLast() const;
     IDxcUtils*                                              GetDxcUtils() const                         { return dxcUtils_.Get(); }
     IDxcCompiler3*                                          GetDxcCompiler() const                      { return dxcCompiler_.Get(); }
     IDxcIncludeHandler*                                     GetIncludeHandler() const                   { return includeHandler_.Get(); }
@@ -103,12 +113,17 @@ public: /// Getter
     const D3D12_RECT&                                       GetScissorRect() const                      { return scissorRect_; }
     DX12Resource*                                           GetDepthStencilResource()                   { return &depthStencilResource_; }
 
-public:
-    void SetGameWindowRect(D3D12_VIEWPORT _viewport);
-    void SetGameWndSRVIndex(uint32_t _index) { gameWndSrvIndexComputed_ = _index; }
-    void AddCommandList(ID3D12GraphicsCommandList* _commandList) { commandLists_.emplace_back(_commandList); }
-    void AddOnResize(const std::string& _key, std::function<void()> _func) { map_func_onResize_[_key] = _func; }
-    void DeleteOnResize(const std::string& _key) { map_func_onResize_.erase(_key); }
+    void SetGameWindowRect(D3D12_VIEWPORT viewport);
+    void SetGameWndSRVIndex(uint32_t index) { gameWndSrvIndexComputed_ = index; }
+    void AddCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList) { commandLists_[type].emplace_back(commandList); }
+    void RemoveCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList);
+
+    /// Resizeイベント用関数登録
+    void AddOnResizeBefore(const std::string& key, std::function<void()> func) { mapFuncOnResizeBefore_[key] = func; }
+    void AddOnResizeAfter(const std::string& key, std::function<void()> func) { mapFuncOnResizeAfter_[key] = func; }
+
+    void DeleteOnResizeBefore(const std::string& key) { mapFuncOnResizeBefore_.erase(key); }
+    void DeleteOnResizeAfter(const std::string& key) { mapFuncOnResizeAfter_.erase(key); }
 
 private:
     static D3DResourceLeakChecker                           leakchecker;
@@ -149,7 +164,8 @@ private:
     std::array<Microsoft::WRL::ComPtr<ID3D11Resource>, 2>   d3d11WrappedBackBuffers_        = {};           // D3D11のラップされたバックバッファ
     std::array<Microsoft::WRL::ComPtr<ID2D1Bitmap1>, 2>     d2dRenderTargets_               = {};           // D2D1のレンダーターゲット
 
-    std::list<ID3D12GraphicsCommandList*>                   commandLists_                   = {};           // コマンドリストのリスト
+    using CLList = std::list<ID3D12GraphicsCommandList*>;
+    std::map<CommandListType, CLList>                       commandLists_                   = {};           // コマンドリストのリスト
 
     D3D12_RESOURCE_BARRIER                                  barrier_                        = {};
     D3D12_COMMAND_QUEUE_DESC                                commandQueueDesc_               = {};           // コマンドキューの設定
@@ -170,7 +186,8 @@ private:
     int32_t                                                 numUploadedTexture              = 0;
     int32_t                                                 padding                         = 0;
     bool                                                    isResized_                      = false;
-    std::unordered_map<std::string, std::function<void()>>  map_func_onResize_              = {};
+    std::unordered_map<std::string, std::function<void()>>  mapFuncOnResizeBefore_          = {};
+    std::unordered_map<std::string, std::function<void()>>  mapFuncOnResizeAfter_           = {};
 
 
 private:

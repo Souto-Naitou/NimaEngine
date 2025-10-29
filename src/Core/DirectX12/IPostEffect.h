@@ -80,7 +80,7 @@ public:
     /// <summary>
     /// バッファリサイズ後の処理を行います。
     /// </summary>
-    virtual void    OnResizedBuffers() = 0;
+    virtual void    OnResizeAfter() = 0;
     /// <summary>
     /// デバッグオーバーレイを描画します。
     /// </summary>

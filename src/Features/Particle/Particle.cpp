@@ -42,6 +42,7 @@ void Particle::Update()
 
     /// パーティクルの更新
     if (particleData_.empty()) return;
+
     uint32_t index = 0;
     auto itr = particleData_.begin();
     while (true)

@@ -18,12 +18,20 @@ void Viewport::Initialize()
     dxcUtils_ = pDx12_->GetDxcUtils();
     dxcCompiler_ = pDx12_->GetDxcCompiler();
     includeHandler_ = pDx12_->GetIncludeHandler();
-    commandList_ = pDx12_->GetCommandList();
-
     viewport_ = pDx12_->GetViewport();
-
     inputTexture_ = pDx12_->GetGameScreenResource();
     outputTexture_ = pDx12_->GetGameScreenComputed();
+
+    device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(commandAllocator_.GetAddressOf()));
+    device_->CreateCommandList(
+        0, 
+        D3D12_COMMAND_LIST_TYPE_DIRECT,
+        commandAllocator_.Get(),
+        nullptr,
+        IID_PPV_ARGS(commandList_.GetAddressOf())
+    );
+
+    pDx12_->AddCommandList(DirectX12::CommandListType::Viewport, commandList_.Get());
 
     // ルートシグネチャの生成
     CreateRootSignature();
@@ -145,10 +153,12 @@ void Viewport::Compute()
 {
     #ifdef _DEBUG
 
-    /// ステートの変更
-    outputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get(), &pDx12_->GetRTVHandle()[pDx12_->GetBackBufferIndex()]);
 
-    inputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+    /// ステートの変更
+    outputTexture_->GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+    inputTexture_->GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
 
     commandList_->SetPipelineState(pipelineState_.Get());
     commandList_->SetComputeRootSignature(rootSignature_.Get());
@@ -170,10 +180,10 @@ void Viewport::Compute()
         1
     );
 
-    inputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    inputTexture_->GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     /// ステートの変更
-    outputTexture_->GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    outputTexture_->GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     #endif // _DEBUG
 }
@@ -253,4 +263,10 @@ void Viewport::DrawWindow()
     Input::GetInstance()->Enable(isHover);
 
     #endif // _DEBUG
+}
+
+void Viewport::PostDraw()
+{
+    commandAllocator_->Reset();
+    commandList_->Reset(commandAllocator_.Get(), nullptr);
 }

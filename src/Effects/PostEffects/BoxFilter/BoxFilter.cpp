@@ -19,7 +19,7 @@ void BoxFilter::Initialize(const PostEffectInitParams& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "BoxFilterRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -102,12 +102,12 @@ void BoxFilter::OnResizeBefore()
     renderTexture_.GetStateTracker().Reset();
 }
 
-void BoxFilter::OnResizedBuffers()
+void BoxFilter::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "BoxFilterRenderTexture");
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void BoxFilter::ToShaderResourceState()

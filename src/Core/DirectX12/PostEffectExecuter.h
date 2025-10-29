@@ -25,7 +25,7 @@ public:
     /// 実行に必要なリソース・パイプラインを初期化します。
     /// </summary>
     /// <param name="isRegisterDebugWindow">デバッグUIを登録するか。</param>
-    void Initialize(DirectX12* pDx12, bool isRegisterDebugWindow = true);
+    void Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow = true);
 
     /// <summary>
     /// リソースを解放します。
@@ -40,7 +40,7 @@ public:
     /// <summary>
     /// フレーム開始時の初期化処理を行います。
     /// </summary>
-    void NewFrame();
+    void PreDraw();
 
     /// <summary>
     /// ポストエフェクト適用後の後処理を行います。
@@ -55,12 +55,12 @@ public:
     /// <summary>
     /// クライアントサイズ変更時に呼び出し、リソース再作成を要求します。
     /// </summary>
-    void OnResize();
+    void OnResizeBefore();
 
     /// <summary>
     /// バッファ再作成後に呼び出し、ハンドル等を更新します。
     /// </summary>
-    void OnResizedBuffers();
+    void OnResizeAfter();
 
     /// <summary>
     /// デバッグUIを描画します。
@@ -72,16 +72,6 @@ public:
 public:
     IPostEffect*    AddEffect(PostEffectClassName name);
     bool            RemoveEffect(IPostEffect* pEffect);
-
-    ID3D12Resource* GetRenderTexture() const
-    {
-        return renderTexture_.GetResource().Get();
-    }
-
-    const D3D12_CPU_DESCRIPTOR_HANDLE* GetRTVHandle()
-    {
-        return &renderTexture_.GetRTVHandle();
-    }
 
     ID3D12GraphicsCommandList* GetCommandList()
     {
@@ -98,7 +88,7 @@ private:
     static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
     DirectX12*                                          pDx12_                  = nullptr;
-    DX12Resource                                        renderTexture_          = {};
+    DX12Resource*                                       pRenderTexture_         = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         outputHandleGpu_        = {};
     D3D12_INPUT_LAYOUT_DESC                             inputLayoutDesc_        = {};
@@ -114,6 +104,11 @@ private:
     std::unique_ptr<PostEffectFactory>                  pEffectFactory_         = nullptr;
 
     std::vector<std::unique_ptr<IPostEffect>>           postEffects_           = {};
+
+    #ifdef _DEBUG
+    int32_t selectedIndex_ = -1;
+    int32_t soloIndex_ = -1;
+    #endif
 
 
 private:

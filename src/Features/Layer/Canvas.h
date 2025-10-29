@@ -8,11 +8,14 @@
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Core/DirectX12/PostEffectExecuter.h>
 #include <d3d12.h>
+#include <Features/Cubemap/Skybox.h>
+#include <Features/Object3d/Object3d.h>
 
 struct CanvasInitParams
 {
     std::string name = "Canvas";
     DirectX12* pDx12 = nullptr;
+    CubemapSystem* pCubemapSystem = nullptr;
 };
 
 /// <summary>
@@ -36,11 +39,29 @@ public:
     void SetName(const std::string& name);
 
     /// <summary>
-    /// 描画対象のスプライトを登録します。
+    /// 描画対象のスプライトを登録します
     /// </summary>
-    /// <param name="sprite">登録するスプライト。</param>
-    /// <returns>自身への参照。</returns>
+    /// <param name="sprite">登録するスプライト</param>
+    /// <returns>自身への参照</returns>
     Canvas& RegisterDrawable(Sprite* sprite);
+
+    /// <summary>
+    /// 描画対象のスカイボックスを登録します。
+    /// </summary>
+    /// <param name="skybox">登録するスカイボックス</param>
+    /// <returns>自身への参照</returns>
+    Canvas& RegisterDrawable(Skybox* skybox);
+
+    /// <summary>
+    /// 描画対象の3Dオブジェクトを登録します。
+    /// </summary>
+    /// <param name="object3d">登録する3Dオブジェクト</param>
+    /// <returns>自身への参照</returns>
+    Canvas& RegisterDrawable(Object3d* object3d);
+
+    void UnregisterDrawable(Sprite* sprite);
+    void UnregisterDrawable(Skybox* skybox);
+    void UnregisterDrawable(Object3d* object3d);
 
     // Getters
     [[nodiscard]]
@@ -60,9 +81,21 @@ public:
     /// </summary>
     /// <param name="name">キャンバス名。</param>
     void Initialize(const CanvasInitParams& params);
+
+    void Finalize();
     
     /// <summary>
-    /// 登録されたスプライトとポストエフェクトを用いて描画します。
+    /// 登録されたオブジェクトを描画します。
+    /// </summary>
+    void DrawObjects() const;
+
+    /// <summary>
+    /// ポストエフェクトを適用します。
+    /// </summary>
+    void ApplyPostEffects() const;
+
+    /// <summary>
+    /// Canvasを描画します。
     /// </summary>
     void Draw() const;
     
@@ -72,10 +105,14 @@ public:
     void ImGui();
 
 private:
-    DX12Resource resource_;
-    bool isEnabled_ = false;
+    DX12Resource resource_ = {};
+    bool isEnabled_ = true;
 
-    std::vector<Sprite*> sprites_;
+    CanvasInitParams params_ = {};
+    std::list<Sprite*> sprites_;
+    std::list<Skybox*> skyboxes_;
+    std::list<Object3d*> objects3ds_;
+
     std::unique_ptr<DebugEntry<Canvas>> pDebugEntry_ = nullptr;
     std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_ = nullptr;
 };

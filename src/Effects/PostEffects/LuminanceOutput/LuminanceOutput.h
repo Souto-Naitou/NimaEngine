@@ -41,7 +41,7 @@ public:
     /// <summary>リサイズ前の処理を行います。</summary>
     void    OnResizeBefore() override;
     /// <summary>リサイズ後の処理を行います。</summary>
-    void    OnResizedBuffers() override;
+    void    OnResizeAfter() override;
     /// <summary>レンダーターゲットをシェーダーリソース状態へ遷移させます。</summary>
     void    ToShaderResourceState() override;
     /// <summary>デバッグオーバーレイを描画します。</summary>
@@ -80,10 +80,6 @@ private:
     // =============================================
     // [Output Begin]
     DX12Resource                                        outputTexture_          = {};
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_           = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
-    uint32_t                                            rtvHeapIndex_           = 0;
-    uint32_t                                            srvHeapIndex_           = 0;
     // [Output End]
     // =============================================
 

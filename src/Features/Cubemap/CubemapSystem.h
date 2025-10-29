@@ -25,7 +25,7 @@ public:
     /// <summary>
     /// キューブマップ描画のための設定を行います。
     /// </summary>
-    void DrawSetting();
+    void DrawSetting(ID3D12GraphicsCommandList* cl);
 
     GameEye** GetGlobalEye() { return &pGlobalEye_; }
     void SetGlobalEye(GameEye* _pGameEye) { pGlobalEye_ = _pGameEye; }

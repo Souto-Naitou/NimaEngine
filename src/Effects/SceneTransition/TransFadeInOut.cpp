@@ -5,7 +5,7 @@
 #include <Core/Win32/WinSystem.h>
 #include <MathExtension/mathExtension.h>
 
-void TransFadeInOut::Initialize(const std::string& _sceneName)
+void TransFadeInOut::Initialize(const std::string& _sceneName, Canvas* canvas)
 {
     sceneName_ = _sceneName;
 
@@ -14,10 +14,10 @@ void TransFadeInOut::Initialize(const std::string& _sceneName)
     sprite_->SetColor({ 0,0,0,0 });
     sprite_->SetSize({ WinSystem::clientWidth, WinSystem::clientHeight });
     timer_.Start();
-    DebugManager::GetInstance()->SetComponent(
-        "Transition", name_, std::bind(&TransFadeInOut::ImGui, this));
+    pDebugEntry_ = std::make_unique<DebugEntry<TransFadeInOut>>("Transition", "FadeInOut", this, false);
 
-    name_ = "FadeInOut";
+    pCanvas_ = canvas;
+    pCanvas_->RegisterDrawable(sprite_.get());
 }
 
 void TransFadeInOut::Update()
@@ -54,13 +54,12 @@ void TransFadeInOut::Update()
 
 void TransFadeInOut::Draw()
 {
-    sprite_->Draw();
 }
 
 void TransFadeInOut::Finalize()
 {
-    UnregisterDebugWindowC("Transition", name_);
     sprite_->Finalize();
+    pCanvas_->UnregisterDrawable(sprite_.get());
 }
 
 void TransFadeInOut::ImGui()

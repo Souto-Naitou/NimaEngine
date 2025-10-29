@@ -41,7 +41,7 @@ public:
     /// <summary>リサイズ前の処理を行います。</summary>
     void    OnResizeBefore() override;
     /// <summary>リサイズ後の処理を行います。</summary>
-    void    OnResizedBuffers() override;
+    void    OnResizeAfter() override;
     /// <summary>レンダーターゲットをシェーダーリソース状態へ遷移させます。</summary>
     void    ToShaderResourceState() override;
     /// <summary>デバッグオーバーレイを描画します。</summary>

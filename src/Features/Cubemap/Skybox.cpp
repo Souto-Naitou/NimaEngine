@@ -13,10 +13,10 @@ void Skybox::Initialize(CubemapSystem* _cms)
 
     pDebugEntry_ = std::make_unique<DebugEntry<Skybox>>("Skybox", this, false);
 
-    this->_CreateVertexResource();
-    this->_CreateIndexResource();
-    this->_CreateTransformationMatrixResource();
-    this->_CreateMaterialResource();
+    this->CreateVertexResource();
+    this->CreateIndexResource();
+    this->CreateTransformationMatrixResource();
+    this->CreateMaterialResource();
 }
 
 void Skybox::Finalize() const
@@ -33,14 +33,13 @@ void Skybox::Update()
     }
 }
 
-void Skybox::Draw() const
+void Skybox::Draw(ID3D12GraphicsCommandList* cl) const
 {
-    auto cl = pDx12_->GetCommandList();
     // 描画コマンドを設定
     cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
     cl->IASetIndexBuffer(&indexBufferView_);
     
-    pDx12_->GetCommandList()->SetGraphicsRootDescriptorTable(0, skyboxTextureSrvHandleGpu_);
+    cl->SetGraphicsRootDescriptorTable(0, skyboxTextureSrvHandleGpu_);
     cl->SetGraphicsRootConstantBufferView(1, resourceTransformationMatrix_->GetGPUVirtualAddress());
     cl->SetGraphicsRootConstantBufferView(2, resourceMaterial_->GetGPUVirtualAddress());
 
@@ -52,7 +51,7 @@ void Skybox::SetSkyboxTexture(D3D12_GPU_DESCRIPTOR_HANDLE _handle)
     skyboxTextureSrvHandleGpu_ = _handle;
 }
 
-void Skybox::_CreateVertices(std::array<Vector4, 24>& _out_vertices)
+void Skybox::CreateVertices(std::array<Vector4, 24>& _out_vertices)
 {
     auto& vertices = _out_vertices;
 
@@ -93,7 +92,7 @@ void Skybox::_CreateVertices(std::array<Vector4, 24>& _out_vertices)
     vertices[23] = { -1.0f, -1.0f, 1.0f, 1.0f };
 }
 
-void Skybox::_CreateIndices(std::array<uint32_t, 36>& _out_indices)
+void Skybox::CreateIndices(std::array<uint32_t, 36>& _out_indices)
 {
     _out_indices = {
         0, 1, 2, 2, 1, 3, // right
@@ -105,10 +104,10 @@ void Skybox::_CreateIndices(std::array<uint32_t, 36>& _out_indices)
     };
 }
 
-void Skybox::_CreateVertexResource()
+void Skybox::CreateVertexResource()
 {
     auto vertices = std::array<Vector4, 24>();
-    this->_CreateVertices(vertices);
+    this->CreateVertices(vertices);
 
     /// 頂点リソースを作成
     vertexResource_ = DX12Helper::CreateBufferResource(device_, sizeof(Vector4) * vertices.size());
@@ -122,10 +121,10 @@ void Skybox::_CreateVertexResource()
     vertexBufferView_.StrideInBytes = sizeof(Vector4);
 }
 
-void Skybox::_CreateIndexResource()
+void Skybox::CreateIndexResource()
 {
     auto indices = std::array<uint32_t, 36>();
-    this->_CreateIndices(indices);
+    this->CreateIndices(indices);
     const size_t sizeInBytes = sizeof(uint32_t) * indices.size();
 
     indexResource_ = DX12Helper::CreateBufferResource(device_, sizeInBytes);
@@ -138,7 +137,7 @@ void Skybox::_CreateIndexResource()
     indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 }
 
-void Skybox::_CreateTransformationMatrixResource()
+void Skybox::CreateTransformationMatrixResource()
 {
     resourceTransformationMatrix_ = DX12Helper::CreateBufferResource(device_, sizeof(TransformationMatrix));
     resourceTransformationMatrix_->Map(0, nullptr, reinterpret_cast<void**>(&mappedTransformationMatrix_));
@@ -153,7 +152,7 @@ void Skybox::_CreateTransformationMatrixResource()
     mappedTransformationMatrix_->wvp = Matrix4x4::Identity();
 }
 
-void Skybox::_CreateMaterialResource()
+void Skybox::CreateMaterialResource()
 {
     resourceMaterial_ = DX12Helper::CreateBufferResource(device_, sizeof(Vector4));
     resourceMaterial_->Map(0, nullptr, reinterpret_cast<void**>(&mappedMaterial_));

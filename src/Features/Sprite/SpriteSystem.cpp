@@ -6,6 +6,7 @@
 #include <Core/Win32/WinSystem.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <config/EngineSetting.h>
+#include <Core/DirectX12/BlendDesc.h>
 
 void SpriteSystem::Initialize()
 {
@@ -45,8 +46,22 @@ void SpriteSystem::DrawCall()
         /// プリミティブトポロジーをセットする
         _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         
+        // DSVハンドル取得
+        auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+
+        // 現在のRTVHandle
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
+
         for(auto& data : commandListDatas_)
         {
+            // RTVハンドルが変わったらセットし直す
+            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
+            if (rtvHandleCurrent.ptr != data.rtvHandleCPU.ptr && data.rtvHandleCPU.ptr)
+            {
+                rtvHandleCurrent = data.rtvHandleCPU;
+                _commandList->OMSetRenderTargets(1, &data.rtvHandleCPU, FALSE, &dsvHandle);
+            }
+
             _commandList->SetGraphicsRootConstantBufferView(0, data.materialResource->GetGPUVirtualAddress());
             _commandList->SetGraphicsRootConstantBufferView(1, data.transformationMatrixResource->GetGPUVirtualAddress());
             _commandList->SetGraphicsRootDescriptorTable(2, data.srvHandleGPU);
@@ -158,17 +173,8 @@ void SpriteSystem::CreatePipelineState()
     inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
     /// BlendStateの設定
-    D3D12_BLEND_DESC blendDesc{};
-    // すべての色要素を書き込む
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;
-    blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-    blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+    BlendDesc blendDesc{};
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     // RasterizerStateの設定
     D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -213,7 +219,7 @@ void SpriteSystem::CreatePipelineState()
     vertexShaderBlob.Get()->GetBufferSize() };						// VertexShader
     graphicsPipelineStateDesc.PS = { pixelShaderBlob.Get()->GetBufferPointer(),
     pixelShaderBlob.Get()->GetBufferSize() };							// PixelShader
-    graphicsPipelineStateDesc.BlendState = blendDesc;			// BlendState
+    graphicsPipelineStateDesc.BlendState = blendDesc.Get();			// BlendState
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;	// RasterizerState
     // 書き込むRTVの情報
     graphicsPipelineStateDesc.NumRenderTargets = 1;

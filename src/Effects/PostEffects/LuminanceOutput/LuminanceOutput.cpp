@@ -21,7 +21,7 @@ void LuminanceOutput::Initialize(const PostEffectInitParams& desc)
     Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "RT_LuminanceOutput");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_);
+    outputTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -50,7 +50,7 @@ bool LuminanceOutput::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE LuminanceOutput::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return outputTexture_.GetSRVHandleGPU();
 }
 
 const std::string& LuminanceOutput::GetName() const
@@ -82,7 +82,7 @@ void LuminanceOutput::Setting()
     outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &outputTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -98,17 +98,17 @@ void LuminanceOutput::Setting()
 
 void LuminanceOutput::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
+    pDx12_->GetRTVHeapCounter()->Deallocate(outputTexture_.GetRTVIndex());
     outputTexture_.Reset();
 }
 
-void LuminanceOutput::OnResizedBuffers()
+void LuminanceOutput::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "LuminanceOutputRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_);
+    outputTexture_.CreateSRV();
 }
 
 void LuminanceOutput::ToShaderResourceState()

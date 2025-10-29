@@ -41,6 +41,7 @@ public:
     struct CommandListData
     {
         std::map<UINT, ID3D12Resource*> cbuffers;
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {};
         IModel* model = nullptr;
     };
 

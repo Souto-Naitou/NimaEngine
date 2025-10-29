@@ -6,9 +6,11 @@ void ParticleManager::Update()
     size_t numDelete = deleteParticles_.size();
     for (size_t i = 0; i < numDelete; ++i)
     {
-        deleteParticles_.remove_if([&](Particle* _particle)
+        deleteParticles_.remove_if([&](Particle* p)
         {
-            ReleaseParticle(_particle);
+            if (!p->IsAbleDelete()) return false;
+
+            ReleaseParticle(p);
             return true;
         });
     }

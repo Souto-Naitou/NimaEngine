@@ -20,7 +20,7 @@ void Vignette::Initialize(const PostEffectInitParams& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Vignette");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -103,12 +103,12 @@ void Vignette::OnResizeBefore()
         renderTexture_.GetStateTracker().Reset();
 }
 
-void Vignette::OnResizedBuffers()
+void Vignette::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Vignette");
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void Vignette::ToShaderResourceState()

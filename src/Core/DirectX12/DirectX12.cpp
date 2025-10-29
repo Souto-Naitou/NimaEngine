@@ -125,47 +125,48 @@ void DirectX12::OnResizedWindow()
 
 void DirectX12::NewFrame()
 {
+    auto* cl = commandLists_[DirectX12::CommandListType::Common].front();
+
     // リソースバリアの設定
-    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(cl, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     /// 描画先のRTV/DSVの設定
-    commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, nullptr);
+    cl->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, nullptr);
 
     // 画面全体のクリア
-    commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    cl->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
-    // 指定した深度で画面全体をクリア (ポストエフェクト用リソースで行うため現在無効)
-    // commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-    commandList_->RSSetViewports(1, &viewport_);            // Viewportを設定
-    commandList_->RSSetScissorRects(1, &scissorRect_);      // Scissorを設定
+    cl->RSSetViewports(1, &viewport_);            // Viewportを設定
+    cl->RSSetScissorRects(1, &scissorRect_);      // Scissorを設定
 }
 
 void DirectX12::CommandExecute()
 {
-    ID3D12GraphicsCommandList* commandList_end = commandList_.Get();
+    ID3D12GraphicsCommandList* clLastExecution = commandList_.Get();
     if (!commandLists_.empty())
     {
-        commandList_end = commandLists_.back();
+        clLastExecution = std::prev(commandLists_.end())->second.back();
     }
 
-    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList_end, D3D12_RESOURCE_STATE_PRESENT);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(clLastExecution, D3D12_RESOURCE_STATE_PRESENT);
 
-    /// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseする
-    hr_ = commandList_->Close();
-    if (FAILED(hr_))
+    /// GPUにコマンドリストを実行させる
+    std::vector<ID3D12CommandList*> commandLists = {};
+    for(auto& pair : commandLists_)
     {
-        pLogger_->LogError(__FILE__, __FUNCTION__, "Failed to close command list.");
-        assert(false && "Failed to close command list");
-    }
+        CLList clList = pair.second;
+        for (auto& cl : clList)
+        {
+            hr_ = cl->Close();
 
+            if (FAILED(hr_))
+            {
+                pLogger_->LogError(__FILE__, __FUNCTION__, "Failed to close command list.");
+                assert(false && "Failed to close command list");
+            }
 
-    /// GPUにコマンドリストの実行を行わせる
-    std::vector<ID3D12CommandList*> commandLists = { commandList_.Get()};
-    for(auto& cl : commandLists_)
-    {
-        cl->Close();
-        commandLists.push_back(cl);
+            commandLists.push_back(cl);
+        }
     }
     commandQueue_->ExecuteCommandLists(static_cast<UINT>(commandLists.size()), commandLists.data());
 }
@@ -253,6 +254,24 @@ void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
     _commandList;
 
     #endif // _DEBUG
+}
+
+ID3D12GraphicsCommandList* DirectX12::GetCommandListLast() const
+{
+    return std::prev(commandLists_.end())->second.back();
+}
+
+void DirectX12::RemoveCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList)
+{
+    for (auto it = commandLists_[type].begin(); it != commandLists_[type].end(); ++it)
+    {
+        if (*it == commandList)
+        {
+            commandLists_[type].erase(it);
+            break;
+        }
+    }
+
 }
 
 DirectX12::~DirectX12()

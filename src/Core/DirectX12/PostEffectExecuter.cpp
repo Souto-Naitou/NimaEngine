@@ -9,22 +9,19 @@
 #include <imgui.h>
 #endif //_DEBUG
 #include <config/EngineSetting.h>
+#include "BlendDesc.h"
 
-void PostEffectExecuter::Initialize(DirectX12* pDx12, bool isRegisterDebugWindow)
+void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow)
 {
     pDx12_ = pDx12;
+
+    pRenderTexture_ = pResource;
 
     // インスタンスの取得
     ObtainInstances();
 
     // 描画用コマンドリストの生成
     CreateCommandList();
-
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, "PureRenderTexture");
-
-    // SRVの生成
-    Helper::CreateSRV(renderTexture_);
 
     // ルートシグネチャの生成
     CreateRootSignature();
@@ -47,18 +44,14 @@ void PostEffectExecuter::Initialize(DirectX12* pDx12, bool isRegisterDebugWindow
 
 void PostEffectExecuter::Finalize()
 {
+    pDx12_->RemoveCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get());
 }
 
 void PostEffectExecuter::ApplyPostEffects()
 {
-    // コマンドリストの設定
-    uint32_t indexBackbuffer = pDx12_->GetBackBufferIndex();
-    rtvHandleSwapChain_ = pDx12_->GetRTVHandle()[indexBackbuffer];
-    DX12Helper::CommandListCommonSetting(pDx12_, commandListForDraw_.Get(), &rtvHandleSwapChain_);
+    pRenderTexture_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
-    renderTexture_.GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-
-    outputHandleGpu_ = renderTexture_.GetSRVHandleGPU();
+    outputHandleGpu_ = pRenderTexture_->GetSRVHandleGPU();
 
     for (auto it = postEffects_.begin(); it != postEffects_.end(); ++it)
     {
@@ -91,19 +84,24 @@ void PostEffectExecuter::Draw()
     commandListForDraw_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandListForDraw_->DrawInstanced(3, 1, 0, 0);
 
-    renderTexture_.GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    pRenderTexture_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
-void PostEffectExecuter::NewFrame()
+void PostEffectExecuter::PreDraw()
 {
+    // コマンドリストの設定
+    uint32_t indexBackbuffer = pDx12_->GetBackBufferIndex();
+    rtvHandleSwapChain_ = pDx12_->GetRTVHandle()[indexBackbuffer];
+    DX12Helper::CommandListCommonSetting(pDx12_, commandListForDraw_.Get(), &rtvHandleSwapChain_);
+
     // Object3dやSpriteの描画先を決定する関数
 
     /// 描画先のRTV/DSVの設定
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
-    commandListMain_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), false, &dsvHandle);
+    commandListMain_->OMSetRenderTargets(1, &pRenderTexture_->GetRTVHandle(), false, &dsvHandle);
 
     // 画面全体のクリア
-    commandListMain_->ClearRenderTargetView(renderTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    commandListMain_->ClearRenderTargetView(pRenderTexture_->GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // 指定した深度で画面全体をクリア
     commandListMain_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -119,18 +117,14 @@ void PostEffectExecuter::PostDraw()
     commandListForDraw_->Reset(commandAllocator_.Get(), nullptr);
 }
 
-void PostEffectExecuter::OnResize()
+void PostEffectExecuter::OnResizeBefore()
 {
-    pSRVManager_->Deallocate(renderTexture_.GetSRVIndex());
-    renderTexture_.Reset();
     for (auto& posteffect : postEffects_) posteffect->OnResizeBefore();
 }
 
-void PostEffectExecuter::OnResizedBuffers()
+void PostEffectExecuter::OnResizeAfter()
 {
-    Helper::CreateRenderTexture(pDx12_, pDevice_, renderTexture_, "RT_Pure");
-    Helper::CreateSRV(renderTexture_);
-    for (auto& posteffect : postEffects_) posteffect->OnResizedBuffers();
+    for (auto& posteffect : postEffects_) posteffect->OnResizeAfter();
 }
 
 void PostEffectExecuter::ImGui()
@@ -138,11 +132,8 @@ void PostEffectExecuter::ImGui()
     #ifdef _DEBUG
 
     // staticな変数で状態を保持
-    static int selectedIndex = -1;
     static const ImVec4 kColorRed(1.0f, 0.0f, 0.0f, 1.0f);
     static const ImVec4 kColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
-
-    static int soloIndex = -1;
 
     bool isBeginTable = ImGui::BeginTable("PostEffectTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg);
 
@@ -158,15 +149,15 @@ void PostEffectExecuter::ImGui()
         {
             std::string name = postEffects_[i]->GetName();
             // Selectableで要素を表示・選択状態を管理
-            if (ImGui::Selectable(name.c_str(), selectedIndex == i))
+            if (ImGui::Selectable(name.c_str(), selectedIndex_ == i))
             {
-                if (selectedIndex == i) selectedIndex = -1;
-                else selectedIndex = i;
+                if (selectedIndex_ == i) selectedIndex_ = -1;
+                else selectedIndex_ = i;
             }
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
             {
-                selectedIndex = i;
-                postEffects_[selectedIndex]->DebugOverlay();
+                selectedIndex_ = i;
+                postEffects_[selectedIndex_]->DebugOverlay();
 
                 if (ImGui::Button("Close"))
                     ImGui::CloseCurrentPopup();
@@ -192,19 +183,19 @@ void PostEffectExecuter::ImGui()
         {
             auto fn = [&](int i) -> void
             {
-                bool isSolo = (soloIndex == i);
+                bool isSolo = (soloIndex_ == i);
                 if (ImGui::SmallButton("S"))
                 {
                     isSolo = !isSolo; // ボタンが押されたらソロモードの切り替え
                     if (isSolo)
                     {
-                        soloIndex = i;
+                        soloIndex_ = i;
                         this->EnableSolo(i); // ソロモードを有効化
                     }
-                    else if (soloIndex == i)
+                    else if (soloIndex_ == i)
                     {
                         postEffects_[i]->Enable(false); // チェックを外すとソロ解除
-                        soloIndex = -1; // チェックを外すとソロ解除
+                        soloIndex_ = -1; // チェックを外すとソロ解除
                     }
                 }
             };
@@ -239,37 +230,37 @@ void PostEffectExecuter::ImGui()
 
     // 移動ボタンの表示と操作
     bool isEnable = false;
-    if (selectedIndex < 0)
+    if (selectedIndex_ < 0)
     {
         ImGui::BeginDisabled();
     }
     else
     {
-        isEnable = postEffects_[selectedIndex]->Enabled();
+        isEnable = postEffects_[selectedIndex_]->Enabled();
     }
 
-    if (ImGui::Button("Up") && selectedIndex > 0)
+    if (ImGui::Button("Up") && selectedIndex_ > 0)
     {
-        std::swap(postEffects_[selectedIndex], postEffects_[selectedIndex - 1]);
-        selectedIndex--;  // 選択インデックスも一緒に更新
+        std::swap(postEffects_[selectedIndex_], postEffects_[selectedIndex_ - 1]);
+        selectedIndex_--;  // 選択インデックスも一緒に更新
     }
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Down") && selectedIndex < postEffects_.size() - 1)
+    if (ImGui::Button("Down") && selectedIndex_ < postEffects_.size() - 1)
     {
-        std::swap(postEffects_[selectedIndex], postEffects_[selectedIndex + 1]);
-        selectedIndex++;  // 選択インデックスも更新
+        std::swap(postEffects_[selectedIndex_], postEffects_[selectedIndex_ + 1]);
+        selectedIndex_++;  // 選択インデックスも更新
     }
 
     ImGui::SameLine();
 
     if (ImGui::Checkbox("Enabled", &isEnable))
     {
-        postEffects_[selectedIndex]->Enable(isEnable);
+        postEffects_[selectedIndex_]->Enable(isEnable);
     }
 
-    if (selectedIndex < 0) 
+    if (selectedIndex_ < 0) 
     {
         ImGui::EndDisabled();
         ImGui::Text("項目を選択してください");
@@ -280,7 +271,14 @@ void PostEffectExecuter::ImGui()
 
 IPostEffect* PostEffectExecuter::AddEffect(PostEffectClassName name)
 {
-    return postEffects_.emplace_back(pEffectFactory_->CreatePostEffect(name)).get();
+    auto effect = pEffectFactory_->CreatePostEffect(name);
+    PostEffectInitParams initParams{};
+    initParams.pDx12 = pDx12_;
+    initParams.pCommandList = commandListForDraw_.Get();
+    effect->Initialize(initParams);
+
+    postEffects_.push_back(std::move(effect));
+    return postEffects_.back().get();
 }
 
 bool PostEffectExecuter::RemoveEffect(IPostEffect* pEffect)
@@ -381,15 +379,8 @@ void PostEffectExecuter::CreatePipelineState()
     inputLayoutDesc_.NumElements = 0;
 
     /// BlendStateの設定
-    D3D12_BLEND_DESC blendDesc{};
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;
-    blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-    blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-    blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-    blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+    BlendDesc blendDesc = {};
+    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
 
 
     /// RasterizerStateの設定
@@ -411,7 +402,7 @@ void PostEffectExecuter::CreatePipelineState()
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;    // InputLayout
     graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
     graphicsPipelineStateDesc.PS = { pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize() };
-    graphicsPipelineStateDesc.BlendState = blendDesc;            // BlendState
+    graphicsPipelineStateDesc.BlendState = blendDesc.Get();            // BlendState
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;    // RasterizerState
     // 書き込むRTVの情報
     graphicsPipelineStateDesc.NumRenderTargets = 1;
@@ -439,6 +430,7 @@ void PostEffectExecuter::CreatePipelineState()
 void PostEffectExecuter::CreateCommandList()
 {
     Helper::CreateCommandList(pDevice_, commandListForDraw_, commandAllocator_);
+    pDx12_->AddCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get());
 }
 
 void PostEffectExecuter::EnableSolo(const size_t _index)

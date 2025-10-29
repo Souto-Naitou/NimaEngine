@@ -68,12 +68,12 @@ public: /// Getter
 
 public: /// Setter
     void                SetName(const std::string& name)            { pDebugEntry_->SetName(name); }
-    void                SetEnableUpdate(const bool isUpdate)       { isUpdateEnabled_ = isUpdate; }
-    void                SetEnableDraw(const bool isDraw)           { isDrawEnabled_ = isDraw; }
-    void                SetRotation(const float rotation)          { rotate_ = rotation; }
-    void                SetPosition(const Vector2& position)       { translate_ = position; }
-    void                SetColor(const Vector4& color)             { materialData_->color = color; }
-    void                SetSize(const Vector2& size)               { size_ = size; }
+    void                SetEnableUpdate(const bool isUpdate)        { isUpdateEnabled_ = isUpdate; }
+    void                SetEnableDraw(const bool isDraw)            { isDrawEnabled_ = isDraw; }
+    void                SetRotation(const float rotation)           { rotate_ = rotation; }
+    void                SetPosition(const Vector2& position)        { translate_ = position; }
+    void                SetColor(const Vector4& color)              { materialData_->color = color; }
+    void                SetSize(const Vector2& size)                { size_ = size; }
     /// <summary>
     /// 元サイズに対する倍率でサイズを設定します。
     /// </summary>
@@ -84,6 +84,7 @@ public: /// Setter
     void                SetFlipY(const bool isFlipY)               { isFlipY_ = isFlipY; }
     void                SetTextureLeftTop(const Vector2& lt)       { textureLeftTop_ = lt; }
     void                SetTextureSize(const Vector2& size)        { textureSize_ = size; }
+    void                SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle) { rtvHandleCPU_ = rtvHandle; }
 
 
 private: /// 他クラスが所持するインスタンスへのポインタ
@@ -94,8 +95,8 @@ private: /// 他クラスが所持するインスタンスへのポインタ
 
 private: /// メンバ変数
     std::unique_ptr<DebugEntry<Sprite>>         pDebugEntry_                    = nullptr;              // デバッグエントリ
-    bool                                        isUpdateEnabled_                       = true;                 // 有効かどうか。falseにするとUpdateとDrawをスキップする
-    bool                                        isDrawEnabled_                         = true;                 // 描画するかどうか。falseにするとDrawをスキップする
+    bool                                        isUpdateEnabled_                = true;                 // 有効かどうか。falseにするとUpdateとDrawをスキップする
+    bool                                        isDrawEnabled_                  = true;                 // 描画するかどうか。falseにするとDrawをスキップする
 
     EulerTransform                              transform_                      = {};                   // 位置、回転、拡大縮小
     Vector2                                     size_                           = {};                   // サイズ
@@ -115,6 +116,7 @@ private: /// メンバ変数
 
     /// ディスクリプタハンドル
     D3D12_GPU_DESCRIPTOR_HANDLE                 textureSrvHandleGPU_            = {};                   // テクスチャハンドルGPU
+    D3D12_CPU_DESCRIPTOR_HANDLE                 rtvHandleCPU_                   = {};                   // RTVハンドルCPU
 
     /// バッファリソース
     Microsoft::WRL::ComPtr<ID3D12Resource>      vertexResource_                 = nullptr;              // 頂点リソース

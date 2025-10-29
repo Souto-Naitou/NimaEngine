@@ -36,6 +36,8 @@ public:
     /// </summary>
     void DrawWindow();
 
+    void PostDraw();
+
 
 public: /// Getter
     uint32_t GetOutputSRVIndex() const { return outputSRVIndex_; }
@@ -61,10 +63,11 @@ private:
     /// </summary>
     void CreateUAV();
 
-
 private:
     HRESULT_ASSERT hr_ = {};
 
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState_ = nullptr;
     Microsoft::WRL::ComPtr<ID3DBlob> csBlob_ = nullptr;
@@ -89,7 +92,6 @@ private:
     IDxcUtils*                  dxcUtils_       = nullptr;
     IDxcCompiler3*              dxcCompiler_    = nullptr;
     IDxcIncludeHandler*         includeHandler_ = nullptr;
-    ID3D12GraphicsCommandList*  commandList_    = nullptr;
     DX12Resource*               inputTexture_   = nullptr;
     DX12Resource*               outputTexture_  = nullptr;
     SRVManager*                 pSRVManager_    = nullptr;

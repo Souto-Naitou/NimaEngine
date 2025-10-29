@@ -67,8 +67,21 @@ void Object3dSystem::DrawCall()
         // プリミティブトポロジーをセットする
         _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+        // DSVハンドル取得
+        auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+
+        // RTVHandleが変化したかをチェックするための変数
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
+
         for(auto& data : commandListDatas_)
         {
+            // RTVハンドルが変わったらセットし直す
+            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
+            if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
+            {
+                rtvHandleCurrent = data.rtvHandle;
+                _commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+            }
             // モデルがnullptrでない場合のみ描画
             if (data.model == nullptr) continue;
 
@@ -100,6 +113,14 @@ void Object3dSystem::DrawCall()
 
         for(auto& data : commandListDatas_)
         {
+            // RTVハンドルが変わったらセットし直す
+            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
+            if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
+            {
+                rtvHandleCurrent = data.rtvHandle;
+                _commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+            }
+
             if (data.model == nullptr) continue;
             for(auto& cbuffer : data.cbuffers)
             {

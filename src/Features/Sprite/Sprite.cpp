@@ -24,7 +24,7 @@ Sprite::~Sprite()
 }
 
 
-void Sprite::Initialize(std::string _filepath)
+void Sprite::Initialize(std::string filepath)
 {
     pSpriteSystem_ = SpriteSystem::GetInstance();
     pDx12_ = pSpriteSystem_->GetDirectX12();
@@ -63,9 +63,7 @@ void Sprite::Initialize(std::string _filepath)
     // 座標変換行列を表すデータを作成する
     CreateTransformationMatrixResource();
 
-    texturePath_ = _filepath;
-
-    TextureManager::GetInstance()->LoadTexture(texturePath_);
+    texturePath_ = TextureManager::GetInstance()->LoadTexture(filepath);
 
     textureSrvHandleGPU_ = TextureManager::GetInstance()->GetSrvHandleGPU(texturePath_);
 
@@ -157,6 +155,7 @@ void Sprite::Draw()
     data.srvHandleGPU = textureSrvHandleGPU_;
     data.pVBV = &vertexBufferView_;
     data.pIBV = &indexBufferView_;
+    data.rtvHandleCPU = rtvHandleCPU_;
 
     SpriteSystem::GetInstance()->AddCommandListData(data);
 }

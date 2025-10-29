@@ -18,10 +18,6 @@ namespace Helper
         const std::string&              name
     );
 
-    void CreateSRV(
-        DX12Resource&                   resource
-    );
-
     void CreateCommandList(
         ID3D12Device* pDevice,
         Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList,

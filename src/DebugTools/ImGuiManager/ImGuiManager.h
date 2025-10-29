@@ -22,7 +22,7 @@ public:
     void Initialize();
     void BeginFrame();
     void Render();                          // 描画
-    void EndFrame();                        // フレーム終了
+    void PostDraw();                        // フレーム終了
     void Finalize();
     void OnResizedBuffers();
 
@@ -48,6 +48,9 @@ private:
     bool                        isChangedFont_      = false;
     uint32_t                    srvIndex_           = 0u;
     ID3D12DescriptorHeap*       srvDescHeap_        = nullptr;
+
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   commandList_        = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      commandAllocator_   = nullptr;
 
     // For debug window
     std::vector<std::string>    styleNameArray_     = {};

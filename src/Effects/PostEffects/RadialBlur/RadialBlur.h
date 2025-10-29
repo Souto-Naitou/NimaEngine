@@ -25,7 +25,7 @@ public:
     /// エフェクトを初期化します。
     /// </summary>
     /// <param name="desc">DX12 初期化情報。</param>
-    void    Initialize(const PostEffectInitDesc& desc) override;
+    void    Initialize(const PostEffectInitParams& desc) override;
     
     /// <summary>
     /// リソースを解放します。
@@ -65,7 +65,7 @@ public:
     /// <summary>
     /// リサイズ後の処理を行います。
     /// </summary>
-    void    OnResizedBuffers() override;
+    void    OnResizeAfter() override;
     /// <summary>
     /// レンダーターゲットをシェーダーリソース状態へ遷移させます。
     /// </summary>
@@ -105,11 +105,7 @@ private:
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_           = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    uint32_t                                            rtvHeapIndex_           = 0;
-    uint32_t                                            srvHeapIndex_           = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/RadialBlur.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/RadialBlur.PS.hlsl";
 

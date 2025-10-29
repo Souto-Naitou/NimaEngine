@@ -1,6 +1,8 @@
 #include "DX12Resource.h"
 
 #include <utility>
+#include <config/EngineSetting.h>
+#include "../SRVManager.h"
 
 void DX12Resource::Initialize(
     Microsoft::WRL::ComPtr<ID3D12Resource> resource,
@@ -16,8 +18,28 @@ void DX12Resource::Initialize(
     }
 }
 
+void DX12Resource::CreateSRV()
+{
+    auto pSRVManager = SRVManager::GetInstance();
+
+    /// 割り当て
+    srvIndex_ = pSRVManager->Allocate();
+    pSRVManager->CreateForTexture2D(
+        srvIndex_,
+        resource_.Get(),
+        NimaEngine::Config::kRenderTargetFormat,
+        1
+    );
+
+    /// ラッパークラスにSRV情報をセット
+    srvHandleCPU_ = pSRVManager->GetCPUDescriptorHandle(srvIndex_);
+    srvHandleGPU_ = pSRVManager->GetGPUDescriptorHandle(srvIndex_);
+}
+
 void DX12Resource::Reset()
 {
+    if (srvIndex_ != 0u) SRVManager::GetInstance()->Deallocate(srvIndex_);
+    
     resource_.Reset();
     stateTracker_.Reset();
     srvIndex_ = 0u;

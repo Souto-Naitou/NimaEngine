@@ -10,6 +10,7 @@
 
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
+#include <Core/DirectX12/Helper/DX12Helper.h>
 
 void ImGuiManager::Initialize()
 {
@@ -24,6 +25,11 @@ void ImGuiManager::Initialize()
     srvDescHeap_ = srvManager->GetDescriptorHeap();
     D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = srvManager->GetCPUDescriptorHandle(srvIndex_);
     D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = srvManager->GetGPUDescriptorHandle(srvIndex_);
+
+    // コマンドリスト周りの初期化
+    device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+    device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr, IID_PPV_ARGS(&commandList_));
+    pDx12_->AddCommandList(DirectX12::CommandListType::ImGui, commandList_.Get());
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -102,12 +108,18 @@ void ImGuiManager::Render()
 {
     ImGui::EndFrame();
     ImGui::Render();
+
+    uint32_t indexBackbuffer = pDx12_->GetBackBufferIndex();
+    auto rtvHandleSwapChain_ = pDx12_->GetRTVHandle()[indexBackbuffer];
+    DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get(), &rtvHandleSwapChain_);
+
+    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
 }
 
-void ImGuiManager::EndFrame()
+void ImGuiManager::PostDraw()
 {
-    ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandListsLast();
-    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+    commandAllocator_->Reset();
+    commandList_->Reset(commandAllocator_.Get(), nullptr);
 }
 
 void ImGuiManager::ImGui()

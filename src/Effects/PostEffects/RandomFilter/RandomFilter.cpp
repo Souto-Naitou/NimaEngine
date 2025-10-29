@@ -9,7 +9,7 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 
-void RandomFilter::Initialize(const PostEffectInitDesc& desc)
+void RandomFilter::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -19,7 +19,7 @@ void RandomFilter::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RandomFilter");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -118,13 +118,13 @@ void RandomFilter::OnResizeBefore()
     renderTexture_.GetStateTracker().Reset();
 }
 
-void RandomFilter::OnResizedBuffers()
+void RandomFilter::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RandomFilter");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void RandomFilter::ToShaderResourceState()

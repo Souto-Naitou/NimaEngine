@@ -13,6 +13,7 @@
 #include <memory>
 #include <cstdint>
 #include <Features/Particle/Emitter/EmitterData.h>
+#include <DebugTools/DebugEntry/DebugEntry.h>
 
 /// <summary>
 /// パーティクルエミッタ
@@ -60,6 +61,11 @@ public:
     /// </summary>
     void Emit();
 
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
+    void ImGui();
+
 public: /// Setter
     void SetPosition(const Vector3& _position) { position_ = _position; }
     void SetGameEye(GameEye** _eye) { this->ModifyGameEye(_eye); }
@@ -71,9 +77,8 @@ public: /// Getter
 private:
     using EmitterData = Type::ParticleEmitter::v3::Data;
 
+    std::unique_ptr<DebugEntry<ParticleEmitter>> debugEntry_ = nullptr;
     static constexpr uint32_t   kDefaultReserveCount_   = 6000u;
-    std::string                 name_                   = {};               // 名前
-    std::string                 ptrHex_                 = {};               // ポインタの16進数表記
     std::string                 particleName_           = {};               // 名前
     std::string                 jsonPath_               = {};               // JSONファイルパス
     TimeMeasurer                timer_                  = {};               // 計測用タイマー
@@ -103,11 +108,6 @@ private:
     Vector3 RandomUnitSphere();
 
 private:
-    /// <summary>
-    /// デバッグUIを描画します。
-    /// </summary>
-    void ImGui();
-
     /// <summary>
     /// カメラ参照を更新します。
     /// </summary>

@@ -10,7 +10,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <DebugTools/Logger/Logger.h>
 
-void Vignette::Initialize(const PostEffectInitDesc& desc)
+void Vignette::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -20,7 +20,7 @@ void Vignette::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Vignette");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -103,12 +103,12 @@ void Vignette::OnResizeBefore()
         renderTexture_.GetStateTracker().Reset();
 }
 
-void Vignette::OnResizedBuffers()
+void Vignette::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Vignette");
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void Vignette::ToShaderResourceState()

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <functional>
 #include <Utility/Debug/dbgutl.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 

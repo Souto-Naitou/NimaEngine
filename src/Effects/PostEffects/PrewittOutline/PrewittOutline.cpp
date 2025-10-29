@@ -10,7 +10,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
-void PrewittOutline::Initialize(const PostEffectInitDesc& desc)
+void PrewittOutline::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -20,7 +20,7 @@ void PrewittOutline::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_PrewittOutline");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -103,13 +103,13 @@ void PrewittOutline::OnResizeBefore()
         renderTexture_.GetStateTracker().Reset();
 }
 
-void PrewittOutline::OnResizedBuffers()
+void PrewittOutline::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_PrewittOutline");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void PrewittOutline::ToShaderResourceState()

@@ -118,16 +118,14 @@ void CubemapSystem::_CreatePSO()
     }
 }
 
-void CubemapSystem::DrawSetting()
+void CubemapSystem::DrawSetting(ID3D12GraphicsCommandList* cl)
 {
-    ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandList();
-
     /// ルートシグネチャをセットする
-    commandList->SetGraphicsRootSignature(rootSignature_.Get());
+    cl->SetGraphicsRootSignature(rootSignature_.Get());
 
     /// グラフィックスパイプラインステートをセットする
-    commandList->SetPipelineState(pso_.GetPSO());
+    cl->SetPipelineState(pso_.GetPSO());
 
     /// プリミティブトポロジーをセットする
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }

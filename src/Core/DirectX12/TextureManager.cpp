@@ -12,7 +12,7 @@ void TextureManager::Initialize(SRVManager* _srvManager)
     auto& cfgData = ConfigManager::GetInstance()->GetConfigData();
     for (auto& path : cfgData.texture_paths)
     {
-        this->AddSearchPath(path);
+        pathResolver_.AddSearchPath(path);
     }
 }
 
@@ -21,7 +21,7 @@ void TextureManager::ReleaseIntermediateResources()
     resourcesIntermediate_.clear();
 }
 
-void TextureManager::LoadTexture(const std::string& filePath)
+std::string TextureManager::LoadTexture(const std::string& filePath)
 {
     std::string strPathResolved = this->ResolveFilePath(filePath);
 
@@ -30,7 +30,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
     {
         if (std::filesystem::equivalent(key, std::filesystem::path(strPathResolved)))
         {
-            return;
+            return filePath;
         }
     }
 
@@ -96,6 +96,8 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
     // Typeに応じてSRVを作成
     this->CreateSRV(textureType, textureData);
+
+    return strPathResolved;
 }
 
 void TextureManager::UnloadTexture(const std::string& filePath)

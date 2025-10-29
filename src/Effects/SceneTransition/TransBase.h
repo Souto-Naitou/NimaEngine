@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/Layer/Canvas.h>
 
 
 /// <summary>
@@ -14,7 +15,7 @@ public:
     /// 遷移の初期化を行います。
     /// </summary>
     /// <param name="sceneName">遷移先のシーン名。</param>
-    virtual void Initialize(const std::string& sceneName) = 0;
+    virtual void Initialize(const std::string& sceneName, Canvas* pCanvas) = 0;
     /// <summary>
     /// 遷移の状態を更新します。
     /// </summary>
@@ -37,4 +38,6 @@ public:
 protected:
     TimeMeasurer timer_;
     bool isEnd_ = false;
+
+private:
 };

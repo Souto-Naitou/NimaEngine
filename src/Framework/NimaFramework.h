@@ -29,6 +29,7 @@
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecuter.h>
 #include <Features/Model/GltfModelSystem.h>
+#include <Features/Layer/Layer.h>
 
 
 /// ゲーム共通のフレームワーククラス
@@ -82,7 +83,7 @@ protected:
     std::unique_ptr<NiGuiDebug>         pNiGuiDebug_                = nullptr;
     std::unique_ptr<GltfModelSystem>    pGltfModelSystem_           = nullptr;
     std::unique_ptr<CubemapSystem>      pCubemapSystem_             = nullptr;
-    std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_        = nullptr;
+    std::unique_ptr<Layer>              pLayer_                     = nullptr;
 
     #ifdef _DEBUG
     std::unique_ptr<ImGuiManager>   pImGuiManager_              = nullptr;

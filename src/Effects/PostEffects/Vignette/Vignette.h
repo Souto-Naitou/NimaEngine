@@ -28,7 +28,7 @@ public:
     /// エフェクトを初期化します。
     /// </summary>
     /// <param name="desc">DX12 初期化情報。</param>
-    void    Initialize(const PostEffectInitDesc& desc) override;
+    void    Initialize(const PostEffectInitParams& desc) override;
     
     /// <summary>
     /// リソースを解放します。
@@ -53,7 +53,7 @@ public:
     /// <summary>リサイズ前の処理を行います。</summary>
     void    OnResizeBefore() override;
     /// <summary>リサイズ後の処理を行います。</summary>
-    void    OnResizedBuffers() override;
+    void    OnResizeAfter() override;
     /// <summary>レンダーターゲットをシェーダーリソース状態へ遷移させます。</summary>
     void    ToShaderResourceState() override;
     /// <summary>デバッグオーバーレイを描画します。</summary>

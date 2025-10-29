@@ -11,7 +11,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 
-void DepthBasedOutline::Initialize(const PostEffectInitDesc& desc)
+void DepthBasedOutline::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -121,7 +121,7 @@ void DepthBasedOutline::OnResizeBefore()
     renderTexture_.Reset();
 }
 
-void DepthBasedOutline::OnResizedBuffers()
+void DepthBasedOutline::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_DepthBasedOutline");
@@ -247,5 +247,5 @@ void DepthBasedOutline::CreateSRV()
     srvIndexDepth_ = sm->Allocate();
     sm->CreateForTexture2D(srvIndexDepth_, pDx12_->GetDepthStencilResource()->GetResource().Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS, 1);
     depthGpuHandle_ = sm->GetGPUDescriptorHandle(srvIndexDepth_);
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }

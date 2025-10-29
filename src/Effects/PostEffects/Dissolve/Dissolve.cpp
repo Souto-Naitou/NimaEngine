@@ -11,7 +11,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <cfloat>
 
-void Dissolve::Initialize(const PostEffectInitDesc& desc)
+void Dissolve::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -22,7 +22,7 @@ void Dissolve::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -114,13 +114,13 @@ void Dissolve::OnResizeBefore()
         renderTexture_.GetStateTracker().Reset();
 }
 
-void Dissolve::OnResizedBuffers()
+void Dissolve::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void Dissolve::ToShaderResourceState()

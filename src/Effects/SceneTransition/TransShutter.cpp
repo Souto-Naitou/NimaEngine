@@ -1,10 +1,15 @@
 #include "TransShutter.h"
 #include <Features/SceneManager/SceneManager.h>
 
-void TransShutter::Initialize(const std::string& _sceneName)
+void TransShutter::Initialize(const std::string& _sceneName, Canvas* pCanvas)
 {
-    this->AnimationInitialize();
+    pCanvas_ = pCanvas;
+
     this->SpriteInitialize();
+    pCanvas_->RegisterDrawable(spriteLower_.get());
+    pCanvas_->RegisterDrawable(spriteUpper_.get());
+
+    this->AnimationInitialize();
 
     pDebugEntry_ = std::make_unique<DebugEntry<TransShutter>>("Transition", "Shutter", this);
 
@@ -24,8 +29,12 @@ void TransShutter::Update()
 
 void TransShutter::Draw()
 {
-    spriteUpper_->Draw();
-    spriteLower_->Draw();
+}
+
+void TransShutter::Finalize()
+{
+    pCanvas_->UnregisterDrawable(spriteLower_.get());
+    pCanvas_->UnregisterDrawable(spriteUpper_.get());
 }
 
 void TransShutter::ImGui()

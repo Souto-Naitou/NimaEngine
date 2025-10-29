@@ -9,8 +9,9 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <config/EngineSetting.h>
 
-void RadialBlur::Initialize(const PostEffectInitDesc& desc)
+void RadialBlur::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -20,7 +21,7 @@ void RadialBlur::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RadialBlur");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -49,7 +50,7 @@ bool RadialBlur::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE RadialBlur::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return renderTexture_.GetSRVHandleGPU();
 }
 
 const std::string& RadialBlur::GetName() const
@@ -81,8 +82,11 @@ void RadialBlur::Setting()
     // レンダーテクスチャをレンダーターゲット状態に変更
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+    // クリア
+    commandList_->ClearRenderTargetView(renderTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -98,18 +102,16 @@ void RadialBlur::Setting()
 
 void RadialBlur::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
     renderTexture_.GetResource().Reset();
-        renderTexture_.GetStateTracker().Reset();
 }
 
-void RadialBlur::OnResizedBuffers()
+void RadialBlur::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RadialBlur");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void RadialBlur::ToShaderResourceState()
@@ -174,7 +176,7 @@ void RadialBlur::CreatePipelineStateObject()
     inputLayoutDesc.NumElements = 0;
 
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;

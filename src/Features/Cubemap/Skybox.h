@@ -22,17 +22,18 @@ public:
     void Initialize(CubemapSystem* _cms);
     void Finalize() const;
     void Update();
-    void Draw() const;
+    void Draw(ID3D12GraphicsCommandList* cl) const;
     void ImGui();
-    void SetSkyboxTexture(D3D12_GPU_DESCRIPTOR_HANDLE _handle);
+    void SetSkyboxTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+    void SetRTVHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { rtvHandleCPU_ = handle; };
 
 private:
-    void _CreateVertices(std::array<Vector4, 24>& _out_vertices);
-    void _CreateIndices(std::array<uint32_t, 36>& _out_indices);
-    void _CreateVertexResource();
-    void _CreateIndexResource();
-    void _CreateTransformationMatrixResource();
-    void _CreateMaterialResource();
+    void CreateVertices(std::array<Vector4, 24>& _out_vertices);
+    void CreateIndices(std::array<uint32_t, 36>& _out_indices);
+    void CreateVertexResource();
+    void CreateIndexResource();
+    void CreateTransformationMatrixResource();
+    void CreateMaterialResource();
 
     std::unique_ptr<DebugEntry<Skybox>>     pDebugEntry_            = nullptr;  //< デバッグエントリ
     Microsoft::WRL::ComPtr<ID3D12Resource>  vertexResource_         = nullptr;
@@ -44,6 +45,7 @@ private:
     EulerTransform                          transformation_         = {};  //< Skyboxの変形情報 
 
     D3D12_GPU_DESCRIPTOR_HANDLE             skyboxTextureSrvHandleGpu_ = {};
+    D3D12_CPU_DESCRIPTOR_HANDLE             rtvHandleCPU_           = {};
     
     Microsoft::WRL::ComPtr<ID3D12Resource> resourceTransformationMatrix_ = nullptr;
     TransformationMatrix* mappedTransformationMatrix_ = nullptr;

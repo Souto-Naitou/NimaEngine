@@ -19,6 +19,7 @@ class SpriteSystem :
 public:
     struct CommandListData
     {
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCPU;
         ID3D12Resource* materialResource;
         ID3D12Resource* transformationMatrixResource;
         D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;

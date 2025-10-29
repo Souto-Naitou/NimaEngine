@@ -7,6 +7,8 @@
 #include <Core/Win32/WinSystem.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
+#include <array>
+#include <Features/Layer/Canvas.h>
 
 
 /// <summary>
@@ -20,7 +22,7 @@ public:
     /// シャッター遷移の初期化を行います。
     /// </summary>
     /// <param name="_sceneName">遷移先のシーン名。</param>
-    void Initialize(const std::string& _sceneName) override;
+    void Initialize(const std::string& sceneName, Canvas* pCanvas) override;
     /// <summary>
     /// 状態を更新します。
     /// </summary>
@@ -32,11 +34,13 @@ public:
     /// <summary>
     /// 後始末を行います。
     /// </summary>
-    void Finalize() override {};
+    void Finalize() override;
     /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
     void ImGui() override;
+
+
 
 private:
     const float kHalfHeight = WinSystem::clientHeight / 2.0f;
@@ -50,10 +54,11 @@ private:
     std::string sceneName_;
     std::unique_ptr<Sprite> spriteUpper_;
     std::unique_ptr<Sprite> spriteLower_;
-
     AnimationTimeline<float> animDeltaY_ = {};
-
     std::unique_ptr<DebugEntry<TransShutter>> pDebugEntry_ = nullptr;  //< デバッグエントリ
+
+
+    Canvas*     pCanvas_ = nullptr;
 
     /// <summary>
     /// アニメーションの初期化を行います。

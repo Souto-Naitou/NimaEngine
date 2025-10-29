@@ -8,7 +8,7 @@ class DirectX12;
 /// <summary>
 /// ポストエフェクト初期化用構造体
 /// </summary>
-struct PostEffectInitDesc
+struct PostEffectInitParams
 {
     DirectX12* pDx12 = nullptr;
     ID3D12GraphicsCommandList* pCommandList = nullptr;
@@ -29,7 +29,7 @@ public:
     /// Helper::PostEffect::CreatePostEffect を使用してインスタンスを生成してください。
     /// </summary>
     /// <param name="desc">初期化に必要な DX12 まわりの情報。</param>
-    virtual void    Initialize(const PostEffectInitDesc& desc) = 0;
+    virtual void    Initialize(const PostEffectInitParams& desc) = 0;
     /// <summary>
     /// リソースを解放します。
     /// </summary>
@@ -80,7 +80,7 @@ public:
     /// <summary>
     /// バッファリサイズ後の処理を行います。
     /// </summary>
-    virtual void    OnResizedBuffers() = 0;
+    virtual void    OnResizeAfter() = 0;
     /// <summary>
     /// デバッグオーバーレイを描画します。
     /// </summary>

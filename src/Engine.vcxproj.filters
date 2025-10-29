@@ -471,7 +471,7 @@
     <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\SceneTransitionManager.cpp">
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecuter.cpp">
       <Filter>Effect\SceneTransition\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Features\Collision\Manager\CollisionManager.cpp">
@@ -678,6 +678,9 @@
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Layer\Layer.cpp">
+      <Filter>Feature\Layer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -812,7 +815,7 @@
     <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\SceneTransitionManager.h">
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecuter.h">
       <Filter>Effect\SceneTransition\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Features\Collision\Manager\CollisionManager.h">
@@ -1090,6 +1093,9 @@
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h">
       <Filter>Effect\PostEffect\.Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Layer\Layer.h">
+      <Filter>Feature\Layer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

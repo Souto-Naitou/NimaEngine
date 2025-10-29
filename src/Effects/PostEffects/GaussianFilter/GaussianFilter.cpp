@@ -10,7 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 
-void GaussianFilter::Initialize(const PostEffectInitDesc& desc)
+void GaussianFilter::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -20,7 +20,7 @@ void GaussianFilter::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_GaussianFilter");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -103,13 +103,13 @@ void GaussianFilter::OnResizeBefore()
         renderTexture_.GetStateTracker().Reset();
 }
 
-void GaussianFilter::OnResizedBuffers()
+void GaussianFilter::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_GaussianFilter");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(renderTexture_);
+    renderTexture_.CreateSRV();
 }
 
 void GaussianFilter::ToShaderResourceState()

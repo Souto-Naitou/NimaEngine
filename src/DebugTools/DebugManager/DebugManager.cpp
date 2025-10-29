@@ -410,6 +410,9 @@ void DebugManager::DebugInfoBar() const
         ImGui::ProgressBar(static_cast<float>(fps_) / 60.0f, ImVec2(200, 0), "");
         ImGui::SameLine();
         ImGui::Text("Update: %dms", static_cast<int>(frameTime_ * 1000));
+        ImGui::SameLine();
+        ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 32.0f , ImGui::GetCursorPosY()});
+        ImGui::Text("F3: Toggle debug window");
     }
     ImGui::End();
 

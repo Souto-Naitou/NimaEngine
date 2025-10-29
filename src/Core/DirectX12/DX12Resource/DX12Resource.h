@@ -23,6 +23,8 @@ public:
         const std::string& name = "Unnamed(Managed by DX12Resource)"
     );
 
+    void CreateSRV();
+
     void Reset();
 
     // Setter

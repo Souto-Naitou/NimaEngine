@@ -18,11 +18,7 @@ const uint32_t ParticleEmitter::kDefaultReserveCount_;
 
 void ParticleEmitter::Initialize(IModel* _pModel, const std::string& _jsonPath)
 {
-#ifdef _DEBUG
-    ptrHex_ = utl::string::to_string(this);
-    name_ = "unnamed##" + ptrHex_;
-    DebugManager::GetInstance()->SetComponent("ParticleEmitter", name_, std::bind(&ParticleEmitter::ImGui, this));
-#endif // _DEBUG
+    debugEntry_ = std::make_unique<DebugEntry<ParticleEmitter>>("ParticleEmitter", "ParticleEmitter", this, false);
 
     winTools_ = WinTools::GetInstance();
 
@@ -52,8 +48,8 @@ void ParticleEmitter::Initialize(IModel* _pModel, const std::string& _jsonPath)
     if (!emitterData_.name.empty())
     {
         particleName_ = emitterData_.name;
-        name_ = particleName_ + "##" + ptrHex_;
-        particle_->SetName(name_);
+        debugEntry_->SetName(particleName_);
+        particle_->SetName(particleName_);
     }
 
     aabb_ = std::make_unique<AABB>();
@@ -247,13 +243,13 @@ void ParticleEmitter::ImGui()
         if (ImGui::InputText("エミッター名", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue))
         {
             particleName_ = name;
-            name_ = particleName_ + "##" + ptrHex_;
             fromJsonData_.name = name;
-            particle_->SetName(name_);
+            debugEntry_->SetName(particleName_);
+            particle_->SetName(particleName_);
         }
         if (ImGui::Button("マニュアル発生"))
         {
-            EmitParticle();
+            Emit();
         }
         if (ImGui::InputText("ファイルパス", path, sizeof(path)))
         {
@@ -273,8 +269,9 @@ void ParticleEmitter::ImGui()
                 /// 名前が空でないなら
                 if (!fromJsonData_.name.empty())
                 {
-                    name_ = fromJsonData_.name;
-                    name_ = fromJsonData_.name + "##" + ptrHex_;
+                    particleName_ = fromJsonData_.name;
+                    debugEntry_->SetName(particleName_);
+                    particle_->SetName(particleName_);
                 }
                 jsonFileExist_ = true;
             }
@@ -473,10 +470,6 @@ void ParticleEmitter::ModifyGameEye(GameEye** _eye)
 
 void ParticleEmitter::Finalize()
 {
-#ifdef _DEBUG
-    DebugManager::GetInstance()->DeleteComponent("ParticleEmitter", name_);
-#endif
-
     ParticleManager::GetInstance()->ReserveDeleteParticle(particle_);
     particle_ = nullptr;
 }

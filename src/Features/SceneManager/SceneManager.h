@@ -2,7 +2,7 @@
 
 #include <Scene/SceneBase.h>
 #include <Interfaces/ISceneFactory.h>
-#include <Effects/SceneTransition/SceneTransitionManager.h>
+#include <Effects/SceneTransition/SceneTransitionExecuter.h>
 #include <Features/Model/ModelManager.h>
 #include <memory>
 #include <Interfaces/ISceneArgs.h>
@@ -61,8 +61,15 @@ public:
     /// <summary>
     /// 次フレームで遷移するシーン名を予約します。
     /// </summary>
-    /// <param name="_sceneName">遷移先シーン名。</param>
+    /// <param name="_sceneName">遷移先シーン名</param>
     void ReserveScene(const std::string& _sceneName);
+    
+    /// <summary>
+    /// 次フレームで遷移するシーンを予約します。(遷移付き)
+    /// </summary>
+    /// <param name="_sceneName">遷移先シーン名</param>
+    /// <param name="transition">トランジションインスタンス</param>
+    void ReserveScene(const std::string& _sceneName, std::unique_ptr<TransBase>&& transition);
     
     /// <summary>
     /// 開始シーンの予約を行います（設定に基づく）。
@@ -74,7 +81,7 @@ public: /// シーン動作
     /// <summary>
     /// シーンマネージャを初期化します。
     /// </summary>
-    void Initialize();
+    void Initialize(DirectX12* pDx12, Layer* pLayer);
     
     /// <summary>
     /// シーンの更新を行います（遷移処理を含む）。
@@ -125,10 +132,9 @@ private:
     std::unique_ptr<ISceneArgs> pSceneArgs_ = nullptr;
     std::unordered_map<std::string, std::any> initialArgs_;
 
-
 private: /// 他クラスのインスタンス
     ISceneFactory* pSceneFactory_ = nullptr;
-    SceneTransitionManager* pSceneTransitionManager_ = nullptr;
+    std::unique_ptr<SceneTransitionExecuter> pTransitionExecuter_ = nullptr;
 
     ModelManager* pModelManager_ = nullptr;
 };

@@ -25,6 +25,7 @@ public:
     /// <param name="_begin">シェイク範囲の最小値。</param>
     /// <param name="_end">シェイク範囲の最大値。</param>
     void Shake(const Vector3& _begin, const Vector3& _end);
+
     /// <summary>
     /// 指定強度でカメラをシェイクさせます。
     /// </summary>

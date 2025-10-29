@@ -33,7 +33,7 @@ public:
     /// エフェクトを初期化し、必要なリソースを確保します。
     /// </summary>
     /// <param name="desc">DX12 まわりの初期化情報。</param>
-    void    Initialize(const PostEffectInitDesc& desc)                override;
+    void    Initialize(const PostEffectInitParams& desc)                override;
     
     /// <summary>
     /// リソースを解放します。
@@ -69,7 +69,7 @@ public:
     /// <summary>
     /// バッファリサイズ変更後の処理を行います。
     /// </summary>
-    void    OnResizedBuffers()          override;
+    void    OnResizeAfter()          override;
     
     /// <summary>
     /// レンダーターゲットをシェーダーリソース状態へ遷移させます。
@@ -107,6 +107,15 @@ public:
     // [Getter End]
     // =============================================
 
+    // =============================================
+    // [Option Begin]
+    void    SetKernelSize(int _size);
+    void    SetSigma(float _sigma);
+    void    SetThreshold(float _threshold);
+    void    SetBloomIntensity(float _intensity);
+    // [Option End]
+    // =============================================
+
 
 private:
     DirectX12*                                          pDx12_                  = nullptr;
@@ -138,8 +147,6 @@ private:
     // =============================================
     // [Final Output Begin]
     DX12Resource                                        outputTexture_              = {};
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_               = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_               = {};
     uint32_t                                            rtvHeapIndex_               = 0;
     uint32_t                                            srvHeapIndex_               = 0;
     // [Final Output End]

@@ -39,7 +39,9 @@ public:
     /// テクスチャファイルの読み込み
     /// </summary>
     /// <param name="_filePath">テクスチャファイルのパス</param>
-    void LoadTexture(const std::string& _filePath);
+    /// <returns>実際に読み込んだファイルパス</returns>
+    /// <remarks>ファイルが見つからなかった場合はデフォルトで読み込まれるテクスチャのパスを返します</remarks>
+    std::string LoadTexture(const std::string& _filePath);
 
     /// <summary>
     /// 指定されたファイルパスのテクスチャをアンロードします。
@@ -56,10 +58,6 @@ public:
         UnloadTexture(_filePath);
         LoadTexture(_filePath);
     }
-
-
-public: /// Setter
-    void AddSearchPath(const std::string& _path) { pathResolver_.AddSearchPath(_path); }
 
 
 public: /// Getter

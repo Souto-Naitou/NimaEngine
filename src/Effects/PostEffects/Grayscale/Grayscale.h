@@ -11,7 +11,7 @@
 class Grayscale : public IPostEffect
 {
 public:
-    void    Initialize(const PostEffectInitDesc& desc) override;
+    void    Initialize(const PostEffectInitParams& desc) override;
     void    Finalize() override;
 
     void    Enable(bool _flag) override;
@@ -20,7 +20,7 @@ public:
     void    Apply() override;
     void    Setting() override;
     void    OnResizeBefore() override;
-    void    OnResizedBuffers() override;
+    void    OnResizeAfter() override;
     void    ToShaderResourceState() override;
     void    DebugOverlay() override {};
 

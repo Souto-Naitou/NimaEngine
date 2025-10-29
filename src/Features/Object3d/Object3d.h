@@ -75,6 +75,7 @@ public: /// Setter
     void SetDirectionalLight(DirectionalLight* _light)          { directionalLight_ = _light; }
     void SetPointLight(PointLight* _light)                      { pointLight_ = _light; }
     void SetModel(IModel* _pModel)                              { pModel_ = _pModel; }
+    void SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle) { rtvHandle_ = rtvHandle; }
 
 
 private: /// メンバ変数
@@ -92,6 +93,7 @@ private: /// メンバ変数
     Microsoft::WRL::ComPtr<ID3D12Resource>          lightingResource_               = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>          pointLightResource_             = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>          materialResource_               = nullptr;
+    D3D12_CPU_DESCRIPTOR_HANDLE                     rtvHandle_                      = {};
 
     Option                                          option_                         = {};
     TransformationMatrix*                           transformationMatrixData_       = nullptr;

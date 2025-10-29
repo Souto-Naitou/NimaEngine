@@ -17,6 +17,7 @@ public:
         Subtract,   // !< 減算
         Multiply,   // !< 乗算
         Screen,     // !< スクリーン
+        Test,       // !< テスト用
 
         COUNT,      // !< カウント用
     };
@@ -27,5 +28,5 @@ public:
 
 private:
     BlendModes currentMode_;
-    D3D12_BLEND_DESC desc_;
+    D3D12_BLEND_DESC desc_{};
 };

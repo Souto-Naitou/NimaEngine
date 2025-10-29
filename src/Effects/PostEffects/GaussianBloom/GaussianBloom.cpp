@@ -10,7 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 
-void GaussianBloom::Initialize(const PostEffectInitDesc& desc)
+void GaussianBloom::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     commandList_ = desc.pCommandList;
@@ -21,7 +21,7 @@ void GaussianBloom::Initialize(const PostEffectInitDesc& desc)
     Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_);
+    outputTexture_.CreateSRV();
 
     // ルートシグネチャの生成
     this->CreateRootSignature();
@@ -54,7 +54,7 @@ bool GaussianBloom::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return outputTexture_.GetSRVHandleGPU();
 }
 
 const std::string& GaussianBloom::GetName() const
@@ -92,6 +92,26 @@ const LuminanceOutput* GaussianBloom::GetLuminanceOutputFilter() const
     return pLuminanceOutput_.get();
 }
 
+void GaussianBloom::SetKernelSize(int _size)
+{
+    pSeparatedGaussianFilter_->GetOption().kernelSize = _size;
+}
+
+void GaussianBloom::SetSigma(float _sigma)
+{
+    pSeparatedGaussianFilter_->SetSigma(_sigma);
+}
+
+void GaussianBloom::SetThreshold(float _threshold)
+{
+    pLuminanceOutput_->GetOption().threshold = _threshold;
+}
+
+void GaussianBloom::SetBloomIntensity(float _intensity)
+{
+    cbOptionData_->bloomIntensity = _intensity;
+}
+
 void GaussianBloom::Apply()
 {
     D3D12_GPU_DESCRIPTOR_HANDLE outputHandleLuminance = {};
@@ -100,7 +120,7 @@ void GaussianBloom::Apply()
     outputHandleGaussian = this->ApplyFilter(outputHandleLuminance, pSeparatedGaussianFilter_.get());
 
     outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    this->PreDrawSetting(outputHandleGaussian, rtvHandleCpu_);
+    this->PreDrawSetting(outputHandleGaussian, outputTexture_.GetRTVHandle());
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
 }
 
@@ -114,7 +134,6 @@ void GaussianBloom::Setting()
 
 void GaussianBloom::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
     outputTexture_.Reset();
 
     // 内部エフェクトのリサイズ
@@ -122,17 +141,17 @@ void GaussianBloom::OnResizeBefore()
     pSeparatedGaussianFilter_->OnResizeBefore();
 }
 
-void GaussianBloom::OnResizedBuffers()
+void GaussianBloom::OnResizeAfter()
 {
     // レンダーテクスチャの生成
     Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
 
     // レンダーテクスチャのSRVを生成
-    Helper::CreateSRV(outputTexture_);
+    outputTexture_.CreateSRV();
 
     // 内部エフェクトのリサイズ
-    pLuminanceOutput_->OnResizedBuffers();
-    pSeparatedGaussianFilter_->OnResizedBuffers();
+    pLuminanceOutput_->OnResizeAfter();
+    pSeparatedGaussianFilter_->OnResizeAfter();
 }
 
 void GaussianBloom::ToShaderResourceState()

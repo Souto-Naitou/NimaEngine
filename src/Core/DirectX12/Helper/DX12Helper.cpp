@@ -272,24 +272,35 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
 
 ComPtr<ID3D12Resource> DX12Helper::CreateTextureResource(const ComPtr<ID3D12Device>& _device, const DirectX::TexMetadata& _metadata)
 {
+    bool isCubeMap = (_metadata.miscFlags & DirectX::TEX_MISC_TEXTURECUBE) != 0;
+
+    if (isCubeMap)
+    {
+        // メタデータをログ出力
+        Logger::GetInstance()->LogInfo(
+            __FILE__,
+            __FUNCTION__,
+            std::format(
+                "Format={}, Width={}, Height={}, Mip={}, Array={}, Cube={}",
+                static_cast<int>(_metadata.format), static_cast<int>(_metadata.width), static_cast<int>(_metadata.height),
+                static_cast<int>(_metadata.mipLevels), static_cast<int>(_metadata.arraySize), isCubeMap));
+    }
+
     // metadataをもとにResourceの設定
     D3D12_RESOURCE_DESC resourceDesc{};
-    resourceDesc.Width = UINT(_metadata.width);
-    resourceDesc.Height = UINT(_metadata.height);
-    resourceDesc.MipLevels = UINT16(_metadata.mipLevels);
-    resourceDesc.DepthOrArraySize = UINT16(_metadata.arraySize);
-    resourceDesc.Format = _metadata.format;
-    resourceDesc.SampleDesc.Count = 1;
-    resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(_metadata.dimension);
+    resourceDesc.Width              = UINT(_metadata.width);
+    resourceDesc.Height             = UINT(_metadata.height);
+    resourceDesc.MipLevels          = UINT16(_metadata.mipLevels);
+    resourceDesc.DepthOrArraySize   = isCubeMap ? 6 : UINT16(_metadata.arraySize);
+    resourceDesc.Format             = _metadata.format;
+    resourceDesc.SampleDesc.Count   = 1;
+    resourceDesc.Dimension          = D3D12_RESOURCE_DIMENSION(_metadata.dimension);
 
-    // 利用するHeapの設定。非常に特殊な運用。 02_04exで一般的なケース版がある
-    D3D12_HEAP_PROPERTIES heapProperties{};
-    heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-    //heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-    //heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
     // Resourceの生成
     ComPtr<ID3D12Resource> resource = nullptr;
+    D3D12_HEAP_PROPERTIES heapProperties{};
+    heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // 利用するHeapの設定
     HRESULT hr = _device->CreateCommittedResource(
         &heapProperties,
         D3D12_HEAP_FLAG_NONE,
@@ -297,13 +308,11 @@ ComPtr<ID3D12Resource> DX12Helper::CreateTextureResource(const ComPtr<ID3D12Devi
         D3D12_RESOURCE_STATE_COPY_DEST,
         nullptr,
         IID_PPV_ARGS(&resource));
-
-    if (FAILED(hr))
+    if (FAILED(hr)) // 生成に失敗したら止める
     {
         Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, "CreateCommittedResource failed");
         assert(false && "Create committed resource failed");
     }
-
 
     return resource;
 }
@@ -337,7 +346,7 @@ DX12Resource DX12Helper::CreateDX12ResourceForRender(
 
     if (result.GetRTVHandle().ptr == 0)
     {
-        const auto rtvHandleIndex = rtvHeapCounter->Allocate("PostEffectRTV");
+        const auto rtvHandleIndex = rtvHeapCounter->Allocate();
         const auto rtvCPUHandle = rtvHeapCounter->GetRTVHandle(rtvHandleIndex);
         result.SetRTV(rtvHandleIndex, rtvCPUHandle);
     }

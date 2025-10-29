@@ -34,7 +34,6 @@ void NimaFramework::Initialize()
     pConfigManager_ = ConfigManager::GetInstance();
     pLogger_ = Logger::GetInstance();
     pDirectX_ = std::make_unique<DirectX12>();
-    pPostEffectExecuter_ = std::make_unique<PostEffectExecuter>();
 
     pDebugManager_ = DebugManager::GetInstance();
     pWinSystem_ = WinSystem::GetInstance();
@@ -61,6 +60,7 @@ void NimaFramework::Initialize()
 
     // 設定ファイルの読み込み
     pConfigManager_->Initialize("resources/json/.engine/config.json");
+
 
     /// ウィンドウの初期化
     pWinSystem_->Initialize();
@@ -107,6 +107,7 @@ void NimaFramework::Initialize()
     /// オーディオの初期化
     pAudioManager_->Initialize();
 
+
     /// 入力の初期化
     pInput_->Initialize(GetModuleHandleA(nullptr), pWinSystem_->GetHwnd());
 
@@ -122,8 +123,11 @@ void NimaFramework::Initialize()
     pViewport_->Initialize();
     pTextSystem_->SetViewport(pViewport_.get());
 
+    /// レイヤーの初期化
+    pLayer_ = std::make_unique<Layer>();
+
     /// シーンマネージャの初期化
-    pSceneManager_->Initialize();
+    pSceneManager_->Initialize(pDirectX_.get(), pLayer_.get());
 
     pParticleManager_->SetDirectX12(pDirectX_.get());
 
@@ -161,23 +165,15 @@ void NimaFramework::Initialize()
     pCubemapSystem_->SetDirectX12(pDirectX_.get());
     pCubemapSystem_->Initialize();
 
-    /// ポストエフェクトの初期化
-    pPostEffectExecuter_->SetDirectX12(pDirectX_.get());
-    pPostEffectExecuter_->Initialize();
-
     /// コマンドリストを追加
-    pDirectX_->AddCommandList(pObject3dSystem_->GetCommandList());
-    pDirectX_->AddCommandList(pParticleSystem_->GetCommandList());
-    pDirectX_->AddCommandList(pSpriteSystem_->GetCommandList());
-    pDirectX_->AddCommandList(pLineSystem_->GetCommandList());
-    pDirectX_->AddCommandList(pPostEffectExecuter_->GetCommandList());
-
-    pDirectX_->AddOnResize("PostEffect", std::bind(&PostEffectExecuter::OnResize, pPostEffectExecuter_.get()));
+    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pObject3dSystem_->GetCommandList());
+    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pParticleSystem_->GetCommandList());
+    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pSpriteSystem_->GetCommandList());
+    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pLineSystem_->GetCommandList());
 
     /// デフォルトシーン引数の設定
     (*pSceneManager_)
         .AddInitialArg("DirectX12", pDirectX_.get())
-        .AddInitialArg("PostEffectExecuter", pPostEffectExecuter_.get())
         .AddInitialArg("Object3dSystem", pObject3dSystem_)
         .AddInitialArg("ParticleSystem", pParticleSystem_)
         .AddInitialArg("SpriteSystem", pSpriteSystem_)
@@ -185,18 +181,24 @@ void NimaFramework::Initialize()
         .AddInitialArg("ParticleManager", pParticleManager_)
         .AddInitialArg("AudioManager", pAudioManager_)
         .AddInitialArg("GltfModelSystem", pGltfModelSystem_.get())
-        .AddInitialArg("CubemapSystem", pCubemapSystem_.get());
+        .AddInitialArg("CubemapSystem", pCubemapSystem_.get())
+        .AddInitialArg("Layer", pLayer_.get());
+
+    pDirectX_->AddOnResizeAfter("Viewport", std::bind(&Viewport::OnResizedBuffers, pViewport_.get()));
+    pDirectX_->AddOnResizeAfter("TextSystem", std::bind(&TextSystem::OnResizedBuffers, pTextSystem_));
+
+    #ifdef _DEBUG
+    pDirectX_->AddOnResizeAfter("ImGuiManager", std::bind(&ImGuiManager::OnResizedBuffers, pImGuiManager_.get()));
+    #endif // _DEBUG
 }
 
 void NimaFramework::Finalize()
 {
-    pDirectX_->DeleteOnResize("PostEffect");
     pAudioManager_->Finalize();
     pWinSystem_->Finalize();
     pLogger_->Save();
     pParticleManager_->Finalize();
     pSceneManager_->Finalize();
-    pPostEffectExecuter_->Finalize();
 
     #ifdef _DEBUG
     pImGuiManager_->Finalize();
@@ -223,13 +225,6 @@ void NimaFramework::Update()
         // ウィンドウのリサイズ後、バッファーのリサイズ前
         pTextSystem_->OnResizedWindow();
         pDirectX_->OnResizedWindow();
-        // バッファーのリサイズ後
-        pPostEffectExecuter_->OnResizedBuffers();
-        pViewport_->OnResizedBuffers();
-        #ifdef _DEBUG
-        pImGuiManager_->OnResizedBuffers();
-        #endif // _DEBUG
-        pTextSystem_->OnResizedBuffers();
     }
 
     #ifdef _DEBUG
@@ -266,8 +261,7 @@ void NimaFramework::Update()
 
     /// シーン更新
     pSceneManager_->Update();
-
-
+    
     /// イベント計測終了
     #ifdef _DEBUG
     pEventTimer_->EndEvent("Update");
@@ -292,6 +286,10 @@ void NimaFramework::Draw()
 
     /// 前景スプライトの描画
     NiGui::DrawUI();
+
+    // Canvasに登録されているオブジェクトをCanvasに描画する
+    pLayer_->DrawObjects();
+
     pSpriteSystem_->DrawCall();
 
     // 同期待ち
@@ -299,17 +297,18 @@ void NimaFramework::Draw()
     pParticleSystem_->Sync();
     pSpriteSystem_->Sync();
 
-    // ポストエフェクトの適用
-    pPostEffectExecuter_->ApplyPostEffects();
+    // Canvasにポストエフェクトを適用する
+    pLayer_->ApplyPostEffects();
 
     // レンダーターゲットの初期化
     pDirectX_->NewFrame();
 
-    // ポストエフェクト後のテクスチャをスワップチェーンリソースに描画
-    pPostEffectExecuter_->Draw();
+    // エフェクト適用後のCanvasを描画
+    pLayer_->DrawCanvases();
 
     // レンダーターゲットからビューポート用リソースにコピー (Releaseでは実行されない)
-    pDirectX_->CopyFromRTV(pDirectX_->GetCommandListsLast());
+    pDirectX_->CopyFromRTV(pDirectX_->GetCommandListLast());
+
     // コンピュートシェーダーの実行
     pViewport_->Compute();
 
@@ -322,7 +321,6 @@ void NimaFramework::Draw()
     /// ImGuiの描画
     #ifdef _DEBUG
     pImGuiManager_->Render();
-    pImGuiManager_->EndFrame();
     #endif // _DEBUG
 
     /// コマンドの実行
@@ -336,13 +334,15 @@ void NimaFramework::Draw()
 
 void NimaFramework::PreProcess()
 {
-    pPostEffectExecuter_->NewFrame();
     pSRVManager_->SetDescriptorHeaps();
-    auto rtvHandle = pPostEffectExecuter_->GetRTVHandle();
-    pObject3dSystem_->SetRTVHandle(rtvHandle);
-    pSpriteSystem_->SetRTVHandle(rtvHandle);
-    pParticleSystem_->SetRTVHandle(rtvHandle);
-    pLineSystem_->SetRTVHandle(rtvHandle);
+    pLayer_->PreDraw();
+    /// レンダーターゲットビューのハンドルを各システムに設定
+    uint32_t indexBackbuffer = pDirectX_->GetBackBufferIndex();
+    auto rtvHandleSwapChain_ = pDirectX_->GetRTVHandle()[indexBackbuffer];
+    pObject3dSystem_->SetRTVHandle(&rtvHandleSwapChain_);
+    pSpriteSystem_->SetRTVHandle(&rtvHandleSwapChain_);
+    pParticleSystem_->SetRTVHandle(&rtvHandleSwapChain_);
+    pLineSystem_->SetRTVHandle(&rtvHandleSwapChain_);
 }
 
 void NimaFramework::PostProcess()
@@ -352,8 +352,12 @@ void NimaFramework::PostProcess()
     pSpriteSystem_->PostDraw();
     pParticleSystem_->PostDraw();
     pLineSystem_->PostDraw();
-    pPostEffectExecuter_->PostDraw();
     pTextureManager_->ReleaseIntermediateResources();
+    pLayer_->PostDraw();
+    pViewport_->PostDraw();
+    #ifdef _DEBUG
+    pImGuiManager_->PostDraw();
+    #endif // _DEBUG
 }
 
 void NimaFramework::InitializeObject3dSystem()

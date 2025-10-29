@@ -113,6 +113,7 @@ void DirectX12::CreateCommandResources()
     {
         pLogger_->LogInfo(__FILE__, __FUNCTION__, "Command list creation completed");
     }
+    commandLists_[DirectX12::CommandListType::Common].emplace_back(commandList_.Get());
 }
 
 void DirectX12::CreateSwapChainAndResource()
@@ -183,8 +184,8 @@ void DirectX12::CreateSwapChainAndResource()
 
 
     /// RTVの生成
-    rtvHeapIndex_[0] = rtvHeapCounter_->Allocate("BackBuffer0");
-    rtvHeapIndex_[1] = rtvHeapCounter_->Allocate("BackBuffer1");
+    rtvHeapIndex_[0] = rtvHeapCounter_->Allocate();
+    rtvHeapIndex_[1] = rtvHeapCounter_->Allocate();
 
     // RTVハンドルの取得
     rtvHandles_[0] = rtvHeapCounter_->GetRTVHandle(rtvHeapIndex_[0]);
@@ -510,12 +511,10 @@ void DirectX12::ResizeBuffers()
 {
     WaitForGPU();
 
-    for (auto& [key, func] : map_func_onResize_)
+    for (auto& [key, func] : mapFuncOnResizeBefore_)
     {
         func();
     }
-
-    pSRVManager_->Deallocate(gameScreenResource_.GetSRVIndex());
 
     d3d11Device_.Reset();
     d3d11On12DeviceContext_.Reset();
@@ -574,14 +573,19 @@ void DirectX12::ResizeBuffers()
     scissorRect_.right  = static_cast<LONG>(WinSystem::clientWidth);
     scissorRect_.bottom = static_cast<LONG>(WinSystem::clientHeight);
 
-    commandList_->RSSetViewports(1, &viewport_);
-    commandList_->RSSetScissorRects(1, &scissorRect_);
+    commandLists_[DirectX12::CommandListType::Common].front()->RSSetViewports(1, &viewport_);
+    commandLists_[DirectX12::CommandListType::Common].front()->RSSetScissorRects(1, &scissorRect_);
 
     CreateDSVAndSettingState();
     CreateD3D11Device();
     CreateID2D1DeviceContext();
     CreateD2DRenderTarget();
     CreateGameScreenResource();
+
+    for (auto& [key, func] : mapFuncOnResizeAfter_)
+    {
+        func();
+    }
 }
 
 void DirectX12::WaitForGPU()

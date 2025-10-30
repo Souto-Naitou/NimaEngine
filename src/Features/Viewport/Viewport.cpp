@@ -228,7 +228,6 @@ void Viewport::DrawWindow()
     if(ImGui::Begin("Viewport", nullptr, flags))
     {
         isHover |= ImGui::IsWindowHovered();
-        isHover |= ImGui::IsAnyItemHovered();
 
         auto cliSize = ImGui::GetContentRegionAvail();
 

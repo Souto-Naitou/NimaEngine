@@ -67,6 +67,12 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     auto cl = pDx12_->GetCommandList();
 
     textureData.metadata = metadata;
+    if (textureType == TextureType::kDDS)
+    {
+        // キューブマップの場合はフラグを設定
+        metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
+    }
+
     auto tempResource = DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata);
     textureData.textureResource.Initialize(
         tempResource,
@@ -74,7 +80,8 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
         textureData.metadata.format,
         strPathResolved
     );
-    
+
+    // アップロード用の中間リソースを作成してデータ転送
     resourcesIntermediate_.push_back(
         DX12Helper::UploadTextureData(
             textureData.textureResource.GetResource(),
@@ -84,6 +91,7 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
         )
     );
 
+    // SRV用のデスクリプタを確保
     uint32_t srvIndex = srvManager_->Allocate();
     auto srvHandleCPU = srvManager_->GetCPUDescriptorHandle(srvIndex);
     auto srvHandleGPU = srvManager_->GetGPUDescriptorHandle(srvIndex);

@@ -103,7 +103,7 @@ void Particle::Finalize()
 void Particle::Draw()
 {
     /// モデルのテクスチャがアップロードされていない場合は描画しない
-    if (!pModel_->IsEndLoading()) return;
+    if (!pModel_->IsEndLoading() && particleData_.size()) return;
 
     ParticleSystem::CommandListData data = {};
     data.pVBV = &vertexBufferView_;
@@ -119,7 +119,6 @@ void Particle::reserve(size_t _size, bool _isInit)
 {
     auto size = sizeof(ParticleData);
     size;
-
     particleData_.reserve(_size);
     CreateParticleForGPUResource();
     if (!_isInit) SRVManager::GetInstance()->Deallocate(srvIndex_);

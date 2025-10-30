@@ -26,7 +26,6 @@ std::shared_ptr<IModel> ModelLoaderLegacy::LoadModel(const std::string& _path)
     if (fsPath.extension() != ".obj")
     {
         throw std::runtime_error("File is not the obj format");
-        return nullptr;
     }
 
     std::shared_ptr<ObjModel> model = std::make_unique<ObjModel>();

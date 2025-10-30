@@ -47,7 +47,7 @@ public:
 
 
 public: /// Setter
-    void SetName(const std::string& name) { pDebugEntry_->SetName(name); }
+    void SetName(const std::string& name) { if (pDebugEntry_) pDebugEntry_->SetName(name); }
     void SetEnableBillboard(bool _enable) { enableBillboard_ = _enable; }
     void SetGameEye(GameEye** _pGameEye) { pGameEye_ = _pGameEye; }
 

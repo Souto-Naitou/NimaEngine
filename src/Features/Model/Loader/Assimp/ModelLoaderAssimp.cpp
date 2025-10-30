@@ -203,7 +203,6 @@ Animation ModelLoaderAssimp::_LoadAnimation(const aiScene* _scene)
     if (kAiTicksPerSecond == 0.0f) [[unlikely]]
     {
         throw std::runtime_error("Animation ticks per second is zero.");
-        return result;
     }
 
     // アニメーションの長さ(秒単位)を計算

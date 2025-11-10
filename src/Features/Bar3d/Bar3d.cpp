@@ -27,8 +27,8 @@ void Bar3d::Draw2d()
     if (isDisplay_ == false) return;
 
 
-    sprite_max_->Draw();
-    sprite_current_->Draw();
+    sprite_max_->DrawCall();
+    sprite_current_->DrawCall();
 }
 
 void Bar3d::Display(float _sec)

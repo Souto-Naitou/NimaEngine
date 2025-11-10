@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
-#include <Features/Sprite/Sprite.h>
+#include <drawable/sprite/Sprite.h>
 #include <vector>
+#include <Features/Layer/Canvas.h>
 
 #include <Vector4.h>
 #include <Vector2.h>
@@ -11,6 +12,14 @@
 
 #define rgba(r, g, b, a) NiVec4{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f}
 
+struct Bar2dInitParams
+{
+    Canvas*     pCanvas = nullptr;
+    std::string nameTexturePath = {};
+    Vector2     barSize = { 100.0f , 10.0f };
+    bool        enableSmoothingColor = true;
+};
+
 /// <summary>
 /// 2Dバー表示クラス
 /// </summary>
@@ -18,7 +27,7 @@ class Bar2d
 {
 public:
     Bar2d() = default;
-    ~Bar2d() = default;
+    ~Bar2d();
 
     /// <summary>
     /// バー表示を初期化します。
@@ -26,7 +35,12 @@ public:
     /// <param name="_nameTexturePath">名称テクスチャの相対パス。</param>
     /// <param name="_barSize">バーのサイズ。</param>
     /// <param name="_enable_smoothing_color">色補間を有効にするか。</param>
-    void Initialize(const std::string& _nameTexturePath, const Vector2& _barSize, bool _enable_smoothing_color = true);
+    void Initialize(const Bar2dInitParams& params);
+
+    /// <summary>
+    /// 終了処理
+    /// </summary>
+    void Finalize();
     
     /// <summary>
     /// 値や見た目の更新を行います。
@@ -36,7 +50,7 @@ public:
     /// <summary>
     /// 2D 描画を行います。
     /// </summary>
-    void Draw2D();
+    void Draw1F();
     
     /// <summary>
     /// デバッグ用 UI を描画します。
@@ -61,31 +75,25 @@ private:
 
     static constexpr char PATH_BAR[] = "white1x1.png";
     static constexpr char PATH_DECORATION[] = "white1x1.png";
-
     static const RGBA COLOR_BAR_NORMAL;
     static const RGBA COLOR_BAR_LOW;
     static const RGBA COLOR_BAR_BG;
-
     static const Vector2 SPACING_HEAD_TO_DECO;
-    Vector2 barSize_ = { 100.0f , 10.0f };
-
     static constexpr float BORDER_DANGER = 0.25f;
+
+    Bar2dInitParams initParams_ = {};
 
     std::unique_ptr<Sprite> bar_ = nullptr;
     std::unique_ptr<Sprite> name_ = nullptr;
     std::unique_ptr<Sprite> background_ = nullptr;
-    std::vector<NumberImage> numbers_;
-
-    std::string nameTexturePath_ = {};
 
     Vector2 position_ = { 0.0f, 0.0f };
     Vector2 size_ = { 0.0f, 0.0f };
     Vector2 anchor_ = { 0.0f, 0.0f };
 
-    float maxValue_ = 0.0f;
+    float maxValue_     = 0.0f;
     float currentValue_ = 0.0f;
 
-    bool isEnable_lerp_color_ = false;
     bool isDisplay_name_ = true;
 
 private:

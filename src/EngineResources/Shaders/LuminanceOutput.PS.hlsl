@@ -24,13 +24,11 @@ PixelShaderOutput main(VertexShaderOutput input)
 {   
     PixelShaderOutput output;
     
-    float3 inputRGB = gTexture.Sample(gSampler, input.texcoord).rgb;
+    float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
     
-    float bright = luminance(inputRGB);
+    float bright = luminance(textureColor.rgb);
     
     float mask = step(gOptions.threshold, bright); // lum >= threshold → 1.0, それ以外 → 0.0
-    output.color.rgb = inputRGB * mask;
-    
-    output.color.a = 1.0f; // アルファ値を1.0に設定
+    output.color = textureColor * mask;
     return output;
 }

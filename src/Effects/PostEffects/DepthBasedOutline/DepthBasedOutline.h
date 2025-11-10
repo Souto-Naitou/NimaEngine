@@ -42,6 +42,7 @@ public:
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE         GetOutputTextureHandle() const override;
     const std::string&                  GetName() const override;
+    DX12Resource*                     GetOutputResource() const override;
     DepthBasedOutlineOption&            GetOption();
     const DepthBasedOutlineOption&      GetOption() const;
     DepthBasedOutlineMaterial&          GetMaterial();
@@ -59,12 +60,8 @@ private:
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     PipelineStateObject                                 pso_                    = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_           = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         depthGpuHandle_         = {};
-    uint32_t                                            rtvHeapIndex_           = 0;
-    uint32_t                                            srvHeapIndex_           = 0;
     uint32_t                                            srvIndexDepth_          = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/DepthBasedOutline.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/DepthBasedOutline.PS.hlsl";

@@ -3,7 +3,8 @@
 #include <string>
 #include <memory>
 
-class DirectX12;
+#include <Core/DirectX12/DX12Resource/DX12Resource.h>
+#include <Core/DirectX12/DirectX12.h>
 
 /// <summary>
 /// ポストエフェクト初期化用構造体
@@ -60,6 +61,11 @@ public:
     /// エフェクト名を取得します。
     /// </summary>
     virtual const std::string& GetName() const = 0;
+    /// <summary>
+    /// 適用後のリソースを取得します。
+    /// </summary>
+    /// <returns>適用後のリソース</returns>
+    virtual DX12Resource* GetOutputResource() const = 0;
 
     /// <summary>
     /// 描画のための設定を行います。

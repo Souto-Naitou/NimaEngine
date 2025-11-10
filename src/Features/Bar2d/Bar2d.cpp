@@ -11,35 +11,49 @@ const RGBA Bar2d::COLOR_BAR_LOW = RGBA(0x2762e8ff);
 
 const Vector2 Bar2d::SPACING_HEAD_TO_DECO = { 0.0f, 10.0f };
 
-void Bar2d::Initialize(const std::string& _nameTexturePath, const Vector2& _barSize, bool _enable_smoothing_color)
+Bar2d::~Bar2d()
 {
-    nameTexturePath_ = _nameTexturePath;
-    barSize_ = _barSize;
+}
 
-    isDisplay_name_ = !nameTexturePath_.empty();
-    isEnable_lerp_color_ = _enable_smoothing_color;
+void Bar2d::Initialize(const Bar2dInitParams& params)
+{
+    initParams_ = params;
+
+    isDisplay_name_ = !params.nameTexturePath.empty();
 
     // テクスチャの読み込み
     auto* tm = TextureManager::GetInstance();
     tm->LoadTexture(PATH_BAR);
     tm->LoadTexture(PATH_DECORATION);
-
-    if (isDisplay_name_) tm->LoadTexture(nameTexturePath_);
+    if (isDisplay_name_) tm->LoadTexture(params.nameTexturePath);
 
     // スプライトの初期化
     bar_ = std::make_unique<Sprite>();
     bar_->Initialize(PATH_BAR);
     bar_->SetColor(COLOR_BAR_NORMAL.to_Vector4());
-
+    
     if (isDisplay_name_)
     {
         name_ = std::make_unique<Sprite>();
-        name_->Initialize(nameTexturePath_);
+        name_->Initialize(params.nameTexturePath);
+        params.pCanvas->RegisterDrawable(name_.get());
     }
 
     background_ = std::make_unique<Sprite>();
     background_->Initialize(PATH_BAR);
     background_->SetColor(COLOR_BAR_BG.to_Vector4());
+    params.pCanvas->RegisterDrawable(background_.get());
+    params.pCanvas->RegisterDrawable(bar_.get());
+}
+
+void Bar2d::Finalize()
+{
+    initParams_.pCanvas->UnregisterDrawable(bar_.get());
+    initParams_.pCanvas->UnregisterDrawable(background_.get());
+    if (isDisplay_name_)
+    {
+        initParams_.pCanvas->UnregisterDrawable(name_.get());
+    }
 }
 
 void Bar2d::Update()
@@ -60,28 +74,24 @@ void Bar2d::Update()
     if (name_) name_->Update();
 }
 
-void Bar2d::Draw2D()
+void Bar2d::Draw1F()
 {
-    if (background_) background_->Draw();
-    if (bar_) bar_->Draw();
-    if (name_) name_->Draw();
-    for (const auto& number : numbers_)
-    {
-        if (number.second) number.second->Draw();
-    }
+    if (background_) background_->Draw1F();
+    if (bar_) bar_->Draw1F();
+    if (name_) name_->Draw1F();
 }
 
 void Bar2d::ImGui()
 {
     #ifdef _DEBUG
     bool isOpen = false;
-    if (nameTexturePath_.empty())
+    if (initParams_.nameTexturePath.empty())
     {
         isOpen = ImGui::Begin("Bar2d (No Name)");
     }
     else
     {
-        isOpen = ImGui::Begin(nameTexturePath_.c_str());
+        isOpen = ImGui::Begin(initParams_.nameTexturePath.c_str());
     }
 
     if (isOpen)
@@ -123,7 +133,7 @@ void Bar2d::SetOpacity(float alpha)
 
 void Bar2d::UpdateTransform()
 {
-    Vector2 leftTop = position_ - mul(anchor_, barSize_);
+    Vector2 leftTop = position_ - mul(anchor_, initParams_.barSize);
     Vector2 cPos = leftTop;
 
     if (name_) 
@@ -135,17 +145,17 @@ void Bar2d::UpdateTransform()
     bar_->SetPosition(cPos);
 
     float ratio = currentValue_ / maxValue_;
-    bar_->SetSize({ barSize_.x * ratio, barSize_.y });
+    bar_->SetSize({ initParams_.barSize.x * ratio, initParams_.barSize.y });
 
     background_->SetPosition(cPos);
-    background_->SetSize(barSize_);
+    background_->SetSize(initParams_.barSize);
 
-    cPos.x += barSize_.x;
+    cPos.x += initParams_.barSize.x;
 }
 
 void Bar2d::UpdateColor()
 {
-    if (isEnable_lerp_color_)
+    if (initParams_.enableSmoothingColor)
     {
         Vector4 color = {};
         color.Lerp(COLOR_BAR_LOW.to_Vector4(), COLOR_BAR_NORMAL.to_Vector4(), currentValue_ / maxValue_);

@@ -56,6 +56,8 @@ public:
     // [Getter Begin]
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;
     const std::string&              GetName() const override;
+    /// <summary>適用後のリソースを取得します。</summary>
+    DX12Resource*    GetOutputResource() const override;
     /// <summary>オプションへの参照を取得します。</summary>
     PrewittOutlineOption&           GetOption();
     /// <summary>オプション（読み取り専用）を取得します。</summary>
@@ -75,11 +77,7 @@ private:
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    D3D12_CPU_DESCRIPTOR_HANDLE                         rtvHandleCpu_           = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE                         rtvHandleGpu_           = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    uint32_t                                            rtvHeapIndex_           = 0;
-    uint32_t                                            srvHeapIndex_           = 0;
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/PrewittOutline.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/PrewittOutline.PS.hlsl";
 

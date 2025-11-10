@@ -2,7 +2,7 @@
 
 #include <NiGui/Interface/NiGui_IDrawer.h>
 #include <memory>
-#include <Features/Sprite/Sprite.h>
+#include <drawable/sprite/Sprite.h>
 #include <NiGui/Type/NiGui_Type_Core.h>
 
 /// <summary>

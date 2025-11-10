@@ -1,5 +1,5 @@
 #include "PointLight.h"
-#include <Features/Object3d/Object3d.h>
+#include <drawable/object3d/Object3d.h>
 
 #include <sstream>
 #include <cstdarg>
@@ -29,7 +29,7 @@ void PointLight::Update()
 
 void PointLight::Draw()
 {
-    pIcon_->Draw();
+    pIcon_->DrawCall();
 }
 
 void PointLight::Finalize()

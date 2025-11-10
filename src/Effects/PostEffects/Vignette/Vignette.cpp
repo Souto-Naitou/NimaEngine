@@ -49,12 +49,17 @@ bool Vignette::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE Vignette::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return renderTexture_.GetSRVHandleGPU();
 }
 
 const std::string& Vignette::GetName() const
 {
     return name_;
+}
+
+DX12Resource* Vignette::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
 }
 
 Vignette::VignetteOption& Vignette::GetOption()
@@ -82,7 +87,7 @@ void Vignette::Setting()
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -98,9 +103,7 @@ void Vignette::Setting()
 
 void Vignette::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
-    renderTexture_.GetResource().Reset();
-        renderTexture_.GetStateTracker().Reset();
+    renderTexture_.Reset();
 }
 
 void Vignette::OnResizeAfter()

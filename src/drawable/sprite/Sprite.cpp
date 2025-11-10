@@ -144,10 +144,10 @@ void Sprite::Update()
     //uvTransformMatrix_ *= Matrix4x4::TranslateMatrix(uvTransform_.translate);
 }
 
-
-void Sprite::Draw()
+void Sprite::DrawCall()
 {
-    if (!isDrawEnabled_) return;
+    if (!isDrawEnabled_ || !isDrawCalled_) return;
+    isDrawCalled_ = false;
 
     SpriteSystem::CommandListData data{};
     data.materialResource = materialResource_.Get();
@@ -155,7 +155,7 @@ void Sprite::Draw()
     data.srvHandleGPU = textureSrvHandleGPU_;
     data.pVBV = &vertexBufferView_;
     data.pIBV = &indexBufferView_;
-    data.rtvHandleCPU = rtvHandleCPU_;
+    data.rtvHandleCPU = rtvHandle_;
 
     SpriteSystem::GetInstance()->AddCommandListData(data);
 }

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <Core/DirectX12/DirectX12.h>
+#include <utility>
 
 class DirectX12;
 
@@ -25,6 +26,15 @@ public:
     void PostDraw();                        // フレーム終了
     void Finalize();
     void OnResizedBuffers();
+
+    /// <summary>
+    /// ImGui::Imageで使用する画像リソースの追加
+    /// リソースの状態遷移を実行するため登録が必須
+    /// </summary>
+    /// <param name="resource">リソース</param>
+    void AddImageResource(DX12Resource* resource);
+
+    void RemoveImageResource(DX12Resource* resource);
 
     // Switch options
     void EnableDocking();
@@ -51,6 +61,8 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   commandList_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      commandAllocator_   = nullptr;
+
+    std::vector<std::pair<DX12Resource*, D3D12_RESOURCE_STATES>>  imageResources_     = {};   // ImGui::Imageで使用するリソースの配列
 
     // For debug window
     std::vector<std::string>    styleNameArray_     = {};

@@ -17,6 +17,7 @@ public:
         D3D12_VERTEX_BUFFER_VIEW* pVBV = nullptr;
         D3D12_GPU_DESCRIPTOR_HANDLE srvHandle = {};
         D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandle = {};
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {};
         UINT vertexCount = 0;
         UINT instanceCount = 0;
     };

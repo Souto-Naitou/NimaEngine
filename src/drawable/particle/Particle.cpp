@@ -100,7 +100,7 @@ void Particle::Finalize()
     return;
 }
 
-void Particle::Draw()
+void Particle::DrawCall()
 {
     /// モデルのテクスチャがアップロードされていない場合は描画しない
     if (!pModel_->IsEndLoading() && particleData_.size()) return;
@@ -111,6 +111,7 @@ void Particle::Draw()
     data.textureSrvHandle = textureSRVHandleGPU_;
     data.vertexCount = static_cast<UINT>(vertexCount_);
     data.instanceCount = static_cast<UINT>(particleData_.size());
+    data.rtvHandle = rtvHandle_;
 
     pSystem_->AddCommandListData(data);
 }

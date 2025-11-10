@@ -32,7 +32,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     gTexture.GetDimensions(width, height);
     float2 texelSize = float2(rcp(float(width)), rcp(float(height)));
     
-    output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    output.color = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
     int kernelSize = gOptions.kernelSize;
     int halfKernelSize = kernelSize * 0.5f;
@@ -43,9 +43,8 @@ PixelShaderOutput main(VertexShaderOutput input)
     for (int i = -halfKernelSize; i <= halfKernelSize; ++i)
     {
         float2 offset = float2(i * isHorizontal, i * isVertical) * texelSize;
-        output.color.rgb += gTexture.Sample(gSampler, input.texcoord + offset).rgb * gOptions.weights[i + halfKernelSize];
+        output.color += gTexture.Sample(gSampler, input.texcoord + offset) * gOptions.weights[i + halfKernelSize];
     }
     
-    output.color.a = 1.0f; // アルファ値を1.0に設定
     return output;
 }

@@ -2,7 +2,7 @@
 #include <Features/Model/ObjModel.h>
 #include <utility>
 #include <Features/GameEye/FreeLook/FreeLookEye.h>
-#include <Features/Object3d/Object3dSystem.h>
+#include <drawable/object3d/Object3dSystem.h>
 #include <imgui.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 
@@ -56,7 +56,7 @@ void SceneObjects::Draw()
     {
         if (obj)
         {
-            obj->Draw();
+            obj->DrawCall();
         }
     }
 }

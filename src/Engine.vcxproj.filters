@@ -7,12 +7,6 @@
     <Filter Include="Feature\Input">
       <UniqueIdentifier>{8803f867-4d11-4cec-883f-32df44af6c30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Sprite">
-      <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Object3d">
-      <UniqueIdentifier>{e1b1b091-2477-475f-b508-9b6faaf83efc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Feature\Model">
       <UniqueIdentifier>{cce5abac-cdc3-482f-9133-860593c9bb69}</UniqueIdentifier>
     </Filter>
@@ -64,9 +58,6 @@
     <Filter Include="Feature\GameEye">
       <UniqueIdentifier>{ea832b38-aeb0-403c-932b-e147be7b883d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Particle">
-      <UniqueIdentifier>{8e2b2b59-3920-4ac0-a9d2-0d0039b75fdb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\DirectX12\SRVManager">
       <UniqueIdentifier>{b8daf23f-873b-43df-af52-7b1171eeb29f}</UniqueIdentifier>
     </Filter>
@@ -84,15 +75,6 @@
     </Filter>
     <Filter Include="Interface">
       <UniqueIdentifier>{698a144f-8678-45a3-8e71-2fb257d08434}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Particle\Emitter">
-      <UniqueIdentifier>{556acd2e-a30a-4489-86c4-bcf0c25fadd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Particle\Manager">
-      <UniqueIdentifier>{82f7154a-fe86-4eeb-a603-29554c7a2cb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Particle\System">
-      <UniqueIdentifier>{3dd920c7-60bf-4a2c-a888-4dac7750a26f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Feature\SceneManager">
       <UniqueIdentifier>{58dab0a0-59c5-4cf9-95ba-19f2b051c76b}</UniqueIdentifier>
@@ -198,9 +180,6 @@
     </Filter>
     <Filter Include="Core\ConfigManager">
       <UniqueIdentifier>{fafd37d8-141a-4074-80f2-64b9aa3be79f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Particle\Type">
-      <UniqueIdentifier>{5eaa0b5f-e515-4ae0-944e-7374dbf4ac5d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\Localization">
       <UniqueIdentifier>{6c680fa0-6d21-4b03-ade3-32265ba472ae}</UniqueIdentifier>
@@ -361,6 +340,33 @@
     <Filter Include="Effect\PostEffect\.Factory">
       <UniqueIdentifier>{40e3b035-9064-4e5e-91c1-d42e5242e461}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Drawable">
+      <UniqueIdentifier>{c552dfb9-a29c-435f-a35d-5f5cc2d09e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Base">
+      <UniqueIdentifier>{0e1fa88e-bd99-4c3e-bd8e-01bdab010fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Object3d">
+      <UniqueIdentifier>{e1b1b091-2477-475f-b508-9b6faaf83efc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Particle">
+      <UniqueIdentifier>{8e2b2b59-3920-4ac0-a9d2-0d0039b75fdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Particle\Emitter">
+      <UniqueIdentifier>{556acd2e-a30a-4489-86c4-bcf0c25fadd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Particle\Manager">
+      <UniqueIdentifier>{82f7154a-fe86-4eeb-a603-29554c7a2cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Particle\System">
+      <UniqueIdentifier>{3dd920c7-60bf-4a2c-a888-4dac7750a26f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Particle\Type">
+      <UniqueIdentifier>{5eaa0b5f-e515-4ae0-944e-7374dbf4ac5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Sprite">
+      <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -399,17 +405,17 @@
     <ClCompile Include="Features\Model\ModelManager.cpp">
       <Filter>Feature\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Object3d\Object3d.cpp">
-      <Filter>Feature\Object3d</Filter>
+    <ClCompile Include="drawable\object3d\Object3d.cpp">
+      <Filter>Drawable\Object3d</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Object3d\Object3dSystem.cpp">
-      <Filter>Feature\Object3d</Filter>
+    <ClCompile Include="drawable\object3d\Object3dSystem.cpp">
+      <Filter>Drawable\Object3d</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Sprite\Sprite.cpp">
-      <Filter>Feature\Sprite</Filter>
+    <ClCompile Include="drawable\sprite\Sprite.cpp">
+      <Filter>Drawable\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Sprite\SpriteSystem.cpp">
-      <Filter>Feature\Sprite</Filter>
+    <ClCompile Include="drawable\sprite\SpriteSystem.cpp">
+      <Filter>Drawable\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="DebugTools\ImGuiManager\ImGuiManager.cpp">
       <Filter>DebugTools\ImGuiManager</Filter>
@@ -423,8 +429,8 @@
     <ClCompile Include="Features\GameEye\GameEye.cpp">
       <Filter>Feature\GameEye</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\Particle.cpp">
-      <Filter>Feature\Particle</Filter>
+    <ClCompile Include="drawable\particle\Particle.cpp">
+      <Filter>Drawable\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\SRVManager.cpp">
       <Filter>Core\DirectX12\SRVManager</Filter>
@@ -438,11 +444,11 @@
     <ClCompile Include="Features\SceneManager\SceneManager.cpp">
       <Filter>Feature\SceneManager</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\ParticleSystem.cpp">
-      <Filter>Feature\Particle\System</Filter>
+    <ClCompile Include="drawable\particle\ParticleSystem.cpp">
+      <Filter>Drawable\Particle\System</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\ParticleManager.cpp">
-      <Filter>Feature\Particle\Manager</Filter>
+    <ClCompile Include="drawable\particle\ParticleStorage.cpp">
+      <Filter>Drawable\Particle\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp">
       <Filter>Feature\RandomGenerator</Filter>
@@ -456,11 +462,11 @@
     <ClCompile Include="Features\Primitive\AABB.cpp">
       <Filter>Feature\Shape\AABB</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\Manager\EmitterManager.cpp">
-      <Filter>Feature\Particle\Manager</Filter>
+    <ClCompile Include="drawable\particle\Manager\EmitterManager.cpp">
+      <Filter>Drawable\Particle\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\Emitter\ParticleEmitter.cpp">
-      <Filter>Feature\Particle\Emitter</Filter>
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitter.cpp">
+      <Filter>Drawable\Particle\Emitter</Filter>
     </ClCompile>
     <ClCompile Include="Features\Lighting\Manager\LightingManager.cpp">
       <Filter>Feature\Lighting\Manager</Filter>
@@ -537,8 +543,8 @@
     <ClCompile Include="Core\ConfigManager\ConfigType.cpp">
       <Filter>Core\ConfigManager</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Particle\Emitter\EmitterData.cpp">
-      <Filter>Feature\Particle\Emitter</Filter>
+    <ClCompile Include="drawable\particle\Emitter\EmitterData.cpp">
+      <Filter>Drawable\Particle\Emitter</Filter>
     </ClCompile>
     <ClCompile Include="Effects\PostEffects\Grayscale\Grayscale.cpp">
       <Filter>Effect\PostEffect\Grayscale</Filter>
@@ -681,6 +687,12 @@
     <ClCompile Include="Features\Layer\Layer.cpp">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
+    <ClCompile Include="drawable\base\DrawableBase.cpp">
+      <Filter>Drawable\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Layer\CanvasScope.h">
+      <Filter>Feature\Layer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -722,17 +734,17 @@
     <ClInclude Include="Features\Model\ModelManager.h">
       <Filter>Feature\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Object3d\Object3d.h">
-      <Filter>Feature\Object3d</Filter>
+    <ClInclude Include="drawable\object3d\Object3d.h">
+      <Filter>Drawable\Object3d</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Object3d\Object3dSystem.h">
-      <Filter>Feature\Object3d</Filter>
+    <ClInclude Include="drawable\object3d\Object3dSystem.h">
+      <Filter>Drawable\Object3d</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Sprite\Sprite.h">
-      <Filter>Feature\Sprite</Filter>
+    <ClInclude Include="drawable\sprite\Sprite.h">
+      <Filter>Drawable\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Sprite\SpriteSystem.h">
-      <Filter>Feature\Sprite</Filter>
+    <ClInclude Include="drawable\sprite\SpriteSystem.h">
+      <Filter>Drawable\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="DebugTools\ImGuiManager\ImGuiManager.h">
       <Filter>DebugTools\ImGuiManager</Filter>
@@ -752,8 +764,8 @@
     <ClInclude Include="Features\GameEye\GameEye.h">
       <Filter>Feature\GameEye</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\Particle.h">
-      <Filter>Feature\Particle</Filter>
+    <ClInclude Include="drawable\particle\Particle.h">
+      <Filter>Drawable\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\SRVManager.h">
       <Filter>Core\DirectX12\SRVManager</Filter>
@@ -773,11 +785,11 @@
     <ClInclude Include="Features\SceneManager\SceneManager.h">
       <Filter>Feature\SceneManager</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\ParticleSystem.h">
-      <Filter>Feature\Particle\System</Filter>
+    <ClInclude Include="drawable\particle\ParticleSystem.h">
+      <Filter>Drawable\Particle\System</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\ParticleManager.h">
-      <Filter>Feature\Particle\Manager</Filter>
+    <ClInclude Include="drawable\particle\ParticleStorage.h">
+      <Filter>Drawable\Particle\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Interfaces\ISceneFactory.h">
       <Filter>Interface</Filter>
@@ -797,11 +809,11 @@
     <ClInclude Include="Features\Primitive\AABB.h">
       <Filter>Feature\Shape\AABB</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\Manager\EmitterManager.h">
-      <Filter>Feature\Particle\Manager</Filter>
+    <ClInclude Include="drawable\particle\Manager\EmitterManager.h">
+      <Filter>Drawable\Particle\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\Emitter\ParticleEmitter.h">
-      <Filter>Feature\Particle\Emitter</Filter>
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitter.h">
+      <Filter>Drawable\Particle\Emitter</Filter>
     </ClInclude>
     <ClInclude Include="Features\Lighting\Manager\LightingManager.h">
       <Filter>Feature\Lighting\Manager</Filter>
@@ -893,8 +905,8 @@
     <ClInclude Include="Core\ConfigManager\ConfigType.h">
       <Filter>Core\ConfigManager</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\Type\ParticleType.h">
-      <Filter>Feature\Particle\Type</Filter>
+    <ClInclude Include="drawable\particle\Type\ParticleType.h">
+      <Filter>Drawable\Particle\Type</Filter>
     </ClInclude>
     <ClInclude Include="Core\Localization\LanguageData.h">
       <Filter>Core\Localization</Filter>
@@ -902,8 +914,8 @@
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h">
       <Filter>Core\DirectX12\ResourceStateTracker</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Particle\Emitter\EmitterData.h">
-      <Filter>Feature\Particle\Emitter</Filter>
+    <ClInclude Include="drawable\particle\Emitter\EmitterData.h">
+      <Filter>Drawable\Particle\Emitter</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\IPostEffect.h">
       <Filter>Core\DirectX12\PostEffect</Filter>
@@ -1095,6 +1107,12 @@
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClInclude>
     <ClInclude Include="Features\Layer\Layer.h">
+      <Filter>Feature\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\base\DrawableBase.h">
+      <Filter>Drawable\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Layer\CurrentCanvas.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
   </ItemGroup>

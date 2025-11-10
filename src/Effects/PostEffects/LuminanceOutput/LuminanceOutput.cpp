@@ -10,6 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 #include <Math/Functions.hpp>
+#include <config/EngineSetting.h>
 
 void LuminanceOutput::Initialize(const PostEffectInitParams& desc)
 {
@@ -58,6 +59,11 @@ const std::string& LuminanceOutput::GetName() const
     return name_;
 }
 
+DX12Resource* LuminanceOutput::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&outputTexture_);
+}
+
 LuminanceOutputOption& LuminanceOutput::GetOption()
 {
     return *pOption_;
@@ -80,6 +86,9 @@ void LuminanceOutput::Finalize()
 void LuminanceOutput::Setting()
 {
     outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    // クリア
+    commandList_->ClearRenderTargetView(outputTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &outputTexture_.GetRTVHandle(), FALSE, nullptr);
@@ -171,7 +180,7 @@ void LuminanceOutput::CreatePipelineStateObject()
     inputLayoutDesc.NumElements = 0;
 
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;

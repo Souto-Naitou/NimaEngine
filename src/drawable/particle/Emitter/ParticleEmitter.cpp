@@ -6,9 +6,9 @@
 #include <Utility/String/strutl.h>
 #endif // _DEBUG
 
-#include <Features/Particle/ParticleManager.h>
+#include <drawable/particle/ParticleStorage.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
-#include <Features/Particle/Manager/EmitterManager.h>
+#include <drawable/particle/Manager/EmitterManager.h>
 #include "EmitterData.h"
 #include <WinTools/WinTools.h>
 #include <Range.h>
@@ -16,22 +16,20 @@
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
 
-void ParticleEmitter::Initialize(IModel* _pModel, const std::string& _jsonPath)
+void ParticleEmitter::Initialize(const ParticleEmitterInitParams& params)
 {
     debugEntry_ = std::make_unique<DebugEntry<ParticleEmitter>>("ParticleEmitter", "ParticleEmitter", this, false);
 
     winTools_ = WinTools::GetInstance();
 
-    jsonPath_ = _jsonPath;
+    jsonPath_ = params.jsonPath;
 
     // タイマースタート
     timer_.Start();
     reloadTimer_.Start();
 
     // パーティクル初期化
-    particle_ = ParticleManager::GetInstance()->CreateParticle();
-    particle_->Initialize(_pModel);
-    particle_->reserve(kDefaultReserveCount_);
+    particle_ = params.particle;
 
     if (jsonPath_.empty())
     {
@@ -470,7 +468,6 @@ void ParticleEmitter::ModifyGameEye(GameEye** _eye)
 
 void ParticleEmitter::Finalize()
 {
-    ParticleManager::GetInstance()->ReserveDeleteParticle(particle_);
     particle_ = nullptr;
 }
 

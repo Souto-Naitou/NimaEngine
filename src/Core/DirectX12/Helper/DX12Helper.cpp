@@ -433,12 +433,15 @@ void DX12Helper::CommandListCommonSetting(const DirectX12* _pDx12, ID3D12Graphic
     ID3D12DescriptorHeap* ppHeaps[] = { pSrvManager->GetDescriptorHeap() };
 
     auto dsvHandle      = _pDx12->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-    auto viewport       = _pDx12->GetViewport();
-    auto scissorRect    = _pDx12->GetScissorRect();
+    auto& viewport       = _pDx12->GetViewport();
+    auto& scissorRect    = _pDx12->GetScissorRect();
 
     /// コマンドリストの設定
     _commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-    _commandList->OMSetRenderTargets(1, rtvHandle, FALSE, &dsvHandle);
+    if (rtvHandle)
+    {
+        _commandList->OMSetRenderTargets(1, rtvHandle, FALSE, &dsvHandle);
+    }
     _commandList->RSSetViewports(1, &viewport);
     _commandList->RSSetScissorRects(1, &scissorRect);
 

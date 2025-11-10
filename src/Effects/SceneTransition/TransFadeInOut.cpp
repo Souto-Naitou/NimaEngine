@@ -54,6 +54,7 @@ void TransFadeInOut::Update()
 
 void TransFadeInOut::Draw()
 {
+    sprite_->Draw1F();
 }
 
 void TransFadeInOut::Finalize()

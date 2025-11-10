@@ -3,20 +3,15 @@
 #include <Core/DirectX12/DX12Resource/DX12Resource.h>
 #include <string>
 #include <vector>
-#include <Features/Sprite/Sprite.h>
 #include <memory>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Core/DirectX12/PostEffectExecuter.h>
 #include <d3d12.h>
 #include <Features/Cubemap/Skybox.h>
-#include <Features/Object3d/Object3d.h>
+#include <drawable/base/DrawableBase.h>
+#include <DebugTools/ImGuiManager/ImGuiManager.h>
 
-struct CanvasInitParams
-{
-    std::string name = "Canvas";
-    DirectX12* pDx12 = nullptr;
-    CubemapSystem* pCubemapSystem = nullptr;
-};
+
 
 /// <summary>
 /// キャンバスクラス
@@ -24,6 +19,14 @@ struct CanvasInitParams
 class Canvas
 {
 public:
+    struct Params
+    {
+        std::string name = "Canvas";
+        DirectX12* pDx12 = nullptr;
+        CubemapSystem* pCubemapSystem = nullptr;
+        ImGuiManager* pImGuiManager = nullptr;
+    };
+
     Canvas() = default;
     ~Canvas() = default;
 
@@ -43,7 +46,7 @@ public:
     /// </summary>
     /// <param name="sprite">登録するスプライト</param>
     /// <returns>自身への参照</returns>
-    Canvas& RegisterDrawable(Sprite* sprite);
+    Canvas& RegisterDrawable(DrawableBase* sprite);
 
     /// <summary>
     /// 描画対象のスカイボックスを登録します。
@@ -52,16 +55,8 @@ public:
     /// <returns>自身への参照</returns>
     Canvas& RegisterDrawable(Skybox* skybox);
 
-    /// <summary>
-    /// 描画対象の3Dオブジェクトを登録します。
-    /// </summary>
-    /// <param name="object3d">登録する3Dオブジェクト</param>
-    /// <returns>自身への参照</returns>
-    Canvas& RegisterDrawable(Object3d* object3d);
-
-    void UnregisterDrawable(Sprite* sprite);
     void UnregisterDrawable(Skybox* skybox);
-    void UnregisterDrawable(Object3d* object3d);
+    void UnregisterDrawable(DrawableBase* drawable);
 
     // Getters
     [[nodiscard]]
@@ -80,10 +75,10 @@ public:
     /// キャンバスを初期化し、内部リソースを確保します。
     /// </summary>
     /// <param name="name">キャンバス名。</param>
-    void Initialize(const CanvasInitParams& params);
+    void Initialize(const Canvas::Params& params);
 
     void Finalize();
-    
+
     /// <summary>
     /// 登録されたオブジェクトを描画します。
     /// </summary>
@@ -92,7 +87,7 @@ public:
     /// <summary>
     /// ポストエフェクトを適用します。
     /// </summary>
-    void ApplyPostEffects() const;
+    void ApplyPostEffects();
 
     /// <summary>
     /// Canvasを描画します。
@@ -105,13 +100,15 @@ public:
     void ImGui();
 
 private:
+    void ParameterCheck(const Canvas::Params& params) const;
+
     DX12Resource resource_ = {};
     bool isEnabled_ = true;
 
-    CanvasInitParams params_ = {};
-    std::list<Sprite*> sprites_;
+    Canvas::Params params_ = {};
+    std::list<DrawableBase*> drawables_;
     std::list<Skybox*> skyboxes_;
-    std::list<Object3d*> objects3ds_;
+
 
     std::unique_ptr<DebugEntry<Canvas>> pDebugEntry_ = nullptr;
     std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_ = nullptr;

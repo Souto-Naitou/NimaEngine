@@ -113,7 +113,7 @@ void DirectX12::CreateCommandResources()
     {
         pLogger_->LogInfo(__FILE__, __FUNCTION__, "Command list creation completed");
     }
-    commandLists_[DirectX12::CommandListType::Common].emplace_back(commandList_.Get());
+    this->AddCommandList(CommandListType::Common, commandList_.Get());
 }
 
 void DirectX12::CreateSwapChainAndResource()
@@ -573,8 +573,9 @@ void DirectX12::ResizeBuffers()
     scissorRect_.right  = static_cast<LONG>(WinSystem::clientWidth);
     scissorRect_.bottom = static_cast<LONG>(WinSystem::clientHeight);
 
-    commandLists_[DirectX12::CommandListType::Common].front()->RSSetViewports(1, &viewport_);
-    commandLists_[DirectX12::CommandListType::Common].front()->RSSetScissorRects(1, &scissorRect_);
+    auto& cl = commandLists_[DirectX12::CommandListType::Common].begin()->second;
+    cl->RSSetViewports(1, &viewport_);
+    cl->RSSetScissorRects(1, &scissorRect_);
 
     CreateDSVAndSettingState();
     CreateD3D11Device();

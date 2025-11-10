@@ -43,7 +43,7 @@ void NimaFramework::Initialize()
     pTextureManager_ = TextureManager::GetInstance();
     pSRVManager_ = SRVManager::GetInstance();
     pSceneManager_ = SceneManager::GetInstance();
-    pParticleManager_ = ParticleManager::GetInstance();
+    pParticleStorage_ = ParticleStorage::GetInstance();
     pLineSystem_ = LineSystem::GetInstance();
     pInput_ = Input::GetInstance();
     pRandomGenerator_ = RandomGenerator::GetInstance();
@@ -127,12 +127,17 @@ void NimaFramework::Initialize()
     pLayer_ = std::make_unique<Layer>();
 
     /// シーンマネージャの初期化
-    pSceneManager_->Initialize(pDirectX_.get(), pLayer_.get());
+    SceneManager::Params sceneManagerParams;
+    sceneManagerParams.pDx12 = pDirectX_.get();
+    sceneManagerParams.pLayer = pLayer_.get();
+    sceneManagerParams.pImGuiManager = pImGuiManager_.get();
 
-    pParticleManager_->SetDirectX12(pDirectX_.get());
+    pSceneManager_->Initialize(sceneManagerParams);
+
+    pParticleStorage_->SetDirectX12(pDirectX_.get());
 
     /// UIの初期化
-    auto vp = pDirectX_->GetViewport();
+    D3D12_VIEWPORT vp = pDirectX_->GetViewport();
     NiGui::Initialize({ vp.Width, vp.Height }, { vp.TopLeftX, vp.TopLeftY });
     NiGui::SetClientSize({WinSystem::clientWidth, WinSystem::clientHeight});
     
@@ -174,11 +179,12 @@ void NimaFramework::Initialize()
     /// デフォルトシーン引数の設定
     (*pSceneManager_)
         .AddInitialArg("DirectX12", pDirectX_.get())
+        .AddInitialArg("ImGuiManager", pImGuiManager_.get())
         .AddInitialArg("Object3dSystem", pObject3dSystem_)
         .AddInitialArg("ParticleSystem", pParticleSystem_)
         .AddInitialArg("SpriteSystem", pSpriteSystem_)
         .AddInitialArg("LineSystem", pLineSystem_)
-        .AddInitialArg("ParticleManager", pParticleManager_)
+        .AddInitialArg("ParticleManager", pParticleStorage_)
         .AddInitialArg("AudioManager", pAudioManager_)
         .AddInitialArg("GltfModelSystem", pGltfModelSystem_.get())
         .AddInitialArg("CubemapSystem", pCubemapSystem_.get())
@@ -194,15 +200,16 @@ void NimaFramework::Initialize()
 
 void NimaFramework::Finalize()
 {
-    pAudioManager_->Finalize();
-    pWinSystem_->Finalize();
-    pLogger_->Save();
-    pParticleManager_->Finalize();
     pSceneManager_->Finalize();
+    pParticleStorage_->Finalize();
+    pAudioManager_->Finalize();
 
     #ifdef _DEBUG
     pImGuiManager_->Finalize();
     #endif // _DEBUG
+
+    pWinSystem_->Finalize();
+    pLogger_->Save();
 }
 
 void NimaFramework::Update()
@@ -247,6 +254,9 @@ void NimaFramework::Update()
     pImGuiManager_->BeginFrame();
     #endif // _DEBUG
 
+    /// シーン更新
+    pSceneManager_->Update();
+
     pDebugManager_->Update();
     pDebugManager_->DrawUI();
     pViewport_->DrawWindow();
@@ -259,16 +269,13 @@ void NimaFramework::Update()
     }
     #endif // _DEBUG
 
-    /// シーン更新
-    pSceneManager_->Update();
-    
     /// イベント計測終了
     #ifdef _DEBUG
     pEventTimer_->EndEvent("Update");
     #endif // _DEBUG
 
     /// パーティクル更新
-    pParticleManager_->Update();
+    pParticleStorage_->Update();
 }
 
 void NimaFramework::Draw()
@@ -276,13 +283,8 @@ void NimaFramework::Draw()
     /// イベント計測開始
     pEventTimer_->BeginEvent("Draw");
 
-    /// パーティクル描画
-    pParticleManager_->Draw();
-    pParticleSystem_->DrawCall();
-
-    // シーンの描画 (テキスト以外)
+    // シーンの描画関数呼び出し
     pSceneManager_->SceneDraw();
-    pObject3dSystem_->DrawCall();
 
     /// 前景スプライトの描画
     NiGui::DrawUI();
@@ -290,12 +292,14 @@ void NimaFramework::Draw()
     // Canvasに登録されているオブジェクトをCanvasに描画する
     pLayer_->DrawObjects();
 
+    pObject3dSystem_->DrawCall();
     pSpriteSystem_->DrawCall();
+    pParticleSystem_->DrawCall();
 
     // 同期待ち
     pObject3dSystem_->Sync();
-    pParticleSystem_->Sync();
     pSpriteSystem_->Sync();
+    pParticleSystem_->Sync();
 
     // Canvasにポストエフェクトを適用する
     pLayer_->ApplyPostEffects();

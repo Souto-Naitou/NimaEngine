@@ -2,14 +2,18 @@
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/Win32/WinSystem.h>
 #include <Config/EngineSetting.h>
+#include <imgui.h>
 
 
-void Canvas::Initialize(const CanvasInitParams& params)
+void Canvas::Initialize(const Canvas::Params& params)
 {
-    params_ = params;
+    // パラメータチェック
+    this->ParameterCheck(params);
 
+    params_ = params;
     pDebugEntry_ = std::make_unique<DebugEntry<Canvas>>("Canvas", params.name, this);
 
+    /// レンダーターゲット用リソースの作成
     auto tempResource = DX12Helper::CreateResourceForRenderTarget(
         params.pDx12->GetDevice(),
         WinSystem::clientWidth,
@@ -17,8 +21,6 @@ void Canvas::Initialize(const CanvasInitParams& params)
         NimaEngine::Config::kRenderTargetFormat,
         NimaEngine::Config::kEditorBGColor
     );
-
-    // リソースの初期化
     resource_.Initialize(
         tempResource, 
         D3D12_RESOURCE_STATE_RENDER_TARGET, 
@@ -30,14 +32,12 @@ void Canvas::Initialize(const CanvasInitParams& params)
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
     rtvDesc.Format = NimaEngine::Config::kRenderTargetFormat;
     rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-
     if (resource_.GetRTVHandle().ptr == 0)
     {
         const auto rtvHandleIndex = params.pDx12->GetRTVHeapCounter()->Allocate();
         const auto rtvCPUHandle = params.pDx12->GetRTVHeapCounter()->GetRTVHandle(rtvHandleIndex);
         resource_.SetRTV(rtvHandleIndex, rtvCPUHandle);
     }
-
     params.pDx12->GetDevice()->CreateRenderTargetView(
         resource_.GetResource().Get(),
         &rtvDesc,
@@ -61,6 +61,7 @@ void Canvas::Finalize()
     params_.pDx12->GetRTVHeapCounter()->Deallocate(resource_.GetRTVIndex());
     params_.pDx12->DeleteOnResizeBefore("PostEffect" + params_.name);
     params_.pDx12->DeleteOnResizeAfter("PostEffect" + params_.name);
+    params_.pImGuiManager->RemoveImageResource(pPostEffectExecuter_->GetIntermediateResource());
     pPostEffectExecuter_->Finalize();
 }
 
@@ -81,20 +82,15 @@ void Canvas::DrawObjects() const
         }
     }
 
-    for (auto& sprite : sprites_)
+    // 描画オブジェクトの描画
+    for (auto& drawable : drawables_)
     {
-        sprite->SetRTVHandle(rtvHandle);
-        sprite->Draw();
-    }
-
-    for (auto& object3d : objects3ds_)
-    {
-        object3d->SetRTVHandle(rtvHandle);
-        object3d->Draw();
+        drawable->SetRTVHandle(rtvHandle);
+        drawable->DrawCall();
     }
 }
 
-void Canvas::ApplyPostEffects() const
+void Canvas::ApplyPostEffects()
 {
     pPostEffectExecuter_->ApplyPostEffects();
 }
@@ -106,13 +102,44 @@ void Canvas::Draw() const
 
 void Canvas::ImGui()
 {
+#ifdef _DEBUG
+
+    ImVec2 imageSize = {};
+    float aspect = static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::clientHeight);
+    auto cliSize = ImGui::GetContentRegionAvail();
+    if (aspect >= 1.0f)
+    {
+        imageSize.x = cliSize.x;
+        imageSize.y = cliSize.x / aspect;
+    }
+    else
+    {
+        imageSize.y = cliSize.y;
+        imageSize.x = cliSize.y * aspect;
+    }
+
+    /// キャンバスの内容を表示 
+    /// PostEffectExecuterの中間リソースを使用
+    DX12Resource* resourceOutput = pPostEffectExecuter_->GetIntermediateResource();
+    ImGui::Image((ImTextureID)resourceOutput->GetSRVHandleGPU().ptr, imageSize);
+    params_.pImGuiManager->AddImageResource(resourceOutput);
+
     pPostEffectExecuter_->ImGui();
+
+#endif // _DEBUG
 }
 
-Canvas& Canvas::RegisterDrawable(Sprite* sprite)
+void Canvas::ParameterCheck(const Canvas::Params& params) const
 {
-    sprites_.push_back(sprite);
-    return *this;
+    if (params.pDx12 == nullptr)
+    {
+        throw std::runtime_error("Canvas::Initialize() : DirectX12 is nullptr.");
+    }
+
+    if (params.pImGuiManager == nullptr)
+    {
+        throw std::runtime_error("Canvas::Initialize() : ImGuiManager is nullptr.");
+    }
 }
 
 Canvas& Canvas::RegisterDrawable(Skybox* skybox)
@@ -121,15 +148,10 @@ Canvas& Canvas::RegisterDrawable(Skybox* skybox)
     return *this;
 }
 
-Canvas& Canvas::RegisterDrawable(Object3d* object3d)
+Canvas& Canvas::RegisterDrawable(DrawableBase* sprite)
 {
-    objects3ds_.push_back(object3d);
+    drawables_.push_back(sprite);
     return *this;
-}
-
-void Canvas::UnregisterDrawable(Sprite* sprite)
-{
-    sprites_.erase(std::remove(sprites_.begin(), sprites_.end(), sprite), sprites_.end());
 }
 
 void Canvas::UnregisterDrawable(Skybox* skybox)
@@ -137,7 +159,7 @@ void Canvas::UnregisterDrawable(Skybox* skybox)
     skyboxes_.erase(std::remove(skyboxes_.begin(), skyboxes_.end(), skybox), skyboxes_.end());
 }
 
-void Canvas::UnregisterDrawable(Object3d* object3d)
+void Canvas::UnregisterDrawable(DrawableBase* drawable)
 {
-    objects3ds_.erase(std::remove(objects3ds_.begin(), objects3ds_.end(), object3d), objects3ds_.end());
+    drawables_.remove(drawable);
 }

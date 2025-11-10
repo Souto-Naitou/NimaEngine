@@ -72,6 +72,11 @@ const std::string& RandomFilter::GetName() const
     return name_;
 }
 
+DX12Resource* RandomFilter::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
+}
+
 RandomFilter::RandomFilterOption& RandomFilter::GetOption()
 {
     return *pOption_;

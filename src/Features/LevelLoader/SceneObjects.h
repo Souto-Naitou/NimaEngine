@@ -4,7 +4,7 @@
 #include <memory>
 #include <d3d12.h>
 #include <string>
-#include <Features/Object3d/Object3d.h>
+#include <drawable/object3d/Object3d.h>
 #include <Features/LevelLoader/ISceneObjects.h>
 #include <Features/LevelLoader/LevelData.h>
 #include <Features/Model/ModelManager.h>

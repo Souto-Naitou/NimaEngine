@@ -50,12 +50,17 @@ bool DepthBasedOutline::Enabled() const
 
 D3D12_GPU_DESCRIPTOR_HANDLE DepthBasedOutline::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return renderTexture_.GetSRVHandleGPU();
 }
 
 const std::string& DepthBasedOutline::GetName() const
 {
     return name_;
+}
+
+DX12Resource* DepthBasedOutline::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
 }
 
 DepthBasedOutlineOption& DepthBasedOutline::GetOption()
@@ -96,7 +101,7 @@ void DepthBasedOutline::Setting()
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -116,7 +121,6 @@ void DepthBasedOutline::Setting()
 
 void DepthBasedOutline::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
     SRVManager::GetInstance()->Deallocate(srvIndexDepth_);
     renderTexture_.Reset();
 }

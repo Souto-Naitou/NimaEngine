@@ -27,6 +27,6 @@ public:
     const D3D12_BLEND_DESC& Get() const { return desc_; }
 
 private:
-    BlendModes currentMode_;
-    D3D12_BLEND_DESC desc_{};
+    BlendModes currentMode_ = {};
+    D3D12_BLEND_DESC desc_ = {};
 };

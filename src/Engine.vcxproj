@@ -65,6 +65,7 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\$(Configuration)\Int\$(ProjectName)\</IntDir>
     <PublicIncludeDirectories>$(ProjectDir);$(ProjectDir)../externals;$(ProjectDir)../modules</PublicIncludeDirectories>
+    <AllProjectBMIsArePublic>false</AllProjectBMIsArePublic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)Externals\VectorMatrix\Math\;$(ProjectDir)Externals\;$(IncludePath)</IncludePath>
@@ -98,6 +99,9 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <PreprocessToFile>false</PreprocessToFile>
+      <EnableModules>false</EnableModules>
+      <CompileAs>Default</CompileAs>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -230,6 +234,7 @@
     <ClCompile Include="DebugTools\ImGuiManager\ImGuiThemes.cpp" />
     <ClCompile Include="DebugTools\ImGuiTemplates\ImGuiTemplates.cpp" />
     <ClCompile Include="DebugTools\Logger\Logger.cpp" />
+    <ClCompile Include="drawable\base\DrawableBase.cpp" />
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
@@ -256,6 +261,7 @@
     <ClCompile Include="Features\Cubemap\CubemapSystem.cpp" />
     <ClCompile Include="Features\Cubemap\Skybox.cpp" />
     <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp" />
+    <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\Layer.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
@@ -281,22 +287,22 @@
     <ClCompile Include="Features\Model\Skeleton.cpp" />
     <ClCompile Include="Features\NiGui\NiGuiDebug.cpp" />
     <ClCompile Include="Features\NiGui\NiGuiDrawer.cpp" />
-    <ClCompile Include="Features\Object3d\Object3d.cpp" />
-    <ClCompile Include="Features\Object3d\Object3dSystem.cpp" />
-    <ClCompile Include="Features\Particle\Emitter\EmitterData.cpp" />
-    <ClCompile Include="Features\Particle\Emitter\ParticleEmitter.cpp" />
-    <ClCompile Include="Features\Particle\Manager\EmitterManager.cpp" />
-    <ClCompile Include="Features\Particle\Particle.cpp" />
-    <ClCompile Include="Features\Particle\ParticleManager.cpp" />
-    <ClCompile Include="Features\Particle\ParticleSystem.cpp" />
+    <ClCompile Include="drawable\object3d\Object3d.cpp" />
+    <ClCompile Include="drawable\object3d\Object3dSystem.cpp" />
+    <ClCompile Include="drawable\particle\Emitter\EmitterData.cpp" />
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitter.cpp" />
+    <ClCompile Include="drawable\particle\Manager\EmitterManager.cpp" />
+    <ClCompile Include="drawable\particle\Particle.cpp" />
+    <ClCompile Include="drawable\particle\ParticleStorage.cpp" />
+    <ClCompile Include="drawable\particle\ParticleSystem.cpp" />
     <ClCompile Include="Features\Primitive\AABB.cpp" />
     <ClCompile Include="Features\Primitive\OBB.cpp" />
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp" />
     <ClCompile Include="Features\SceneManager\SceneManager.cpp" />
     <ClCompile Include="Effects\SceneTransition\SceneTransitionExecuter.cpp" />
     <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp" />
-    <ClCompile Include="Features\Sprite\Sprite.cpp" />
-    <ClCompile Include="Features\Sprite\SpriteSystem.cpp" />
+    <ClCompile Include="drawable\sprite\Sprite.cpp" />
+    <ClCompile Include="drawable\sprite\SpriteSystem.cpp" />
     <ClCompile Include="Features\Text\Text.cpp" />
     <ClCompile Include="Features\Text\TextSystem.cpp" />
     <ClCompile Include="Features\ThreadPool\ThreadPool.cpp" />
@@ -345,6 +351,7 @@
     <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h" />
     <ClInclude Include="DebugTools\Logger\Logger.h" />
     <ClInclude Include="DebugTools\ReakChecker.h" />
+    <ClInclude Include="drawable\base\DrawableBase.h" />
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h" />
     <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h" />
     <ClInclude Include="Effects\PostEffects\BoxFilter\BoxFilter.h" />
@@ -375,6 +382,7 @@
     <ClInclude Include="Features\Cubemap\CubemapSystem.h" />
     <ClInclude Include="Features\Cubemap\Skybox.h" />
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
+    <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\Layer.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />
@@ -409,15 +417,15 @@
     <ClInclude Include="Features\Model\SkinCluster.h" />
     <ClInclude Include="Features\NiGui\NiGuiDebug.h" />
     <ClInclude Include="Features\NiGui\NiGuiDrawer.h" />
-    <ClInclude Include="Features\Object3d\Object3d.h" />
-    <ClInclude Include="Features\Object3d\Object3dSystem.h" />
-    <ClInclude Include="Features\Particle\Emitter\EmitterData.h" />
-    <ClInclude Include="Features\Particle\Emitter\ParticleEmitter.h" />
-    <ClInclude Include="Features\Particle\Manager\EmitterManager.h" />
-    <ClInclude Include="Features\Particle\Particle.h" />
-    <ClInclude Include="Features\Particle\ParticleManager.h" />
-    <ClInclude Include="Features\Particle\ParticleSystem.h" />
-    <ClInclude Include="Features\Particle\Type\ParticleType.h" />
+    <ClInclude Include="drawable\object3d\Object3d.h" />
+    <ClInclude Include="drawable\object3d\Object3dSystem.h" />
+    <ClInclude Include="drawable\particle\Emitter\EmitterData.h" />
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitter.h" />
+    <ClInclude Include="drawable\particle\Manager\EmitterManager.h" />
+    <ClInclude Include="drawable\particle\Particle.h" />
+    <ClInclude Include="drawable\particle\ParticleStorage.h" />
+    <ClInclude Include="drawable\particle\ParticleSystem.h" />
+    <ClInclude Include="drawable\particle\Type\ParticleType.h" />
     <ClInclude Include="Features\Primitive\AABB.h" />
     <ClInclude Include="Features\Primitive\OBB.h" />
     <ClInclude Include="Features\RandomGenerator\RandomGenerator.h" />
@@ -425,8 +433,8 @@
     <ClInclude Include="Effects\SceneTransition\SceneTransitionExecuter.h" />
     <ClInclude Include="Effects\SceneTransition\TransBase.h" />
     <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h" />
-    <ClInclude Include="Features\Sprite\Sprite.h" />
-    <ClInclude Include="Features\Sprite\SpriteSystem.h" />
+    <ClInclude Include="drawable\sprite\Sprite.h" />
+    <ClInclude Include="drawable\sprite\SpriteSystem.h" />
     <ClInclude Include="Features\Text\Text.h" />
     <ClInclude Include="Features\Text\TextSystem.h" />
     <ClInclude Include="Features\ThreadPool\ThreadPool.h" />

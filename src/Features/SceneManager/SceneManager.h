@@ -21,7 +21,9 @@ public:
     {
         DirectX12*          pDx12           = nullptr;
         Layer*              pLayer          = nullptr;
+        #ifdef _DEBUG
         ImGuiManager*       pImGuiManager   = nullptr;
+        #endif // _DEBUG
     };
 
     SceneManager(SceneManager const&) = delete;

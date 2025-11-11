@@ -57,7 +57,9 @@ void SceneManager::Initialize(const Params& param)
     canvasParam.name = "SceneTransitionCanvas";
     canvasParam.pDx12 = parameters_.pDx12;
     canvasParam.pCubemapSystem = nullptr;
+    #ifdef _DEBUG
     canvasParam.pImGuiManager = param.pImGuiManager;
+    #endif // _DEBUG
     pTransitionExecuter_->Initialize(canvasParam, param.pLayer);
 
     this->ReserveStartupScene();

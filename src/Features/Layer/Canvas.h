@@ -24,7 +24,10 @@ public:
         std::string name = "Canvas";
         DirectX12* pDx12 = nullptr;
         CubemapSystem* pCubemapSystem = nullptr;
+
+        #ifdef _DEBUG
         ImGuiManager* pImGuiManager = nullptr;
+        #endif // _DEBUG
     };
 
     Canvas() = default;

@@ -258,7 +258,6 @@ ID3D12GraphicsCommandList* DirectX12::GetCommandListLast() const
     if (!commandLists_.empty())
     {
         auto outerIt = std::prev(commandLists_.end());  // 外側の最後
-        auto& lastType = outerIt->first;
         auto& lastList = outerIt->second;
 
         if (!lastList.empty())

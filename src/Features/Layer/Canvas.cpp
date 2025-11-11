@@ -61,7 +61,11 @@ void Canvas::Finalize()
     params_.pDx12->GetRTVHeapCounter()->Deallocate(resource_.GetRTVIndex());
     params_.pDx12->DeleteOnResizeBefore("PostEffect" + params_.name);
     params_.pDx12->DeleteOnResizeAfter("PostEffect" + params_.name);
+
+    #ifdef _DEBUG
     params_.pImGuiManager->RemoveImageResource(pPostEffectExecuter_->GetIntermediateResource());
+    #endif // _DEBUG
+
     pPostEffectExecuter_->Finalize();
 }
 
@@ -136,10 +140,12 @@ void Canvas::ParameterCheck(const Canvas::Params& params) const
         throw std::runtime_error("Canvas::Initialize() : DirectX12 is nullptr.");
     }
 
+    #ifdef _DEBUG
     if (params.pImGuiManager == nullptr)
     {
         throw std::runtime_error("Canvas::Initialize() : ImGuiManager is nullptr.");
     }
+    #endif // _DEBUG
 }
 
 Canvas& Canvas::RegisterDrawable(Skybox* skybox)

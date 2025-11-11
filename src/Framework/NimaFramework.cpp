@@ -130,7 +130,9 @@ void NimaFramework::Initialize()
     SceneManager::Params sceneManagerParams;
     sceneManagerParams.pDx12 = pDirectX_.get();
     sceneManagerParams.pLayer = pLayer_.get();
+    #ifdef _DEBUG
     sceneManagerParams.pImGuiManager = pImGuiManager_.get();
+    #endif // _DEBUG
 
     pSceneManager_->Initialize(sceneManagerParams);
 
@@ -179,7 +181,9 @@ void NimaFramework::Initialize()
     /// デフォルトシーン引数の設定
     (*pSceneManager_)
         .AddInitialArg("DirectX12", pDirectX_.get())
+        #ifdef _DEBUG
         .AddInitialArg("ImGuiManager", pImGuiManager_.get())
+        #endif // _DEBUG
         .AddInitialArg("Object3dSystem", pObject3dSystem_)
         .AddInitialArg("ParticleSystem", pParticleSystem_)
         .AddInitialArg("SpriteSystem", pSpriteSystem_)

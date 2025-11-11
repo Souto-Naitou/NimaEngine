@@ -15,7 +15,7 @@ void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, b
 {
     pDx12_ = pDx12;
 
-    pRenderTexture_ = pResource;
+    pResourceInput_ = pResource;
 
     // インスタンスの取得
     ObtainInstances();
@@ -47,11 +47,17 @@ void PostEffectExecuter::Finalize()
     pDx12_->RemoveCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get());
 }
 
+void PostEffectExecuter::RegisterCommandListToDirectX12(uint32_t order) const
+{
+    pDx12_->AddCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get(), order);
+}
+
 void PostEffectExecuter::ApplyPostEffects()
 {
-    pRenderTexture_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    pResourceInput_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
-    outputHandleGpu_ = pRenderTexture_->GetSRVHandleGPU();
+    D3D12_GPU_DESCRIPTOR_HANDLE intermediateHandle = pResourceInput_->GetSRVHandleGPU();
+    pResourceIntermediate_ = pResourceInput_;
 
     for (auto it = postEffects_.begin(); it != postEffects_.end(); ++it)
     {
@@ -60,7 +66,7 @@ void PostEffectExecuter::ApplyPostEffects()
         if (!postEffect->Enabled()) continue;
 
         // 適用前テクスチャの設定
-        postEffect->SetInputTextureHandle(outputHandleGpu_);
+        postEffect->SetInputTextureHandle(intermediateHandle);
 
         // 1. PostEffectの設定 (PSOなど)
         postEffect->Setting();
@@ -68,7 +74,8 @@ void PostEffectExecuter::ApplyPostEffects()
         postEffect->Apply();
         // 3. PostEffectの描画後の処理
         postEffect->ToShaderResourceState();
-        outputHandleGpu_ = postEffect->GetOutputTextureHandle();
+        pResourceIntermediate_ = postEffect->GetOutputResource();
+        intermediateHandle = pResourceIntermediate_->GetSRVHandleGPU();
     }
 }
 
@@ -80,11 +87,11 @@ void PostEffectExecuter::Draw()
     // レンダーターゲットがSwapchainリソースになっている前提
     commandListForDraw_->SetGraphicsRootSignature(rootSignature_.Get());
     commandListForDraw_->SetPipelineState(pso_.Get());
-    commandListForDraw_->SetGraphicsRootDescriptorTable(0, outputHandleGpu_);
+    commandListForDraw_->SetGraphicsRootDescriptorTable(0, pResourceIntermediate_->GetSRVHandleGPU());
     commandListForDraw_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandListForDraw_->DrawInstanced(3, 1, 0, 0);
 
-    pRenderTexture_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    pResourceInput_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void PostEffectExecuter::PreDraw()
@@ -98,10 +105,10 @@ void PostEffectExecuter::PreDraw()
 
     /// 描画先のRTV/DSVの設定
     D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetCPUDescriptorHandleForHeapStart();
-    commandListMain_->OMSetRenderTargets(1, &pRenderTexture_->GetRTVHandle(), false, &dsvHandle);
+    commandListMain_->OMSetRenderTargets(1, &pResourceInput_->GetRTVHandle(), false, &dsvHandle);
 
     // 画面全体のクリア
-    commandListMain_->ClearRenderTargetView(pRenderTexture_->GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    commandListMain_->ClearRenderTargetView(pResourceInput_->GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // 指定した深度で画面全体をクリア
     commandListMain_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -380,7 +387,7 @@ void PostEffectExecuter::CreatePipelineState()
 
     /// BlendStateの設定
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
 
     /// RasterizerStateの設定
@@ -430,7 +437,6 @@ void PostEffectExecuter::CreatePipelineState()
 void PostEffectExecuter::CreateCommandList()
 {
     Helper::CreateCommandList(pDevice_, commandListForDraw_, commandAllocator_);
-    pDx12_->AddCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get());
 }
 
 void PostEffectExecuter::EnableSolo(const size_t _index)

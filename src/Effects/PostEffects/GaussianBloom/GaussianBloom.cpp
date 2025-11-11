@@ -9,6 +9,7 @@
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
+#include <config/EngineSetting.h>
 
 void GaussianBloom::Initialize(const PostEffectInitParams& desc)
 {
@@ -60,6 +61,11 @@ D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::GetOutputTextureHandle() const
 const std::string& GaussianBloom::GetName() const
 {
     return name_;
+}
+
+DX12Resource* GaussianBloom::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&outputTexture_);
 }
 
 GaussianBloomOption& GaussianBloom::GetOption()
@@ -220,7 +226,7 @@ void GaussianBloom::CreatePipelineStateObject()
     inputLayoutDesc.NumElements = 0;
 
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
@@ -259,6 +265,9 @@ void GaussianBloom::CreatePipelineStateObject()
 
 void GaussianBloom::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle)
 {
+    // クリア
+    commandList_->ClearRenderTargetView(_outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
 

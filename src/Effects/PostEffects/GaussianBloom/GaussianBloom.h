@@ -92,6 +92,8 @@ public:
     // [Getter Begin]
     D3D12_GPU_DESCRIPTOR_HANDLE             GetOutputTextureHandle()        const override;
     const std::string&                      GetName()                       const override;
+    /// <summary>適用後のリソースを取得します。</summary>
+    DX12Resource*    GetOutputResource() const override;
     /// <summary>オプション（読み取り専用）を取得します。</summary>
     const GaussianBloomOption&              GetOption()                     const;
     /// <summary>内部の分離ガウシアンフィルタ（読み取り専用）を取得します。</summary>
@@ -147,8 +149,6 @@ private:
     // =============================================
     // [Final Output Begin]
     DX12Resource                                        outputTexture_              = {};
-    uint32_t                                            rtvHeapIndex_               = 0;
-    uint32_t                                            srvHeapIndex_               = 0;
     // [Final Output End]
     // =============================================
 

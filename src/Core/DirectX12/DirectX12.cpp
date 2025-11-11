@@ -125,7 +125,7 @@ void DirectX12::OnResizedWindow()
 
 void DirectX12::NewFrame()
 {
-    auto* cl = commandLists_[DirectX12::CommandListType::Common].front();
+    auto* cl = commandLists_[DirectX12::CommandListType::Common].begin()->second;
 
     // リソースバリアの設定
     swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(cl, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -143,10 +143,7 @@ void DirectX12::NewFrame()
 void DirectX12::CommandExecute()
 {
     ID3D12GraphicsCommandList* clLastExecution = commandList_.Get();
-    if (!commandLists_.empty())
-    {
-        clLastExecution = std::prev(commandLists_.end())->second.back();
-    }
+    if (!commandLists_.empty()) clLastExecution = this->GetCommandListLast();
 
     swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(clLastExecution, D3D12_RESOURCE_STATE_PRESENT);
 
@@ -157,7 +154,7 @@ void DirectX12::CommandExecute()
         CLList clList = pair.second;
         for (auto& cl : clList)
         {
-            hr_ = cl->Close();
+            hr_ = cl.second->Close();
 
             if (FAILED(hr_))
             {
@@ -165,7 +162,7 @@ void DirectX12::CommandExecute()
                 assert(false && "Failed to close command list");
             }
 
-            commandLists.push_back(cl);
+            commandLists.push_back(cl.second);
         }
     }
     commandQueue_->ExecuteCommandLists(static_cast<UINT>(commandLists.size()), commandLists.data());
@@ -258,14 +255,49 @@ void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
 
 ID3D12GraphicsCommandList* DirectX12::GetCommandListLast() const
 {
-    return std::prev(commandLists_.end())->second.back();
+    if (!commandLists_.empty())
+    {
+        auto outerIt = std::prev(commandLists_.end());  // 外側の最後
+        auto& lastList = outerIt->second;
+
+        if (!lastList.empty())
+        {
+            auto innerIt = std::prev(lastList.end());   // 内側の最後
+            auto& [key, cmd] = *innerIt;
+            return cmd;
+        }
+    }
+    return nullptr;
+}
+
+void DirectX12::AddCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList, uint32_t order)
+{
+    uint32_t orderAssigned = order;
+    uint32_t& orderNext = nextCLOrder_[CommandListType::ImGui];
+
+    if (order == 0)
+    {
+        orderAssigned = orderNext;
+    }
+
+    // すでに同じorderが存在する場合は、orderをずらす
+    while (commandLists_[type].find(orderAssigned) != commandLists_[type].end())
+    {
+        ++orderAssigned;
+        if (order == 0)
+        {
+            orderNext = orderAssigned + 1;
+        }
+    }
+
+    commandLists_[type].insert(std::make_pair(orderAssigned, commandList));
 }
 
 void DirectX12::RemoveCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList)
 {
     for (auto it = commandLists_[type].begin(); it != commandLists_[type].end(); ++it)
     {
-        if (*it == commandList)
+        if (it->second == commandList)
         {
             commandLists_[type].erase(it);
             break;

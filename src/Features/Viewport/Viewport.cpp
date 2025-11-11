@@ -207,8 +207,8 @@ void Viewport::DrawWindow()
     auto gpuHnd = SRVManager::GetInstance()->GetGPUDescriptorHandle(outputSRVIndex_);
     auto vp = pDx12_->GetViewport();
 
-    uint32_t width = static_cast<uint32_t>(vp.Width);
-    uint32_t height = static_cast<uint32_t>(vp.Height);
+    auto width = static_cast<uint32_t>(vp.Width);
+    auto height = static_cast<uint32_t>(vp.Height);
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));

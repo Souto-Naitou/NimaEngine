@@ -22,11 +22,10 @@ PixelShaderOutput main(VertexShaderOutput input)
 {   
     PixelShaderOutput output;
    
-    float3 inputRGB = gTexture.Sample(gSampler, input.texcoord).rgb;
-    float3 bloomRGB = gBloomTexture.Sample(gSampler, input.texcoord).rgb;
+    float4 inputColor = gTexture.Sample(gSampler, input.texcoord);
+    float4 bloomColor = gBloomTexture.Sample(gSampler, input.texcoord);
     
-    output.color.rgb = inputRGB + bloomRGB * gOption.colorMultiply; // 入力の色とブロームの色を加算
+    output.color = inputColor + bloomColor * gOption.colorMultiply; // 入力の色とブルームの色を加算
     
-    output.color.a = 1.0f; // アルファ値を1.0に設定
     return output;
 }

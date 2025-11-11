@@ -27,7 +27,7 @@ void LineSystem::Initialize()
 void LineSystem::PresentDraw()
 {
     /// コマンドリストの設定
-    DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get(), rtvHandle_);
+    DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get());
 
     /// ルートシグネチャをセットする
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());

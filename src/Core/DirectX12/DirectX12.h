@@ -115,7 +115,7 @@ public: /// Getter
 
     void SetGameWindowRect(D3D12_VIEWPORT viewport);
     void SetGameWndSRVIndex(uint32_t index) { gameWndSrvIndexComputed_ = index; }
-    void AddCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList) { commandLists_[type].emplace_back(commandList); }
+    void AddCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList, uint32_t order = 0);
     void RemoveCommandList(CommandListType type, ID3D12GraphicsCommandList* commandList);
 
     /// Resizeイベント用関数登録
@@ -164,7 +164,9 @@ private:
     std::array<Microsoft::WRL::ComPtr<ID3D11Resource>, 2>   d3d11WrappedBackBuffers_        = {};           // D3D11のラップされたバックバッファ
     std::array<Microsoft::WRL::ComPtr<ID2D1Bitmap1>, 2>     d2dRenderTargets_               = {};           // D2D1のレンダーターゲット
 
-    using CLList = std::list<ID3D12GraphicsCommandList*>;
+    /// コマンドリスト
+    std::map<CommandListType, uint32_t>                     nextCLOrder_                = {};           // コマンドリストの実行順番カウンタ
+    using CLList = std::map<uint32_t, ID3D12GraphicsCommandList*>;
     std::map<CommandListType, CLList>                       commandLists_                   = {};           // コマンドリストのリスト
 
     D3D12_RESOURCE_BARRIER                                  barrier_                        = {};
@@ -256,7 +258,6 @@ private:
     /// レンダーターゲットの生成
     /// </summary>
     void CreateD2DRenderTarget();
-
 
     void ResizeBuffers();
 

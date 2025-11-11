@@ -56,12 +56,17 @@ void Dissolve::SetTextureResource(const DX12Resource& _texResource)
 
 D3D12_GPU_DESCRIPTOR_HANDLE Dissolve::GetOutputTextureHandle() const
 {
-    return rtvHandleGpu_;
+    return renderTexture_.GetSRVHandleGPU();
 }
 
 const std::string& Dissolve::GetName() const
 {
     return name_;
+}
+
+DX12Resource* Dissolve::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
 }
 
 DissolveOption& Dissolve::GetOption()
@@ -91,7 +96,7 @@ void Dissolve::Setting()
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &rtvHandleCpu_, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -109,9 +114,7 @@ void Dissolve::Setting()
 
 void Dissolve::OnResizeBefore()
 {
-    SRVManager::GetInstance()->Deallocate(srvHeapIndex_);
-    renderTexture_.GetResource().Reset();
-        renderTexture_.GetStateTracker().Reset();
+    renderTexture_.Reset();
 }
 
 void Dissolve::OnResizeAfter()

@@ -3,17 +3,22 @@
 #pragma warning(disable: 4324) // 構造体のメンバがアライメントのためにパディングされる
 
 #include <Features/TimeMeasurer/TimeMeasurer.h>
-#include <Features/Particle/Particle.h>
+#include <drawable/particle/Particle.h>
 #include <Features/Primitive/AABB.h>
 #include <WinTools/WinTools.h>
 #include <Features/GameEye/GameEye.h>
 #include <Vector3.h>
-#include <Vector4.h>
 #include <string>
 #include <memory>
 #include <cstdint>
-#include <Features/Particle/Emitter/EmitterData.h>
+#include <drawable/particle/Emitter/EmitterData.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+
+struct ParticleEmitterInitParams
+{
+    Particle* particle = nullptr;
+    std::string jsonPath = {};
+};
 
 /// <summary>
 /// パーティクルエミッタ
@@ -27,9 +32,8 @@ public:
     /// <summary>
     /// パーティクルエミッタを初期化します。
     /// </summary>
-    /// <param name="_pModel">使用するパーティクルモデル。</param>
-    /// <param name="_jsonPath">エミッタ設定のJSONパス（任意）。</param>
-    void Initialize(IModel* _pModel, const std::string& _jsonPath = {});
+    /// <param name="params">初期化パラメータ。</param>
+    void Initialize(const ParticleEmitterInitParams& params);
 
     /// <summary>
     /// 手動発生モードを有効にします。
@@ -72,7 +76,7 @@ public: /// Setter
     void SetEnableBillboard(bool _enable) { particle_->SetEnableBillboard(_enable); }
 
 public: /// Getter
-    //EmitterData& GetEmitterData() { return emitterData_; }
+    Particle* GetParticle() const { return particle_; }
 
 private:
     using EmitterData = Type::ParticleEmitter::v3::Data;

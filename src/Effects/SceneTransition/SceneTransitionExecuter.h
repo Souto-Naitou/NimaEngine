@@ -16,7 +16,7 @@ public:
     SceneTransitionExecuter() = default;
     ~SceneTransitionExecuter() = default;
 
-    void Initialize(CanvasInitParams canvasParams, Layer* pLayer);
+    void Initialize(Canvas::Params canvasParams, Layer* pLayer);
     void Finalize();
 
     /// <summary>

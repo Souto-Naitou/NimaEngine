@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Features/Particle/Emitter/ParticleEmitter.h>
-#include <Features/Particle/Emitter/EmitterData.h>
+#include <drawable/particle/Emitter/ParticleEmitter.h>
+#include <drawable/particle/Emitter/EmitterData.h>
 #include <Utility/JSONIO/JSONIO.h>
 #include <unordered_map>
 #include <filesystem>

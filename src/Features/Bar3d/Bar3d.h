@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Features/Sprite/Sprite.h>
+#include <drawable/sprite/Sprite.h>
 #include <Color.h>
 #include <memory>
 #include <Features/TimeMeasurer/TimeMeasurer.h>

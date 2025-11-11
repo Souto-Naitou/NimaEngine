@@ -7,6 +7,9 @@
 #include <memory>
 #include <Interfaces/ISceneArgs.h>
 #include <unordered_map>
+#include <DebugTools/ImGuiManager/ImGuiManager.h>
+#include <Features/Layer/Layer.h>
+#include <Core/DirectX12/DirectX12.h>
 
 /// <summary>
 /// シーン保守クラス
@@ -14,6 +17,15 @@
 class SceneManager
 {
 public:
+    struct Params
+    {
+        DirectX12*          pDx12           = nullptr;
+        Layer*              pLayer          = nullptr;
+        #ifdef _DEBUG
+        ImGuiManager*       pImGuiManager   = nullptr;
+        #endif // _DEBUG
+    };
+
     SceneManager(SceneManager const&) = delete;
     void operator=(SceneManager const&) = delete;
     SceneManager(SceneManager&&) = delete;
@@ -26,18 +38,20 @@ public:
     }
 
 
-public: /// Setter
+    /// [Setters]
+
     /// <summary>
     /// シーン生成に使用するファクトリを設定します。
     /// </summary>
     /// <param name="_pSceneFactory">シーンファクトリ。</param>
     void SetSceneFactory(ISceneFactory* _pSceneFactory);
+
     /// <summary>
     /// 次回シーン生成に渡す引数を設定します。
     /// </summary>
     /// <param name="_pSceneArgs">所有権を移動するシーン引数。</param>
     void SetSceneArgs(std::unique_ptr<ISceneArgs> _pSceneArgs);
-    
+
     /// <summary>
     /// モデルマネージャを設定します。
     /// </summary>
@@ -81,7 +95,7 @@ public: /// シーン動作
     /// <summary>
     /// シーンマネージャを初期化します。
     /// </summary>
-    void Initialize(DirectX12* pDx12, Layer* pLayer);
+    void Initialize(const Params& param);
     
     /// <summary>
     /// シーンの更新を行います（遷移処理を含む）。
@@ -126,6 +140,8 @@ private:
     char buffer[128] = {};
 
     bool isReserveScene_ = false;
+
+    Params parameters_ = {};
 
     std::string nextSceneName_;
     std::unique_ptr<SceneBase> pCurrentScene_ = nullptr;

@@ -45,20 +45,24 @@ void SceneManager::ReserveStartupScene()
     this->ReserveScene(cfgData.start_scene);
 }
 
-void SceneManager::Initialize(DirectX12* pDx12, Layer* pLayer)
+void SceneManager::Initialize(const Params& param)
 {
-    DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SceneManager::ImGui, this), true);
+    parameters_ = param;
 
+    DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SceneManager::ImGui, this), true);
     pSceneArgs_ = std::make_unique<SceneArgs>();
 
     pTransitionExecuter_ = std::make_unique<SceneTransitionExecuter>();
-    CanvasInitParams params = {};
-    params.name = "SceneTransitionCanvas";
-    params.pDx12 = pDx12;
-    params.pCubemapSystem = nullptr;
-    pTransitionExecuter_->Initialize(params, pLayer);
+    Canvas::Params canvasParam = {};
+    canvasParam.name = "SceneTransitionCanvas";
+    canvasParam.pDx12 = parameters_.pDx12;
+    canvasParam.pCubemapSystem = nullptr;
+    #ifdef _DEBUG
+    canvasParam.pImGuiManager = param.pImGuiManager;
+    #endif // _DEBUG
+    pTransitionExecuter_->Initialize(canvasParam, param.pLayer);
 
-    ReserveStartupScene();
+    this->ReserveStartupScene();
 }
 
 void SceneManager::Update()

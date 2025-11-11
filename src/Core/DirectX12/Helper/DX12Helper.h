@@ -101,7 +101,10 @@ namespace DX12Helper
         D3D12_RESOURCE_STATES _after
     );
 
-    void CommandListCommonSetting(const DirectX12* _pDx12, ID3D12GraphicsCommandList* _commandList, const D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle);
+    void CommandListCommonSetting(
+        const DirectX12* _pDx12, 
+        ID3D12GraphicsCommandList* _commandList, 
+        const D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle = nullptr);
 
     /// <summary>
     /// レンダーターゲットテクスチャリソースを生成

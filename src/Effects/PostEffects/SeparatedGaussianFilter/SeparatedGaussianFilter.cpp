@@ -10,6 +10,7 @@
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <imgui.h>
 #include <Math/Functions.hpp>
+#include <config/EngineSetting.h>
 
 void SeparatedGaussianFilter::Initialize(const PostEffectInitParams& desc)
 {
@@ -64,6 +65,11 @@ D3D12_GPU_DESCRIPTOR_HANDLE SeparatedGaussianFilter::GetOutputTextureHandle() co
 const std::string& SeparatedGaussianFilter::GetName() const
 {
     return name_;
+}
+
+DX12Resource* SeparatedGaussianFilter::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
 }
 
 SeparatedGaussianFilterOption& SeparatedGaussianFilter::GetOption()
@@ -194,7 +200,7 @@ void SeparatedGaussianFilter::CreatePipelineStateObject()
     inputLayoutDesc.NumElements = 0;
 
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
@@ -255,6 +261,9 @@ void SeparatedGaussianFilter::CreateResourceCBuffer()
 
 void SeparatedGaussianFilter::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource)
 {
+    // クリア
+    commandList_->ClearRenderTargetView(_outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
 

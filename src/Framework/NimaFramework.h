@@ -8,15 +8,15 @@
 #include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
-#include <Features/Sprite/SpriteSystem.h>
-#include <Features/Object3d/Object3dSystem.h>
-#include <Features/Particle/ParticleSystem.h>
+#include <drawable/sprite/SpriteSystem.h>
+#include <drawable/object3d/Object3dSystem.h>
+#include <drawable/particle/ParticleSystem.h>
 #include <Features/Model/ModelManager.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Features/SceneManager/SceneManager.h>
 #include <Interfaces/ISceneFactory.h>
-#include <Features/Particle/ParticleManager.h>
+#include <drawable/particle/ParticleStorage.h>
 #include <Features/Line/LineSystem.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <Features/Text/TextSystem.h>
@@ -100,7 +100,7 @@ protected:
     SpriteSystem*                   pSpriteSystem_              = nullptr;
     Object3dSystem*                 pObject3dSystem_            = nullptr;
     ParticleSystem*                 pParticleSystem_            = nullptr;
-    ParticleManager*                pParticleManager_           = nullptr;
+    ParticleStorage*                pParticleStorage_           = nullptr;
     LineSystem*                     pLineSystem_                = nullptr;
     TextSystem*                     pTextSystem_                = nullptr;
     Input*                          pInput_                     = nullptr;

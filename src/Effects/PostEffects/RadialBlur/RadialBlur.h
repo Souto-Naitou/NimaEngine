@@ -84,9 +84,11 @@ public:
     // =============================================
     // [Getters Begin]
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;
-    const std::string&              GetName() const override;
+    const std::string&       GetName() const override;
+    /// <summary>適用後のリソースを取得します。</summary>
+    DX12Resource*     GetOutputResource() const override;
     /// <summary>オプションへの参照を取得します。</summary>
-    RadialBlurOption&               GetOption();
+    RadialBlurOption&         GetOption();
     /// <summary>オプション（読み取り専用）を取得します。</summary>
     const RadialBlurOption&         GetOption() const;
     // [Getters End]

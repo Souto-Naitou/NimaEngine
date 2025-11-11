@@ -1,5 +1,6 @@
 #pragma once
 
+#include <drawable/base/DrawableBase.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Common/structs.h>
 #include "ParticleSystem.h"
@@ -19,7 +20,7 @@
 /// <summary>
 /// パーティクルクラス
 /// </summary>
-class Particle : public EngineFeature
+class Particle : public EngineFeature, public DrawableBase
 {
 public:
     Particle() = default;
@@ -28,18 +29,22 @@ public:
     /// </summary>
     /// <param name="_pModel">使用するモデル。</param>
     void Initialize(IModel* _pModel);
+
     /// <summary>
     /// パーティクルの描画を行います。
     /// </summary>
-    void Draw();
+    void DrawCall() override;
+
     /// <summary>
     /// パーティクルの更新を行います。
     /// </summary>
     void Update();
+
     /// <summary>
     /// リソースの解放を行います。
     /// </summary>
     void Finalize();
+
     /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
@@ -65,35 +70,35 @@ public: /// container operator
 
 private:
     /// Common
-    std::unique_ptr<DebugEntry<Particle>>   pDebugEntry_                        = nullptr;
+    std::unique_ptr<DebugEntry<Particle>>   pDebugEntry_            = nullptr;
 
     /// GameEye
-    GameEye**                               pGameEye_                           = nullptr;
+    GameEye**                               pGameEye_               = nullptr;
 
     /// Instancing
-    Microsoft::WRL::ComPtr<ID3D12Resource>  instancingResource_                 = nullptr;
-    ParticleForGPU*                         instancingData_                     = nullptr;
-    uint32_t                                currentInstancingSize_              = 0u;
+    Microsoft::WRL::ComPtr<ID3D12Resource>  instancingResource_     = nullptr;
+    ParticleForGPU*                         instancingData_         = nullptr;
+    uint32_t                                currentInstancingSize_  = 0u;
 
     /// Model
-    std::string                             modelPath_                          = {};
-    IModel*                                 pModel_                             = nullptr;
-    size_t                                  vertexCount_                        = 0u;
-    D3D12_VERTEX_BUFFER_VIEW                vertexBufferView_                   = {};
+    std::string                             modelPath_              = {};
+    IModel*                                 pModel_                 = nullptr;
+    size_t                                  vertexCount_            = 0u;
+    D3D12_VERTEX_BUFFER_VIEW                vertexBufferView_       = {};
 
     /// SRV
-    uint32_t                                srvIndex_                           = 0u;
-    D3D12_CPU_DESCRIPTOR_HANDLE             srvCpuHandle_                       = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE             srvGpuHandle_                       = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE             textureSRVHandleGPU_                = {};
+    uint32_t                                srvIndex_               = 0u;
+    D3D12_CPU_DESCRIPTOR_HANDLE             srvCpuHandle_           = {};
+    D3D12_GPU_DESCRIPTOR_HANDLE             srvGpuHandle_           = {};
+    D3D12_GPU_DESCRIPTOR_HANDLE             textureSRVHandleGPU_    = {};
 
     /// Billboard
-    Matrix4x4                               backToFrontMatrix_                  = {};
-    Matrix4x4                               billboardMatrix_                    = {};
-    bool                                    enableBillboard_                    = false;
+    Matrix4x4                               backToFrontMatrix_      = {};
+    Matrix4x4                               billboardMatrix_        = {};
+    bool                                    enableBillboard_        = false;
 
     /// Parameter
-    std::vector<ParticleData>               particleData_                       = {};
+    std::vector<ParticleData>               particleData_           = {};
 
 
 private: /// 他クラスのインスタンス

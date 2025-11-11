@@ -29,6 +29,8 @@ void TransShutter::Update()
 
 void TransShutter::Draw()
 {
+    spriteUpper_->Draw1F();
+    spriteLower_->Draw1F();
 }
 
 void TransShutter::Finalize()

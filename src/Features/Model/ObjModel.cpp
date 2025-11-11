@@ -2,7 +2,7 @@
 
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Features/Model/Helper/ModelHelper.h>
-#include <Features/Object3d/Object3dSystem.h>
+#include <drawable/object3d/Object3dSystem.h>
 #include <Core/DirectX12/TextureManager.h>
 #include <Features/Model/ModelManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>

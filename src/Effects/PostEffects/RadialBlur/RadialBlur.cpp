@@ -58,6 +58,11 @@ const std::string& RadialBlur::GetName() const
     return name_;
 }
 
+DX12Resource* RadialBlur::GetOutputResource() const
+{
+    return const_cast<DX12Resource*>(&renderTexture_);
+}
+
 RadialBlurOption& RadialBlur::GetOption()
 {
     return *pOption_;

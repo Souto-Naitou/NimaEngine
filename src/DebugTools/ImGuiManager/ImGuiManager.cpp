@@ -75,6 +75,23 @@ void ImGuiManager::OnResizedBuffers()
     }
 }
 
+void ImGuiManager::AddImageResource(DX12Resource* resource)
+{
+    imageResources_.emplace_back(std::make_pair(resource, D3D12_RESOURCE_STATE_COMMON));
+}
+
+void ImGuiManager::RemoveImageResource(DX12Resource* resource)
+{
+    imageResources_.erase(
+        std::remove_if(
+            imageResources_.begin(),
+            imageResources_.end(),
+            [resource](const auto& pair) { return pair.first == resource; }
+        ),
+        imageResources_.end()
+    );
+}
+
 void ImGuiManager::EnableDocking()
 {
     #ifdef _DEBUG
@@ -99,6 +116,8 @@ void ImGuiManager::BeginFrame()
         isChangedFont_ = true;
     }
 
+    imageResources_.clear();
+
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
@@ -109,11 +128,24 @@ void ImGuiManager::Render()
     ImGui::EndFrame();
     ImGui::Render();
 
+    /// 使用するリソースの状態を遷移
+    for (auto& resource : imageResources_)
+    {
+        auto& stateTracker = resource.first->GetStateTracker();
+        resource.second = stateTracker.ChangeState(commandList_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    }
+
     uint32_t indexBackbuffer = pDx12_->GetBackBufferIndex();
     auto rtvHandleSwapChain_ = pDx12_->GetRTVHandle()[indexBackbuffer];
     DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get(), &rtvHandleSwapChain_);
-
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_.Get());
+
+    /// 使用したリソースの状態を元に戻す
+    for (auto& resource : imageResources_)
+    {
+        auto& stateTracker = resource.first->GetStateTracker();
+        resource.second = stateTracker.ChangeState(commandList_.Get(), resource.second);
+    }
 }
 
 void ImGuiManager::PostDraw()

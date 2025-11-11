@@ -1,7 +1,7 @@
-#include "ParticleManager.h"
+#include "./ParticleStorage.h"
 #include <cassert>
 
-void ParticleManager::Update()
+void ParticleStorage::Update()
 {
     size_t numDelete = deleteParticles_.size();
     for (size_t i = 0; i < numDelete; ++i)
@@ -21,27 +21,19 @@ void ParticleManager::Update()
     }
 }
 
-void ParticleManager::Draw()
-{
-    for (auto& particle : particles_)
-    {
-        particle->Draw();
-    }
-}
-
-void ParticleManager::Finalize()
+void ParticleStorage::Finalize()
 {
     ReleaseAllParticle();
 }
 
-Particle* ParticleManager::CreateParticle()
+Particle* ParticleStorage::CreateParticle()
 {
     auto& ref = particles_.emplace_back(std::make_unique<Particle>());
     ref->SetDirectX12(pDx12_);
     return ref.get();
 }
 
-void ParticleManager::ReleaseParticle(Particle* _particle)
+void ParticleStorage::ReleaseParticle(Particle* _particle)
 {
     for (auto itr = particles_.begin(); itr != particles_.end(); ++itr)
     {
@@ -53,17 +45,14 @@ void ParticleManager::ReleaseParticle(Particle* _particle)
             return;
         }
     }
-
-    return;
 }
 
-void ParticleManager::ReserveDeleteParticle(Particle* _particle)
+void ParticleStorage::ReserveDeleteParticle(Particle* _particle)
 {
     deleteParticles_.push_back(_particle);
-    return;
 }
 
-void ParticleManager::ReleaseAllParticle()
+void ParticleStorage::ReleaseAllParticle()
 {
     for (auto& particle : particles_)
     {
@@ -72,5 +61,4 @@ void ParticleManager::ReleaseAllParticle()
 
     particles_.clear();
     deleteParticles_.clear();
-    return;
 }

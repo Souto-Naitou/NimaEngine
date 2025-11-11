@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Features/Particle/Particle.h>
+#include <drawable/particle/Particle.h>
 
 #include <list>
 #include <memory>
@@ -8,17 +8,17 @@
 /// <summary>
 /// パーティクル管理クラス
 /// </summary>
-class ParticleManager : public EngineFeature
+class ParticleStorage : public EngineFeature
 {
 public:
-    ParticleManager(ParticleManager const&) = delete;
-    void operator=(ParticleManager const&) = delete;
-    ParticleManager(ParticleManager const&&) = delete;
-    void operator=(ParticleManager const&&) = delete;
+    ParticleStorage(ParticleStorage const&) = delete;
+    void operator=(ParticleStorage const&) = delete;
+    ParticleStorage(ParticleStorage const&&) = delete;
+    void operator=(ParticleStorage const&&) = delete;
 
-    static ParticleManager* GetInstance()
+    static ParticleStorage* GetInstance()
     {
-        static ParticleManager instance;
+        static ParticleStorage instance;
         return &instance;
     }
 
@@ -29,14 +29,9 @@ public:
     /// </summary>
     void Update();
     /// <summary>
-    /// 全パーティクルの描画を行います。
-    /// </summary>
-    void Draw();
-    /// <summary>
     /// 全パーティクルの破棄など後始末を行います。
     /// </summary>
     void Finalize();
-
 
 public:
     /// <summary>
@@ -61,8 +56,8 @@ public:
 
 
 private:
-    ParticleManager() = default;
-    ~ParticleManager() = default;
+    ParticleStorage() = default;
+    ~ParticleStorage() = default;
 
 
 public:

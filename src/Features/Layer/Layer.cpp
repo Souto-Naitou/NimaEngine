@@ -4,20 +4,28 @@
 
 uint32_t Layer::AddCanvas(Canvas* canvas, uint32_t zOrder)
 {
+    uint32_t assignedZOrder = zOrder;
+
     if (zOrder == 0)
     {
-        canvases_.emplace(nextZOrder_, canvas);
-        return nextZOrder_++;
+        assignedZOrder = nextZOrder_;
     }
+    else assignedZOrder = zOrder;
 
-    while (canvases_.find(zOrder) != canvases_.end())
+    while (canvases_.find(assignedZOrder) != canvases_.end())
     {
-        ++zOrder;
+        ++assignedZOrder;
+        if (zOrder == 0)
+        {
+            nextZOrder_ = assignedZOrder + 1;
+        }
     }
 
-    canvases_.emplace(zOrder, canvas);
+    canvases_.emplace(assignedZOrder, canvas);
 
-    return zOrder;
+    canvas->GetPostEffectExecuter().RegisterCommandListToDirectX12(assignedZOrder);
+
+    return assignedZOrder;
 }
 
 void Layer::RemoveCanvas(uint32_t zOrder)

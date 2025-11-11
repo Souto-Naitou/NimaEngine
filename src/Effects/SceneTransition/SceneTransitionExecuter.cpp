@@ -1,6 +1,6 @@
 #include "SceneTransitionExecuter.h"
 
-void SceneTransitionExecuter::Initialize(CanvasInitParams canvasParams, Layer* pLayer)
+void SceneTransitionExecuter::Initialize(Canvas::Params canvasParams, Layer* pLayer)
 {
     pCanvas_ = std::make_unique<Canvas>();
     pCanvas_->Initialize(canvasParams);
@@ -33,5 +33,5 @@ void SceneTransitionExecuter::Update()
 void SceneTransitionExecuter::Draw()
 {
     if (!pTransition_) return;
-    //pTransition_->Draw();
+    pTransition_->Draw();
 }

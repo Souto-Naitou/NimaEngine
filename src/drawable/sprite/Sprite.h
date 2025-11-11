@@ -1,5 +1,6 @@
 #pragma once
 
+#include <drawable/base/DrawableBase.h>
 #include <Vector4.h>
 #include <Vector2.h>
 #include <Core/DirectX12/DirectX12.h>
@@ -14,7 +15,7 @@
 class SpriteSystem;
 
 
-class Sprite
+class Sprite : public DrawableBase
 {
 public:
     struct Material
@@ -36,11 +37,11 @@ public:
     /// スプライトの状態更新を行います。
     /// </summary>
     void                Update();
-    
+
     /// <summary>
-    /// スプライトを描画します。
+    /// 描画命令を発行します。
     /// </summary>
-    void                Draw();
+    void                DrawCall() override;
     
     /// <summary>
     /// リソースの解放を行います。
@@ -84,7 +85,6 @@ public: /// Setter
     void                SetFlipY(const bool isFlipY)               { isFlipY_ = isFlipY; }
     void                SetTextureLeftTop(const Vector2& lt)       { textureLeftTop_ = lt; }
     void                SetTextureSize(const Vector2& size)        { textureSize_ = size; }
-    void                SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle) { rtvHandleCPU_ = rtvHandle; }
 
 
 private: /// 他クラスが所持するインスタンスへのポインタ
@@ -116,7 +116,6 @@ private: /// メンバ変数
 
     /// ディスクリプタハンドル
     D3D12_GPU_DESCRIPTOR_HANDLE                 textureSrvHandleGPU_            = {};                   // テクスチャハンドルGPU
-    D3D12_CPU_DESCRIPTOR_HANDLE                 rtvHandleCPU_                   = {};                   // RTVハンドルCPU
 
     /// バッファリソース
     Microsoft::WRL::ComPtr<ID3D12Resource>      vertexResource_                 = nullptr;              // 頂点リソース

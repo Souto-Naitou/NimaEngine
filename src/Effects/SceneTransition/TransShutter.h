@@ -2,7 +2,7 @@
 
 #include <Effects/SceneTransition/TransBase.h>
 #include <string>
-#include <Features/Sprite/Sprite.h>
+#include <drawable/sprite/Sprite.h>
 #include <Features/Animation/AnimationTimeline.h>
 #include <Core/Win32/WinSystem.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>

@@ -119,9 +119,11 @@ void Object3d::Update()
     }
 }
 
-void Object3d::Draw()
+void Object3d::DrawCall()
 {
-    if (!isDraw_) return;
+    if (!isDraw_ || !isDrawCalled_) return;
+
+    isDrawCalled_ = false;
 
     Object3dSystem::CommandListData data;
     data.cbuffers[0] = materialResource_.Get();
@@ -131,6 +133,7 @@ void Object3d::Draw()
     data.cbuffers[5] = cameraForGPUResource_.Get();
     data.cbuffers[6] = lightingResource_.Get();
     data.cbuffers[7] = pointLightResource_.Get();
+    data.rtvHandle = rtvHandle_;
     data.model = pModel_;
 
     pSystem_->AddCommandListData(data);

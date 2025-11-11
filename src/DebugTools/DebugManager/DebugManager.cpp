@@ -1,11 +1,12 @@
 #include "DebugTools/DebugManager/DebugManager.h"
 
+#include <NiGui.h>
+
 #ifdef _DEBUG
 #include <imgui.h>
 #include <imgui_impl_dx12.h>
 #endif // _DEBUG
 
-#include <Core/DirectX12/SRVManager.h>
 #include <unordered_map>
 
 DebugManager* DebugManager::GetInstance()
@@ -22,6 +23,18 @@ void DebugManager::PushLog(const std::string& _log)
 DebugManager::DebugManager()
 {
     pInput_ = Input::GetInstance();
+
+    windowFuncs_ = {
+        { WindowType::ObjectList,       { true, [](DebugManager& m) { m.Window_ObjectList(); } } },
+        { WindowType::DebugInfo,        { true, [](DebugManager& m) { m.Window_DebugInfo(); } } },
+        { WindowType::DebugInfoBar,     { true, [](DebugManager& m) { m.Window_DebugInfoBar(); } } },
+        { WindowType::Inspector,        { true, [](DebugManager& m) { m.Window_Inspector(); } } },
+        { WindowType::OverlayFPS,       { false, [](DebugManager& m) { m.OverlayFPS(); } } },
+        { WindowType::Logger,           { false, [](DebugManager& m) {} } },
+        { WindowType::Viewport,         { false, [](DebugManager& m) {} } },
+        { WindowType::EventTimer,       { false, [](DebugManager& m) {} } },
+        { WindowType::NiGuiDebug,       { false, [](DebugManager& m) { NiGui::DrawDebug(); } } },
+    };
 }
 
 DebugManager::~DebugManager()
@@ -87,6 +100,48 @@ void DebugManager::MeasureFrameTime()
     frameTimer_.Start();
 
     #endif // _DEBUG
+}
+
+void DebugManager::SwitchEnableWindow()
+{
+    // デバッグウィンドウをすべて表示
+    if (pInput_->TriggerKey(DIK_F1))
+    {
+        isDisplay_ = true;
+        windowFuncs_[WindowType::DebugInfo].first = true;
+        windowFuncs_[WindowType::DebugInfoBar].first = true;
+        windowFuncs_[WindowType::Inspector].first = true;
+        windowFuncs_[WindowType::ObjectList].first = true;
+        windowFuncs_[WindowType::Logger].first = true;
+        windowFuncs_[WindowType::Viewport].first = true;
+        windowFuncs_[WindowType::EventTimer].first = true;
+    }
+
+    // デバッグウィンドウの表示/非表示切り替え
+    if (pInput_->TriggerKey(DIK_F3))
+    {
+        isDisplay_ = !isDisplay_;
+
+        windowFuncs_[WindowType::DebugInfo].first = isDisplay_;
+        windowFuncs_[WindowType::DebugInfoBar].first = isDisplay_;
+        windowFuncs_[WindowType::Inspector].first = isDisplay_;
+        windowFuncs_[WindowType::ObjectList].first = isDisplay_;
+        windowFuncs_[WindowType::Logger].first = isDisplay_;
+        windowFuncs_[WindowType::Viewport].first = true;
+        windowFuncs_[WindowType::EventTimer].first = isDisplay_;
+    }
+
+    // Inspectorウィンドウが独占
+    if (pInput_->TriggerKey(DIK_F4))
+    {
+        windowFuncs_[WindowType::DebugInfo].first = false;
+        windowFuncs_[WindowType::DebugInfoBar].first = false;
+        windowFuncs_[WindowType::Inspector].first = true;
+        windowFuncs_[WindowType::ObjectList].first = false;
+        windowFuncs_[WindowType::Logger].first = false;
+        windowFuncs_[WindowType::Viewport].first = false;
+        windowFuncs_[WindowType::EventTimer].first = false;
+    }
 }
 
 void DebugManager::Window_ObjectList()
@@ -260,6 +315,24 @@ void DebugManager::SetComponent(const std::string& _category, const std::string&
     componentList_.emplace_back(data);
 }
 
+void DebugManager::SetViewportWindow(Viewport* pViewport)
+{
+    pViewport_ = pViewport;
+    windowFuncs_[WindowType::Viewport] = { true, [](DebugManager& m) { m.pViewport_->DrawWindow(); } };
+}
+
+void DebugManager::SetLoggerWindow(Logger* pLogger)
+{
+    pLogger_ = pLogger;
+    windowFuncs_[WindowType::DebugInfo] = { true, [](DebugManager& m) { m.pLogger_->DrawUI(); } };
+}
+
+void DebugManager::SetEventTimerWindow(EventTimer* pEventTimer)
+{
+    pEventTimer_ = pEventTimer;
+    windowFuncs_[WindowType::EventTimer] = { true, [](DebugManager& m) { m.pEventTimer_->ImGui(); } };
+}
+
 void DebugManager::DeleteComponent(const std::string& _name)
 {
     try
@@ -325,13 +398,9 @@ void DebugManager::DeleteComponent(const std::string& _category, const std::stri
 
 void DebugManager::Update()
 {
-    if (pInput_->TriggerKey(DIK_F3))
-    {
-        isDisplay_ = !isDisplay_;
-    }
-
-    MeasureFrameTime();
-    MeasureFPS();
+    this->SwitchEnableWindow();
+    this->MeasureFrameTime();
+    this->MeasureFPS();
 }
 
 void DebugManager::DrawUI()
@@ -340,15 +409,13 @@ void DebugManager::DrawUI()
 
     ShowDockSpace();
 
-    if (isDisplay_)
+    /// 有効なウィンドウの表示
+    for (auto& [type, funcPair] : windowFuncs_)
     {
-        DebugInfoBar();
-
-        Window_DebugInfo();
-
-        Window_ObjectList();
-
-        Window_Inspector();
+        if (funcPair.first && funcPair.second)
+        {
+            funcPair.second(*this);
+        }
     }
 
     #endif // _DEBUG
@@ -399,7 +466,7 @@ void DebugManager::ShowDockSpace()
     #endif // _DEBUG
 }
 
-void DebugManager::DebugInfoBar() const
+void DebugManager::Window_DebugInfoBar() const
 {
     #ifdef _DEBUG
 
@@ -411,7 +478,7 @@ void DebugManager::DebugInfoBar() const
         ImGui::SameLine();
         ImGui::Text("Update: %dms", static_cast<int>(frameTime_ * 1000));
         ImGui::SameLine();
-        ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 32.0f , ImGui::GetCursorPosY()});
+        ImGui::SetCursorPos({ ImGui::GetCursorPosX() + 32.0f , ImGui::GetCursorPosY() });
         ImGui::Text("F3: Toggle debug window");
     }
     ImGui::End();

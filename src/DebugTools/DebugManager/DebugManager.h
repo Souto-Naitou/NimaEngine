@@ -10,6 +10,11 @@
 #include <array>
 #include <optional>
 #include <Features/Input/Input.h>
+#include <unordered_map>
+#include <utility>
+#include <Features/Viewport/Viewport.h>
+#include <DebugTools/Logger/Logger.h>
+#include <DebugTools/EventTimer/EventTimer.h>
 
 #ifdef _DEBUG
 #define RegisterDebugWindowC(category, name, func, windowMode)      DebugManager::GetInstance()->SetComponent(category, name, std::bind(&func, this), windowMode)
@@ -56,6 +61,9 @@ public:
     void    SetComponent(const std::string& _category, const std::string&& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
     void    SetComponent(const std::string& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
     void    SetComponent(const std::string&& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
+    void    SetViewportWindow(Viewport* pViewport);
+    void    SetLoggerWindow(Logger* pLogger);
+    void    SetEventTimerWindow(EventTimer* pEventTimer);
 
     void    DeleteComponent(const std::string& _name);
     void    DeleteComponent(const std::string& _category, const std::string& _name);
@@ -71,6 +79,19 @@ public:
     void    PushLog(const std::string& _log);
 
 private:
+    enum class WindowType
+    {
+        ObjectList,
+        DebugInfo,
+        DebugInfoBar,
+        Inspector,
+        OverlayFPS,
+        Logger,
+        Viewport,
+        EventTimer,
+        NiGuiDebug,
+    };
+
     DebugManager();
     ~DebugManager();
 
@@ -78,11 +99,14 @@ private:
     Input*                  pInput_ = nullptr;
 
     // Localization
-    Localization::_Common       lang_common_ = {};
-    Localization::_DebugManager lang_dm_ = {};
+    Localization::Common        lang_common_ = {};
+    Localization::DebugManager  lang_dm_ = {};
 
     // Component data structure
     std::list<ComponentData>    componentList_;
+    Viewport*                   pViewport_ = nullptr;
+    Logger*                     pLogger_ = nullptr;
+    EventTimer*                 pEventTimer_ = nullptr;
 
     // Timing utilities for frame measurement
     TimeMeasurer            timer_ = {};
@@ -99,15 +123,17 @@ private:
     std::string             textLog_ = {};
 
     // flags
+    using WindowFunc = std::function<void(DebugManager&)>;
+    using WindowFuncPair = std::pair<bool, WindowFunc>;
+    std::unordered_map<WindowType, WindowFuncPair> windowFuncs_;
     bool                    isDisplay_ = true;
     bool                    enableAutoScroll_ = true;
     bool                    isExistSettingFile_ = false;
-    
 
 private:
     void MeasureFPS();
     void MeasureFrameTime();
-
+    void SwitchEnableWindow();
 
 private: /// Windows
     void Window_ObjectList();
@@ -115,5 +141,5 @@ private: /// Windows
     void Window_Inspector();
     void ShowDockSpace();
     void OverlayFPS() const;
-    void DebugInfoBar() const;
+    void Window_DebugInfoBar() const;
 };

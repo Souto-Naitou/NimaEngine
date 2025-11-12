@@ -8,6 +8,7 @@
 #include <Effects/PostEffects/SeparatedGaussianFilter/SeparatedGaussianFilter.h>
 #include <Effects/PostEffects/RandomFilter/RandomFilter.h>
 #include <Effects/PostEffects/GaussianBloom/GaussianBloom.h>
+#include <Effects/PostEffects/DepthBasedOutline/DepthBasedOutline.h>
 
 PostEffectFactory::PostEffectFactory(DirectX12* pDx12, ID3D12GraphicsCommandList* pCommandList)
 {
@@ -28,6 +29,7 @@ void PostEffectFactory::RegisterCreators()
     creators_[PostEffectClassName::RadialBlur]              = [this]() { return std::make_unique<RadialBlur>(); };
     creators_[PostEffectClassName::LuminanceOutput]         = [this]() { return std::make_unique<LuminanceOutput>(); };
     creators_[PostEffectClassName::PrewittOutline]          = [this]() { return std::make_unique<PrewittOutline>(); };
+    creators_[PostEffectClassName::DepthBasedOutline]       = [this]() { return std::make_unique<DepthBasedOutline>(); };
     creators_[PostEffectClassName::GaussianFilter]          = [this]() { return std::make_unique<GaussianFilter>(); };
     creators_[PostEffectClassName::SeparatedGaussianFilter] = [this]() { return std::make_unique<SeparatedGaussianFilter>(); };
     creators_[PostEffectClassName::RandomFilter]            = [this]() { return std::make_unique<RandomFilter>(); };

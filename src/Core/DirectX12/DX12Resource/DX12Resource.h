@@ -6,6 +6,7 @@
 #include <string>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <dxgiformat.h>
+#include <Core/DirectX12/RTVHeapCounter.h>
 
 /// <summary>
 /// ID3D12Resourceと各種DescriptorHandleをまとめたラッパークラス
@@ -13,15 +14,19 @@
 class DX12Resource
 {
 public:
+    struct Params
+    {
+        Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+        D3D12_RESOURCE_STATES state;
+        DXGI_FORMAT format;
+        std::string name = "Unnamed(Managed by DX12Resource)";
+        RTVHeapCounter* pRTVCounter = nullptr;
+    };
+    
     DX12Resource() = default;
-    ~DX12Resource() = default;
+    ~DX12Resource();
 
-    void Initialize(
-        Microsoft::WRL::ComPtr<ID3D12Resource> resource,
-        D3D12_RESOURCE_STATES state,
-        DXGI_FORMAT format,
-        const std::string& name = "Unnamed(Managed by DX12Resource)"
-    );
+    void Initialize(const Params& param);
 
     void CreateSRV();
 
@@ -45,8 +50,10 @@ public:
     [[nodiscard]] ResourceStateTracker& GetStateTracker() { return stateTracker_; }
 
 private:
+    RTVHeapCounter* pRTVHeapCounter_ = nullptr;
+
     // Resource
-    Microsoft::WRL::ComPtr<ID3D12Resource> resource_ = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12Resource>  resource_ = nullptr;
 
     // Stateの整合性補助クラス
     ResourceStateTracker                    stateTracker_ = {};

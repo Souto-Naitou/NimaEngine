@@ -74,12 +74,15 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     }
 
     auto tempResource = DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata);
-    textureData.textureResource.Initialize(
-        tempResource,
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        textureData.metadata.format,
-        strPathResolved
-    );
+
+    DX12Resource::Params params{};
+    params.format = metadata.format;
+    params.name = strPathResolved;
+    params.resource = tempResource;
+    params.state = D3D12_RESOURCE_STATE_COPY_DEST;
+    params.pRTVCounter = pDx12_->GetRTVHeapCounter();
+
+    textureData.textureResource.Initialize(params);
 
     // アップロード用の中間リソースを作成してデータ転送
     resourcesIntermediate_.push_back(

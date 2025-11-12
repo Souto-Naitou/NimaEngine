@@ -17,6 +17,7 @@ enum class PostEffectClassName
     RadialBlur,
     LuminanceOutput,
     PrewittOutline,
+    DepthBasedOutline,
     GaussianFilter,
     SeparatedGaussianFilter,
     RandomFilter,

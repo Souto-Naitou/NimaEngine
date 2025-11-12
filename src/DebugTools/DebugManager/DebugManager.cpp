@@ -30,10 +30,10 @@ DebugManager::DebugManager()
         { WindowType::DebugInfoBar,     { true, [](DebugManager& m) { m.Window_DebugInfoBar(); } } },
         { WindowType::Inspector,        { true, [](DebugManager& m) { m.Window_Inspector(); } } },
         { WindowType::OverlayFPS,       { false, [](DebugManager& m) { m.OverlayFPS(); } } },
-        { WindowType::Logger,           { false, [](DebugManager& m) {} } },
-        { WindowType::Viewport,         { false, [](DebugManager& m) {} } },
-        { WindowType::EventTimer,       { false, [](DebugManager& m) {} } },
-        { WindowType::NiGuiDebug,       { false, [](DebugManager& m) { NiGui::DrawDebug(); } } },
+        { WindowType::Logger,           { false, [](DebugManager& m) {m;} } },
+        { WindowType::Viewport,         { false, [](DebugManager& m) {m;} } },
+        { WindowType::EventTimer,       { false, [](DebugManager& m) {m;} } },
+        { WindowType::NiGuiDebug,       { false, [](DebugManager& m) { m; NiGui::DrawDebug(); } } },
     };
 }
 

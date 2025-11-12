@@ -85,7 +85,7 @@ public:
     /// <summary>
     /// 登録されたオブジェクトを描画します。
     /// </summary>
-    void DrawObjects() const;
+    void DrawObjects();
 
     /// <summary>
     /// ポストエフェクトを適用します。

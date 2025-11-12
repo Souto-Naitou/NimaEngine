@@ -149,7 +149,7 @@ void LuminanceOutput::CreateRootSignature()
 
     StaticSamplerDesc staticSamplerDesc = {};
     staticSamplerDesc
-        .PresetPointWrap()
+        .PresetPointClamp()
         .SetMaxAnisotropy(16)
         .SetShaderRegister(0)
         .SetRegisterSpace(0);

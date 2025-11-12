@@ -25,7 +25,7 @@ void Particle::Initialize(IModel* _pModel)
     /// デフォルトのGameEyeを取得
     pGameEye_ = pSystem_->GetGlobalEye();
 
-    if (!particleData_.capacity()) reserve(1, true);
+    if (!currentInstancingSize_) reserve(1, true);
 
     /// モデルを読み込む
     pModel_ = _pModel;
@@ -57,7 +57,7 @@ void Particle::Update()
         ParticleDataUpdate(itr);
 
         /// パーティクルの条件付き削除
-        if (ParticleDeleteByCondition(itr))
+        if (DeleteParticleByCondition(itr))
         {
             /// 削除されたら
             if (itr == particleData_.end()) break;
@@ -97,7 +97,6 @@ void Particle::Finalize()
     /// リソースの解放
     instancingResource_.Reset();
     SRVManager::GetInstance()->Deallocate(srvIndex_);
-    return;
 }
 
 void Particle::DrawCall()
@@ -118,9 +117,8 @@ void Particle::DrawCall()
 
 void Particle::reserve(size_t _size, bool _isInit)
 {
-    auto size = sizeof(ParticleData);
-    size;
-    particleData_.reserve(_size);
+    currentInstancingSize_ = static_cast<uint32_t>(_size);
+
     CreateParticleForGPUResource();
     if (!_isInit) SRVManager::GetInstance()->Deallocate(srvIndex_);
     CreateSRV();
@@ -131,8 +129,9 @@ void Particle::reserve(size_t _size, bool _isInit)
 void Particle::emplace_back(const ParticleData& _data)
 {
     particleData_.emplace_back(_data);
-    if (particleData_.capacity() > currentInstancingSize_)
+    if (particleData_.size() > currentInstancingSize_)
     {
+        currentInstancingSize_ *= 2;
         CreateParticleForGPUResource();
         SRVManager::GetInstance()->Deallocate(srvIndex_);
         CreateSRV();
@@ -143,16 +142,15 @@ void Particle::CreateParticleForGPUResource()
 {
     /// 座標変換行列リソースを作成
     instancingResource_.Reset();
-    instancingResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(ParticleForGPU) * particleData_.capacity());
+    instancingResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(ParticleForGPU) * currentInstancingSize_);
     instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
     /// 座標変換行列データを初期化
-    for (uint32_t index = 0; index < particleData_.capacity(); ++index)
+    for (uint32_t index = 0; index < currentInstancingSize_; ++index)
     {
         instancingData_[index].wvp = Matrix4x4::Identity();
         instancingData_[index].world = Matrix4x4::Identity();
         instancingData_[index].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     }
-    currentInstancingSize_ = static_cast<uint32_t>(particleData_.capacity());
 }
 
 void Particle::CreateSRV()
@@ -162,7 +160,7 @@ void Particle::CreateSRV()
     srvCpuHandle_ = srvManager->GetCPUDescriptorHandle(srvIndex_);
     srvGpuHandle_ = srvManager->GetGPUDescriptorHandle(srvIndex_);
 
-    srvManager->CreateForStructuredBuffer(srvIndex_, instancingResource_.Get(), static_cast<UINT>(particleData_.capacity()), sizeof(ParticleForGPU));
+    srvManager->CreateForStructuredBuffer(srvIndex_, instancingResource_.Get(), static_cast<UINT>(currentInstancingSize_), sizeof(ParticleForGPU));
     return;
 }
 
@@ -182,10 +180,9 @@ void Particle::InitializeTransform()
         transform.rotate = Vector3(0.0f, 0.0f, 0.0f);
         transform.translate = Vector3(0.0f, 0.0f, 0.0f);
     }
-    return;
 }
 
-void Particle::ParticleDataUpdate(std::vector<ParticleData>::iterator& _itr)
+void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
 {
     bool isGround = false;
     float deltaTime = 1.0f / 60.0f;
@@ -297,7 +294,7 @@ void Particle::ImGui()
 
     auto pFunc = [&]()
     {
-        ImGuiTemplate::VariableTableRow("最大許容数", particleData_.capacity());
+        ImGuiTemplate::VariableTableRow("最大許容数", currentInstancingSize_);
         ImGuiTemplate::VariableTableRow("現在召喚されている数", particleData_.size());
     };
 
@@ -336,7 +333,7 @@ void Particle::ApplyFriction(Vector3& _velocity, bool _isGround, float _friction
     _velocity.z *= std::pow(1.0f - _frictionCoef, _deltaTime);
 }
 
-bool Particle::ParticleDeleteByCondition(std::vector<ParticleData>::iterator& _itr)
+bool Particle::DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr)
 {
     bool isDelete = false;
 
@@ -355,7 +352,7 @@ bool Particle::ParticleDeleteByCondition(std::vector<ParticleData>::iterator& _i
     return isDelete;
 }
 
-bool Particle::DeleteByLifeTime(std::vector<ParticleData>::iterator& _itr)
+bool Particle::DeleteByLifeTime(std::list<ParticleData>::iterator& _itr)
 {
     bool isDelete = false;
 
@@ -368,7 +365,7 @@ bool Particle::DeleteByLifeTime(std::vector<ParticleData>::iterator& _itr)
     return isDelete;
 }
 
-bool Particle::DeleteByZeroAlpha(std::vector<ParticleData>::iterator& _itr)
+bool Particle::DeleteByZeroAlpha(std::list<ParticleData>::iterator& _itr)
 {
     bool isDelete = false;
 

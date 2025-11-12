@@ -98,7 +98,7 @@ private:
     bool                                    enableBillboard_        = false;
 
     /// Parameter
-    std::vector<ParticleData>               particleData_           = {};
+    std::list<ParticleData>                 particleData_           = {};
 
 
 private: /// 他クラスのインスタンス
@@ -126,7 +126,7 @@ private:
     /// <summary>
     /// 1パーティクル分のデータを更新します。
     /// </summary>
-    void ParticleDataUpdate(std::vector<ParticleData>::iterator& _itr);
+    void ParticleDataUpdate(std::list<ParticleData>::iterator& _itr);
     /// <summary>
     /// イージング関数（EaseOutCubic）。
     /// </summary>
@@ -148,13 +148,13 @@ private: /// delete condition
     /// <summary>
     /// パーティクル削除条件を判定します。
     /// </summary>
-    bool ParticleDeleteByCondition(std::vector<ParticleData>::iterator& _itr);
+    bool DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr);
     /// <summary>
     /// 寿命によって削除するか判定します。
     /// </summary>
-    bool DeleteByLifeTime(std::vector<ParticleData>::iterator& _itr);
+    bool DeleteByLifeTime(std::list<ParticleData>::iterator& _itr);
     /// <summary>
     /// 透明度が0になった場合に削除するか判定します。
     /// </summary>
-    bool DeleteByZeroAlpha(std::vector<ParticleData>::iterator& _itr);
+    bool DeleteByZeroAlpha(std::list<ParticleData>::iterator& _itr);
 };

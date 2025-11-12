@@ -21,12 +21,15 @@ void Canvas::Initialize(const Canvas::Params& params)
         NimaEngine::Config::kRenderTargetFormat,
         NimaEngine::Config::kEditorBGColor
     );
-    resource_.Initialize(
-        tempResource, 
-        D3D12_RESOURCE_STATE_RENDER_TARGET, 
-        NimaEngine::Config::kRenderTargetFormat, 
-        params.name + "(canvas)"
-    );
+
+    DX12Resource::Params paramResource{};
+    paramResource.resource = tempResource;
+    paramResource.state = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    paramResource.format = NimaEngine::Config::kRenderTargetFormat;
+    paramResource.name = params.name + "(canvas)";
+    paramResource.pRTVCounter = params.pDx12->GetRTVHeapCounter();
+
+    resource_.Initialize(paramResource);
 
     /// RTVの作成
     D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -58,7 +61,6 @@ void Canvas::Initialize(const Canvas::Params& params)
 
 void Canvas::Finalize()
 {
-    params_.pDx12->GetRTVHeapCounter()->Deallocate(resource_.GetRTVIndex());
     params_.pDx12->DeleteOnResizeBefore("PostEffect" + params_.name);
     params_.pDx12->DeleteOnResizeAfter("PostEffect" + params_.name);
 
@@ -69,7 +71,7 @@ void Canvas::Finalize()
     pPostEffectExecuter_->Finalize();
 }
 
-void Canvas::DrawObjects() const
+void Canvas::DrawObjects()
 {
     auto cl = pPostEffectExecuter_->GetCommandList();
     auto clDx12 = params_.pDx12->GetCommandList();

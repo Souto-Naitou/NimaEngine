@@ -72,8 +72,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     weight = length(difference);
     weight = saturate(weight * gOptions.weightMultiply);
     
-    output.color.rgb = (1.0f - weight) * gTexture.Sample(gSampler, input.texcoord).rgb;
-    output.color.a = 1.0f;
+    output.color = (1.0f - weight) * gTexture.Sample(gSampler, input.texcoord);
     
     return output;
 }

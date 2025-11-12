@@ -10,6 +10,7 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <config/EngineSetting.h>
 
 void DepthBasedOutline::Initialize(const PostEffectInitParams& desc)
 {
@@ -100,6 +101,8 @@ void DepthBasedOutline::Setting()
     // レンダーテクスチャをレンダーターゲット状態に変更
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+    commandList_->ClearRenderTargetView(renderTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);
 
@@ -166,7 +169,7 @@ void DepthBasedOutline::CreateRootSignature()
 
     StaticSamplerDesc staticSampler = {};
     staticSampler
-        .PresetPointWrap()
+        .PresetPointClamp()
         .SetMaxAnisotropy(16)
         .SetShaderRegister(0)
         .SetRegisterSpace(0);
@@ -197,7 +200,7 @@ void DepthBasedOutline::CreatePipelineStateObject()
     inputLayoutDesc.NumElements = 0;
 
     BlendDesc blendDesc = {};
-    blendDesc.Initialize(BlendDesc::BlendModes::Alpha);
+    blendDesc.Initialize(BlendDesc::BlendModes::Test);
 
     D3D12_RASTERIZER_DESC rasterizerDesc{};
     rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;

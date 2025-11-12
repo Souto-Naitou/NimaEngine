@@ -2,7 +2,6 @@
 #include <cassert>
 #include <Core/DirectX12/DirectX12.h>
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
-#include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
@@ -194,7 +193,7 @@ void GaussianBloom::CreateRootSignature()
     /// StaticSamplerの設定
     StaticSamplerDesc staticSamplerDesc = {};
     staticSamplerDesc
-        .PresetPointWrap()
+        .PresetPointClamp()
         .SetMaxAnisotropy(16)
         .SetShaderRegister(0)
         .SetRegisterSpace(0);

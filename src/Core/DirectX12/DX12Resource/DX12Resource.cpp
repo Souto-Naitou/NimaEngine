@@ -4,18 +4,24 @@
 #include <config/EngineSetting.h>
 #include "../SRVManager.h"
 
-void DX12Resource::Initialize(
-    Microsoft::WRL::ComPtr<ID3D12Resource> resource,
-    D3D12_RESOURCE_STATES state,
-    DXGI_FORMAT format,
-    const std::string& name)
+DX12Resource::~DX12Resource()
 {
-    this->resource_ = resource;
-    stateTracker_.Initialize(this->resource_, state, format);
+    if (rtvIndex_ != 0u)
+    {
+        pRTVHeapCounter_->Deallocate(rtvIndex_);
+    }
+}
+
+void DX12Resource::Initialize(const Params& param)
+{
+    this->resource_ = param.resource;
+    stateTracker_.Initialize(this->resource_, param.state, param.format);
     if (this->resource_)
     {
-        this->resource_->SetName(std::wstring(name.begin(), name.end()).c_str());
+        this->resource_->SetName(std::wstring(param.name.begin(), param.name.end()).c_str());
     }
+
+    pRTVHeapCounter_ = param.pRTVCounter;
 }
 
 void DX12Resource::CreateSRV()

@@ -336,7 +336,13 @@ DX12Resource DX12Helper::CreateDX12ResourceForRender(
             NimaEngine::Config::kEditorBGColor
         );
 
-        result.Initialize(temp, D3D12_RESOURCE_STATE_RENDER_TARGET, kFormat, name);
+        DX12Resource::Params param{};
+        param.resource = temp;
+        param.state = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        param.format = kFormat;
+        param.name = name;
+
+        result.Initialize(param);
     }
 
     /// RTVの作成

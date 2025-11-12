@@ -6,14 +6,14 @@
 /// </summary>
 namespace Localization
 {
-    struct _Common
+    struct Common
     {
         std::string name          = "Name";
         std::string uncategorized = "Uncategorized";
         std::string category      = "Category";
     };
 
-    struct _DebugManager
+    struct DebugManager
     {
         std::string window_debug         = "Debug";
         std::string window_componentList = "Components";
@@ -23,8 +23,8 @@ namespace Localization
 
     struct LanguageData
     {
-        _Common common;
-        _DebugManager debugManager;
+        Common common;
+        DebugManager debugManager;
     };
 }
 

@@ -20,7 +20,14 @@ void Helper::CreateRenderTexture(DirectX12* _pDx12, ID3D12Device* _pDevice, DX12
             NimaEngine::Config::kEditorBGColor
         );
 
-        resource.Initialize(temp, D3D12_RESOURCE_STATE_RENDER_TARGET, kFormat, name);
+        DX12Resource::Params param{};
+        param.resource = temp;
+        param.pRTVCounter = _pDx12->GetRTVHeapCounter();
+        param.format = kFormat;
+        param.state = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        param.name = name;
+
+        resource.Initialize(param);
     }
 
     /// RTVの作成

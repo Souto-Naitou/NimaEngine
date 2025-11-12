@@ -149,6 +149,22 @@ void CollisionManager::CheckCollisionPair(Collider* _colA, Collider* _colB)
     {
         isCollide = IsCollision(_colA->GetSphere(), _colB->GetSphere());
     }
+    else if (_colA->GetShape() == Shape::AABB && _colB->GetShape() == Shape::Sphere)
+    {
+        isCollide = IsCollision(*_colA->GetAABB(), *_colB->GetSphere());
+    }
+    else if (_colA->GetShape() == Shape::Sphere && _colB->GetShape() == Shape::AABB)
+    {
+        isCollide = IsCollision(*_colB->GetAABB(), *_colA->GetSphere());
+    }
+    else if (_colA->GetShape() == Shape::OBB && _colB->GetShape() == Shape::Sphere)
+    {
+        isCollide = IsCollision(*_colA->GetOBB(), *_colB->GetSphere());
+    }
+    else if (_colA->GetShape() == Shape::Sphere && _colB->GetShape() == Shape::OBB)
+    {
+        isCollide = IsCollision(*_colB->GetOBB(), *_colA->GetSphere());
+    }
     else if (_colA->GetShape() == Shape::OBB && _colB->GetShape() == Shape::OBB)
     {
         ++countWithoutLighter;
@@ -159,7 +175,7 @@ void CollisionManager::CheckCollisionPair(Collider* _colA, Collider* _colB)
             Sphere sphereB = { _colB->GetPosition(), static_cast<float>(_colB->GetRadius()) };
             isCollide = IsCollision(&sphereA, &sphereB);
         }
-        
+
         if (isCollide)
         {
             ++countCheckCollision_;

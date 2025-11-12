@@ -195,8 +195,17 @@ void DirectX12::CreateSwapChainAndResource()
     device_->CreateRenderTargetView(tempResources[0].Get(), &rtvDesc_, rtvHandles_[0]);
     device_->CreateRenderTargetView(tempResources[1].Get(), &rtvDesc_, rtvHandles_[1]);
 
-    swapChainResources_[0].Initialize(tempResources[0], D3D12_RESOURCE_STATE_PRESENT, NimaEngine::Config::kRenderTargetFormat, "SwapchainResource0");
-    swapChainResources_[1].Initialize(tempResources[1], D3D12_RESOURCE_STATE_PRESENT, NimaEngine::Config::kRenderTargetFormat, "SwapchainResource1");
+    DX12Resource::Params params{};
+    params.format = NimaEngine::Config::kRenderTargetFormat;
+    params.resource = tempResources[0];
+    params.state = D3D12_RESOURCE_STATE_PRESENT;
+    params.name = "SwapchainResource0";
+    params.pRTVCounter = rtvHeapCounter_.get();
+    swapChainResources_[0].Initialize(params);
+
+    params.resource = tempResources[1];
+    params.name = "SwapchainResource1";
+    swapChainResources_[1].Initialize(params);
 }
 
 void DirectX12::CreateGameScreenResource()
@@ -228,11 +237,14 @@ void DirectX12::CreateGameScreenResource()
             IID_PPV_ARGS(tempResource.GetAddressOf())
         );
 
-        gameScreenResource_.Initialize(tempResource,
-            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-            NimaEngine::Config::kRenderTargetFormat,
-            "GameScreenResource"
-        );
+        DX12Resource::Params params{};
+        params.format = NimaEngine::Config::kRenderTargetFormat;
+        params.resource = tempResource;
+        params.state = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        params.name = "GameScreenComputed";
+        params.pRTVCounter = rtvHeapCounter_.get();
+
+        gameScreenResource_.Initialize(params);
     }
 
     /// SRVの生成
@@ -280,12 +292,14 @@ void DirectX12::CreateGameScreenResource()
         IID_PPV_ARGS(tempUAVResource.GetAddressOf())
     );
 
-    gameScreenComputed_.Initialize(
-        tempUAVResource,
-        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-        NimaEngine::Config::kRenderTargetFormat,
-        "GameScreenComputed"
-    );
+    DX12Resource::Params uavParams{};
+    uavParams.format = NimaEngine::Config::kRenderTargetFormat;
+    uavParams.resource = tempUAVResource;
+    uavParams.state = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+    uavParams.name = "GameScreenComputed";
+    uavParams.pRTVCounter = rtvHeapCounter_.get();
+
+    gameScreenComputed_.Initialize(uavParams);
 }
 
 void DirectX12::CreateDSVAndSettingState()
@@ -294,12 +308,14 @@ void DirectX12::CreateDSVAndSettingState()
     Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
     tempResource = DX12Helper::CreateDepthStencilTextureResource(device_, WinSystem::clientWidth, WinSystem::clientHeight);
 
-    depthStencilResource_.Initialize(
-        tempResource,
-        D3D12_RESOURCE_STATE_DEPTH_WRITE,
-        DXGI_FORMAT_D24_UNORM_S8_UINT,
-        "DepthStencilResource"
-    );
+    DX12Resource::Params params{};
+    params.format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    params.state = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+    params.resource = tempResource;
+    params.name = "DepthStencilResource";
+    params.pRTVCounter = rtvHeapCounter_.get();
+
+    depthStencilResource_.Initialize(params);
 
     /// DSVの生成
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
@@ -560,8 +576,14 @@ void DirectX12::ResizeBuffers()
         Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
         swapChain_->GetBuffer(i, IID_PPV_ARGS(&tempResource));
 
-        std::string name = "SwapchainResource" + std::to_string(i);
-        swapChainResources_[i].Initialize(tempResource, D3D12_RESOURCE_STATE_PRESENT, desc.Format, name);
+        DX12Resource::Params params{};
+        params.format = desc.Format;
+        params.resource = tempResource;
+        params.state = D3D12_RESOURCE_STATE_PRESENT;
+        params.name = "SwapchainResource" + std::to_string(i);
+        params.pRTVCounter = rtvHeapCounter_.get();
+
+        swapChainResources_[i].Initialize(params);
         device_->CreateRenderTargetView(swapChainResources_[i].GetResource().Get(), nullptr, rtvHandles_[i]);
     }
 

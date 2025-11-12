@@ -19,6 +19,8 @@ void Bar2d::Initialize(const Bar2dInitParams& params)
 {
     initParams_ = params;
 
+    pDebugEntry_ = std::make_unique<DebugEntry<Bar2d>>("Bar2d", "unnamed", this, false);
+
     isDisplay_name_ = !params.nameTexturePath.empty();
 
     // テクスチャの読み込み
@@ -36,24 +38,15 @@ void Bar2d::Initialize(const Bar2dInitParams& params)
     {
         name_ = std::make_unique<Sprite>();
         name_->Initialize(params.nameTexturePath);
-        params.pCanvas->RegisterDrawable(name_.get());
     }
 
     background_ = std::make_unique<Sprite>();
     background_->Initialize(PATH_BAR);
     background_->SetColor(COLOR_BAR_BG.to_Vector4());
-    params.pCanvas->RegisterDrawable(background_.get());
-    params.pCanvas->RegisterDrawable(bar_.get());
 }
 
 void Bar2d::Finalize()
 {
-    initParams_.pCanvas->UnregisterDrawable(bar_.get());
-    initParams_.pCanvas->UnregisterDrawable(background_.get());
-    if (isDisplay_name_)
-    {
-        initParams_.pCanvas->UnregisterDrawable(name_.get());
-    }
 }
 
 void Bar2d::Update()
@@ -84,26 +77,14 @@ void Bar2d::Draw1F()
 void Bar2d::ImGui()
 {
     #ifdef _DEBUG
-    bool isOpen = false;
-    if (initParams_.nameTexturePath.empty())
-    {
-        isOpen = ImGui::Begin("Bar2d (No Name)");
-    }
-    else
-    {
-        isOpen = ImGui::Begin(initParams_.nameTexturePath.c_str());
-    }
 
-    if (isOpen)
-    {
-        ImGui::Text("Position");
-        ImGui::DragFloat2("Position", &position_.x, 0.1f);
-        ImGui::Text("Max Value");
-        ImGui::DragFloat("Max Value", &maxValue_, 0.1f, FLT_MIN);
-        ImGui::Text("Current Value");
-        ImGui::DragFloat("Current Value", &currentValue_, 0.1f, FLT_MIN, maxValue_);
-    }
-    ImGui::End();
+    ImGui::Text("Position");
+    ImGui::DragFloat2("Position", &position_.x, 0.1f);
+    ImGui::Text("Max Value");
+    ImGui::DragFloat("Max Value", &maxValue_, 0.1f, FLT_MIN);
+    ImGui::Text("Current Value");
+    ImGui::DragFloat("Current Value", &currentValue_, 0.1f, FLT_MIN, maxValue_);
+
     #endif
 }
 

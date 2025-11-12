@@ -106,8 +106,6 @@ void SeparatedGaussianFilter::Setting()
 
 void SeparatedGaussianFilter::OnResizeBefore()
 {
-    pDx12_->GetRTVHeapCounter()->Deallocate(horizontalGaussTexture_.GetRTVIndex());
-    pDx12_->GetRTVHeapCounter()->Deallocate(renderTexture_.GetRTVIndex());
     horizontalGaussTexture_.Reset();
     renderTexture_.Reset();
 }
@@ -169,7 +167,7 @@ void SeparatedGaussianFilter::CreateRootSignature()
 
     StaticSamplerDesc staticSamplerDesc = {};
     staticSamplerDesc
-        .PresetPointWrap()
+        .PresetPointClamp()
         .SetMaxAnisotropy(16)
         .SetShaderRegister(0)
         .SetRegisterSpace(0);

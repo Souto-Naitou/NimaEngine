@@ -6,7 +6,7 @@
 
 DrawableBase::~DrawableBase()
 {
-    if (pCanvasCurrent_ != nullptr)
+    if (pCanvasCurrent_)
     {
         pCanvasCurrent_->UnregisterDrawable(this);
     }
@@ -16,6 +16,7 @@ void DrawableBase::Draw1F()
 {
     if (pCanvasCurrent_ != CurrentCanvas::Get())
     {
+        if (pCanvasCurrent_) pCanvasCurrent_->UnregisterDrawable(this);
         pCanvasCurrent_ = CurrentCanvas::Get();
         pCanvasCurrent_->RegisterDrawable(this);
     }

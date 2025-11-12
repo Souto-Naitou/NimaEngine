@@ -57,6 +57,7 @@ void NimaFramework::Initialize()
 
     /// ロガーの初期化
     pLogger_->Initialize();
+    pDebugManager_->SetLoggerWindow(pLogger_);
 
     // 設定ファイルの読み込み
     pConfigManager_->Initialize("resources/json/.engine/config.json");
@@ -107,6 +108,8 @@ void NimaFramework::Initialize()
     /// オーディオの初期化
     pAudioManager_->Initialize();
 
+    /// イベントタイマーをデバッグマネージャに設定
+    pDebugManager_->SetEventTimerWindow(pEventTimer_);
 
     /// 入力の初期化
     pInput_->Initialize(GetModuleHandleA(nullptr), pWinSystem_->GetHwnd());
@@ -122,6 +125,7 @@ void NimaFramework::Initialize()
     pViewport_->SetDirectX12(pDirectX_.get());
     pViewport_->Initialize();
     pTextSystem_->SetViewport(pViewport_.get());
+    pDebugManager_->SetViewportWindow(pViewport_.get());
 
     /// レイヤーの初期化
     pLayer_ = std::make_unique<Layer>();
@@ -144,8 +148,8 @@ void NimaFramework::Initialize()
     NiGui::SetClientSize({WinSystem::clientWidth, WinSystem::clientHeight});
     
 
-    NiGui::SetConfirmSound(pAudioManager_->GetNewAudio("UI", "ui_confirm.wav"));
-    NiGui::SetHoverSound(pAudioManager_->GetNewAudio("UI", "ui_hover.wav"));
+    NiGui::SetConfirmSound(pAudioManager_->GetNewAudio("UI", "ui_common_confirm.wav"));
+    NiGui::SetHoverSound(pAudioManager_->GetNewAudio("UI", "ui_common_hover.wav"));
 
     /// Drawerの設定
     pDrawer_ = std::make_unique<NiGuiDrawer>();
@@ -260,18 +264,7 @@ void NimaFramework::Update()
 
     /// シーン更新
     pSceneManager_->Update();
-
     pDebugManager_->Update();
-    pDebugManager_->DrawUI();
-    pViewport_->DrawWindow();
-
-    #ifdef _DEBUG
-    if (pDebugManager_->IsDisplay())
-    {
-        pLogger_->DrawUI();
-        NiGui::DrawDebug();
-    }
-    #endif // _DEBUG
 
     /// イベント計測終了
     #ifdef _DEBUG
@@ -324,7 +317,7 @@ void NimaFramework::Draw()
     pEventTimer_->EndEvent("Draw");
     pEventTimer_->EndFrame();
 
-    if (pDebugManager_->IsDisplay()) pEventTimer_->ImGui();
+    pDebugManager_->DrawUI();
 
     /// ImGuiの描画
     #ifdef _DEBUG

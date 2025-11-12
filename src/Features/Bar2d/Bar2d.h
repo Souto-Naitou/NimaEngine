@@ -14,7 +14,6 @@
 
 struct Bar2dInitParams
 {
-    Canvas*     pCanvas = nullptr;
     std::string nameTexturePath = {};
     Vector2     barSize = { 100.0f , 10.0f };
     bool        enableSmoothingColor = true;
@@ -80,6 +79,8 @@ private:
     static const RGBA COLOR_BAR_BG;
     static const Vector2 SPACING_HEAD_TO_DECO;
     static constexpr float BORDER_DANGER = 0.25f;
+
+    std::unique_ptr<DebugEntry<Bar2d>> pDebugEntry_ = nullptr;
 
     Bar2dInitParams initParams_ = {};
 

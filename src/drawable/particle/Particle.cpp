@@ -102,7 +102,7 @@ void Particle::Finalize()
 void Particle::DrawCall()
 {
     /// モデルのテクスチャがアップロードされていない場合は描画しない
-    if (!pModel_->IsEndLoading() && particleData_.size()) return;
+    if (!pModel_->IsEndLoading() || !particleData_.size()) return;
 
     ParticleSystem::CommandListData data = {};
     data.pVBV = &vertexBufferView_;

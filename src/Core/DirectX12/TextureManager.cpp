@@ -66,12 +66,12 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     auto pDevice = pDx12_->GetDevice();
     auto cl = pDx12_->GetCommandList();
 
-    textureData.metadata = metadata;
     if (textureType == TextureType::kDDS)
     {
         // キューブマップの場合はフラグを設定
         metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
     }
+    textureData.metadata = metadata;
 
     auto tempResource = DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata);
 

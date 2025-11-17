@@ -338,7 +338,7 @@ bool CollisionManager::OverlapOnAxis(const OBB* _obb1, const OBB* _obb2, const V
     if (axis.x == 0 && axis.y == 0 && axis.z == 0) return true;
 
     // 軸を正規化
-    Vector3 normAxis = axis.Normalize();
+    Vector3 normAxis = axis.Normalized();
 
     // OBBの中心間距離を軸上に投影
     float distance = std::abs((_obb2->GetCenter() - _obb1->GetCenter()).Dot(normAxis));

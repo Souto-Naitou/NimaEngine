@@ -230,7 +230,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     velocity -= resistance * deltaTime;
     if (enableDirectionByVelocity)
     {
-        transform.rotate = velocity.Normalize();
+        transform.rotate = velocity.Normalized();
     }
     transform.translate += velocity * deltaTime;
 

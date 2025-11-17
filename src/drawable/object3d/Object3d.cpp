@@ -91,7 +91,7 @@ void Object3d::Update()
 
     /// 平行光源の方向を正規化
     if (directionalLight_)
-        directionalLight_->direction = directionalLight_->direction.Normalize();
+        directionalLight_->direction = directionalLight_->direction.Normalized();
 
 
     /// 平行光源データを更新

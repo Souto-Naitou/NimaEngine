@@ -102,7 +102,7 @@ void Particle::Finalize()
 void Particle::DrawCall()
 {
     /// モデルのテクスチャがアップロードされていない場合は描画しない
-    if (!pModel_->IsEndLoading() && particleData_.size()) return;
+    if (!pModel_->IsEndLoading() || !particleData_.size()) return;
 
     ParticleSystem::CommandListData data = {};
     data.pVBV = &vertexBufferView_;
@@ -230,7 +230,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     velocity -= resistance * deltaTime;
     if (enableDirectionByVelocity)
     {
-        transform.rotate = velocity.Normalize();
+        transform.rotate = velocity.Normalized();
     }
     transform.translate += velocity * deltaTime;
 

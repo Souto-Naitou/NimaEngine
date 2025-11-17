@@ -3,6 +3,7 @@
 struct VertexShaderInput
 {
     float3 position : POSITION0;
+    
 };
 
 struct Matrices

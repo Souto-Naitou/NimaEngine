@@ -147,7 +147,6 @@ void NimaFramework::Initialize()
     NiGui::Initialize({ vp.Width, vp.Height }, { vp.TopLeftX, vp.TopLeftY });
     NiGui::SetClientSize({WinSystem::clientWidth, WinSystem::clientHeight});
     
-
     NiGui::SetConfirmSound(pAudioManager_->GetNewAudio("UI", "ui_common_confirm.wav"));
     NiGui::SetHoverSound(pAudioManager_->GetNewAudio("UI", "ui_common_hover.wav"));
 

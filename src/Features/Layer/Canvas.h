@@ -16,7 +16,7 @@
 /// <summary>
 /// キャンバスクラス
 /// </summary>
-class Canvas
+class Canvas : public DrawableBase
 {
 public:
     struct Params
@@ -95,7 +95,7 @@ public:
     /// <summary>
     /// Canvasを描画します。
     /// </summary>
-    void Draw() const;
+    void DrawCall() override;
     
     /// <summary>
     /// デバッグ用 UI を描画します。
@@ -111,7 +111,6 @@ private:
     Canvas::Params params_ = {};
     std::list<DrawableBase*> drawables_;
     std::list<Skybox*> skyboxes_;
-
 
     std::unique_ptr<DebugEntry<Canvas>> pDebugEntry_ = nullptr;
     std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_ = nullptr;

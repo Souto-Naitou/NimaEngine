@@ -79,12 +79,16 @@ void PostEffectExecuter::ApplyPostEffects()
     }
 }
 
-void PostEffectExecuter::Draw()
+void PostEffectExecuter::Draw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle)
 {
     uint32_t indexBuckbuffer = pDx12_->GetBackBufferIndex();
-    auto rtvHandle = pDx12_->GetRTVHandle()[indexBuckbuffer];
+    if (rtvHandle.ptr == 0)
+    {
+        // 指定されていなければSwapchainのRTVを使用する
+        rtvHandle = pDx12_->GetRTVHandle()[indexBuckbuffer];
+    }
+
     commandListForDraw_->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
-    // レンダーターゲットがSwapchainリソースになっている前提
     commandListForDraw_->SetGraphicsRootSignature(rootSignature_.Get());
     commandListForDraw_->SetPipelineState(pso_.Get());
     commandListForDraw_->SetGraphicsRootDescriptorTable(0, pResourceIntermediate_->GetSRVHandleGPU());

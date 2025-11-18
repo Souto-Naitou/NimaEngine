@@ -92,9 +92,9 @@ void Layer::DrawCanvases()
 {
     for (auto& canvas : canvases_)
     {
-        if (canvas.second->IsEnabled())
+        if (canvas.second->IsEnabled() && !canvas.second->IsDrawByCanvas())
         {
-            canvas.second->Draw();
+            canvas.second->DrawCall();
         }
     }
 }

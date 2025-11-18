@@ -101,9 +101,16 @@ void Canvas::ApplyPostEffects()
     pPostEffectExecuter_->ApplyPostEffects();
 }
 
-void Canvas::Draw() const
+void Canvas::DrawCall()
 {
-    pPostEffectExecuter_->Draw();
+    if (rtvHandle_.ptr)
+    {
+        pPostEffectExecuter_->Draw(rtvHandle_);
+    }
+    else 
+    {
+        pPostEffectExecuter_->Draw();
+    }
 }
 
 void Canvas::ImGui()

@@ -107,7 +107,7 @@ void Canvas::ApplyPostEffects()
     pPostEffectExecuter_->ApplyPostEffects();
 }
 
-void Canvas::DrawCall(ID3D12GraphicsCommandList* cl)
+void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
 {
     if (rtvHandle_.ptr)
     {

@@ -45,7 +45,7 @@ public:
     /// <summary>
     /// 描画
     /// </summary>
-    void DrawCall() override;
+    void DrawCall(ID3D12GraphicsCommandList* cl) override;
 
     /// <summary>
     /// 終了処理

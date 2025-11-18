@@ -6,6 +6,7 @@
 
 #include <BaseClasses/ObjectSystemBaseMT.h>
 #include <Common/SingletonPattern.h>
+#include <drawable/object3d/Object3dSystem.h>
 
 /// <summary>
 /// スプライト描画共通
@@ -51,6 +52,8 @@ public:
     /// </summary>
     /// <param name="_data">マテリアル、行列、VBV/IBV、SRV など。</param>
     void AddCommandListData(const CommandListData& _data);
+
+    void DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data);
 
 private:
     void CreateRootSignature();

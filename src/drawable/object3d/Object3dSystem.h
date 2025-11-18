@@ -84,12 +84,14 @@ public:
     /// 描画に必要なコマンドリスト情報を追加します。
     /// </summary>
     /// <param name="_data">コマンドリスト関連のリソース。</param>
-    void    AddCommandListData(CommandListData& _data);
+    void    AddCommandListData(CommandListData& data);
     /// <summary>
     /// 環境マップの SRV ハンドルを設定します。
     /// </summary>
     /// <param name="_handle">GPU ディスクリプタハンドル。</param>
-    void    SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE _handle);
+    void    SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle);
+
+    void    DrawSingle(ID3D12GraphicsCommandList* commandList, Object3dSystem::CommandListData& data);
 
     // Getter
     RootParameters<9> GetRootParameters() const {return rootParameters_;}

@@ -33,7 +33,7 @@ public:
     /// <summary>
     /// パーティクルの描画を行います。
     /// </summary>
-    void DrawCall() override;
+    void DrawCall(ID3D12GraphicsCommandList* cl) override;
 
     /// <summary>
     /// パーティクルの更新を行います。

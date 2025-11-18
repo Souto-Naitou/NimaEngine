@@ -29,7 +29,7 @@ void PointLight::Update()
 
 void PointLight::Draw()
 {
-    pIcon_->DrawCall();
+    pIcon_->Draw1F();
 }
 
 void PointLight::Finalize()

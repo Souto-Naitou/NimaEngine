@@ -56,7 +56,7 @@ void SceneObjects::Draw()
     {
         if (obj)
         {
-            obj->DrawCall();
+            obj->Draw1F();
         }
     }
 }

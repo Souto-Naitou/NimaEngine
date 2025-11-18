@@ -99,7 +99,7 @@ void Particle::Finalize()
     SRVManager::GetInstance()->Deallocate(srvIndex_);
 }
 
-void Particle::DrawCall()
+void Particle::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     /// モデルのテクスチャがアップロードされていない場合は描画しない
     if (!pModel_->IsEndLoading() || !particleData_.size()) return;
@@ -112,7 +112,8 @@ void Particle::DrawCall()
     data.instanceCount = static_cast<UINT>(particleData_.size());
     data.rtvHandle = rtvHandle_;
 
-    pSystem_->AddCommandListData(data);
+    pSystem_->DrawSingle(cl, data);
+    //pSystem_->AddCommandListData(data);
 }
 
 void Particle::reserve(size_t _size, bool _isInit)

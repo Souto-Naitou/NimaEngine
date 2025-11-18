@@ -288,15 +288,6 @@ void NimaFramework::Draw()
     // Canvasに登録されているオブジェクトをCanvasに描画する
     pLayer_->DrawObjects();
 
-    pObject3dSystem_->DrawCall();
-    pSpriteSystem_->DrawCall();
-    pParticleSystem_->DrawCall();
-
-    // 同期待ち
-    pObject3dSystem_->Sync();
-    pSpriteSystem_->Sync();
-    pParticleSystem_->Sync();
-
     // Canvasにポストエフェクトを適用する
     pLayer_->ApplyPostEffects();
 

@@ -144,7 +144,7 @@ void Sprite::Update()
     //uvTransformMatrix_ *= Matrix4x4::TranslateMatrix(uvTransform_.translate);
 }
 
-void Sprite::DrawCall()
+void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     if (!isDrawEnabled_ || !isDrawCalled_) return;
     isDrawCalled_ = false;
@@ -157,7 +157,7 @@ void Sprite::DrawCall()
     data.pIBV = &indexBufferView_;
     data.rtvHandleCPU = rtvHandle_;
 
-    SpriteSystem::GetInstance()->AddCommandListData(data);
+    SpriteSystem::GetInstance()->DrawSingle(cl, data);
 }
 
 void Sprite::Finalize()

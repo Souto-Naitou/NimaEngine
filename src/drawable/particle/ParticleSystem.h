@@ -47,10 +47,13 @@ public:
     /// キューされた描画コマンドを発行します。
     /// </summary>
     void DrawCall();
+
     /// <summary>
     /// マルチスレッド環境での同期を行います。
     /// </summary>
     void Sync();
+
+    void DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data);
 
 
 public: /// Setter

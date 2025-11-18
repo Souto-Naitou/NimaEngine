@@ -23,7 +23,9 @@ public:
     /// <summary>
     /// DrawCallをリストに積みます。
     /// </summary>
-    virtual void DrawCall() = 0;
+    virtual void DrawCall(ID3D12GraphicsCommandList* cl) = 0;
+
+    void DetachCurrentCanvas() { pCanvasCurrent_ = nullptr; }
 
 protected:
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_ = {};

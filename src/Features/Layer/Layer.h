@@ -8,6 +8,8 @@ public:
     Layer() = default;
     ~Layer() = default;
     
+    void Initialize();
+
     uint32_t AddCanvas(Canvas* canvas, uint32_t zOrder = 0);
 
     void RemoveCanvas(uint32_t zOrder);
@@ -32,4 +34,9 @@ private:
     // <Z-order, Canvas*>
     std::map<uint32_t, Canvas*> canvases_;
     uint32_t nextZOrder_ = 1;
+
+    // ポストエフェクト用のコマンドリスト
+    Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> pCommandList_ = nullptr;
+    // コマンドアロケータ
+    Microsoft::WRL::ComPtr<ID3D12CommandAllocator> pCommandAllocator_ = nullptr;
 };

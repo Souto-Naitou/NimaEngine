@@ -30,7 +30,7 @@ void NiGuiDrawer::Draw()
         sprite->SetColor({ data->color.x, data->color.y, data->color.z, data->color.w });
 
         sprite->Update();
-        sprite->DrawCall();
+        sprite->Draw1F();
 
         currentIndex++;
     }

@@ -3,6 +3,7 @@
 #include <Core/Win32/WinSystem.h>
 #include <Config/EngineSetting.h>
 #include <imgui.h>
+#include "CurrentCanvas.h"
 
 
 void Canvas::Initialize(const Canvas::Params& params)
@@ -69,6 +70,11 @@ void Canvas::Finalize()
     #endif // _DEBUG
 
     pPostEffectExecuter_->Finalize();
+
+    for (auto& drawable : drawables_)
+    {
+        drawable->DetachCurrentCanvas();
+    }
 }
 
 void Canvas::DrawObjects()
@@ -92,7 +98,7 @@ void Canvas::DrawObjects()
     for (auto& drawable : drawables_)
     {
         drawable->SetRTVHandle(rtvHandle);
-        drawable->DrawCall();
+        drawable->DrawCall(cl);
     }
 }
 
@@ -101,10 +107,12 @@ void Canvas::ApplyPostEffects()
     pPostEffectExecuter_->ApplyPostEffects();
 }
 
-void Canvas::DrawCall()
+void Canvas::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     if (rtvHandle_.ptr)
     {
+        this->DrawObjects();
+        pPostEffectExecuter_->ApplyPostEffects();
         pPostEffectExecuter_->Draw(rtvHandle_);
     }
     else 

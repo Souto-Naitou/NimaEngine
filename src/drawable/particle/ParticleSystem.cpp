@@ -87,6 +87,28 @@ void ParticleSystem::Sync()
     commandListDatas_.clear();
 }
 
+void ParticleSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data)
+{
+    /// ルートシグネチャをセットする
+    commandList->SetGraphicsRootSignature(rootSignature_.Get());
+
+    /// グラフィックスパイプラインステートをセットする
+    commandList->SetPipelineState(graphicsPipelineState_.Get());
+
+    /// プリミティブトポロジーをセットする
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    // DSVハンドル取得
+    auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+
+    commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+
+    commandList->IASetVertexBuffers(0, 1, data.pVBV);
+    commandList->SetGraphicsRootDescriptorTable(0, data.srvHandle);
+    commandList->SetGraphicsRootDescriptorTable(1, data.textureSrvHandle);
+    commandList->DrawInstanced(data.vertexCount, data.instanceCount, 0, 0);
+}
+
 void ParticleSystem::CreateRootSignature()
 {
     ID3D12Device* device = pDx12_->GetDevice();

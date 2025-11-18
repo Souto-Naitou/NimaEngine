@@ -119,7 +119,7 @@ void Object3d::Update()
     }
 }
 
-void Object3d::DrawCall()
+void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     if (!isDraw_ || !isDrawCalled_) return;
 
@@ -136,7 +136,8 @@ void Object3d::DrawCall()
     data.rtvHandle = rtvHandle_;
     data.model = pModel_;
 
-    pSystem_->AddCommandListData(data);
+    pSystem_->DrawSingle(cl, data);
+    //pSystem_->AddCommandListData(data);
 }
 
 void Object3d::Finalize() const

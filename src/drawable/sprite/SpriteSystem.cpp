@@ -85,6 +85,29 @@ void SpriteSystem::AddCommandListData(const CommandListData& _data)
     commandListDatas_.emplace_back(_data);
 }
 
+void SpriteSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data)
+{
+    /// ルートシグネチャをセットする
+    commandList->SetGraphicsRootSignature(rootSignature_.Get());
+
+    /// グラフィックスパイプラインステートをセットする
+    commandList->SetPipelineState(graphicsPipelineState_.Get());
+
+    /// プリミティブトポロジーをセットする
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    // DSVハンドル取得
+    auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+    commandList->OMSetRenderTargets(1, &data.rtvHandleCPU, FALSE, &dsvHandle);
+
+    commandList->SetGraphicsRootConstantBufferView(0, data.materialResource->GetGPUVirtualAddress());
+    commandList->SetGraphicsRootConstantBufferView(1, data.transformationMatrixResource->GetGPUVirtualAddress());
+    commandList->SetGraphicsRootDescriptorTable(2, data.srvHandleGPU);
+    commandList->IASetVertexBuffers(0, 1, data.pVBV);
+    commandList->IASetIndexBuffer(data.pIBV);
+    commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
 void SpriteSystem::CreateRootSignature()
 {
     ID3D12Device* device = pDx12_->GetDevice();

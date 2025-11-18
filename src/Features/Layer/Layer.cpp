@@ -2,6 +2,18 @@
 
 
 
+bool IsCanvasEnabled(Canvas* canvas)
+{
+    bool isEnabled = canvas->IsEnabled();
+    isEnabled &= !canvas->IsEnableManualDraw();
+    return isEnabled;
+}
+
+void Layer::Initialize()
+{
+
+}
+
 uint32_t Layer::AddCanvas(Canvas* canvas, uint32_t zOrder)
 {
     uint32_t assignedZOrder = zOrder;
@@ -70,7 +82,7 @@ void Layer::DrawObjects()
     // リストに格納された順番通りにCanvasのオブジェクトを描画する
     for (auto& canvas : canvases_)
     {
-        if (canvas.second->IsEnabled())
+        if (IsCanvasEnabled(canvas.second))
         {
             canvas.second->DrawObjects();
         }
@@ -81,7 +93,7 @@ void Layer::ApplyPostEffects()
 {
     for (auto& canvas : canvases_)
     {
-        if (canvas.second->IsEnabled())
+        if (IsCanvasEnabled(canvas.second))
         {
             canvas.second->ApplyPostEffects();
         }
@@ -92,9 +104,9 @@ void Layer::DrawCanvases()
 {
     for (auto& canvas : canvases_)
     {
-        if (canvas.second->IsEnabled() && !canvas.second->IsDrawByCanvas())
+        if (IsCanvasEnabled(canvas.second))
         {
-            canvas.second->DrawCall();
+            canvas.second->DrawCall(nullptr);
         }
     }
 }

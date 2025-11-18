@@ -60,20 +60,15 @@ void Object3dSystem::DrawCall()
 
         // ルートシグネチャをセットする
         _commandList->SetGraphicsRootSignature(rootSignature_.Get());
-
         // グラフィックスパイプラインステートをセットする
         _commandList->SetPipelineState(psoEarlyZ_.Get());
-
         // プリミティブトポロジーをセットする
         _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
         // DSVハンドル取得
         auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-
         // RTVHandleが変化したかをチェックするための変数
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
-
-        for(auto& data : commandListDatas_)
+        for (auto& data : commandListDatas_)
         {
             // RTVハンドルが変わったらセットし直す
             // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
@@ -84,13 +79,11 @@ void Object3dSystem::DrawCall()
             }
             // モデルがnullptrでない場合のみ描画
             if (data.model == nullptr) continue;
-
-            for(auto& cbuffer : data.cbuffers)
+            for (auto& cbuffer : data.cbuffers)
             {
                 auto& [key, value] = cbuffer;
                 _commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
             }
-
             _commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
 
             data.model->Draw(_commandList);
@@ -111,7 +104,7 @@ void Object3dSystem::DrawCall()
         /// プリミティブトポロジーをセットする
         _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-        for(auto& data : commandListDatas_)
+        for (auto& data : commandListDatas_)
         {
             // RTVハンドルが変わったらセットし直す
             // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
@@ -122,7 +115,7 @@ void Object3dSystem::DrawCall()
             }
 
             if (data.model == nullptr) continue;
-            for(auto& cbuffer : data.cbuffers)
+            for (auto& cbuffer : data.cbuffers)
             {
                 auto& [key, value] = cbuffer;
                 _commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
@@ -390,4 +383,53 @@ void Object3dSystem::CreateDepthPipelineState()
     }
 
     return;
+}
+
+void Object3dSystem::DrawSingle(ID3D12GraphicsCommandList* cl, Object3dSystem::CommandListData& data)
+{
+    // モデルがnullptrでない場合のみ描画
+    if (!data.model) return;
+
+    // =============================================
+    // [DepthDraw Begin]
+
+    // ルートシグネチャをセットする
+    cl->SetGraphicsRootSignature(rootSignature_.Get());
+    // グラフィックスパイプラインステートをセットする
+    cl->SetPipelineState(psoEarlyZ_.Get());
+    // プリミティブトポロジーをセットする
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // DSVハンドル取得
+    auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+    cl->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+    for (auto& cbuffer : data.cbuffers)
+    {
+        auto& [key, value] = cbuffer;
+        cl->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
+    }
+    cl->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
+
+    data.model->Draw(cl);
+
+    // [DepthDraw End]
+    // =============================================
+
+    // =============================================
+    // [MainDraw Begin]
+
+    /// グラフィックスパイプラインステートをセットする
+    cl->SetPipelineState(psoMain_.Get());
+
+    for (auto& cbuffer : data.cbuffers)
+    {
+        auto& [key, value] = cbuffer;
+        cl->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
+    }
+
+    cl->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
+
+    data.model->Draw(cl);
+
+    // [MainDraw End]
+    // =============================================
 }

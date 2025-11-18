@@ -42,6 +42,7 @@ public:
 
     // Setters
     inline void SetEnable(bool enable) { isEnabled_ = enable; }
+    inline void SetEnableManualDraw(bool enable) { isEnableManualDraw_ = enable; }
     void SetName(const std::string& name);
 
     /// <summary>
@@ -49,7 +50,7 @@ public:
     /// </summary>
     /// <param name="sprite">登録するスプライト</param>
     /// <returns>自身への参照</returns>
-    Canvas& RegisterDrawable(DrawableBase* sprite);
+    Canvas& RegisterDrawable(DrawableBase* drawable);
 
     /// <summary>
     /// 描画対象のスカイボックスを登録します。
@@ -64,6 +65,8 @@ public:
     // Getters
     [[nodiscard]]
     inline bool IsEnabled() const { return isEnabled_; }
+    [[nodiscard]]
+    inline bool IsEnableManualDraw() const { return isEnableManualDraw_; }
     [[nodiscard]]
     inline const DX12Resource& GetResource() const { return resource_; }
     [[nodiscard]]
@@ -95,7 +98,7 @@ public:
     /// <summary>
     /// Canvasを描画します。
     /// </summary>
-    void DrawCall() override;
+    void DrawCall(ID3D12GraphicsCommandList* cl) override;
     
     /// <summary>
     /// デバッグ用 UI を描画します。
@@ -107,6 +110,7 @@ private:
 
     DX12Resource resource_ = {};
     bool isEnabled_ = true;
+    bool isEnableManualDraw_ = false;
 
     Canvas::Params params_ = {};
     std::list<DrawableBase*> drawables_;

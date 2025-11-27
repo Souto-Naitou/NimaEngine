@@ -30,8 +30,10 @@ void ParticleEmitter::Initialize(const ParticleEmitterInitParams& params)
 
     // パーティクル初期化
     particle_ = params.particle;
+    
+    bool isExist = std::filesystem::directory_entry(jsonPath_).exists();
 
-    if (jsonPath_.empty())
+    if (!isExist)
     {
         fromJsonData_ = {};
         emitterData_ = {};
@@ -104,138 +106,145 @@ void ParticleEmitter::Draw()
 
 void ParticleEmitter::EmitParticle()
 {
-    RandomGenerator* random = RandomGenerator::GetInstance();
-
     particle_->emplace_back({});
     auto& parameter = particle_->GetParticleData();
     auto& datum = parameter.back();
 
     /// 初期トランスフォーム
-    if (emitterData_.flags.enableRandomEmit)
-    {
-        datum.transform_.translate = Vector3(
-            random->Generate(emitterData_.ranges.position.start().x, emitterData_.ranges.position.end().x),
-            random->Generate(emitterData_.ranges.position.start().y, emitterData_.ranges.position.end().y),
-            random->Generate(emitterData_.ranges.position.start().z, emitterData_.ranges.position.end().z));
-    }
-    else
-    {
-        datum.transform_.translate = emitterData_.common.emitPositionFixed;
-    }
+    this->InitTransform(datum);
 
     /// 衝突半径
     datum.radius = emitterData_.common.radius;
 
     /// スケール
+    this->InitScale(datum);
+    
+    /// ライフタイム
+    datum.lifeTime = emitterData_.common.particleLifeTime;
+
+    /// 速度
+    this->InitVelocity(datum);
+
+    /// 回転
+    this->InitRotation(datum);
+
+    // 色範囲
+    datum.colorRange = emitterData_.ranges.color;
+
+    // アルファ値の変化量
+    datum.alphaDeltaValue = emitterData_.common.alphaDeltaValue;
+    // 消去条件
+    datum.deleteCondition = ParticleDeleteCondition::LifeTime;
+    // 物理
+    datum.accGravity = emitterData_.physics.gravity;
+    datum.accResistance = emitterData_.physics.resistance;
+    datum.frictionCoef = emitterData_.physics.frictionCoef;
+    datum.smoothPower = emitterData_.physics.smoothNoisePower;
+
+    // 衝突床
+    datum.enableCollisionFloor = emitterData_.flags.enableCollisionFloor;
+    datum.collisionFloor = emitterData_.collisionFloor;
+    datum.enableSmoothRandom = emitterData_.flags.enableSmoothNoise;
+
+    aabb_->SetMinMax(emitterData_.ranges.position.start(), emitterData_.ranges.position.end());
+}
+
+void ParticleEmitter::InitTransform(ParticleData& datum)
+{
+    if (emitterData_.flags.enableRandomEmit)
+    {
+        datum.transform.translate = Vector3(
+            pRandGen_->Generate(emitterData_.ranges.position.start().x, emitterData_.ranges.position.end().x),
+            pRandGen_->Generate(emitterData_.ranges.position.start().y, emitterData_.ranges.position.end().y),
+            pRandGen_->Generate(emitterData_.ranges.position.start().z, emitterData_.ranges.position.end().z));
+    }
+    else
+    {
+        datum.transform.translate = emitterData_.common.emitPositionFixed;
+    }
+}
+
+void ParticleEmitter::InitScale(ParticleData& datum)
+{
     if (emitterData_.flags.enableRandomScale)
     {
-        datum.transform_.scale = Vector3(
-            random->Generate(emitterData_.ranges.scaleRandom.start().x, emitterData_.ranges.scaleRandom.end().x),
-            random->Generate(emitterData_.ranges.scaleRandom.start().y, emitterData_.ranges.scaleRandom.end().y),
-            random->Generate(emitterData_.ranges.scaleRandom.start().z, emitterData_.ranges.scaleRandom.end().z)
+        datum.transform.scale = Vector3(
+            pRandGen_->Generate(emitterData_.ranges.scaleRandom.start().x, emitterData_.ranges.scaleRandom.end().x),
+            pRandGen_->Generate(emitterData_.ranges.scaleRandom.start().y, emitterData_.ranges.scaleRandom.end().y),
+            pRandGen_->Generate(emitterData_.ranges.scaleRandom.start().z, emitterData_.ranges.scaleRandom.end().z)
         );
-        datum.scaleRange_.start() = datum.transform_.scale;
+        datum.scaleRange.start() = datum.transform.scale;
         if (!emitterData_.flags.enableScaleTransition)
         {
-            datum.scaleRange_.end() = datum.transform_.scale;
+            datum.scaleRange.end() = datum.transform.scale;
         }
     }
     else if (emitterData_.flags.enableScaleTransition)
     {
-        datum.transform_.scale = emitterData_.ranges.scale.start();
-        datum.scaleRange_ = emitterData_.ranges.scale;
+        datum.transform.scale = emitterData_.ranges.scale.start();
+        datum.scaleRange = emitterData_.ranges.scale;
     }
     else
     {
-        datum.transform_.scale = emitterData_.common.scaleFixed;
-        datum.scaleRange_ = Range(emitterData_.common.scaleFixed, emitterData_.common.scaleFixed);
+        datum.transform.scale = emitterData_.common.scaleFixed;
+        datum.scaleRange = Range(emitterData_.common.scaleFixed, emitterData_.common.scaleFixed);
     }
-    datum.scaleDelayTime_ = emitterData_.common.scaleDelayTime;
+    datum.scaleDelayTime = emitterData_.common.scaleDelayTime;
+}
 
-    /// ライフタイム
-    datum.lifeTime_ = emitterData_.common.particleLifeTime;
-
-    /// 速度
+void ParticleEmitter::InitVelocity(ParticleData& datum)
+{
     if (emitterData_.flags.enableRandomVelocity)
     {
         if (emitterData_.flags.velocityDistribution == VelocityDistribution::Box)
         {
-            datum.velocity_ = Vector3(
-                random->Generate(emitterData_.ranges.velocityRandom.start().x, emitterData_.ranges.velocityRandom.end().x),
-                random->Generate(emitterData_.ranges.velocityRandom.start().y, emitterData_.ranges.velocityRandom.end().y),
-                random->Generate(emitterData_.ranges.velocityRandom.start().z, emitterData_.ranges.velocityRandom.end().z)
+            datum.velocity = Vector3(
+                pRandGen_->Generate(emitterData_.ranges.velocityRandom.start().x, emitterData_.ranges.velocityRandom.end().x),
+                pRandGen_->Generate(emitterData_.ranges.velocityRandom.start().y, emitterData_.ranges.velocityRandom.end().y),
+                pRandGen_->Generate(emitterData_.ranges.velocityRandom.start().z, emitterData_.ranges.velocityRandom.end().z)
             );
         }
         else if (emitterData_.flags.velocityDistribution == VelocityDistribution::Sphere)
         {
             // 球面上のランダムなベクトルを生成
             Vector3 randomDirection = RandomUnitSphere();
-            float speed = random->Generate(emitterData_.ranges.velocityRandomSphere.start(), emitterData_.ranges.velocityRandomSphere.end());
-            datum.velocity_ = randomDirection * speed;
+            float speed = pRandGen_->Generate(emitterData_.ranges.velocityRandomSphere.start(), emitterData_.ranges.velocityRandomSphere.end());
+            datum.velocity = randomDirection * speed;
         }
     }
     else
     {
-        datum.velocity_ = emitterData_.common.velocityFixed;
+        datum.velocity = emitterData_.common.velocityFixed;
     }
 
-    // 回転
+    datum.direction = datum.velocity;
+    datum.speed_ = datum.velocity.Length();
+}
+
+void ParticleEmitter::InitRotation(ParticleData& datum)
+{
     if (emitterData_.flags.enableRandomRotation)
     {
-        datum.transform_.rotate = Vector3(
-            random->Generate(emitterData_.ranges.rotationRandom.start().x, emitterData_.ranges.rotationRandom.end().x),
-            random->Generate(emitterData_.ranges.rotationRandom.start().y, emitterData_.ranges.rotationRandom.end().y),
-            random->Generate(emitterData_.ranges.rotationRandom.start().z, emitterData_.ranges.rotationRandom.end().z)
+        datum.transform.rotate = Vector3(
+            pRandGen_->Generate(emitterData_.ranges.rotationRandom.start().x, emitterData_.ranges.rotationRandom.end().x),
+            pRandGen_->Generate(emitterData_.ranges.rotationRandom.start().y, emitterData_.ranges.rotationRandom.end().y),
+            pRandGen_->Generate(emitterData_.ranges.rotationRandom.start().z, emitterData_.ranges.rotationRandom.end().z)
         );
     }
     else
     {
-        datum.transform_.rotate = {};
+        datum.transform.rotate = {};
     }
-
-    // 色範囲
-    datum.colorRange_ = emitterData_.ranges.color;
-
-    // アルファ値の変化量
-    datum.alphaDeltaValue_ = emitterData_.common.alphaDeltaValue;
-    // 消去条件
-    datum.deleteCondition_ = ParticleDeleteCondition::LifeTime;
-    // 物理
-    datum.accGravity_ = emitterData_.physics.gravity;
-    datum.accResistance_ = emitterData_.physics.resistance;
-    datum.frictionCoef_ = emitterData_.physics.frictionCoef;
-
-    // 衝突床
-    datum.enableCollisionFloor = emitterData_.flags.enableCollisionFloor;
-    datum.collisionFloor_ = emitterData_.collisionFloor;
-
-    aabb_->SetMinMax(emitterData_.ranges.position.start(), emitterData_.ranges.position.end());
 }
 
-Vector3 ParticleEmitter::RandomUnitSphere()
+void ParticleEmitter::ImGuiSectionCommon()
 {
-    RandomGenerator* random = RandomGenerator::GetInstance();
-    float u = random->Generate(0.0f, 1.0f);
-    float v = random->Generate(0.0f, 1.0f);
-    float theta = 2.0f * std::numbers::pi_v<float> * u;
-    float phi = std::acos(2.0f * v - 1.0f);
-
-    float x = std::sin(phi) * std::cos(theta);
-    float y = std::sin(phi) * std::sin(theta);
-    float z = std::cos(phi);
-    return Vector3(x, y, z);
-}
-
-void ParticleEmitter::ImGui()
-{
-#ifdef _DEBUG
-
+    #ifdef _DEBUG
     char path[512] = "";
     char name[128] = "";
     memcpy_s(path, sizeof(name), jsonPath_.c_str(), jsonPath_.size());
     memcpy_s(name, sizeof(name), fromJsonData_.name.c_str(), fromJsonData_.name.size());
 
-    ImGui::Text("Name : %s", particleName_.c_str());
     if (ImGui::CollapsingHeader("一般"))
     {
         if (ImGui::InputText("エミッター名", name, sizeof(name), ImGuiInputTextFlags_EnterReturnsTrue))
@@ -305,6 +314,14 @@ void ParticleEmitter::ImGui()
         ImGui::Spacing();
     }
 
+    jsonPath_ = path;
+
+    #endif // _DEBUG
+}
+
+void ParticleEmitter::ImGuiSectionColor()
+{
+#ifdef _DEBUG
     if (ImGui::CollapsingHeader("色の変化"))
     {
         ImGui::ColorEdit4("開始色", &fromJsonData_.ranges.color.start().x);
@@ -328,7 +345,12 @@ void ParticleEmitter::ImGui()
 
         ImGui::Spacing();
     }
-    
+#endif // _DEBUG
+}
+
+void ParticleEmitter::ImGuiSectionTransform()
+{
+#ifdef _DEBUG
     if (ImGui::CollapsingHeader("変形"))
     {
         ImGui::DragFloat("衝突半径", &fromJsonData_.common.radius, 0.01f, FLT_MIN, FLT_MAX);
@@ -377,7 +399,12 @@ void ParticleEmitter::ImGui()
 
         ImGui::Spacing();
     }
+#endif // _DEBUG
+}
 
+void ParticleEmitter::ImGuiSectionSpawnPoint()
+{
+#ifdef _DEBUG
     if (ImGui::CollapsingHeader("生成場所"))
     {
         ImGui::Checkbox("ランダム範囲生成", &fromJsonData_.flags.enableRandomEmit);
@@ -393,7 +420,12 @@ void ParticleEmitter::ImGui()
 
         ImGui::Spacing();
     }
+#endif // _DEBUG
+}
 
+void ParticleEmitter::ImGuiSectionVelocity()
+{
+#ifdef _DEBUG
     static const char* velocityDistributionTypes[] = { "Box", "Sphere" };
     int selectedVelocityDistribution = static_cast<int>(fromJsonData_.flags.velocityDistribution);
 
@@ -436,6 +468,37 @@ void ParticleEmitter::ImGui()
 
         ImGui::Spacing();
     }
+#endif // _DEBUG
+}
+
+Vector3 ParticleEmitter::RandomUnitSphere()
+{
+    float u = pRandGen_->Generate(0.0f, 1.0f);
+    float v = pRandGen_->Generate(0.0f, 1.0f);
+    float theta = 2.0f * std::numbers::pi_v<float> * u;
+    float phi = std::acos(2.0f * v - 1.0f);
+
+    float x = std::sin(phi) * std::cos(theta);
+    float y = std::sin(phi) * std::sin(theta);
+    float z = std::cos(phi);
+    return Vector3(x, y, z);
+}
+
+void ParticleEmitter::ImGui()
+{
+#ifdef _DEBUG
+
+    ImGui::Text("Name : %s", particleName_.c_str());
+
+    this->ImGuiSectionCommon();
+
+    this->ImGuiSectionColor();
+    
+    this->ImGuiSectionTransform();
+
+    this->ImGuiSectionSpawnPoint();
+
+    this->ImGuiSectionVelocity();
 
     if (ImGui::CollapsingHeader("衝突床"))
     {
@@ -454,9 +517,13 @@ void ParticleEmitter::ImGui()
         ImGui::DragFloat3("重力", &fromJsonData_.physics.gravity.x, 0.01f);
         ImGui::DragFloat3("抵抗", &fromJsonData_.physics.resistance.x, 0.01f);
         ImGui::DragFloat("動摩擦係数", &fromJsonData_.physics.frictionCoef, 0.01f);
-    }
 
-    jsonPath_ = path;
+        ImGui::Checkbox("スムースノイズ", &fromJsonData_.flags.enableSmoothNoise);
+        if (fromJsonData_.flags.enableSmoothNoise)
+        {
+            ImGui::DragFloat("スムースノイズ強度", &fromJsonData_.physics.smoothNoisePower, 0.01f, 0.0f, FLT_MAX);
+        }
+    }
 #endif // _DEBUG
 }
 

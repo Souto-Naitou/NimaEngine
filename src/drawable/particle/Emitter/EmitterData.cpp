@@ -249,6 +249,7 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_phys, "gravity", d_phys.gravity);
         utl::json::try_assign(j_phys, "resistance", d_phys.resistance);
         utl::json::try_assign(j_phys, "frictionCoef", d_phys.frictionCoef);
+        utl::json::try_assign(j_phys, "smoothNoisePower", d_phys.smoothNoisePower);
 
         auto& d_flag = _data.flags;
 
@@ -259,6 +260,7 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_flag, "enableScaleTransition", d_flag.enableScaleTransition);
         utl::json::try_assign(j_flag, "enableCollisionFloor", d_flag.enableCollisionFloor);
         utl::json::try_assign(j_flag, "velocityDistribution", d_flag.velocityDistribution);
+        utl::json::try_assign(j_flag, "enableSmoothNoise", d_flag.enableSmoothNoise);
 
         auto& d_colFloor = _data.collisionFloor;
 
@@ -301,6 +303,7 @@ namespace Type::ParticleEmitter::v3
         j_phys["gravity"]                       = d_phys.gravity;
         j_phys["resistance"]                    = d_phys.resistance;
         j_phys["frictionCoef"]                  = d_phys.frictionCoef;
+        j_phys["smoothNoisePower"]              = d_phys.smoothNoisePower;
 
         auto& j_flag = _j["flags"];
         auto& d_flag = _data.flags;
@@ -312,6 +315,7 @@ namespace Type::ParticleEmitter::v3
         j_flag["enableScaleTransition"]         = d_flag.enableScaleTransition;
         j_flag["enableCollisionFloor"]          = d_flag.enableCollisionFloor;
         j_flag["velocityDistribution"]          = d_flag.velocityDistribution;
+        j_flag["enableSmoothNoise"]             = d_flag.enableSmoothNoise;
 
         auto& j_colflo = _j["collisionFloor"];
         auto& d_colflo = _data.collisionFloor;

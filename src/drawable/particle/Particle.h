@@ -28,7 +28,7 @@ public:
     /// パーティクルを初期化します。
     /// </summary>
     /// <param name="_pModel">使用するモデル。</param>
-    void Initialize(IModel* _pModel);
+    void Initialize(IModel* pModel);
 
     /// <summary>
     /// パーティクルの描画を行います。
@@ -53,8 +53,8 @@ public:
 
 public: /// Setter
     void SetName(const std::string& name) { if (pDebugEntry_) pDebugEntry_->SetName(name); }
-    void SetEnableBillboard(bool _enable) { enableBillboard_ = _enable; }
-    void SetGameEye(GameEye** _pGameEye) { pGameEye_ = _pGameEye; }
+    void SetEnableBillboard(bool enable) { enableBillboard_ = enable; }
+    void SetGameEye(GameEye** pGameEye) { pGameEye_ = pGameEye; }
 
 
 public: /// Getter
@@ -64,8 +64,8 @@ public: /// Getter
 
 
 public: /// container operator
-    void reserve(size_t _size, bool _isInit = false);
-    void emplace_back(const ParticleData& _data);
+    void reserve(size_t size, bool isInit = false);
+    void emplace_back(const ParticleData& data);
 
 
 private:
@@ -104,6 +104,7 @@ private:
 private: /// 他クラスのインスタンス
     ID3D12Device* pDevice_ = nullptr;
     ParticleSystem* pSystem_ = nullptr;
+    RandomGenerator* pRandomGenerator_ = nullptr;
 
 
 private:
@@ -111,50 +112,54 @@ private:
     /// GPU向けインスタンシング用バッファを作成します。
     /// </summary>
     void CreateParticleForGPUResource();
+
     /// <summary>
     /// SRV を作成します。
     /// </summary>
     void CreateSRV();
+
     /// <summary>
     /// モデルの頂点情報などを取得します。
     /// </summary>
     void GetModelData();
+
     /// <summary>
     /// 変換情報を初期化します。
     /// </summary>
     void InitializeTransform();
+
     /// <summary>
     /// 1パーティクル分のデータを更新します。
     /// </summary>
-    void ParticleDataUpdate(std::list<ParticleData>::iterator& _itr);
-    /// <summary>
-    /// イージング関数（EaseOutCubic）。
-    /// </summary>
-    float EaseOutCubic(float t);
-    /// <summary>
-    /// イージング関数（EaseOutQuad）。
-    /// </summary>
-    float EaseOutQuad(float t);
+    void ParticleDataUpdate(std::list<ParticleData>::iterator& itr);
+
+    void ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, float deltaTime);
+    void ParticleColorUpdate(std::list<ParticleData>::iterator& itr);
+    void ParticleScaleUpdate(std::list<ParticleData>::iterator& itr);
+
     /// <summary>
     /// 床との衝突による位置/速度の更新を行います。
     /// </summary>
-    bool UpdateByCollisionFloor(Vector3& _position, Vector3& _velocity, const v3::CollisionFloor& _floor, float _radius);
+    bool UpdateByCollisionFloor(Vector3& position, Vector3& velocity, const v3::CollisionFloor& floor, float radius);
+
     /// <summary>
     /// 摩擦を適用します。
     /// </summary>
-    void ApplyFriction(Vector3& _velocity, bool _isGround, float _frictionCoef, float _deltaTime);
+    void ApplyFriction(Vector3& velocity, bool isGround, float frictionCoef, float deltaTime);
 
 private: /// delete condition
     /// <summary>
     /// パーティクル削除条件を判定します。
     /// </summary>
-    bool DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr);
+    bool DeleteParticleByCondition(std::list<ParticleData>::iterator& itr);
+
     /// <summary>
     /// 寿命によって削除するか判定します。
     /// </summary>
-    bool DeleteByLifeTime(std::list<ParticleData>::iterator& _itr);
+    bool DeleteByLifeTime(std::list<ParticleData>::iterator& itr);
+
     /// <summary>
     /// 透明度が0になった場合に削除するか判定します。
     /// </summary>
-    bool DeleteByZeroAlpha(std::list<ParticleData>::iterator& _itr);
+    bool DeleteByZeroAlpha(std::list<ParticleData>::iterator& itr);
 };

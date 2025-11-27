@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <drawable/particle/Emitter/EmitterData.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+#include <Features/RandomGenerator/RandomGenerator.h>
 
 struct ParticleEmitterInitParams
 {
@@ -93,10 +94,13 @@ private:
     Particle*                   particle_               = nullptr;
     std::unique_ptr<AABB>       aabb_                   = nullptr;
     bool                        jsonFileExist_          = true;
-    WinTools*                   winTools_               = nullptr;
     bool                        isManualMode_           = false;
     bool                        isEmitRequest_          = false;
     Vector3                     position_               = {};
+
+    /// [ Pointers ]
+    WinTools*                   winTools_               = nullptr;
+    RandomGenerator*            pRandGen_               = RandomGenerator::GetInstance();
 
 
 private:
@@ -104,6 +108,18 @@ private:
     /// 実際のパーティクル生成処理を行います。
     /// </summary>
     void EmitParticle();
+
+    /// [ 初期化関数群 ]
+    void InitTransform(ParticleData& datum);
+    void InitScale(ParticleData& datum);
+    void InitVelocity(ParticleData& datum);
+    void InitRotation(ParticleData& datum);
+
+    void ImGuiSectionCommon();
+    void ImGuiSectionColor();
+    void ImGuiSectionTransform();
+    void ImGuiSectionSpawnPoint();
+    void ImGuiSectionVelocity();
 
     /// <summary>
     /// 単位球上のランダムベクトルを生成します。

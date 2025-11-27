@@ -2,13 +2,14 @@
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <numbers>
-#include <Common/define.h>
 
 #if defined _DEBUG
 #include <imgui.h>
-#include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #endif
+#include <Math/Easing.h>
+#include <Math/Functions.hpp>
+#include <mathExtension.h>
 
 using namespace Type::ParticleEmitter;
 
@@ -21,6 +22,7 @@ void Particle::Initialize(IModel* _pModel)
     /// 必要なインスタンスを取得
     pDevice_ = pDx12_->GetDevice();
     pSystem_ = ParticleSystem::GetInstance();
+    pRandomGenerator_ = RandomGenerator::GetInstance();
 
     /// デフォルトのGameEyeを取得
     pGameEye_ = pSystem_->GetGlobalEye();
@@ -50,8 +52,8 @@ void Particle::Update()
         if (itr == particleData_.end()) break;
         if (index >= currentInstancingSize_) break;
 
-        EulerTransform& transform = itr->transform_;
-        Vector4& currentColor = itr->currentColor_;
+        EulerTransform& transform = itr->transform;
+        Vector4& currentColor = itr->currentColor;
 
         /// パーティクルデータの更新
         ParticleDataUpdate(itr);
@@ -124,12 +126,13 @@ void Particle::reserve(size_t _size, bool _isInit)
     if (!_isInit) SRVManager::GetInstance()->Deallocate(srvIndex_);
     CreateSRV();
     InitializeTransform();
-    return;
 }
 
 void Particle::emplace_back(const ParticleData& _data)
 {
-    particleData_.emplace_back(_data);
+    auto& newData = particleData_.emplace_back(_data);
+    newData.seed = pRandomGenerator_->Generate(0.0f, 10000.0f);
+
     if (particleData_.size() > currentInstancingSize_)
     {
         currentInstancingSize_ *= 2;
@@ -176,7 +179,7 @@ void Particle::InitializeTransform()
 {
     for (auto& datum : particleData_)
     {
-        EulerTransform& transform = datum.transform_;
+        EulerTransform& transform = datum.transform;
         transform.scale = Vector3(1.0f, 1.0f, 1.0f);
         transform.rotate = Vector3(0.0f, 0.0f, 0.0f);
         transform.translate = Vector3(0.0f, 0.0f, 0.0f);
@@ -188,27 +191,20 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     bool isGround = false;
     float deltaTime = 1.0f / 60.0f;
 
-    TimeMeasurer&       timer = _itr->timer_;
+    TimeMeasurer&       timer = _itr->timer;
+    EulerTransform& transform = _itr->transform;
+    Vector3& velocity = _itr->velocity;
 
-    EulerTransform&     transform = _itr->transform_;
-    Vector3&            velocity = _itr->velocity_;
-    Vector3&            acceleration = _itr->acceleration_;
-    Vector3&            gravity = _itr->accGravity_;
-    Vector3&            resistance = _itr->accResistance_;
-    float               frictionCoef = _itr->frictionCoef_;
+    float               frictionCoef = _itr->frictionCoef;
 
-    Vector4&            currentColor = _itr->currentColor_;
-    const auto&         colorRange = _itr->colorRange_;
+    Vector4&            currentColor = _itr->currentColor;
+    const auto&         colorRange = _itr->colorRange;
 
-    const auto&         scaleRange = _itr->scaleRange_;
-    const float         lifeTime = _itr->lifeTime_;
-    const float         scaleDelayTime = _itr->scaleDelayTime_;
-    float&              currentLifeTime = _itr->currentLifeTime_;
-    float&              alphaDeltaValue = _itr->alphaDeltaValue_;
-    bool&               enableDirectionByVelocity = _itr->enableDirectionByVelocity;
+    const float         lifeTime = _itr->lifeTime;
+    float&              currentLifeTime = _itr->currentLifeTime;
     bool&               enableCollisionFloor = _itr->enableCollisionFloor;
     float               radius = _itr->radius;
-    v3::CollisionFloor& collisionFloor = _itr->collisionFloor_;
+    v3::CollisionFloor& collisionFloor = _itr->collisionFloor;
     
 
     /// タイマーの更新
@@ -222,10 +218,74 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     currentLifeTime = lifeTime - timer.GetNow<float>();
     if (currentLifeTime < 0.0f) currentLifeTime = 0.0f;
 
-    float t = 0.0f;
-    if (lifeTime != 0.0f) t = 1.0f - currentLifeTime / lifeTime;
-
     /// 位置の更新
+    this->ParticlePositionUpdate(_itr, deltaTime);
+
+    /// 色の更新
+    this->ParticleColorUpdate(_itr);
+
+    /// スケールの更新
+    this->ParticleScaleUpdate(_itr);
+
+    // 当たり判定(座標計算後に実行する)
+    if (enableCollisionFloor)
+    {
+        radius *= transform.scale.y;
+        isGround = UpdateByCollisionFloor(transform.translate, velocity, collisionFloor, radius);
+    }
+
+    // 摩擦を適用
+    ApplyFriction(velocity, isGround, frictionCoef, deltaTime);
+
+    return;
+}
+
+void Particle::ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, float deltaTime)
+{
+    EulerTransform& transform = itr->transform;
+    Vector3& velocity = itr->velocity;
+    Vector3& acceleration = itr->acceleration;
+    Vector3& gravity = itr->accGravity;
+    Vector3& resistance = itr->accResistance;
+    bool& enableDirectionByVelocity = itr->enableDirectionByVelocity;
+    bool& enableSmoothRandom = itr->enableSmoothRandom;
+    float seed = itr->seed;
+    float smoothPower = itr->smoothPower;
+    float time = itr->timer.GetNow<float>();
+    float speed = itr->speed_;
+
+    if (enableSmoothRandom)
+    {
+        // 初期速度を direction から一度だけ設定
+        if (velocity.Length() == 0.0f)
+        {
+            Vector3 dir = itr->direction.Normalized();
+            velocity = dir * (speed > 0.0f ? speed : 1.0f);
+        }
+
+        // ノイズ生成（滑らかな変化）
+        float yawNoise = Math::smoothNoise(time * 0.7f + seed * 1.13f); // -1..1
+        float pitchNoise = Math::smoothNoise(time * 0.5f + seed * 2.27f); // -1..1
+
+        // 回転角へ変換（強度は smoothPower）
+        float yawDelta = yawNoise * smoothPower * deltaTime;
+        float pitchDelta = pitchNoise * smoothPower * deltaTime;
+
+        // 回転行列（Yaw -> Pitch）
+        Matrix4x4 rotYaw = Matrix4x4::RotateYMatrix(yawDelta);
+        Matrix4x4 rotPitch = Matrix4x4::RotateXMatrix(pitchDelta);
+        Matrix4x4 rot = rotYaw * rotPitch;
+
+        // 長さ維持して回転
+        float speedLen = velocity.Length();
+        if (speedLen > 0.0f)
+        {
+            Vector3 dirNorm = velocity.Normalized();
+            dirNorm = Math::TransformNormal(dirNorm, rot);
+            velocity = dirNorm * speedLen;
+        }
+    }
+
     velocity += acceleration * deltaTime;
     velocity += gravity * deltaTime;
     velocity -= resistance * deltaTime;
@@ -234,30 +294,41 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
         transform.rotate = velocity.Normalized();
     }
     transform.translate += velocity * deltaTime;
-
-    /// 加速度のリセット
     acceleration = {};
+}
 
-    /// 色の更新
+void Particle::ParticleColorUpdate(std::list<ParticleData>::iterator& itr)
+{
+    float& alphaDeltaValue = itr->alphaDeltaValue;
+    Vector4& currentColor = itr->currentColor;
+    const auto& colorRange = itr->colorRange;
+    const float lifeTime = itr->lifeTime;
+    float& currentLifeTime = itr->currentLifeTime;
+
+    float t = 0.0f;
+    if (lifeTime != 0.0f) t = 1.0f - currentLifeTime / lifeTime;
+
+    if (alphaDeltaValue == 0)
     {
-        if (alphaDeltaValue == 0)
-        {
-            currentColor.Lerp(colorRange.start(), colorRange.end(), EaseOutCubic(t));
-        }
-        else
-        {
-            Vector3 rgb = currentColor.xyz();
-            rgb.Lerp(colorRange.start().xyz(), colorRange.end().xyz(), EaseOutCubic(t));
-            currentColor.w += alphaDeltaValue;
-            currentColor = { rgb.x, rgb.y, rgb.z, currentColor.w };
-        }
+        currentColor.Lerp(colorRange.start(), colorRange.end(), Math::Easing::EaseOutCubic(t));
     }
+    else
+    {
+        Vector3 rgb = currentColor.xyz();
+        rgb.Lerp(colorRange.start().xyz(), colorRange.end().xyz(), Math::Easing::EaseOutCubic(t));
+        currentColor.w += alphaDeltaValue;
+        currentColor = { rgb.x, rgb.y, rgb.z, currentColor.w };
+    }
+}
 
+void Particle::ParticleScaleUpdate(std::list<ParticleData>::iterator& itr)
+{
+    const float lifeTime = itr->lifeTime;
+    const float scaleDelayTime = itr->scaleDelayTime;
+    float& currentLifeTime = itr->currentLifeTime;
+    EulerTransform& transform = itr->transform;
+    const auto& scaleRange = itr->scaleRange;
 
-    /// スケールの更新
-    /// lifetime = 10.0
-    /// current = 9.0
-    /// delay = 3.0
     if (lifeTime - scaleDelayTime != 0.0f)
     {
         if (currentLifeTime > lifeTime - scaleDelayTime)
@@ -274,17 +345,6 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
         transform.scale = scaleRange.start();
     }
 
-    // 当たり判定(座標計算後に実行する)
-    if (enableCollisionFloor)
-    {
-        radius *= transform.scale.y;
-        isGround = UpdateByCollisionFloor(transform.translate, velocity, collisionFloor, radius);
-    }
-
-    // 摩擦を適用
-    ApplyFriction(velocity, isGround, frictionCoef, deltaTime);
-
-    return;
 }
 
 void Particle::ImGui()
@@ -302,16 +362,6 @@ void Particle::ImGui()
     ImGuiTemplate::VariableTable("Particle", pFunc);
 
 #endif
-}
-
-float Particle::EaseOutCubic(float t)
-{
-    return 1.0f - std::powf(1.0f - t, 3.0f);
-}
-
-float Particle::EaseOutQuad(float t)
-{
-    return 1.0f - std::powf(1.0f - t, 2.0f);
 }
 
 bool Particle::UpdateByCollisionFloor(Vector3& _position, Vector3& _velocity, const v3::CollisionFloor& _floor, float _radius)
@@ -338,7 +388,7 @@ bool Particle::DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr
 {
     bool isDelete = false;
 
-    switch (_itr->deleteCondition_)
+    switch (_itr->deleteCondition)
     {
     case ParticleDeleteCondition::LifeTime:
         isDelete = DeleteByLifeTime(_itr);
@@ -357,7 +407,7 @@ bool Particle::DeleteByLifeTime(std::list<ParticleData>::iterator& _itr)
 {
     bool isDelete = false;
 
-    if (_itr->currentLifeTime_ <= 0.0f)
+    if (_itr->currentLifeTime <= 0.0f)
     {
         _itr = particleData_.erase(_itr);
         isDelete = true;
@@ -370,7 +420,7 @@ bool Particle::DeleteByZeroAlpha(std::list<ParticleData>::iterator& _itr)
 {
     bool isDelete = false;
 
-    if (_itr->currentColor_.w <= 0.0f)
+    if (_itr->currentColor.w <= 0.0f)
     {
         _itr = particleData_.erase(_itr);
         isDelete = true;

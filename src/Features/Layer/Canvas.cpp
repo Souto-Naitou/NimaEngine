@@ -125,6 +125,32 @@ void Canvas::ImGui()
 {
 #ifdef _DEBUG
 
+    this->ImGuiPreview();
+
+    pPostEffectExecuter_->ImGui();
+
+#endif // _DEBUG
+}
+
+void Canvas::ParameterCheck(const Canvas::Params& params) const
+{
+    if (params.pDx12 == nullptr)
+    {
+        throw std::runtime_error("Canvas::Initialize() : DirectX12 is nullptr.");
+    }
+
+    #ifdef _DEBUG
+    if (params.pImGuiManager == nullptr)
+    {
+        throw std::runtime_error("Canvas::Initialize() : ImGuiManager is nullptr.");
+    }
+    #endif // _DEBUG
+}
+
+void Canvas::ImGuiPreview()
+{
+    #ifdef _DEBUG
+
     ImVec2 imageSize = {};
     float aspect = static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::clientHeight);
     auto cliSize = ImGui::GetContentRegionAvail();
@@ -145,23 +171,6 @@ void Canvas::ImGui()
     ImGui::Image((ImTextureID)resourceOutput->GetSRVHandleGPU().ptr, imageSize);
     params_.pImGuiManager->AddImageResource(resourceOutput);
 
-    pPostEffectExecuter_->ImGui();
-
-#endif // _DEBUG
-}
-
-void Canvas::ParameterCheck(const Canvas::Params& params) const
-{
-    if (params.pDx12 == nullptr)
-    {
-        throw std::runtime_error("Canvas::Initialize() : DirectX12 is nullptr.");
-    }
-
-    #ifdef _DEBUG
-    if (params.pImGuiManager == nullptr)
-    {
-        throw std::runtime_error("Canvas::Initialize() : ImGuiManager is nullptr.");
-    }
     #endif // _DEBUG
 }
 

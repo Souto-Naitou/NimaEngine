@@ -107,6 +107,7 @@ public:
 
 private:
     void ParameterCheck(const Canvas::Params& params) const;
+    void ImGuiPreview();
 
     DX12Resource resource_ = {};
     bool isEnabled_ = true;

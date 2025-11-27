@@ -261,6 +261,8 @@ void NimaFramework::Update()
     pImGuiManager_->BeginFrame();
     #endif // _DEBUG
 
+    pDebugManager_->DrawUI();
+
     /// シーン更新
     pSceneManager_->Update();
     pDebugManager_->Update();
@@ -276,9 +278,6 @@ void NimaFramework::Update()
 
 void NimaFramework::Draw()
 {
-    /// イベント計測開始
-    pEventTimer_->BeginEvent("Draw");
-
     // シーンの描画関数呼び出し
     pSceneManager_->SceneDraw();
 
@@ -302,12 +301,6 @@ void NimaFramework::Draw()
 
     // コンピュートシェーダーの実行
     pViewport_->Compute();
-
-    /// イベント計測終了と出力
-    pEventTimer_->EndEvent("Draw");
-    pEventTimer_->EndFrame();
-
-    pDebugManager_->DrawUI();
 
     /// ImGuiの描画
     #ifdef _DEBUG

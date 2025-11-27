@@ -10,19 +10,22 @@ class TimeMeasurer
 {
 public:
     TimeMeasurer();
-    ~TimeMeasurer() {};
+    ~TimeMeasurer() = default;
     /// <summary>
     /// 計測を開始します。
     /// </summary>
     void Start();
+
     /// <summary>
     /// 計測を一時停止します。
     /// </summary>
     void Stop();
+
     /// <summary>
     /// 計測値をリセットします。
     /// </summary>
     void Reset();
+
     template <typename T>
     /// <summary>
     /// 開始からの経過時間を取得します。

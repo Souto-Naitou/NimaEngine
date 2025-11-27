@@ -143,17 +143,19 @@ struct Type::ParticleEmitter::v3::Common : public v2::Common
 
 struct Type::ParticleEmitter::v3::RangeData : public v2::RangeData
 {
-    Range<float>    velocityRandomSphere        = {};                 // SphereVelocityDistribution用のランダム範囲
+    Range<float>    velocityRandomSphere        = {};                   // SphereVelocityDistribution用のランダム範囲
 };
 
 struct Type::ParticleEmitter::v3::PhysicsData : public v2::PhysicsData
 {
     float           frictionCoef                = 0.0f;                 // 摩擦
+    float           smoothNoisePower            = 0.1f;                 // スムースノイズ強度
 };
 
 struct Type::ParticleEmitter::v3::Flags : v2::Flags
 {
     bool            enableCollisionFloor        = {};                   // 衝突床
+    bool            enableSmoothNoise           = false;                // スムースノイズ
     VelocityDistribution velocityDistribution   = VelocityDistribution::Box; // 速度分布タイプ
 };
 

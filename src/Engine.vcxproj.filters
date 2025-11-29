@@ -693,6 +693,7 @@
     <ClCompile Include="Features\Layer\CanvasScope.h">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
+    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1115,6 +1116,7 @@
     <ClInclude Include="Features\Layer\CurrentCanvas.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
+    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

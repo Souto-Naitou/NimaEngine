@@ -35,8 +35,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
     
     output.color.rgb = lerp(textureColor.rgb, randColor.rgb, gOption.opacity);
-
-    output.color.a = 1.0f;
+    output.color.a = textureColor.a;
     
     return output;
 }

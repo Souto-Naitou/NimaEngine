@@ -95,8 +95,8 @@ public:
 
 
 private:
-    static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
-    static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
+    static constexpr wchar_t kVertexShaderPath[]    = L"EngineResources/Shaders/Fullscreen.VS.hlsl";
+    static constexpr wchar_t kPixelShaderPath[]     = L"EngineResources/Shaders/Fullscreen.PS.hlsl";
     DirectX12*                                          pDx12_                  = nullptr;
     DX12Resource*                                       pResourceInput_         = {};
     DX12Resource*                                       pResourceIntermediate_  = nullptr;
@@ -115,8 +115,9 @@ private:
     std::vector<std::unique_ptr<IPostEffect>>           postEffects_            = {};
 
     #ifdef _DEBUG
-    int32_t selectedIndex_ = -1;
-    int32_t soloIndex_ = -1;
+    int32_t selectedIndex_  = -1;
+    int32_t soloIndex_      = -1;
+    PostEffectClassName currentSelectedEffect_ = PostEffectClassName::None;
     #endif
 
 

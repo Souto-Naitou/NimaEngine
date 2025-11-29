@@ -263,6 +263,7 @@
     <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\Layer.cpp" />
+    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
     <ClCompile Include="Features\GameEye\GameEye.cpp" />
@@ -384,6 +385,7 @@
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\Layer.h" />
+    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />
     <ClInclude Include="Features\GameEye\GameEye.h" />

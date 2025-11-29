@@ -1,6 +1,14 @@
 #pragma once
 
 #include <map>
+#include <cstdint>
+
+enum class DeltaTimeChannelReserved : uint32_t
+{
+    Default = 0,
+    Game = 1,
+    Particle = 2,
+};
 
 /// <summary>
 /// デルタタイム共有クラス
@@ -19,9 +27,14 @@ public:
         return &instance;
     }
 
-    void SetDeltaTime(uint32_t _channel, float _deltaTime)
+    inline void SetDeltaTime(DeltaTimeChannelReserved channel, float deltaTime)
     {
-        deltaTimes_[_channel] = _deltaTime;
+        this->SetDeltaTime(static_cast<uint32_t>(channel), deltaTime);
+    }
+
+    inline void SetDeltaTime(uint32_t channel, float deltaTime)
+    {
+        deltaTimes_[channel] = deltaTime;
     }
 
     float GetDeltaTime(uint32_t _channel) const

@@ -7,6 +7,7 @@
 
 #ifdef _DEBUG
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #endif //_DEBUG
 #include <config/EngineSetting.h>
 #include "BlendDesc.h"
@@ -146,6 +147,26 @@ void PostEffectExecuter::ImGui()
     static const ImVec4 kColorRed(1.0f, 0.0f, 0.0f, 1.0f);
     static const ImVec4 kColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
 
+    if (ImGui::Button("Add"))
+    {
+        this->AddEffect(currentSelectedEffect_);
+    }
+    ImGui::SameLine();
+    if (ImGui::BeginCombo("##EffectNames", PostEffectFactory::nameMap_.at(currentSelectedEffect_).c_str()))
+    {
+        for (auto& name : PostEffectFactory::nameMap_)
+        {
+            const bool isSelected = (currentSelectedEffect_ == name.first);
+            if (ImGui::Selectable(name.second.c_str(), isSelected))
+            {
+                currentSelectedEffect_ = name.first;
+            }
+
+            if (isSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
     bool isBeginTable = ImGui::BeginTable("PostEffectTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg);
 
     if (isBeginTable)
@@ -241,7 +262,8 @@ void PostEffectExecuter::ImGui()
 
     // 移動ボタンの表示と操作
     bool isEnable = false;
-    if (selectedIndex_ < 0)
+    bool isSelected = (selectedIndex_ >= 0);
+    if (!isSelected)
     {
         ImGui::BeginDisabled();
     }
@@ -271,7 +293,17 @@ void PostEffectExecuter::ImGui()
         postEffects_[selectedIndex_]->Enable(isEnable);
     }
 
-    if (selectedIndex_ < 0) 
+    ImGui::SameLine();
+
+    ImGui::PushStyleColor(ImGuiCol_Button, kColorRed);
+    if (ImGui::Button("Remove"))
+    {
+        postEffects_.erase(postEffects_.begin() + selectedIndex_);
+        selectedIndex_ = -1; // 選択解除
+    }
+    ImGui::PopStyleColor();
+
+    if (!isSelected) 
     {
         ImGui::EndDisabled();
         ImGui::Text("項目を選択してください");

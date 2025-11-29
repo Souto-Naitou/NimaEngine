@@ -6,12 +6,15 @@
 #include <memory>
 #include <functional>
 #include <unordered_map>
+#include <map>
+#include <string>
 
 /// <summary>
 /// ポストエフェクトクラス名列挙型
 /// </summary>
 enum class PostEffectClassName
 {
+    None,
     Grayscale,
     BoxFilter,
     RadialBlur,
@@ -30,6 +33,8 @@ enum class PostEffectClassName
 class PostEffectFactory
 {
 public:
+    static const std::map<PostEffectClassName, std::string> nameMap_;
+
     PostEffectFactory(DirectX12* pDx12, ID3D12GraphicsCommandList* pCommandList);
     std::unique_ptr<IPostEffect> CreatePostEffect(PostEffectClassName name);
 

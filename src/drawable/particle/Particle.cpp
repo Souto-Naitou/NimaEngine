@@ -189,11 +189,11 @@ void Particle::InitializeTransform()
 void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
 {
     bool isGround = false;
-    float deltaTime = 1.0f / 60.0f;
+    float deltaTime = DeltaTimeManager::GetInstance()->GetDeltaTime(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));
 
-    TimeMeasurer&       timer = _itr->timer;
-    EulerTransform& transform = _itr->transform;
-    Vector3& velocity = _itr->velocity;
+    TimeMeasurerByDt&   timer = _itr->timer;
+    EulerTransform&     transform = _itr->transform;
+    Vector3&            velocity = _itr->velocity;
 
     float               frictionCoef = _itr->frictionCoef;
 
@@ -215,6 +215,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     }
 
     /// 経過時間の取得
+    timer.Update(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));
     currentLifeTime = lifeTime - timer.GetNow<float>();
     if (currentLifeTime < 0.0f) currentLifeTime = 0.0f;
 
@@ -236,8 +237,6 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
 
     // 摩擦を適用
     ApplyFriction(velocity, isGround, frictionCoef, deltaTime);
-
-    return;
 }
 
 void Particle::ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, float deltaTime)

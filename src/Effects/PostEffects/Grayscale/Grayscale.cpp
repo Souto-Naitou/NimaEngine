@@ -8,6 +8,7 @@
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <config/EngineSetting.h>
 
 void Grayscale::Initialize(const PostEffectInitParams& desc)
 {
@@ -71,6 +72,9 @@ void Grayscale::Setting()
 {
     // レンダーテクスチャをレンダーターゲット状態に変更
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    // クリア
+    commandList_->ClearRenderTargetView(renderTexture_.GetRTVHandle(), &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
     commandList_->OMSetRenderTargets(1, &renderTexture_.GetRTVHandle(), FALSE, nullptr);

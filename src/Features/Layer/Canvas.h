@@ -43,7 +43,6 @@ public:
     // Setters
     inline void SetEnable(bool enable) { isEnabled_ = enable; }
     inline void SetEnableManualDraw(bool enable) { isEnableManualDraw_ = enable; }
-    void SetName(const std::string& name);
 
     /// <summary>
     /// 描画対象のスプライトを登録します

@@ -15,6 +15,7 @@
 #include "./Emitter/EmitterData.h"
 #include <Features/Model/IModel.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+#include <Features/DeltaTimeManager/DeltaTimeManager.h>
 #include <memory>
 
 /// <summary>

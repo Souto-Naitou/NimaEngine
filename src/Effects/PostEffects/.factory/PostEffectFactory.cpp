@@ -10,6 +10,22 @@
 #include <Effects/PostEffects/GaussianBloom/GaussianBloom.h>
 #include <Effects/PostEffects/DepthBasedOutline/DepthBasedOutline.h>
 
+const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
+{
+    { PostEffectClassName::None,                    "None"  },
+    { PostEffectClassName::Grayscale,               "Grayscale" },
+    { PostEffectClassName::BoxFilter,               "BoxFilter" },
+    { PostEffectClassName::RadialBlur,              "RadialBlur" },
+    { PostEffectClassName::LuminanceOutput,         "LuminanceOutput" },
+    { PostEffectClassName::PrewittOutline,          "PrewittOutline" },
+    { PostEffectClassName::DepthBasedOutline,       "DepthBasedOutline" },
+    { PostEffectClassName::GaussianFilter,          "GaussianFilter" },
+    { PostEffectClassName::SeparatedGaussianFilter, "SeparatedGaussianFilter" },
+    { PostEffectClassName::RandomFilter,            "RandomFilter" },
+    { PostEffectClassName::GaussianBloom,           "GaussianBloom"  }
+};
+
+
 PostEffectFactory::PostEffectFactory(DirectX12* pDx12, ID3D12GraphicsCommandList* pCommandList)
 {
     pDx12_ = pDx12;

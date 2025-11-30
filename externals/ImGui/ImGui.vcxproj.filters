@@ -42,6 +42,9 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="imgui_stdlib.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui.cpp">
@@ -67,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="dummy.cpp">
       <Filter>usercode</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_stdlib.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

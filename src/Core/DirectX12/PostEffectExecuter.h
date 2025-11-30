@@ -7,7 +7,7 @@
 #include <Effects/PostEffects/.Factory/PostEffectFactory.h>
 
 #include <wrl/client.h>
-#include <vector>
+#include <list>
 #include <functional>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 
@@ -112,7 +112,7 @@ private:
     std::unique_ptr<DebugEntry<PostEffectExecuter>>     pDebugEntry_            = nullptr;
     std::unique_ptr<PostEffectFactory>                  pEffectFactory_         = nullptr;
 
-    std::vector<std::unique_ptr<IPostEffect>>           postEffects_            = {};
+    std::list<std::unique_ptr<IPostEffect>>             postEffects_            = {};
 
     #ifdef _DEBUG
     int32_t selectedIndex_  = -1;

@@ -11,6 +11,7 @@
 #endif //_DEBUG
 #include <config/EngineSetting.h>
 #include "BlendDesc.h"
+#include <iterator>
 
 void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow)
 {
@@ -177,9 +178,9 @@ void PostEffectExecuter::ImGui()
         ImGui::TableHeadersRow();
 
         // 一列目の処理
-        auto fnColumn1 = [&](int i) -> void
+        auto fnColumn1 = [&](int i, IPostEffect* effect) -> void
         {
-            std::string name = postEffects_[i]->GetName();
+            std::string name = effect->GetName();
             // Selectableで要素を表示・選択状態を管理
             if (ImGui::Selectable(name.c_str(), selectedIndex_ == i))
             {
@@ -189,7 +190,7 @@ void PostEffectExecuter::ImGui()
             if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
             {
                 selectedIndex_ = i;
-                postEffects_[selectedIndex_]->DebugOverlay();
+                effect->DebugOverlay();
 
                 if (ImGui::Button("Close"))
                     ImGui::CloseCurrentPopup();
@@ -199,11 +200,11 @@ void PostEffectExecuter::ImGui()
         };
 
         // 二列目の処理
-        auto fnColumn2 = [&](int i) -> void
+        auto fnColumn2 = [&](IPostEffect* effect) -> void
         {
             auto fn = [&]() -> void
             {
-                if (postEffects_[i]->Enabled()) ImGui::TextColored(kColorGreen, "Yes");
+                if (effect->Enabled()) ImGui::TextColored(kColorGreen, "Yes");
                 else ImGui::TextColored(kColorRed, "No");
             };
 
@@ -211,7 +212,7 @@ void PostEffectExecuter::ImGui()
         };
 
         // 三列目の処理
-        auto fnColumn3 = [&](int i) -> void
+        auto fnColumn3 = [&](int i, IPostEffect* effect) -> void
         {
             auto fn = [&](int i) -> void
             {
@@ -226,7 +227,7 @@ void PostEffectExecuter::ImGui()
                     }
                     else if (soloIndex_ == i)
                     {
-                        postEffects_[i]->Enable(false); // チェックを外すとソロ解除
+                        effect->Enable(false); // チェックを外すとソロ解除
                         soloIndex_ = -1; // チェックを外すとソロ解除
                     }
                 }
@@ -238,19 +239,22 @@ void PostEffectExecuter::ImGui()
         // テーブル構成
         for (int i = 0; i < postEffects_.size(); ++i)
         {
+            // 要素の取得
+            IPostEffect* effect = std::next(postEffects_.begin(), i)->get();
+
             ImGui::PushID(i); // 各要素にユニークなIDを付与
 
             ImGui::TableNextColumn(); // 次の列へ移動
 
-            fnColumn1(i);
+            fnColumn1(i, effect);
 
             ImGui::TableNextColumn(); // 2列目へ移動
 
-            fnColumn2(i);
+            fnColumn2(effect);
 
             ImGui::TableNextColumn(); // 3列目へ移動
 
-            fnColumn3(i);
+            fnColumn3(i, effect);
 
             ImGui::PopID(); // IDをポップして元に戻す
         }
@@ -263,34 +267,41 @@ void PostEffectExecuter::ImGui()
     // 移動ボタンの表示と操作
     bool isEnable = false;
     bool isSelected = (selectedIndex_ >= 0);
+    auto itrSelected = isSelected ? std::next(postEffects_.begin(), selectedIndex_) : postEffects_.end();
     if (!isSelected)
     {
         ImGui::BeginDisabled();
     }
     else
     {
-        isEnable = postEffects_[selectedIndex_]->Enabled();
+        isEnable = (*itrSelected)->Enabled();
     }
 
     if (ImGui::Button("Up") && selectedIndex_ > 0)
     {
-        std::swap(postEffects_[selectedIndex_], postEffects_[selectedIndex_ - 1]);
-        selectedIndex_--;  // 選択インデックスも一緒に更新
+        auto itrPrevious = std::prev(itrSelected);
+        postEffects_.splice(itrPrevious, postEffects_, itrSelected);
+
+        --selectedIndex_;  // 選択インデックスも一緒に更新
     }
 
     ImGui::SameLine();
 
     if (ImGui::Button("Down") && selectedIndex_ < postEffects_.size() - 1)
     {
-        std::swap(postEffects_[selectedIndex_], postEffects_[selectedIndex_ + 1]);
-        selectedIndex_++;  // 選択インデックスも更新
+        // list::splice(...)のArg1の手前にArg3を移動させるため
+        // 次の次のイテレータを取得しておく
+        auto itrNext = std::next(itrSelected);
+        auto itrNextNext = std::next(itrNext);
+        postEffects_.splice(itrNextNext, postEffects_, itrSelected);
+        ++selectedIndex_;  // 選択インデックスも更新
     }
 
     ImGui::SameLine();
 
     if (ImGui::Checkbox("Enabled", &isEnable))
     {
-        postEffects_[selectedIndex_]->Enable(isEnable);
+        (*itrSelected)->Enable(isEnable);
     }
 
     ImGui::SameLine();
@@ -298,7 +309,9 @@ void PostEffectExecuter::ImGui()
     ImGui::PushStyleColor(ImGuiCol_Button, kColorRed);
     if (ImGui::Button("Remove"))
     {
-        postEffects_.erase(postEffects_.begin() + selectedIndex_);
+        // #FIX: 
+        postEffects_.erase(itrSelected);
+        itrSelected = postEffects_.end();
         selectedIndex_ = -1; // 選択解除
     }
     ImGui::PopStyleColor();
@@ -475,20 +488,23 @@ void PostEffectExecuter::CreateCommandList()
     Helper::CreateCommandList(pDevice_, commandListForDraw_, commandAllocator_);
 }
 
-void PostEffectExecuter::EnableSolo(const size_t _index)
+void PostEffectExecuter::EnableSolo(const size_t index)
 {
-    if (_index < postEffects_.size())
+    if (index < postEffects_.size())
     {
+        auto itr = postEffects_.begin();
         for (size_t i = 0; i < postEffects_.size(); ++i)
         {
-            if (i == _index)
+            IPostEffect* effect = itr->get();
+            if (i == index)
             {
-                postEffects_[i]->Enable(true);
+                effect->Enable(true);
             }
             else
             {
-                postEffects_[i]->Enable(false);
+                effect->Enable(false);
             }
+            ++itr;
         }
     }
 }

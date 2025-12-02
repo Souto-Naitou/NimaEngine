@@ -76,6 +76,7 @@ public:
     bool    IsDisplay() const { return isDisplay_; }
 
     double  GetFPS() const { return fps_; }
+    void    PushLog(const std::string& _log);
 
 private:
     enum class WindowType

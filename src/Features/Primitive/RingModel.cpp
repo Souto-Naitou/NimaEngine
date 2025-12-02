@@ -13,6 +13,7 @@ RingModel::RingModel(const Params& params)
 
 void RingModel::Initialize()
 {
+    pDebugEntry_ = std::make_unique<DebugEntry<RingModel>>("Ring", "unnamed", this, false);
     isOverwroteTexture_ = false;
     this->CreateGPUResource();
 }
@@ -54,6 +55,19 @@ void RingModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE _texSrvHnd)
 {
     textureSrvHandleGPU_ = _texSrvHnd;
     isOverwroteTexture_ = true;
+}
+
+void RingModel::ImGui()
+{
+    #ifdef _DEBUG
+
+    ImGui::DragFloat("Outer Radius", &params_.radiusOuter, 0.01f, 0.0f, 100.0f);
+    ImGui::DragFloat("Inner Radius", &params_.radiusInner, 0.01f, 0.0f, 100.0f);
+    ImGui::DragFloat("Angle Start (rad)", &params_.radAngleStart, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
+    ImGui::DragFloat("Angle End (rad)", &params_.radAngleEnd, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
+    ImGui::DragFloat("Angle Offset (rad)", &params_.radAngleOffset, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
+
+    #endif // _DEBUG
 }
 
 void RingModel::SetAngleRange(const Range<float>& range)

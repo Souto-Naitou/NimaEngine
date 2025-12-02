@@ -5,6 +5,7 @@
 #include <string>
 #include <span>
 #include <Range.h>
+#include <DebugTools/DebugEntry/DebugEntry.h>
 
 class RingModel : public IModel
 {
@@ -28,6 +29,7 @@ public:
     void Update() override;
     void Draw(ID3D12GraphicsCommandList* cl) override;
     void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd) override;
+    void ImGui();
 
     /// [ リング操作 ]
 
@@ -73,4 +75,5 @@ private:
     bool                                    isReadyDraw_                = false;
     RingModel*                              pCloneSrc_                  = nullptr;  //< クローン元のインスタンス
     bool                                    isOverwroteTexture_         = false;    //< テクスチャを上書きしたかどうか
+    std::unique_ptr<DebugEntry<RingModel>>  pDebugEntry_                = nullptr;
 };

@@ -1119,6 +1119,7 @@
     </ClInclude>
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />
+    <ClInclude Include="Features\Gauge\GaugeBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

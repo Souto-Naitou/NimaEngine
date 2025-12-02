@@ -384,6 +384,7 @@
     <ClInclude Include="Features\Cubemap\CubemapSystem.h" />
     <ClInclude Include="Features\Cubemap\Skybox.h" />
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
+    <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\Layer.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />

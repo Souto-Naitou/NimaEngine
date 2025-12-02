@@ -694,6 +694,7 @@
       <Filter>Feature\Layer</Filter>
     </ClCompile>
     <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
+    <ClCompile Include="Features\Primitive\RingModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1117,6 +1118,7 @@
       <Filter>Feature\Layer</Filter>
     </ClInclude>
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
+    <ClInclude Include="Features\Primitive\RingModel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

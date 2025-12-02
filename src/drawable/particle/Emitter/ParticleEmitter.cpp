@@ -284,6 +284,7 @@ void ParticleEmitter::ImGuiSectionCommon()
             }
             else
             {
+                DebugManager::GetInstance()->PushLog("ファイルが存在しません");
                 jsonFileExist_ = false;
             }
         }

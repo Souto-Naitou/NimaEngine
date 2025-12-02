@@ -13,7 +13,7 @@ RingModel::RingModel(const Params& params)
 
 void RingModel::Initialize()
 {
-    pDebugEntry_ = std::make_unique<DebugEntry<RingModel>>("Ring", "unnamed", this, false);
+    pDebugEntry_ = std::make_unique<DebugEntry<RingModel>>("Model", "unnnamed_ring", this, false);
     isOverwroteTexture_ = false;
     this->CreateGPUResource();
 }

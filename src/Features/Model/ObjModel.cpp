@@ -45,7 +45,7 @@ void ObjModel::Clone(IModel* _src)
 
     isOverwroteTexture_ = false;
 
-    ObjModel* pSrc = dynamic_cast<ObjModel*>(_src);
+    auto pSrc = dynamic_cast<ObjModel*>(_src);
     if (!pSrc)
     {
         throw std::runtime_error("ObjModel::Clone: Source model is not an ObjModel.");
@@ -118,19 +118,7 @@ void ObjModel::LoadModelTexture()
         return;
     }
 
-    std::string filePath = modelData_.material.textureFilePath;
-
-    if (!std::filesystem::exists(modelData_.material.textureFilePath))
-    {
-        DebugManager::GetInstance()->PushLog("[Warning] The model's texture could not be loaded so white1x1.png is loaded instead : " + modelData_.material.textureFilePath + "\n");
-        Logger::GetInstance()->LogWarning(
-            "Model",
-            "LoadModelTexture",
-            "Could'nt load so white1x1.png is loaded instead. path: " + modelData_.material.textureFilePath
-        );
-
-        filePath = "white1x1.png";
-    }
+    const std::string& filePath = modelData_.material.textureFilePath;
 
     TextureManager* textureManager = TextureManager::GetInstance();
     textureManager->LoadTexture(filePath);

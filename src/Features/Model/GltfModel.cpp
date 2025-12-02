@@ -274,21 +274,8 @@ void GltfModel::_LoadModelTexture()
         return;
     }
 
-    std::string filePath = modelData_.material.textureFilePath;
-
-    if (!std::filesystem::exists(modelData_.material.textureFilePath))
-    {
-        DebugManager::GetInstance()->PushLog("[Warning] The model's texture could not be loaded so white1x1.png is loaded instead : " + modelData_.material.textureFilePath + "\n");
-        Logger::GetInstance()->LogWarning(
-            "Model",
-            "LoadModelTexture",
-            "Could'nt load so white1x1.png is loaded instead. path: " + modelData_.material.textureFilePath
-        );
-
-        filePath = "white1x1.png";
-    }
-
     TextureManager* textureManager = TextureManager::GetInstance();
+    std::string filePath = modelData_.material.textureFilePath;
     textureManager->LoadTexture(filePath);
     textureSrvHandleGPU_ = textureManager->GetSrvHandleGPU(filePath);
 

@@ -15,6 +15,11 @@ DebugManager* DebugManager::GetInstance()
     return &instance;
 }
 
+void DebugManager::PushLog(const std::string& _log)
+{
+    textLog_ += _log;
+}
+
 DebugManager::DebugManager()
 {
     pInput_ = Input::GetInstance();

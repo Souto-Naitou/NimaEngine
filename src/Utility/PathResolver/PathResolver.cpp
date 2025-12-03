@@ -49,14 +49,14 @@ std::string PathResolver::GetParentPath(const std::string& _fileName)
     return directoryPath.string();
 }
 
-std::string PathResolver::GetFilePath(const std::string& fileName)
+std::string PathResolver::GetFilePath(const std::string& _fileName)
 {
     fs::path filePath = {};
-    if (!fs::exists(fileName) && !fileName.empty())
+    if (!fs::exists(_fileName))
     {
         for (const auto& path : searchPaths_)
         {
-            fs::path tempPath = path / fileName;
+            fs::path tempPath = path / _fileName;
             if (fs::exists(tempPath))
             {
                 filePath = tempPath;
@@ -66,7 +66,7 @@ std::string PathResolver::GetFilePath(const std::string& fileName)
     }
     else
     {
-        filePath = fs::path(fileName);
+        filePath = fs::path(_fileName);
     }
 
     return filePath.string();

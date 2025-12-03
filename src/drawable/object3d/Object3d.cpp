@@ -117,8 +117,6 @@ void Object3d::Update()
     {
         cameraForGPU_->worldPosition = (*ppSystemGameEye_)->GetTransform().translate;
     }
-
-    if (pModel_) pModel_->Update();
 }
 
 void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)

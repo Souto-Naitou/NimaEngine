@@ -31,7 +31,7 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
         objModel->SetDirectX12(pDx12_);
         objModel->Initialize();
 
-        *objModel->GetModelData() = this->LoadModelByAssimp(_path);
+        *objModel->GetModelData() = this->_LoadModelByAssimp(_path);
         objModel->CreateGPUResource();
         model = objModel;
     }
@@ -41,10 +41,10 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
         gltfModel->SetDirectX12(pDx12_);
         gltfModel->Initialize();
 
-        *gltfModel->GetModelData() = this->LoadModelByAssimp(_path);
-        *gltfModel->GetAnimationData() = this->LoadAnimation(_path);
-        *gltfModel->GetSkeleton() = this->CreateSkeleton(gltfModel->GetModelData()->rootNode);
-        *gltfModel->GetSkinCluster() = this->CreateSkinCluster(
+        *gltfModel->GetModelData() = this->_LoadModelByAssimp(_path);
+        *gltfModel->GetAnimationData() = this->_LoadAnimation(_path);
+        *gltfModel->GetSkeleton() = this->_CreateSkeleton(gltfModel->GetModelData()->rootNode);
+        *gltfModel->GetSkinCluster() = this->_CreateSkinCluster(
             pDx12_->GetDevice(),
             *gltfModel->GetSkeleton(),
             *gltfModel->GetModelData()
@@ -56,7 +56,7 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
     return model;
 }
 
-ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
+ModelData ModelLoaderAssimp::_LoadModelByAssimp(const std::string& _path)
 {
     ModelData result = {};
     Assimp::Importer importer;
@@ -171,20 +171,20 @@ ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
         }
     }
 
-    result.rootNode = this->ReadNode(scene->mRootNode);
+    result.rootNode = this->_ReadNode(scene->mRootNode);
 
     return result;
 }
 
-Animation ModelLoaderAssimp::LoadAnimation(const std::string& _path)
+Animation ModelLoaderAssimp::_LoadAnimation(const std::string& _path)
 {
     Animation result = {};
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(_path.c_str(), 0);
-    return this->LoadAnimation(scene);
+    return this->_LoadAnimation(scene);
 }
 
-Animation ModelLoaderAssimp::LoadAnimation(const aiScene* _scene)
+Animation ModelLoaderAssimp::_LoadAnimation(const aiScene* _scene)
 {
     Animation result = {};
 
@@ -256,7 +256,7 @@ Animation ModelLoaderAssimp::LoadAnimation(const aiScene* _scene)
     return result;
 }
 
-Node ModelLoaderAssimp::ReadNode(aiNode* _node)
+Node ModelLoaderAssimp::_ReadNode(aiNode* _node)
 {
     Node node;
 
@@ -277,18 +277,18 @@ Node ModelLoaderAssimp::ReadNode(aiNode* _node)
     node.children.resize(_node->mNumChildren);
     for (uint32_t childIndex = 0; childIndex < _node->mNumChildren; ++childIndex)
     {
-        node.children[childIndex] = ReadNode(_node->mChildren[childIndex]);
+        node.children[childIndex] = _ReadNode(_node->mChildren[childIndex]);
     }
 
     return node;
 }
 
-Skeleton ModelLoaderAssimp::CreateSkeleton(const Node& _rootNode)
+Skeleton ModelLoaderAssimp::_CreateSkeleton(const Node& _rootNode)
 {
     Skeleton skeleton;
     skeleton.Initialize();
     SkeletonData& skeletonData = skeleton.GetSkeletonData();
-    skeletonData.rootIndex = CreateJoint(_rootNode, {}, skeletonData.joints);
+    skeletonData.rootIndex = _CreateJoint(_rootNode, {}, skeletonData.joints);
 
     // 名前とindexのマッピングを行いアクセスしやすくする
     for (const Joint& joint : skeletonData.joints)
@@ -321,7 +321,7 @@ Skeleton ModelLoaderAssimp::CreateSkeleton(const Node& _rootNode)
     return skeleton;
 }
 
-int32_t ModelLoaderAssimp::CreateJoint(const Node& _node, const std::optional<int32_t>& _parentIndex, std::vector<Joint>& _joints)
+int32_t ModelLoaderAssimp::_CreateJoint(const Node& _node, const std::optional<int32_t>& _parentIndex, std::vector<Joint>& _joints)
 {
     Joint joint;
     joint.Initialize();
@@ -336,13 +336,13 @@ int32_t ModelLoaderAssimp::CreateJoint(const Node& _node, const std::optional<in
     for (const Node& child : _node.children)
     {
         // 子Jointを作成してそのIndexを登録
-        int32_t childIndex = this->CreateJoint(child, jointData.index, _joints);
+        int32_t childIndex = this->_CreateJoint(child, jointData.index, _joints);
         _joints[jointData.index].GetJointData().childrenIndices.push_back(childIndex);
     }
     return jointData.index;
 }
 
-SkinCluster ModelLoaderAssimp::CreateSkinCluster(
+SkinCluster ModelLoaderAssimp::_CreateSkinCluster(
     const Microsoft::WRL::ComPtr<ID3D12Device>& _device,
     const Skeleton& _skeleton, 
     const ModelData& _modelData

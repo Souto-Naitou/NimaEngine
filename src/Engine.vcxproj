@@ -266,7 +266,6 @@
     <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\Layer.cpp" />
-    <ClCompile Include="Features\Primitive\RingModel.cpp" />
     <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
@@ -392,7 +391,6 @@
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\Layer.h" />
-    <ClInclude Include="Features\Primitive\RingModel.h" />
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />

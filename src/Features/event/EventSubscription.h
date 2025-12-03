@@ -14,7 +14,7 @@ public:
     EventSubscription(EventID id, size_t index, EventListener* owner)
         : id_(id), index_(index), owner_(owner) {}
 
-    inline ~EventSubscription() noexcept;
+    ~EventSubscription();
 
     // コピー禁止
     EventSubscription(const EventSubscription&) = delete;

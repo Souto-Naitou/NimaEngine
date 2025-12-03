@@ -34,7 +34,6 @@ public:
     template <typename T>
     EventSubscription Subscribe(std::function<void(const T&)> callback);
 
-    template <typename T>
     inline void Unsubscribe(EventID id, size_t index)
     {
         auto it = subscribers_.find(id);

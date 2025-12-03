@@ -1,11 +1,11 @@
 #include "EventSubscription.h"
 #include "EventListener.h"
 
-EventSubscription::~EventSubscription() noexcept
+EventSubscription::~EventSubscription()
 {
     if (owner_)
     {
-        owner_->Unsubscribe<void>(id_, index_);
+        owner_->Unsubscribe(id_, index_);
     }
 }
 
@@ -16,7 +16,7 @@ EventSubscription& EventSubscription::operator=(EventSubscription&& other) noexc
         // 既存のサブスクリプションを解除
         if (owner_)
         {
-            owner_->Unsubscribe<void>(id_, index_);
+            owner_->Unsubscribe(id_, index_);
         }
         id_ = other.id_;
         index_ = other.index_;

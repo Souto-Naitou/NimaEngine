@@ -42,6 +42,7 @@ void NimaFramework::Initialize()
     pParticleSystem_ = ParticleSystem::GetInstance();
     pTextureManager_ = TextureManager::GetInstance();
     pSRVManager_ = SRVManager::GetInstance();
+    pEventListener_ = EventListener::GetInstance();
     pSceneManager_ = SceneManager::GetInstance();
     pParticleStorage_ = ParticleStorage::GetInstance();
     pLineSystem_ = LineSystem::GetInstance();
@@ -274,6 +275,9 @@ void NimaFramework::Update()
 
     /// パーティクル更新
     pParticleStorage_->Update();
+
+    /// イベントリスナーのディスパッチ
+    pEventListener_->Dispatch();
 }
 
 void NimaFramework::Draw()

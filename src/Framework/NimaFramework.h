@@ -25,6 +25,7 @@
 #include <Features/NiGui/NiGuiDebug.h>
 #include <Features/Cubemap/CubemapSystem.h>
 #include <DebugTools/EventTimer/EventTimer.h>
+#include <Features/Event/EventListener.h>
 
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecuter.h>
@@ -107,6 +108,7 @@ protected:
     RandomGenerator*                pRandomGenerator_           = nullptr;
     AudioManager*                   pAudioManager_              = nullptr;
     EventTimer*                     pEventTimer_                = nullptr;
+    EventListener*                  pEventListener_             = nullptr;
 
     bool                                isExitProgram_          = false;
 

@@ -31,6 +31,8 @@ public:
     void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd) override;
     void ImGui();
 
+    void SetName(const std::string& name);
+
     /// [ リング操作 ]
 
     /// <summary>

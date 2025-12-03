@@ -70,6 +70,11 @@ void RingModel::ImGui()
     #endif // _DEBUG
 }
 
+void RingModel::SetName(const std::string& name)
+{
+    if (pDebugEntry_) pDebugEntry_->SetName(name);
+}
+
 void RingModel::SetAngleRange(const Range<float>& range)
 {
     if (range.start() <= range.end())

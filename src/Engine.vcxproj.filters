@@ -367,6 +367,12 @@
     <Filter Include="Drawable\Sprite">
       <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Feature\Shape\Ring">
+      <UniqueIdentifier>{a7ceecdd-c428-42af-a8dc-4c495cb4f039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Gauge">
+      <UniqueIdentifier>{352baa52-3f6a-440f-ad34-b776f126c4c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -693,8 +699,17 @@
     <ClCompile Include="Features\Layer\CanvasScope.h">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
-    <ClCompile Include="Features\Primitive\RingModel.cpp" />
+    <ClCompile Include="Features\Primitive\RingModel.cpp">
+      <Filter>Feature\Shape\Ring</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp">
+      <Filter>Feature\TimeMeasurer</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Gauge\GaugeBase.cpp">
+      <Filter>Feature\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Event\EventListener.cpp" />
+    <ClCompile Include="Features\Event\EventSubscription.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1117,9 +1132,17 @@
     <ClInclude Include="Features\Layer\CurrentCanvas.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
-    <ClInclude Include="Features\Primitive\RingModel.h" />
-    <ClInclude Include="Features\Gauge\GaugeBase.h" />
+    <ClInclude Include="Features\Primitive\RingModel.h">
+      <Filter>Feature\Shape\Ring</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h">
+      <Filter>Feature\TimeMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Gauge\GaugeBase.h">
+      <Filter>Feature\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Event\EventListener.h" />
+    <ClInclude Include="Features\Event\EventSubscription.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

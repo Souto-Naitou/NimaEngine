@@ -261,6 +261,9 @@
     <ClCompile Include="Features\Cubemap\CubemapSystem.cpp" />
     <ClCompile Include="Features\Cubemap\Skybox.cpp" />
     <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp" />
+    <ClCompile Include="Features\Event\EventListener.cpp" />
+    <ClCompile Include="Features\Event\EventSubscription.cpp" />
+    <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\Layer.cpp" />
     <ClCompile Include="Features\Primitive\RingModel.cpp" />
@@ -384,6 +387,8 @@
     <ClInclude Include="Features\Cubemap\CubemapSystem.h" />
     <ClInclude Include="Features\Cubemap\Skybox.h" />
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
+    <ClInclude Include="Features\Event\EventListener.h" />
+    <ClInclude Include="Features\Event\EventSubscription.h" />
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\Layer.h" />

@@ -23,20 +23,20 @@ public:
     std::shared_ptr<IModel> LoadModel(const std::string& _path) override;
 
 private:
-    ModelData   _LoadModelByAssimp(const std::string& _path);
+    ModelData   LoadModelByAssimp(const std::string& _path);
     // アニメーションの読み込み
-    Animation   _LoadAnimation(const aiScene* _scene);
+    Animation   LoadAnimation(const aiScene* _scene);
     // ハンドラ
-    Animation   _LoadAnimation(const std::string& _path);
+    Animation   LoadAnimation(const std::string& _path);
     // ノードの読み込み
-    Node        _ReadNode(aiNode* _node);
+    Node        ReadNode(aiNode* _node);
 
     // スケルトンの作成
-    Skeleton    _CreateSkeleton(const Node& _rootNode);
+    Skeleton    CreateSkeleton(const Node& _rootNode);
 
-    int32_t     _CreateJoint(const Node& _node, const std::optional<int32_t>& _parentIndex, std::vector<Joint>& _joints);
+    int32_t     CreateJoint(const Node& _node, const std::optional<int32_t>& _parentIndex, std::vector<Joint>& _joints);
 
-    SkinCluster _CreateSkinCluster(
+    SkinCluster CreateSkinCluster(
         const Microsoft::WRL::ComPtr<ID3D12Device>& _device,
         const Skeleton& _skeleton,
         const ModelData& _modelData

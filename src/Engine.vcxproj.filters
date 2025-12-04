@@ -124,9 +124,6 @@
     <Filter Include="Feature\Easing">
       <UniqueIdentifier>{53aeec94-d787-4d99-b465-261ed690cdbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Easing\Manager">
-      <UniqueIdentifier>{87c034dc-2a58-4398-a8da-17b67b15a2e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Feature\CSV">
       <UniqueIdentifier>{041acee4-5bdd-4267-9204-84c9d7b43c7c}</UniqueIdentifier>
     </Filter>
@@ -373,6 +370,9 @@
     <Filter Include="Feature\Gauge">
       <UniqueIdentifier>{352baa52-3f6a-440f-ad34-b776f126c4c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Feature\Event">
+      <UniqueIdentifier>{5d9bd20b-26a0-4fec-bb43-cf77d179c10f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -491,9 +491,6 @@
     </ClCompile>
     <ClCompile Include="Features\Collision\Collider\Collider.cpp">
       <Filter>Feature\Collision\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\Easing.cpp">
-      <Filter>Feature\Easing</Filter>
     </ClCompile>
     <ClCompile Include="Features\CSV\CSVLoader.cpp">
       <Filter>Feature\CSV</Filter>
@@ -699,17 +696,24 @@
     <ClCompile Include="Features\Layer\CanvasScope.h">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Primitive\RingModel.cpp">
-      <Filter>Feature\Shape\Ring</Filter>
-    </ClCompile>
     <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp">
       <Filter>Feature\TimeMeasurer</Filter>
     </ClCompile>
     <ClCompile Include="Features\Gauge\GaugeBase.cpp">
       <Filter>Feature\Gauge</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Event\EventListener.cpp" />
-    <ClCompile Include="Features\Event\EventSubscription.cpp" />
+    <ClCompile Include="Features\Primitive\RingModel.cpp">
+      <Filter>Feature\Shape\Ring</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Event\EventListener.cpp">
+      <Filter>Feature\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Event\EventSubscription.cpp">
+      <Filter>Feature\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Easing.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -855,9 +859,6 @@
     </ClInclude>
     <ClInclude Include="Features\Collision\Shape.h">
       <Filter>Feature\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Easing.h">
-      <Filter>Feature\Easing</Filter>
     </ClInclude>
     <ClInclude Include="Features\CSV\CSVLoader.h">
       <Filter>Feature\CSV</Filter>
@@ -1132,17 +1133,24 @@
     <ClInclude Include="Features\Layer\CurrentCanvas.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Primitive\RingModel.h">
-      <Filter>Feature\Shape\Ring</Filter>
-    </ClInclude>
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h">
       <Filter>Feature\TimeMeasurer</Filter>
     </ClInclude>
     <ClInclude Include="Features\Gauge\GaugeBase.h">
       <Filter>Feature\Gauge</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Event\EventListener.h" />
-    <ClInclude Include="Features\Event\EventSubscription.h" />
+    <ClInclude Include="Features\Primitive\RingModel.h">
+      <Filter>Feature\Shape\Ring</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Event\EventListener.h">
+      <Filter>Feature\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Event\EventSubscription.h">
+      <Filter>Feature\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Easing.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

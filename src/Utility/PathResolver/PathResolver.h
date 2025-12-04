@@ -40,7 +40,7 @@ public:
     /// <param name="_fileName">ファイル名</param>
     /// <returns>ファイルパス</returns>
     [[nodiscard]]
-    std::string GetFilePath(const std::string& _fileName);
+    std::string GetFilePath(const std::string& fileName);
 
 private:
     std::vector<std::filesystem::path> searchPaths_ = {};

@@ -23,7 +23,7 @@ public:
     static WinSystem* GetInstance() { static WinSystem instance;return &instance; };
 
     HWND GetHwnd() const { return hwnd_; }
-    HINSTANCE GetHinstance() const { return wc_.hInstance; }
+    HINSTANCE GetInstanceHandle() const { return wc_.hInstance; }
 
     void Initialize();
     void Finalize() const;

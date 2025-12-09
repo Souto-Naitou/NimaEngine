@@ -2,13 +2,13 @@
 
 
 
-void GaugeBase::operator=(const float& val)
+void GaugeBase::operator=(float val)
 {
-    targetValue_ = val;
+    rawValue_ = val;
 }
 
 float& GaugeBase::operator+=(const float& val)
 {
-    targetValue_ += val;
-    return targetValue_;
+    rawValue_ += val;
+    return rawValue_;
 }

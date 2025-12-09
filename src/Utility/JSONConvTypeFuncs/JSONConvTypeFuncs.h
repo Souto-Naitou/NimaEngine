@@ -34,12 +34,12 @@ inline void to_json(nlohmann::json& _j, const Vector4& _v)
 template <typename T>
 inline void from_json(const nlohmann::json& _j, Range<T>& _v)
 {
-    _j.at("start").get_to(_v.start());
-    _j.at("end").get_to(_v.end());
+    _j.at("start").get_to(_v.start);
+    _j.at("end").get_to(_v.end);
 }
 
 template <typename T>
 inline void to_json(nlohmann::json& _j, const Range<T>& _v)
 {
-    _j = nlohmann::json{ {"start", _v.start()}, {"end", _v.end()} };
+    _j = nlohmann::json{ {"start", _v.start}, {"end", _v.end} };
 }

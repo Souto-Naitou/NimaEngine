@@ -77,29 +77,29 @@ void RingModel::SetName(const std::string& name)
 
 void RingModel::SetAngleRange(const Range<float>& range)
 {
-    if (range.start() <= range.end())
+    if (range.start <= range.end)
     {
-        params_.radAngleStart = range.start();
-        params_.radAngleEnd = range.end();
+        params_.radAngleStart = range.start;
+        params_.radAngleEnd = range.end;
     }
     else
     {
-        params_.radAngleStart = range.end();
-        params_.radAngleEnd = range.start();
+        params_.radAngleStart = range.end;
+        params_.radAngleEnd = range.start;
     }
 }
 
 void RingModel::SetRadii(const Range<float>& range)
 {
-    if (range.start() <= range.end())
+    if (range.start <= range.end)
     {
-        params_.radiusInner = range.start();
-        params_.radiusOuter = range.end();
+        params_.radiusInner = range.start;
+        params_.radiusOuter = range.end;
     }
     else
     {
-        params_.radiusInner = range.end();
-        params_.radiusOuter = range.start();
+        params_.radiusInner = range.end;
+        params_.radiusOuter = range.start;
     }
 }
 

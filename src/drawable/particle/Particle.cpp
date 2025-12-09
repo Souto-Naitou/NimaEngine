@@ -211,7 +211,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     if (!timer.GetIsStart())
     {
         timer.Start();
-        currentColor = colorRange.start();
+        currentColor = colorRange.start;
     }
 
     /// 経過時間の取得
@@ -309,12 +309,12 @@ void Particle::ParticleColorUpdate(std::list<ParticleData>::iterator& itr)
 
     if (alphaDeltaValue == 0)
     {
-        currentColor.Lerp(colorRange.start(), colorRange.end(), Math::Easing::EaseOutCubic(t));
+        currentColor.Lerp(colorRange.start, colorRange.end, Math::Easing::EaseOutCubic(t));
     }
     else
     {
         Vector3 rgb = currentColor.xyz();
-        rgb.Lerp(colorRange.start().xyz(), colorRange.end().xyz(), Math::Easing::EaseOutCubic(t));
+        rgb.Lerp(colorRange.start.xyz(), colorRange.end.xyz(), Math::Easing::EaseOutCubic(t));
         currentColor.w += alphaDeltaValue;
         currentColor = { rgb.x, rgb.y, rgb.z, currentColor.w };
     }
@@ -332,16 +332,16 @@ void Particle::ParticleScaleUpdate(std::list<ParticleData>::iterator& itr)
     {
         if (currentLifeTime > lifeTime - scaleDelayTime)
         {
-            transform.scale = scaleRange.start();
+            transform.scale = scaleRange.start;
         }
         else
         {
-            transform.scale.Lerp(scaleRange.start(), scaleRange.end(), 1.0f - currentLifeTime / (lifeTime - scaleDelayTime));
+            transform.scale.Lerp(scaleRange.start, scaleRange.end, 1.0f - currentLifeTime / (lifeTime - scaleDelayTime));
         }
     }
     else
     {
-        transform.scale = scaleRange.start();
+        transform.scale = scaleRange.start;
     }
 
 }

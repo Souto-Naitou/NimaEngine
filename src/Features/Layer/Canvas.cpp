@@ -85,6 +85,8 @@ void Canvas::DrawObjects()
     DX12Helper::CommandListCommonSetting(params_.pDx12, cl, &rtvHandle);
     DX12Helper::CommandListCommonSetting(params_.pDx12, clDx12, &rtvHandle);
 
+    if (!isEnabled_) return;
+
     if (params_.pCubemapSystem)
     {
         params_.pCubemapSystem->DrawSetting(clDx12);
@@ -109,6 +111,8 @@ void Canvas::ApplyPostEffects()
 
 void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
 {
+    if (!isEnabled_) return;
+
     if (rtvHandle_.ptr)
     {
         this->DrawObjects();
@@ -124,7 +128,7 @@ void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
 void Canvas::ImGui()
 {
 #ifdef _DEBUG
-
+    ImGui::Checkbox("Enable", &isEnabled_);
     this->ImGuiPreview();
 
     pPostEffectExecuter_->ImGui();

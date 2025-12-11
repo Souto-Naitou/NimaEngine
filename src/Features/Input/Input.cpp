@@ -2,19 +2,20 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <Core/Win32/WinSystem.h>
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
-void Input::Initialize(HINSTANCE _hInstance, HWND _hwnd)
+void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 {
     HRESULT hr = DirectInput8Create(
-        _hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr
+        hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, static_cast<void**>(&directInput_), nullptr
     );
     assert(SUCCEEDED(hr));
 
     // キーボードデバイスの生成
-    hr = directInput_->CreateDevice(GUID_SysKeyboard, &keyboard_, NULL);
+    hr = directInput_->CreateDevice(GUID_SysKeyboard, &keyboard_, nullptr);
     assert(SUCCEEDED(hr));
 
     // 入力データ形式のセット
@@ -23,7 +24,7 @@ void Input::Initialize(HINSTANCE _hInstance, HWND _hwnd)
 
     // 排他制御レベルのセット
     hr = keyboard_->SetCooperativeLevel(
-        _hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE
+        hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE
     );
     assert(SUCCEEDED(hr));
 
@@ -31,7 +32,7 @@ void Input::Initialize(HINSTANCE _hInstance, HWND _hwnd)
     keyboard_->Acquire();
 
     // マウスデバイスの生成
-    hr = directInput_->CreateDevice(GUID_SysMouse, &mouse_, NULL);
+    hr = directInput_->CreateDevice(GUID_SysMouse, &mouse_, nullptr);
     assert(SUCCEEDED(hr));
 
     // 入力データ形式のセット
@@ -40,7 +41,7 @@ void Input::Initialize(HINSTANCE _hInstance, HWND _hwnd)
 
     // 排他制御レベルのセット
     hr = mouse_->SetCooperativeLevel(
-        _hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE
+        hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE
     );
 
     // マウス情報の取得開始
@@ -48,7 +49,7 @@ void Input::Initialize(HINSTANCE _hInstance, HWND _hwnd)
 
     assert(SUCCEEDED(hr));
 
-    this->InitializePad(_hwnd);
+    this->InitializePad(hwnd);
 }
 
 void Input::Update()
@@ -64,6 +65,9 @@ void Input::Update()
     // マウスの状態を更新
     this->UpdateDeviceState(pad_.Get(), &padState_, sizeof(padState_));
 
+    // カーソル位置の更新
+    this->UpdateCursorPosition();
+
     // ゲームパッドの更新
     this->UpdatePad();
 
@@ -71,25 +75,25 @@ void Input::Update()
     this->MapInputData();
 }
 
-void Input::Enable(bool _flag)
+void Input::Enable(bool flag)
 {
-    isEnable_ = _flag;
+    isEnable_ = flag;
 }
 
-bool Input::PushKey(BYTE _keyNumber) const
+bool Input::PushKey(BYTE keyNumber) const
 {
     // 指定キーを押して入ればtrueを返す
-    if (key_[_keyNumber])
+    if (key_[keyNumber])
     {
         return true;
     }
     return false;
 }
 
-bool Input::PushKeyC(char _key) const
+bool Input::PushKeyC(char key) const
 {
     // 指定キーを押して入ればtrueを返す
-    if(key_[GetKeyNumber(_key)])
+    if(key_[GetKeyNumber(key)])
     {
         return true;
     }
@@ -97,10 +101,10 @@ bool Input::PushKeyC(char _key) const
     return false;
 }
 
-bool Input::TriggerKey(BYTE _keyNumber) const
+bool Input::TriggerKey(BYTE keyNumber) const
 {
     // キーが押された瞬間ならtrueを返す
-    if(key_[_keyNumber] && !keyPre_[_keyNumber])
+    if(key_[keyNumber] && !keyPre_[keyNumber])
     {
         return true;
     }
@@ -108,10 +112,10 @@ bool Input::TriggerKey(BYTE _keyNumber) const
     return false;
 }
 
-bool Input::TriggerKeyC(char _key) const
+bool Input::TriggerKeyC(char key) const
 {
     // キーが押された瞬間ならtrueを返す
-    BYTE keyNumber = GetKeyNumber(_key);
+    BYTE keyNumber = GetKeyNumber(key);
     if(key_[keyNumber] && !keyPre_[keyNumber])
     {
         return true;
@@ -130,16 +134,21 @@ Vector2 Input::GetRightStickPosition() const
     return rightStickPosition_;
 }
 
-bool Input::PushMouse(MouseNum _mouseNum) const
+POINT Input::GetCursorPosition() const
 {
-    if (_mouseNum == MouseNum::Left)
+    return mousePosition_;
+}
+
+bool Input::PushMouse(MouseNum mouseNum) const
+{
+    if (mouseNum == MouseNum::Left)
     {
         if (leftClick_)
         {
             return true;
         }
     }
-    else if (_mouseNum == MouseNum::Right)
+    else if (mouseNum == MouseNum::Right)
     {
         if (rightClick_)
         {
@@ -150,16 +159,16 @@ bool Input::PushMouse(MouseNum _mouseNum) const
     return false;
 }
 
-bool Input::TriggerMouse(MouseNum _mouseNum) const
+bool Input::TriggerMouse(MouseNum mouseNum) const
 {
-    if (_mouseNum == MouseNum::Left)
+    if (mouseNum == MouseNum::Left)
     {
         if (leftClick_ && !leftClickPre_)
         {
             return true;
         }
     }
-    else if (_mouseNum == MouseNum::Right)
+    else if (mouseNum == MouseNum::Right)
     {
         if (rightClick_ && !rightClickPre_)
         {
@@ -175,10 +184,10 @@ int32_t Input::GetWheelDelta() const
     return wheelDelta_;
 }
 
-BYTE Input::GetKeyNumber(char _key) const
+BYTE Input::GetKeyNumber(char key) const
 {
     // キーの文字からキー番号を取得
-    return static_cast<BYTE>(MapVirtualKey(_key, MAPVK_VK_TO_VSC));
+    return static_cast<BYTE>(MapVirtualKey(key, MAPVK_VK_TO_VSC));
 }
 
 void Input::MapInputData()
@@ -315,12 +324,30 @@ void Input::UpdateDeviceState(IDirectInputDevice8* pDevice, LPVOID out_state, si
     }
 }
 
+void Input::UpdateCursorPosition()
+{
+    POINT point;
+    if (GetCursorPos(&point))
+    {
+        ScreenToClient(WinSystem::GetInstance()->GetHwnd(), &point);
+        point.x -= viewportOffset_.x;
+        point.y -= viewportOffset_.y;
+        mousePosition_ = point;
+    }
+
+    // 異なる画面サイズ用に補正をかける (縦横比が同じである前提)
+    if (viewportSize_.cy == 0) return; // ゼロ除算防止
+    float ratio = static_cast<float>(WinSystem::clientHeight) / static_cast<float>(viewportSize_.cy);
+    mousePosition_.x = static_cast<LONG>(static_cast<float>(mousePosition_.x) * ratio);
+    mousePosition_.y = static_cast<LONG>(static_cast<float>(mousePosition_.y) * ratio);
+}
+
 int Input::EnumJoystickCallback(const DIDEVICEINSTANCE* pdidInstance, void* context)
 {
     auto pInput = static_cast<Input*>(context);
     auto directInput = pInput->GetDirectInput();
     
-    if (FAILED(directInput->CreateDevice(pdidInstance->guidInstance, pInput->GetPad(), NULL)))
+    if (FAILED(directInput->CreateDevice(pdidInstance->guidInstance, pInput->GetPad(), nullptr)))
     {
         return DIENUM_CONTINUE; // エラーが発生した場合は次のデバイスへ
     }

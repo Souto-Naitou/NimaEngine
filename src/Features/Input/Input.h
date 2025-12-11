@@ -36,7 +36,7 @@ public:
     /// </summary>
     /// <param name="_hInstance">アプリケーションインスタンス。</param>
     /// <param name="_hwnd">ウィンドウハンドル。</param>
-    void        Initialize(HINSTANCE _hInstance, HWND _hwnd);
+    void        Initialize(HINSTANCE hInstance, HWND hwnd);
     /// <summary>
     /// 入力状態を更新します。
     /// キーボード/マウス/パッドの状態を取得して内部に反映します。
@@ -47,19 +47,23 @@ public:
     /// 入力処理の有効/無効を切り替えます。
     /// </summary>
     /// <param name="_flag">trueで有効。</param>
-    void        Enable(bool _flag);
+    void        Enable(bool flag);
 
     void        SetDeadZoneRange(float deadZoneRange) { deadZoneRange_ = deadZoneRange; }
+    void        SetWindowOffset(POINT offset) { viewportOffset_ = offset; }
+    void        SetWindowSize(SIZE size) { viewportSize_ = size; }
 
-    bool        PushKey(BYTE _keyNumber) const;
-    bool        PushKeyC(char _key) const;
-    bool        TriggerKey(BYTE _keyNumber) const;
-    bool        TriggerKeyC(char _key) const;
+    /// 状態の取得
+    bool        PushKey(BYTE keyNumber) const;
+    bool        PushKeyC(char key) const;
+    bool        TriggerKey(BYTE keyNumber) const;
+    bool        TriggerKeyC(char key) const;
     Vector2     GetLeftStickPosition() const;
     Vector2     GetRightStickPosition() const;
+    POINT       GetCursorPosition() const;
 
-    bool        PushMouse(MouseNum _mouseNum) const;
-    bool        TriggerMouse(MouseNum _mouseNum) const;
+    bool        PushMouse(MouseNum mouseNum) const;
+    bool        TriggerMouse(MouseNum mouseNum) const;
     int32_t     GetWheelDelta() const;
     IDirectInput8* GetDirectInput() const { return directInput_.Get(); }
     IDirectInputDevice8** GetPad() { return pad_.GetAddressOf(); }
@@ -74,7 +78,7 @@ private:
     /// <summary>
     /// 文字からDirectInputのキー番号へ変換します。
     /// </summary>
-    BYTE GetKeyNumber(char _key) const;
+    BYTE GetKeyNumber(char key) const;
     /// <summary>
     /// デバイスの生入力から論理入力へマッピングします。
     /// </summary>
@@ -91,6 +95,10 @@ private:
     /// 指定デバイスの状態を更新します。
     /// </summary>
     void UpdateDeviceState(IDirectInputDevice8* pDevice, LPVOID out_state, size_t sizeState);
+    /// <summary>
+    /// カーソル位置を更新します。
+    /// </summary>
+    void UpdateCursorPosition();
 
     // State
     bool isEnable_ = true;
@@ -119,4 +127,7 @@ private:
     bool    buttons_[32]        = {}; // ボタンの状態
     bool    buttonsPre_[32]     = {}; // 前回のボタン状態
     float   deadZoneRange_      = 0.1f;  // ジョイスティックのデッドゾーン範囲
+    POINT   mousePosition_      = { 0, 0 };
+    POINT   viewportOffset_     = { 0, 0 };
+    SIZE    viewportSize_       = { 0, 0 };
 };

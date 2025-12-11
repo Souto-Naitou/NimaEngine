@@ -46,11 +46,12 @@ void WinSystem::Finalize() const
 void WinSystem::ShowWnd()
 {
     RECT wrc = { 0,0,static_cast<LONG>(clientWidth), static_cast<LONG>(clientHeight) };
-    AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
+    long flag = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
+    AdjustWindowRect(&wrc, flag, false);
     hwnd_ = CreateWindow(
         wc_.lpszClassName,          // 利用するクラス名
         title_.c_str(),             // タイトルバーの文字
-        WS_OVERLAPPEDWINDOW,        // よく見るウィンドウスタイル
+        flag,                       // よく見るウィンドウスタイル
         CW_USEDEFAULT,              // 表示X座標(ウィンドウ出現位置？)
         CW_USEDEFAULT,              // 表示Y座標
         wrc.right - wrc.left,       // ウィンドウ横幅

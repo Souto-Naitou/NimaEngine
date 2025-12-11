@@ -9,6 +9,7 @@
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
 #include <config/EngineSetting.h>
+#include <imgui.h>
 
 void Grayscale::Initialize(const PostEffectInitParams& desc)
 {
@@ -27,6 +28,9 @@ void Grayscale::Initialize(const PostEffectInitParams& desc)
 
     // パイプラインステートの生成
     this->CreatePipelineStateObject();
+
+    // 定数バッファリソースの生成
+    this->CreateResorceCBuffer();
 }
 
 void Grayscale::Enable(bool _flag)
@@ -85,6 +89,8 @@ void Grayscale::Setting()
 
     // 入力テクスチャのSRVを設定する（自分が所有するテクスチャのSRVではないため注意)
     commandList_->SetGraphicsRootDescriptorTable(0, inputGpuHandle_);
+    // オプション用CBVを設定
+    commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -108,13 +114,21 @@ void Grayscale::ToShaderResourceState()
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
+void Grayscale::DebugOverlay()
+{
+#ifdef _DEBUG
+    ImGui::DragFloat("Power", &pOption_->power, 0.01f);
+#endif // _DEBUG
+}
+
 void Grayscale::CreateRootSignature()
 {
     D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
     descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-    RootParameters<1> rootParameters = {};
+    RootParameters<2> rootParameters = {};
     rootParameters.SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL);
+    rootParameters.SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
 
     descriptionRootSignature.pParameters = rootParameters.GetParams();
     descriptionRootSignature.NumParameters = rootParameters.GetSize();
@@ -187,4 +201,12 @@ void Grayscale::CreatePipelineStateObject()
         assert(false);
     }
     return;
+}
+
+void Grayscale::CreateResorceCBuffer()
+{
+    optionResource_ = DX12Helper::CreateBufferResource(device_, sizeof(Grayscale));
+    optionResource_->Map(0, nullptr, reinterpret_cast<void**>(&pOption_));
+
+    pOption_->power = 1.0f;
 }

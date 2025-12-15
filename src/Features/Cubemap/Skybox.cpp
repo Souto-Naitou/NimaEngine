@@ -4,9 +4,9 @@
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
 
-void Skybox::Initialize(CubemapSystem* _cms)
+void Skybox::Initialize(CubemapSystem* cms)
 {
-    pCubemapSystem_ = _cms;
+    pCubemapSystem_ = cms;
     pDx12_ = pCubemapSystem_->GetDirectX12();
     device_ = pDx12_->GetDevice();
     ppGlobalEye_ = pCubemapSystem_->GetGlobalEye();
@@ -46,14 +46,14 @@ void Skybox::Draw(ID3D12GraphicsCommandList* cl) const
     cl->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
 
-void Skybox::SetSkyboxTexture(D3D12_GPU_DESCRIPTOR_HANDLE _handle)
+void Skybox::SetSkyboxTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle)
 {
-    skyboxTextureSrvHandleGpu_ = _handle;
+    skyboxTextureSrvHandleGpu_ = handle;
 }
 
-void Skybox::CreateVertices(std::array<Vector4, 24>& _out_vertices)
+void Skybox::CreateVertices(std::array<Vector4, 24>& out_vertices)
 {
-    auto& vertices = _out_vertices;
+    auto& vertices = out_vertices;
 
     // right. index : [0,1,2] [2,1,3]
     vertices[0] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -92,9 +92,9 @@ void Skybox::CreateVertices(std::array<Vector4, 24>& _out_vertices)
     vertices[23] = { -1.0f, -1.0f, 1.0f, 1.0f };
 }
 
-void Skybox::CreateIndices(std::array<uint32_t, 36>& _out_indices)
+void Skybox::CreateIndices(std::array<uint32_t, 36>& out_indices)
 {
-    _out_indices = {
+    out_indices = {
         0, 1, 2, 2, 1, 3, // right
         4, 5, 6, 6, 5, 7, // left
         8, 9, 10, 10, 9, 11, // front

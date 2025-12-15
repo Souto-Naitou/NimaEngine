@@ -36,19 +36,19 @@ void SeparatedGaussianFilter::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void SeparatedGaussianFilter::Enable(bool _flag)
+void SeparatedGaussianFilter::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void SeparatedGaussianFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void SeparatedGaussianFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
-void SeparatedGaussianFilter::SetSigma(float _sigma)
+void SeparatedGaussianFilter::SetSigma(float sigma)
 {
-    sigma_ = _sigma;
+    sigma_ = sigma;
     this->CreateKernel();
 }
 
@@ -257,25 +257,25 @@ void SeparatedGaussianFilter::CreateResourceCBuffer()
     this->CreateKernel();
 }
 
-void SeparatedGaussianFilter::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource)
+void SeparatedGaussianFilter::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle, ID3D12Resource* execInfoResource)
 {
     // クリア
-    commandList_->ClearRenderTargetView(_outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    commandList_->ClearRenderTargetView(outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &outputCpuHandle, FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
     commandList_->SetPipelineState(pso_.Get());
 
     // 入力テクスチャのSRVを設定する（自分が所有するテクスチャのSRVではないため注意)
-    commandList_->SetGraphicsRootDescriptorTable(0, _inputGpuHandle);
+    commandList_->SetGraphicsRootDescriptorTable(0, inputGpuHandle);
 
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
-    commandList_->SetGraphicsRootConstantBufferView(2, _execInfoResource->GetGPUVirtualAddress());
+    commandList_->SetGraphicsRootConstantBufferView(2, execInfoResource->GetGPUVirtualAddress());
 }
 
 void SeparatedGaussianFilter::CreateKernel()

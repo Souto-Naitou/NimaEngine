@@ -32,19 +32,19 @@ void SpriteSystem::PresentDraw()
 
 void SpriteSystem::DrawCall()
 {
-    auto record = [&](ID3D12GraphicsCommandList* _commandList)
+    auto record = [&](ID3D12GraphicsCommandList* commandList)
     {
         /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, _commandList);
+        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
 
         /// ルートシグネチャをセットする
-        _commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_.Get());
 
         /// グラフィックスパイプラインステートをセットする
-        _commandList->SetPipelineState(graphicsPipelineState_.Get());
+        commandList->SetPipelineState(graphicsPipelineState_.Get());
 
         /// プリミティブトポロジーをセットする
-        _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         
         // DSVハンドル取得
         auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
@@ -59,15 +59,15 @@ void SpriteSystem::DrawCall()
             if (rtvHandleCurrent.ptr != data.rtvHandleCPU.ptr && data.rtvHandleCPU.ptr)
             {
                 rtvHandleCurrent = data.rtvHandleCPU;
-                _commandList->OMSetRenderTargets(1, &data.rtvHandleCPU, FALSE, &dsvHandle);
+                commandList->OMSetRenderTargets(1, &data.rtvHandleCPU, FALSE, &dsvHandle);
             }
 
-            _commandList->SetGraphicsRootConstantBufferView(0, data.materialResource->GetGPUVirtualAddress());
-            _commandList->SetGraphicsRootConstantBufferView(1, data.transformationMatrixResource->GetGPUVirtualAddress());
-            _commandList->SetGraphicsRootDescriptorTable(2, data.srvHandleGPU);
-            _commandList->IASetVertexBuffers(0, 1, data.pVBV);
-            _commandList->IASetIndexBuffer(data.pIBV);
-            _commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+            commandList->SetGraphicsRootConstantBufferView(0, data.materialResource->GetGPUVirtualAddress());
+            commandList->SetGraphicsRootConstantBufferView(1, data.transformationMatrixResource->GetGPUVirtualAddress());
+            commandList->SetGraphicsRootDescriptorTable(2, data.srvHandleGPU);
+            commandList->IASetVertexBuffers(0, 1, data.pVBV);
+            commandList->IASetIndexBuffer(data.pIBV);
+            commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
         }
     };
 
@@ -80,9 +80,9 @@ void SpriteSystem::Sync()
     commandListDatas_.clear();
 }
 
-void SpriteSystem::AddCommandListData(const CommandListData& _data)
+void SpriteSystem::AddCommandListData(const CommandListData& data)
 {
-    commandListDatas_.emplace_back(_data);
+    commandListDatas_.emplace_back(data);
 }
 
 void SpriteSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data)

@@ -109,12 +109,12 @@ void SceneObjects::ImGui()
     #endif // _DEBUG
 }
 
-void SceneObjects::SetLevelData(const BlenderLevel::LevelData& _levelData)
+void SceneObjects::SetLevelData(const BlenderLevel::LevelData& levelData)
 {
-    levelData_ = _levelData;
+    levelData_ = levelData;
 }
 
-void SceneObjects::SetDirectionalLight(DirectionalLight* _light)
+void SceneObjects::SetDirectionalLight(DirectionalLight* light)
 {
     for (auto& obj : objects_)
     {
@@ -122,12 +122,12 @@ void SceneObjects::SetDirectionalLight(DirectionalLight* _light)
         {
             auto& option = obj->GetOption();
             option.lightingData->enableLighting = true;
-            obj->SetDirectionalLight(_light);
+            obj->SetDirectionalLight(light);
         }
     }
 }
 
-void SceneObjects::Build(ModelManager* _modelManager)
+void SceneObjects::Build(ModelManager* modelManager)
 {
     for (const auto& object : levelData_.objects)
     {
@@ -135,7 +135,7 @@ void SceneObjects::Build(ModelManager* _modelManager)
         {
             // Create a model from the object data
             IModel* model = nullptr;
-            try { model = _modelManager->Load(object.filename); }
+            try { model = modelManager->Load(object.filename); }
             catch (const std::runtime_error& e)
             {
                 Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, e.what());

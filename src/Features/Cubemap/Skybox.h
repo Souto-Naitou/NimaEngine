@@ -19,7 +19,7 @@ class Skybox
 public:
     Skybox() = default;
     ~Skybox() = default;
-    void Initialize(CubemapSystem* _cms);
+    void Initialize(CubemapSystem* cms);
     void Finalize() const;
     void Update();
     void Draw(ID3D12GraphicsCommandList* cl) const;
@@ -28,8 +28,8 @@ public:
     void SetRTVHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { rtvHandleCPU_ = handle; };
 
 private:
-    void CreateVertices(std::array<Vector4, 24>& _out_vertices);
-    void CreateIndices(std::array<uint32_t, 36>& _out_indices);
+    void CreateVertices(std::array<Vector4, 24>& out_vertices);
+    void CreateIndices(std::array<uint32_t, 36>& out_indices);
     void CreateVertexResource();
     void CreateIndexResource();
     void CreateTransformationMatrixResource();

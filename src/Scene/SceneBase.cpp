@@ -1,7 +1,7 @@
 #include "SceneBase.h"
 
-SceneBase::SceneBase(ISceneArgs* _pArgs)
+SceneBase::SceneBase(ISceneArgs* pArgs)
 {
-    pArgs_ = _pArgs;
+    pArgs_ = pArgs;
     pLayer_ = std::any_cast<Layer*>(pArgs_->Get("Layer"));
 }

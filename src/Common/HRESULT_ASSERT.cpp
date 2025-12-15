@@ -2,9 +2,9 @@
 
 #include <cassert>
 
-HRESULT_ASSERT HRESULT_ASSERT::operator=(const HRESULT& _lValue)
+HRESULT_ASSERT HRESULT_ASSERT::operator=(const HRESULT& lValue)
 {
-    hr_ = _lValue;
+    hr_ = lValue;
     if (FAILED(hr_))
     {
         assert(false && "HRESULT ERROR");
@@ -12,9 +12,9 @@ HRESULT_ASSERT HRESULT_ASSERT::operator=(const HRESULT& _lValue)
     return *this;
 }
 
-HRESULT_ASSERT HRESULT_ASSERT::operator=(const HRESULT&& _rValue)
+HRESULT_ASSERT HRESULT_ASSERT::operator=(const HRESULT&& rValue)
 {
-    hr_ = _rValue;
+    hr_ = rValue;
     if (FAILED(hr_))
     {
         assert(false && "HRESULT ERROR");

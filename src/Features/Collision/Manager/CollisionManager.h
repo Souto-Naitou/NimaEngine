@@ -38,14 +38,14 @@ public:
     /// <summary>
     /// コライダーを登録します。
     /// </summary>
-    /// <param name="_collider">登録するコライダー。</param>
-    void RegisterCollider(Collider* _collider);
+    /// <param name="collider">登録するコライダー。</param>
+    void RegisterCollider(Collider* collider);
     
     /// <summary>
     /// コライダーを登録解除します。
     /// </summary>
-    /// <param name="_collider">削除するコライダー。</param>
-    void DeleteCollider(Collider* _collider);
+    /// <param name="collider">削除するコライダー。</param>
+    void DeleteCollider(Collider* collider);
     
     /// <summary>
     /// すべてのコライダー登録をクリアします。
@@ -55,30 +55,30 @@ public:
     /// <summary>
     /// 新しい属性値（ビット）を発行します。
     /// </summary>
-    /// <param name="_id">属性名。</param>
+    /// <param name="id">属性名。</param>
     /// <returns>割り当てられた属性ビット。</returns>
-    uint32_t GetNewAttribute(std::string _id);
+    uint32_t GetNewAttribute(std::string id);
 
     /// <summary>
     /// 指定IDに対して衝突無視対象を加味したマスクを生成・登録します。
     /// </summary>
-    /// <param name="_id">マスクのID。</param>
-    /// <param name="_ignoreNames">衝突を無視する属性名の可変引数。</param>
+    /// <param name="id">マスクのID。</param>
+    /// <param name="ignoreNames">衝突を無視する属性名の可変引数。</param>
     /// <returns>生成・登録されたマスク値へのポインタ。</returns>
     template <typename... Args>
-    uint32_t* GetNewMask(std::string _id, Args... _ignoreNames)
+    uint32_t* GetNewMask(std::string id, Args... ignoreNames)
     {
         uint32_t result = 0;
         for (auto& attributePair : attributeList_)
         {
-            if (_id.compare(attributePair.first) == 0)
+            if (id.compare(attributePair.first) == 0)
             {
                 /// 自分自身の属性は除外
                 result = ~attributePair.second;
                 break;
             }
         }
-        for (std::string name : std::initializer_list<std::string>{ _ignoreNames... })
+        for (std::string name : std::initializer_list<std::string>{ ignoreNames... })
         {
             result ^= GetNewAttribute(name);
         }
@@ -90,7 +90,7 @@ public:
         /// 配列の中身を変更
         for (auto& maskPair : maskList_)
         {
-            if (maskPair.first.compare(_id) == 0)
+            if (maskPair.first.compare(id) == 0)
             {
                 maskPair.second = result;
                 resultPtr = &maskPair.second;
@@ -99,7 +99,7 @@ public:
         }
         if (!isCompare) // マスクリストに登録されていなかったら
         {
-            maskList_.push_back({ _id, result });
+            maskList_.push_back({ id, result });
             resultPtr = &maskList_.back().second;
         }
 

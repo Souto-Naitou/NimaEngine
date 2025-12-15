@@ -39,13 +39,13 @@ void ObjModel::CreateGPUResource()
     isReadyDraw_ = true;
 }
 
-void ObjModel::Clone(IModel* _src)
+void ObjModel::Clone(IModel* src)
 {
-    if (_src == nullptr) return;
+    if (src == nullptr) return;
 
     isOverwroteTexture_ = false;
 
-    auto pSrc = dynamic_cast<ObjModel*>(_src);
+    auto pSrc = dynamic_cast<ObjModel*>(src);
     if (!pSrc)
     {
         throw std::runtime_error("ObjModel::Clone: Source model is not an ObjModel.");
@@ -83,16 +83,16 @@ std::unique_ptr<IModel> ObjModel::Cloned()
     return pCloned;
 }
 
-void ObjModel::Draw(ID3D12GraphicsCommandList* _cl)
+void ObjModel::Draw(ID3D12GraphicsCommandList* cl)
 {
     if (isReadyDraw_ == false) return;
 
     // 頂点バッファを設定
-    _cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
+    cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
     // SRVの設定
-    _cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+    cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
     // 描画！（DrawCall/ドローコール）
-    _cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), 1, 0, 0);
+    cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), 1, 0, 0);
 }
 
 void ObjModel::CreateVertexResource()
@@ -124,15 +124,15 @@ void ObjModel::LoadModelTexture()
     textureSrvHandleGPU_ = textureManager->GetSrvHandleGPU(filePath);
 }
 
-void ObjModel::CopyFrom(ObjModel* _pCopySrc)
+void ObjModel::CopyFrom(ObjModel* pCopySrc)
 {
-    this->pDx12_ = _pCopySrc->pDx12_;
+    this->pDx12_ = pCopySrc->pDx12_;
     // モデルデータをコピー
-    this->modelData_ = _pCopySrc->modelData_;
+    this->modelData_ = pCopySrc->modelData_;
     // テクスチャのSRVハンドルをコピー
     if (!isOverwroteTexture_)
     {
-        this->textureSrvHandleGPU_ = _pCopySrc->textureSrvHandleGPU_;
+        this->textureSrvHandleGPU_ = pCopySrc->textureSrvHandleGPU_;
     }
     // 頂点リソースを作成
     this->CreateVertexResource();
@@ -165,8 +165,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE ObjModel::GetTextureSrvHandle() const
     return textureSrvHandleGPU_; 
 }
 
-void ObjModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE _texSrvHnd)
+void ObjModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd)
 {
-    textureSrvHandleGPU_ = _texSrvHnd;
+    textureSrvHandleGPU_ = texSrvHnd;
     isOverwroteTexture_ = true;
 }

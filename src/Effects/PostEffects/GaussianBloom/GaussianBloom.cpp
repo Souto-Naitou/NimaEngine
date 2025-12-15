@@ -37,14 +37,14 @@ void GaussianBloom::Initialize(const PostEffectInitParams& desc)
     this->InitializeSeparatedGaussianFilter();
 }
 
-void GaussianBloom::Enable(bool _flag)
+void GaussianBloom::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void GaussianBloom::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void GaussianBloom::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool GaussianBloom::Enabled() const
@@ -97,24 +97,24 @@ const LuminanceOutput* GaussianBloom::GetLuminanceOutputFilter() const
     return pLuminanceOutput_.get();
 }
 
-void GaussianBloom::SetKernelSize(int _size)
+void GaussianBloom::SetKernelSize(int size)
 {
-    pSeparatedGaussianFilter_->GetOption().kernelSize = _size;
+    pSeparatedGaussianFilter_->GetOption().kernelSize = size;
 }
 
-void GaussianBloom::SetSigma(float _sigma)
+void GaussianBloom::SetSigma(float sigma)
 {
-    pSeparatedGaussianFilter_->SetSigma(_sigma);
+    pSeparatedGaussianFilter_->SetSigma(sigma);
 }
 
-void GaussianBloom::SetThreshold(float _threshold)
+void GaussianBloom::SetThreshold(float threshold)
 {
-    pLuminanceOutput_->GetOption().threshold = _threshold;
+    pLuminanceOutput_->GetOption().threshold = threshold;
 }
 
-void GaussianBloom::SetBloomIntensity(float _intensity)
+void GaussianBloom::SetBloomIntensity(float intensity)
 {
-    cbOptionData_->bloomIntensity = _intensity;
+    cbOptionData_->bloomIntensity = intensity;
 }
 
 void GaussianBloom::Apply()
@@ -254,21 +254,21 @@ void GaussianBloom::CreatePipelineStateObject()
             .Build(device_);
         pso_ = psoBuilder.GetPSO();
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
-        Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, _e.what());
+        Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, e.what());
         assert(false);
     }
     return;
 }
 
-void GaussianBloom::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle)
+void GaussianBloom::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle)
 {
     // クリア
-    commandList_->ClearRenderTargetView(_outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    commandList_->ClearRenderTargetView(outputCpuHandle, &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     // レンダーターゲットを設定 (自分が所有するテクスチャに対して設定)
-    commandList_->OMSetRenderTargets(1, &_outputCpuHandle, FALSE, nullptr);
+    commandList_->OMSetRenderTargets(1, &outputCpuHandle, FALSE, nullptr);
 
     // PSOとルートシグネチャを設定
     commandList_->SetGraphicsRootSignature(rootSignature_.Get());
@@ -276,7 +276,7 @@ void GaussianBloom::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, 
 
     // 入力テクスチャのSRVを設定する（自分が所有するテクスチャのSRVではないため注意)
     commandList_->SetGraphicsRootDescriptorTable(0, inputGpuHandle_);
-    commandList_->SetGraphicsRootDescriptorTable(1, _inputGpuHandle);
+    commandList_->SetGraphicsRootDescriptorTable(1, inputGpuHandle);
     commandList_->SetGraphicsRootConstantBufferView(2, cbOptionResorce_->GetGPUVirtualAddress());
 
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -298,13 +298,13 @@ void GaussianBloom::InitializeSeparatedGaussianFilter()
     pSeparatedGaussianFilter_->Enable(true);
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect)
+D3D12_GPU_DESCRIPTOR_HANDLE GaussianBloom::ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, IPostEffect* pEffect)
 {
-    _pEffect->SetInputTextureHandle(_inputGpuHandle);
-    _pEffect->Setting();
-    _pEffect->Apply();
-    _pEffect->ToShaderResourceState();
-    return _pEffect->GetOutputTextureHandle();
+    pEffect->SetInputTextureHandle(inputGpuHandle);
+    pEffect->Setting();
+    pEffect->Apply();
+    pEffect->ToShaderResourceState();
+    return pEffect->GetOutputTextureHandle();
 }
 
 void GaussianBloom::CreateResourceCBuffer()

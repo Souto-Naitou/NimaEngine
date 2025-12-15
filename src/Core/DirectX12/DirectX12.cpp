@@ -207,14 +207,14 @@ void DirectX12::DisplayFrame()
     assert(SUCCEEDED(hr_));
 }
 
-void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
+void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* commandList)
 {
     #ifdef _DEBUG
 
     /// レンダーターゲットからコピー元状態にする
-    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
-    gameScreenResource_.GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_COPY_DEST);
+    gameScreenResource_.GetStateTracker().ChangeState(commandList, D3D12_RESOURCE_STATE_COPY_DEST);
 
 
     D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
@@ -236,19 +236,19 @@ void DirectX12::CopyFromRTV(ID3D12GraphicsCommandList* _commandList)
     srcBox.front  = 0;
     srcBox.back   = 1;
 
-    _commandList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, &srcBox);
+    commandList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, &srcBox);
 
     /// バリアを戻す
-    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    swapChainResources_[backBufferIndex_].GetStateTracker().ChangeState(commandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    gameScreenResource_.GetStateTracker().ChangeState(_commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    gameScreenResource_.GetStateTracker().ChangeState(commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
     /// rtvのクリア
-    _commandList->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
+    commandList->ClearRenderTargetView(rtvHandles_[backBufferIndex_], &NimaEngine::Config::kEditorBGColor.x, 0, nullptr);
 
     #else
 
-    _commandList;
+    commandList;
 
     #endif // _DEBUG
 }

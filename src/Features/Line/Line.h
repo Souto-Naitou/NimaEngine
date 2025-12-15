@@ -17,7 +17,7 @@
 class Line
 {
 public:
-    Line(size_t _lineCount) { vertices_.resize(_lineCount * 2); }
+    Line(size_t lineCount) { vertices_.resize(lineCount * 2); }
     ~Line();
     /// <summary>
     /// ライン描画に必要なGPUリソース等を初期化します。
@@ -40,26 +40,26 @@ public:
     void Draw();
 
 public:
-    Vector3& operator [](size_t _idx) { return vertices_[_idx]; }
+    Vector3& operator [](size_t idx) { return vertices_[idx]; }
 
 
 public:
     /// <summary>
     /// 頂点配列サイズを変更します（2頂点で1ライン）。
     /// </summary>
-    /// <param name="_size">頂点数。</param>
-    void Resize(size_t _size);
+    /// <param name="size">頂点数。</param>
+    void Resize(size_t size);
     /// <summary>
     /// ライン本数を変更します。
     /// </summary>
-    /// <param name="_numLines">ライン数。</param>
-    void ResizeLine(size_t _numLines);
-    void SetColor(const Vector4& _color) { color_ = _color; }
-    void SetGameEye(GameEye** _eye) { pGameEye_ = _eye; }
+    /// <param name="numLines">ライン数。</param>
+    void ResizeLine(size_t numLines);
+    void SetColor(const Vector4& color) { color_ = color; }
+    void SetGameEye(GameEye** eye) { pGameEye_ = eye; }
 
 
 public: /// Getter
-    Vector3& GetVertex(size_t _idx) { return vertices_[_idx]; }
+    Vector3& GetVertex(size_t idx) { return vertices_[idx]; }
     std::vector<Vector3>& GetVertices() { return vertices_; }
     Vector4& GetColorData() { return color_; }
     size_t GetLineCount() const { return vertices_.size() / 2; }

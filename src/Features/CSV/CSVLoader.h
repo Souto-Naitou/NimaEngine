@@ -36,23 +36,23 @@ public:
     /// <summary>
     /// ファイルを読み込む
     /// </summary>
-    /// <param name="_fileName">ファイル名。oo.csv</param>
+    /// <param name="fileName">ファイル名。oo.csv</param>
     /// <returns>読んだデータ</returns>
-    CSVData* LoadFile(std::string _fileName);
+    CSVData* LoadFile(std::string fileName);
 
     /// <summary>
     /// 指定ファイルの指定ID行を取得します。
     /// </summary>
-    /// <param name="_fileName">CSVファイル名。</param>
-    /// <param name="_ID">行ID。</param>
+    /// <param name="fileName">CSVファイル名。</param>
+    /// <param name="ID">行ID。</param>
     /// <returns>該当行。なければ nullptr。</returns>
-    CSVLine* GetLine(std::string _fileName, std::string _ID);
+    CSVLine* GetLine(std::string fileName, std::string ID);
     /// <summary>
     /// 指定ファイルに新規行を追加し、その行を取得します。
     /// </summary>
-    /// <param name="_fileName">CSVファイル名。</param>
+    /// <param name="fileName">CSVファイル名。</param>
     /// <returns>新規行。</returns>
-    CSVLine* GetNewLine(std::string _fileName);
+    CSVLine* GetNewLine(std::string fileName);
 
     /// <summary>
     /// 変更内容を全てのファイルに保存します。
@@ -61,10 +61,10 @@ public:
     /// <summary>
     /// 1行分の変更をファイルへ保存します。
     /// </summary>
-    /// <param name="_fileName">CSVファイル名。</param>
-    /// <param name="_line">保存する行データ。</param>
-    void SaveLine(std::string _fileName, CSVLine& _line);
-    void SetDirectory(std::string _dir) { directory_ = _dir; }
+    /// <param name="fileName">CSVファイル名。</param>
+    /// <param name="line">保存する行データ。</param>
+    void SaveLine(std::string fileName, CSVLine& line);
+    void SetDirectory(std::string dir) { directory_ = dir; }
 
 private:
     CSVLoader();

@@ -16,7 +16,7 @@ class ModelLoaderLegacy : public IModelLoader
 public:
     void Initialize() override;
     void Update() override;
-    std::shared_ptr<IModel> LoadModel(const std::string& _path) override;
+    std::shared_ptr<IModel> LoadModel(const std::string& path) override;
 
 private:
     /// アップロードキューに登録

@@ -72,9 +72,9 @@ public:
     void ImGui();
 
 public: /// Setter
-    void SetPosition(const Vector3& _position) { position_ = _position; }
-    void SetGameEye(GameEye** _eye) { this->ModifyGameEye(_eye); }
-    void SetEnableBillboard(bool _enable) { particle_->SetEnableBillboard(_enable); }
+    void SetPosition(const Vector3& position) { position_ = position; }
+    void SetGameEye(GameEye** eye) { this->ModifyGameEye(eye); }
+    void SetEnableBillboard(bool enable) { particle_->SetEnableBillboard(enable); }
 
 public: /// Getter
     Particle* GetParticle() const { return particle_; }
@@ -131,6 +131,6 @@ private:
     /// <summary>
     /// カメラ参照を更新します。
     /// </summary>
-    /// <param name="_eye">GameEye のダブルポインタ。</param>
-    void ModifyGameEye(GameEye** _eye);
+    /// <param name="eye">GameEye のダブルポインタ。</param>
+    void ModifyGameEye(GameEye** eye);
 };

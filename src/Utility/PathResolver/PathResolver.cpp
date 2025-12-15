@@ -14,26 +14,26 @@ void PathResolver::Finalize()
     searchPaths_.clear();
 }
 
-void PathResolver::AddSearchPath(const std::string& _path)
+void PathResolver::AddSearchPath(const std::string& path)
 {
-    for (const auto& path : searchPaths_)
+    for (const auto& existingPath : searchPaths_)
     {
-        if (path == _path)
+        if (existingPath == path)
         {
             return;
         }
     }
-    searchPaths_.push_back(_path);
+    searchPaths_.push_back(path);
 }
 
-std::string PathResolver::GetParentPath(const std::string& _fileName)
+std::string PathResolver::GetParentPath(const std::string& fileName)
 {
     fs::path directoryPath = {};
-    if (!fs::exists(_fileName))
+    if (!fs::exists(fileName))
     {
         for (const auto& path : searchPaths_)
         {
-            fs::path filePath = path / _fileName;
+            fs::path filePath = path / fileName;
             if (fs::exists(filePath))
             {
                 directoryPath = path;
@@ -43,7 +43,7 @@ std::string PathResolver::GetParentPath(const std::string& _fileName)
     }
     else
     {
-        directoryPath = fs::path(_fileName).parent_path().string();
+        directoryPath = fs::path(fileName).parent_path().string();
     }
 
     return directoryPath.string();

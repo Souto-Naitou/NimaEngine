@@ -50,15 +50,15 @@ public: /// Getter
 
 
 public: /// Setter
-    inline  void                        SetOwner(void* _owner)                  { owner_ = _owner; }
-    void                                SetColliderID(const std::string& _id);
+    inline  void                        SetOwner(void* owner)                  { owner_ = owner; }
+    void                                SetColliderID(const std::string& id);
 
     template<typename T>
     void                                SetShapeData(T* _shapeData) { shapeData_ = _shapeData; }
-    void                                SetShape(Shape _shape) { shape_ = _shape; }
+    void                                SetShape(Shape shape) { shape_ = shape; }
 
-    void                                SetAttribute(uint32_t _attribute);
-    void                                SetMask(uint32_t* _mask);
+    void                                SetAttribute(uint32_t attribute);
+    void                                SetMask(uint32_t* mask);
     void                                SetOnCollision(const std::function<void(const Collider*)>& _func) { onCollisionFunction_ = _func; }
     void                                SetOnCollisionTrigger(const std::function<void(const Collider*)>& _func) { onCollisionTriggerFunction_ = _func; }
     void                                SetRadius(unsigned int _rad) { radiusCollider_ = _rad; }
@@ -68,14 +68,14 @@ public: /// Setter
     void                                RegisterCollidingPtr(const Collider* _ptr) { collidingPtrList_.push_back(_ptr); }
 
 
-    inline  void                        OnCollision(const Collider* _other)
+    inline  void                        OnCollision(const Collider* other)
     {
         if (onCollisionFunction_)
-            onCollisionFunction_(_other);
+            onCollisionFunction_(other);
         return;
     }
 
-    void OnCollisionTrigger(const Collider* _other);
+    void OnCollisionTrigger(const Collider* other);
 
 private:
 

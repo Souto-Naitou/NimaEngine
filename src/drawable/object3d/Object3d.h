@@ -35,7 +35,7 @@ public:
     /// <summary>
     /// 初期化
     /// </summary>
-    void Initialize(bool _enableDebugWindow = true);
+    void Initialize(bool enableDebugWindow = true);
 
     /// <summary>
     /// 更新
@@ -68,14 +68,14 @@ public: /// Getter
 
 
 public: /// Setter
-    void SetScale(const Vector3& _scale)                        { option_.transform.scale = _scale; }
-    void SetRotate(const Vector3& _rotate)                      { option_.transform.rotate = _rotate; }
-    void SetTranslate(const Vector3& _translate)                { option_.transform.translate = _translate; }
-    void SetGameEye(GameEye* _pGameEye)                         { pGameEye_ = _pGameEye; }
+    void SetScale(const Vector3& scale)                        { option_.transform.scale = scale; }
+    void SetRotate(const Vector3& rotate)                      { option_.transform.rotate = rotate; }
+    void SetTranslate(const Vector3& translate)                { option_.transform.translate = translate; }
+    void SetGameEye(GameEye* pGameEye)                         { pGameEye_ = pGameEye; }
     void SetName(const std::string& name)                       { if(pDebugEntry_) pDebugEntry_->SetName(name); }
-    void SetDirectionalLight(DirectionalLight* _light)          { directionalLight_ = _light; }
-    void SetPointLight(PointLight* _light)                      { pointLight_ = _light; }
-    void SetModel(IModel* _pModel)                              { pModel_ = _pModel; }
+    void SetDirectionalLight(DirectionalLight* light)          { directionalLight_ = light; }
+    void SetPointLight(PointLight* light)                      { pointLight_ = light; }
+    void SetModel(IModel* pModel)                              { pModel_ = pModel; }
 
 
 private: /// メンバ変数

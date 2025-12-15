@@ -4,15 +4,15 @@
 using _me = PipelineStateObject;
 using _ref = _me&;
 
-_ref PipelineStateObject::SetDesc(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& _desc)
+_ref PipelineStateObject::SetDesc(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc)
 {
-    desc_ = _desc;
+    desc_ = desc;
     return *this;
 }
 
-_ref PipelineStateObject::SetRootSignature(ID3D12RootSignature* _pRootSignature)
+_ref PipelineStateObject::SetRootSignature(ID3D12RootSignature* pRootSignature)
 {
-    desc_.pRootSignature = _pRootSignature;
+    desc_.pRootSignature = pRootSignature;
     return *this;
 }
 
@@ -29,34 +29,34 @@ _ref PipelineStateObject::SetVertexShader(const void* _pShaderByteCode, size_t _
     return *this;
 }
 
-_ref PipelineStateObject::SetPixelShader(const void* _pShaderByteCode, size_t _length)
+_ref PipelineStateObject::SetPixelShader(const void* pShaderByteCode, size_t length)
 {
-    desc_.PS.pShaderBytecode = _pShaderByteCode;
-    desc_.PS.BytecodeLength = _length;
+    desc_.PS.pShaderBytecode = pShaderByteCode;
+    desc_.PS.BytecodeLength = length;
     return *this;
 }
 
-_ref PipelineStateObject::SetRasterizerState(const D3D12_RASTERIZER_DESC& _rasterizerDesc)
+_ref PipelineStateObject::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc)
 {
-    desc_.RasterizerState = _rasterizerDesc;
+    desc_.RasterizerState = rasterizerDesc;
     return *this;
 }
 
-_ref PipelineStateObject::SetBlendState(const D3D12_BLEND_DESC& _blendDesc)
+_ref PipelineStateObject::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
 {
-    desc_.BlendState = _blendDesc;
+    desc_.BlendState = blendDesc;
     return *this;
 }
 
-_ref PipelineStateObject::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& _depthStencilDesc)
+_ref PipelineStateObject::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc)
 {
-    desc_.DepthStencilState = _depthStencilDesc;
+    desc_.DepthStencilState = depthStencilDesc;
     return *this;
 }
 
-_ref PipelineStateObject::SetSampleMask(UINT _sampleMask)
+_ref PipelineStateObject::SetSampleMask(UINT sampleMask)
 {
-    desc_.SampleMask = _sampleMask;
+    desc_.SampleMask = sampleMask;
     return *this;
 }
 

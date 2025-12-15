@@ -20,7 +20,7 @@ public:
     void    Initialize(const PostEffectInitParams& desc) override;
     void    Finalize() override;
 
-    void    Enable(bool _flag) override;
+    void    Enable(bool flag) override;
     bool    Enabled() const override;
 
     void    Apply() override;
@@ -31,7 +31,7 @@ public:
     void    DebugOverlay() override;
 
     // Setters
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
 
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;
@@ -49,6 +49,7 @@ private:
 
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "Grayscale";
+    GrayscaleOption                                     option_                 = {};
     DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;

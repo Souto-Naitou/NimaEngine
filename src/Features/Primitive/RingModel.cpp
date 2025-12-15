@@ -38,22 +38,22 @@ void RingModel::Update()
     this->UpdateVertexData();
 }
 
-void RingModel::Draw(ID3D12GraphicsCommandList* _cl)
+void RingModel::Draw(ID3D12GraphicsCommandList* cl)
 {
     if (isReadyDraw_ == false) return;
 
     // 頂点バッファを設定
-    _cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
+    cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
     // SRVの設定
-    _cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+    cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
     // 描画！（DrawCall/ドローコール）
-    _cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), 1, 0, 0);
+    cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), 1, 0, 0);
 
 }
 
-void RingModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE _texSrvHnd)
+void RingModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd)
 {
-    textureSrvHandleGPU_ = _texSrvHnd;
+    textureSrvHandleGPU_ = texSrvHnd;
     isOverwroteTexture_ = true;
 }
 
@@ -115,13 +115,13 @@ bool RingModel::IsEndLoading() const
     return isReadyDraw_;
 }
 
-void RingModel::Clone(IModel* _src)
+void RingModel::Clone(IModel* src)
 {
-    if (_src == nullptr) return;
+    if (src == nullptr) return;
 
     isOverwroteTexture_ = false;
 
-    auto pSrc = dynamic_cast<RingModel*>(_src);
+    auto pSrc = dynamic_cast<RingModel*>(src);
     if (!pSrc)
     {
         throw std::runtime_error("RingModel::Clone: Source model is not an RingModel.");

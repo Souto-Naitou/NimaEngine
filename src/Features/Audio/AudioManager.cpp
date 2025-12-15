@@ -49,9 +49,9 @@ void AudioManager::Finalize()
     pXAudio2_.Reset();
 }
 
-void AudioManager::AddSearchPath(const std::string& _path)
+void AudioManager::AddSearchPath(const std::string& path)
 {
-    pFilePathSearcher_->AddSearchPath(_path);
+    pFilePathSearcher_->AddSearchPath(path);
 }
 
 Audio* AudioManager::GetNewAudio(const std::string& category, const std::string& filename)
@@ -69,9 +69,9 @@ Audio* AudioManager::GetNewAudio(const std::string& category, const std::string&
     return pAudio;
 }
 
-SoundData& AudioManager::LoadWave(const char* _filename)
+SoundData& AudioManager::LoadWave(const char* filename)
 {
-    std::ifstream file(_filename, std::ios::binary);
+    std::ifstream file(filename, std::ios::binary);
 
     assert(file.is_open());
 
@@ -131,9 +131,9 @@ SoundData& AudioManager::LoadWave(const char* _filename)
     file.close();
 
 
-    soundDataMap_[_filename] = {};
+    soundDataMap_[filename] = {};
 
-    auto& soundData = soundDataMap_[_filename];
+    auto& soundData = soundDataMap_[filename];
 
     soundData.wfex = format.wfex;
     soundData.pBuffer = std::make_unique<BYTE[]>(data.size);
@@ -144,14 +144,14 @@ SoundData& AudioManager::LoadWave(const char* _filename)
     return soundData;
 }
 
-void AudioManager::ChunkHeaderRead(std::ifstream& _file, ChunkHeader& _chunkHeader, const char* _target)
+void AudioManager::ChunkHeaderRead(std::ifstream& file, ChunkHeader& chunkHeader, const char* target)
 {
     while (true)
     {
-        _file.read(reinterpret_cast<char*>(&_chunkHeader), sizeof(ChunkHeader));
-        if (strncmp(_chunkHeader.id, _target, 4) != 0)
+        file.read(reinterpret_cast<char*>(&chunkHeader), sizeof(ChunkHeader));
+        if (strncmp(chunkHeader.id, target, 4) != 0)
         {
-            _file.seekg(_chunkHeader.size, std::ios::cur); // 現在のチャンクをスキップ
+            file.seekg(chunkHeader.size, std::ios::cur); // 現在のチャンクをスキップ
         }
         else
         {

@@ -45,10 +45,10 @@ public:
     /// <summary>
     /// 検索パスを追加
     /// </summary>
-    /// <param name="_path">パス</param>
-    void AddSearchPath(const std::string& _path);
+    /// <param name="path">パス</param>
+    void AddSearchPath(const std::string& path);
 
-    void AddSourceVoice(IXAudio2SourceVoice* _sv) { sourceVoices_.push_back(_sv); }
+    void AddSourceVoice(IXAudio2SourceVoice* sv) { sourceVoices_.push_back(sv); }
     /// <summary>
     /// 新しい Audio インスタンスを作成して返します。
     /// </summary>
@@ -75,15 +75,15 @@ private:
     /// <summary>
     /// WAV ファイルを読み込みます。
     /// </summary>
-    /// <param name="_filename">ファイル名。</param>
+    /// <param name="filename">ファイル名。</param>
     /// <returns>読み込んだサウンドデータ。</returns>
-    SoundData& LoadWave(const char* _filename);
+    SoundData& LoadWave(const char* filename);
 
     /// <summary>
     /// チャンクヘッダを読み込み、ターゲットに一致するまで進めます。
     /// </summary>
-    /// <param name="_file">入力ストリーム。</param>
-    /// <param name="_chunkHeader">読み込まれるチャンクヘッダ。</param>
-    /// <param name="_target">探索するチャンクID。</param>
-    void ChunkHeaderRead(std::ifstream& _file, ChunkHeader& _chunkHeader, const char* _target);
+    /// <param name="file">入力ストリーム。</param>
+    /// <param name="chunkHeader">読み込まれるチャンクヘッダ。</param>
+    /// <param name="target">探索するチャンクID。</param>
+    void ChunkHeaderRead(std::ifstream& file, ChunkHeader& chunkHeader, const char* target);
 };

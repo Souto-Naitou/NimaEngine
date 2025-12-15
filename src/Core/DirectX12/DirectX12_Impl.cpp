@@ -23,9 +23,9 @@
 
 const uint32_t DirectX12::kMaxSRVCount_ = 512ui32;
 
-void DirectX12::SetGameWindowRect(D3D12_VIEWPORT _viewport)
+void DirectX12::SetGameWindowRect(D3D12_VIEWPORT viewport)
 {
-    viewport_ = _viewport;
+    viewport_ = viewport;
     //pSRVManager_->Deallocate(gameWndSrvIndex_);
     //gameScreenResource_.Reset();
 

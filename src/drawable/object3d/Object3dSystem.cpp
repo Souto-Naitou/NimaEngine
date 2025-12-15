@@ -50,20 +50,20 @@ void Object3dSystem::MainDrawSetting()
 
 void Object3dSystem::DrawCall()
 {
-    auto record = [&](ID3D12GraphicsCommandList* _commandList)
+    auto record = [&](ID3D12GraphicsCommandList* commandList)
     {
         /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, _commandList);
+        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
 
         // =============================================
         // [DepthDraw Begin]
 
         // ルートシグネチャをセットする
-        _commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_.Get());
         // グラフィックスパイプラインステートをセットする
-        _commandList->SetPipelineState(psoEarlyZ_.Get());
+        commandList->SetPipelineState(psoEarlyZ_.Get());
         // プリミティブトポロジーをセットする
-        _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         // DSVハンドル取得
         auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
         // RTVHandleが変化したかをチェックするための変数
@@ -75,18 +75,18 @@ void Object3dSystem::DrawCall()
             if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
             {
                 rtvHandleCurrent = data.rtvHandle;
-                _commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
             }
             // モデルがnullptrでない場合のみ描画
             if (data.model == nullptr) continue;
             for (auto& cbuffer : data.cbuffers)
             {
                 auto& [key, value] = cbuffer;
-                _commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
+                commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
             }
-            _commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
+            commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
 
-            data.model->Draw(_commandList);
+            data.model->Draw(commandList);
         }
 
         // [DepthDraw End]
@@ -96,13 +96,13 @@ void Object3dSystem::DrawCall()
         // [MainDraw Begin]
 
         /// ルートシグネチャをセットする
-        _commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_.Get());
 
         /// グラフィックスパイプラインステートをセットする
-        _commandList->SetPipelineState(psoMain_.Get());
+        commandList->SetPipelineState(psoMain_.Get());
 
         /// プリミティブトポロジーをセットする
-        _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         for (auto& data : commandListDatas_)
         {
@@ -111,19 +111,19 @@ void Object3dSystem::DrawCall()
             if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
             {
                 rtvHandleCurrent = data.rtvHandle;
-                _commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
             }
 
             if (data.model == nullptr) continue;
             for (auto& cbuffer : data.cbuffers)
             {
                 auto& [key, value] = cbuffer;
-                _commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
+                commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
             }
 
-            _commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
+            commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
 
-            data.model->Draw(_commandList);
+            data.model->Draw(commandList);
         }
 
         // [MainDraw End]
@@ -139,14 +139,14 @@ void Object3dSystem::Sync()
     commandListDatas_.clear();
 }
 
-void Object3dSystem::AddCommandListData(CommandListData& _data)
+void Object3dSystem::AddCommandListData(CommandListData& data)
 {
-    commandListDatas_.emplace_back(_data);
+    commandListDatas_.emplace_back(data);
 }
 
-void Object3dSystem::SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE _handle)
+void Object3dSystem::SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle)
 {
-    environmentTextureSrvHandleGpu_ = _handle;
+    environmentTextureSrvHandleGpu_ = handle;
 }
 
 void Object3dSystem::CreateRootSignature()

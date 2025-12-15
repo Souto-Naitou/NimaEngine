@@ -8,11 +8,11 @@
 class SceneArgs : public ISceneArgs
 {
 public:
-    std::any& Get(const std::string& _key) override;
-    const std::any& Get(const std::string& _key) const override;
-    void Set(const std::string& _key, const std::any& _value) override;
+    std::any& Get(const std::string& key) override;
+    const std::any& Get(const std::string& key) const override;
+    void Set(const std::string& key, const std::any& value) override;
     void Reset() override;
-    void Erase(const std::string& _key) override;
+    void Erase(const std::string& key) override;
 
 private:
     std::unordered_map<std::string, std::any> argDataMap_;

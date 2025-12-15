@@ -32,13 +32,13 @@ public:
     /// <summary>
     /// 指定範囲 [min, max] の一様分布から実数乱数を生成します。
     /// </summary>
-    /// <param name="_min">下限。</param>
-    /// <param name="_max">上限。</param>
+    /// <param name="min">下限。</param>
+    /// <param name="max">上限。</param>
     /// <returns>生成された乱数。</returns>
-    T Generate(T _min, T _max)
+    T Generate(T min, T max)
     {
-        T trueMin = _min < _max ? _min : _max;
-        T trueMax = _min < _max ? _max : _min;
+        T trueMin = min < max ? min : max;
+        T trueMax = min < max ? max : min;
         std::uniform_real_distribution<T> dist(trueMin, trueMax);
         return dist(engine_);
     }

@@ -40,7 +40,7 @@ public:
     void    Finalize() override;
 
     /// <summary>有効・無効を設定します。</summary>
-    void    Enable(bool _flag) override;
+    void    Enable(bool flag) override;
     /// <summary>有効かどうかを返します。</summary>
     bool    Enabled() const override;
 
@@ -59,8 +59,8 @@ public:
 
     // Setters
     /// <summary>入力テクスチャのハンドルを設定します。</summary>
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
-    void    SetSigma(float _sigma);
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
+    void    SetSigma(float sigma);
 
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;
@@ -106,6 +106,6 @@ private:
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
-    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle, ID3D12Resource* _execInfoResource);
+    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle, ID3D12Resource* execInfoResource);
     void    CreateKernel();
 };

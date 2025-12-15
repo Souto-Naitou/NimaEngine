@@ -50,8 +50,8 @@ public:
     /// <summary>
     /// 描画に必要なコマンドリストデータを追加します。
     /// </summary>
-    /// <param name="_data">マテリアル、行列、VBV/IBV、SRV など。</param>
-    void AddCommandListData(const CommandListData& _data);
+    /// <param name="data">マテリアル、行列、VBV/IBV、SRV など。</param>
+    void AddCommandListData(const CommandListData& data);
 
     void DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data);
 

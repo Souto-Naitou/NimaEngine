@@ -526,10 +526,10 @@ void ParticleEmitter::ImGui()
 #endif // _DEBUG
 }
 
-void ParticleEmitter::ModifyGameEye(GameEye** _eye)
+void ParticleEmitter::ModifyGameEye(GameEye** eye)
 {
-    particle_->SetGameEye(_eye);
-    aabb_->SetGameEye(_eye);
+    particle_->SetGameEye(eye);
+    aabb_->SetGameEye(eye);
 }
 
 void ParticleEmitter::Finalize()

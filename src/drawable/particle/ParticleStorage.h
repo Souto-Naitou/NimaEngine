@@ -42,13 +42,13 @@ public:
     /// <summary>
     /// 即時にパーティクルを破棄します。
     /// </summary>
-    /// <param name="_particle">対象パーティクル。</param>
-    void ReleaseParticle(Particle* _particle);
+    /// <param name="particle">対象パーティクル。</param>
+    void ReleaseParticle(Particle* particle);
     /// <summary>
     /// フレーム終端での破棄を予約します。
     /// </summary>
-    /// <param name="_particle">対象パーティクル。</param>
-    void ReserveDeleteParticle(Particle* _particle);
+    /// <param name="particle">対象パーティクル。</param>
+    void ReserveDeleteParticle(Particle* particle);
     /// <summary>
     /// 管理下の全パーティクルを破棄します。
     /// </summary>

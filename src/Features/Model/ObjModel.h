@@ -20,9 +20,9 @@ public:
     void    Initialize()                            override;
     void    Finalize()                              override {};
     void    Update()                                override;
-    void    Draw(ID3D12GraphicsCommandList* _cl)    override;
+    void    Draw(ID3D12GraphicsCommandList* cl)    override;
     void    CreateGPUResource()                     override;
-    void    Clone(IModel* _src)                     override;
+    void    Clone(IModel* src)                     override;
     std::unique_ptr<IModel> Cloned()                override;
 
     // Getter
@@ -33,7 +33,7 @@ public:
     bool                        IsEndLoading()          const   override;
 
     // Setter
-    void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE _texSrvHnd) override;
+    void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd) override;
 
 
 private: /// メンバ変数

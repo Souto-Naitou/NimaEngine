@@ -9,7 +9,7 @@ class SceneBase
 {
 public:
     /// dtor
-    SceneBase(ISceneArgs* _pArgs);
+    SceneBase(ISceneArgs* pArgs);
     virtual ~SceneBase() {}
 
     /// 初期化

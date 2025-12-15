@@ -6,7 +6,7 @@
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #endif // _DEBUG
 
-void SRVManager::Initialize(DirectX12* _pDx12)
+void SRVManager::Initialize(DirectX12* pDx12)
 {
 #ifdef _DEBUG
     DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SRVManager::ImGui, this), true);
@@ -14,7 +14,7 @@ void SRVManager::Initialize(DirectX12* _pDx12)
 
     name_ = "SRVManager";
 
-    pDx12_ = _pDx12;
+    pDx12_ = pDx12;
     pDescHeap_ = DX12HeapHelper::CreateDescriptorHeap(
         pDx12_->GetDevice(),
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
@@ -52,59 +52,59 @@ uint32_t SRVManager::Allocate()
     return 0xffffffff;
 }
 
-void SRVManager::Deallocate(uint32_t _index)
+void SRVManager::Deallocate(uint32_t index)
 {
-    assert(isAllocated_[_index] && "すでに開放されています。");
-    isAllocated_[_index] = false;
+    assert(isAllocated_[index] && "すでに開放されています。");
+    isAllocated_[index] = false;
     currentSize_--;
 
     return;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE SRVManager::GetCPUDescriptorHandle(uint32_t _index)
+D3D12_CPU_DESCRIPTOR_HANDLE SRVManager::GetCPUDescriptorHandle(uint32_t index)
 {
     D3D12_CPU_DESCRIPTOR_HANDLE handle = pDescHeap_->GetCPUDescriptorHandleForHeapStart();
-    handle.ptr += (descriptorSize_ * _index);
+    handle.ptr += (descriptorSize_ * index);
     return handle;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t _index)
+D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index)
 {
     D3D12_GPU_DESCRIPTOR_HANDLE handle = pDescHeap_->GetGPUDescriptorHandleForHeapStart();
-    handle.ptr += (descriptorSize_ * _index);
+    handle.ptr += (descriptorSize_ * index);
     return handle;
 }
 
-void SRVManager::SetGraphicsRootDescriptorTable(UINT _rootParameterIndex, uint32_t _srvIndex)
+void SRVManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex)
 {
-    pDx12_->GetCommandList()->SetGraphicsRootDescriptorTable(_rootParameterIndex, GetGPUDescriptorHandle(_srvIndex));
+    pDx12_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));
 }
 
-void SRVManager::CreateForTexture2D(uint32_t _index, ID3D12Resource* _pTexture, DXGI_FORMAT _format, UINT _mipLevels)
+void SRVManager::CreateForTexture2D(uint32_t index, ID3D12Resource* pTexture, DXGI_FORMAT format, UINT mipLevels)
 {
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format                  = _format;
+    srvDesc.Format                  = format;
     srvDesc.ViewDimension           = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.Texture2D.MipLevels     = _mipLevels;
+    srvDesc.Texture2D.MipLevels     = mipLevels;
 
-    pDx12_->GetDevice()->CreateShaderResourceView(_pTexture, &srvDesc, GetCPUDescriptorHandle(_index));
+    pDx12_->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, GetCPUDescriptorHandle(index));
 }
 
-void SRVManager::CreateForCubemap(uint32_t _index, ID3D12Resource* _pTexture, DXGI_FORMAT _format, UINT _mipLevels)
+void SRVManager::CreateForCubemap(uint32_t index, ID3D12Resource* pTexture, DXGI_FORMAT format, UINT mipLevels)
 {
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format                      = _format;
+    srvDesc.Format                      = format;
     srvDesc.Shader4ComponentMapping     = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension               = D3D12_SRV_DIMENSION_TEXTURECUBE;
     srvDesc.TextureCube.MostDetailedMip = 0;
-    srvDesc.TextureCube.MipLevels       = _mipLevels;
+    srvDesc.TextureCube.MipLevels       = mipLevels;
     srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
 
-    pDx12_->GetDevice()->CreateShaderResourceView(_pTexture, &srvDesc, GetCPUDescriptorHandle(_index));
+    pDx12_->GetDevice()->CreateShaderResourceView(pTexture, &srvDesc, GetCPUDescriptorHandle(index));
 }
 
-void SRVManager::CreateForStructuredBuffer(uint32_t _index, ID3D12Resource* _pBuffer, UINT _numElements, UINT _stride)
+void SRVManager::CreateForStructuredBuffer(uint32_t index, ID3D12Resource* pBuffer, UINT numElements, UINT stride)
 {
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format                     = DXGI_FORMAT_UNKNOWN;
@@ -112,33 +112,33 @@ void SRVManager::CreateForStructuredBuffer(uint32_t _index, ID3D12Resource* _pBu
     srvDesc.ViewDimension              = D3D12_SRV_DIMENSION_BUFFER;
     srvDesc.Buffer.FirstElement        = 0;
     srvDesc.Buffer.Flags               = D3D12_BUFFER_SRV_FLAG_NONE;
-    srvDesc.Buffer.NumElements         = _numElements;
-    srvDesc.Buffer.StructureByteStride = _stride;
+    srvDesc.Buffer.NumElements         = numElements;
+    srvDesc.Buffer.StructureByteStride = stride;
 
-    pDx12_->GetDevice()->CreateShaderResourceView(_pBuffer, &srvDesc, GetCPUDescriptorHandle(_index));
+    pDx12_->GetDevice()->CreateShaderResourceView(pBuffer, &srvDesc, GetCPUDescriptorHandle(index));
 }
 
-void SRVManager::CreateUAV(uint32_t _index, ID3D12Resource* _pTexture, DXGI_FORMAT _format)
+void SRVManager::CreateUAV(uint32_t index, ID3D12Resource* pTexture, DXGI_FORMAT format)
 {
     D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
     uavDesc.ViewDimension      = D3D12_UAV_DIMENSION_TEXTURE2D;
-    uavDesc.Format             = _format;
+    uavDesc.Format             = format;
     uavDesc.Texture2D.MipSlice = 0;
 
-    pDx12_->GetDevice()->CreateUnorderedAccessView(_pTexture, nullptr, &uavDesc, GetCPUDescriptorHandle(_index));
+    pDx12_->GetDevice()->CreateUnorderedAccessView(pTexture, nullptr, &uavDesc, GetCPUDescriptorHandle(index));
 }
 
-void SRVManager::CreateUAV4Buffer(uint32_t _index, ID3D12Resource* _pTexture, DXGI_FORMAT _format, uint32_t _numElements, uint32_t _structureByteStride)
+void SRVManager::CreateUAV4Buffer(uint32_t index, ID3D12Resource* pTexture, DXGI_FORMAT format, uint32_t numElements, uint32_t structureByteStride)
 {
     D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-    uavDesc.Format             = _format;
+    uavDesc.Format             = format;
     uavDesc.ViewDimension      = D3D12_UAV_DIMENSION_BUFFER;
     uavDesc.Buffer.FirstElement = 0;
-    uavDesc.Buffer.NumElements  = _numElements;
+    uavDesc.Buffer.NumElements  = numElements;
     uavDesc.Buffer.Flags        = D3D12_BUFFER_UAV_FLAG_NONE;
-    uavDesc.Buffer.StructureByteStride = _structureByteStride;
+    uavDesc.Buffer.StructureByteStride = structureByteStride;
 
-    pDx12_->GetDevice()->CreateUnorderedAccessView(_pTexture, nullptr, &uavDesc, GetCPUDescriptorHandle(_index));
+    pDx12_->GetDevice()->CreateUnorderedAccessView(pTexture, nullptr, &uavDesc, GetCPUDescriptorHandle(index));
 }
 
 void SRVManager::ImGui()

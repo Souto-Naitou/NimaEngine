@@ -35,15 +35,15 @@ public:
     void    Finalize() override;
 
     /// <summary>有効・無効を設定します。</summary>
-    void    Enable(bool _flag) override;
+    void    Enable(bool flag) override;
     /// <summary>有効かどうかを返します。</summary>
     bool    Enabled() const override;
 
     /// <summary>
     /// ディゾルブ用のマスクテクスチャを設定します。
     /// </summary>
-    /// <param name="_texResource">テクスチャリソース。</param>
-    void    SetTextureResource(const DX12Resource& _texResource);
+    /// <param name="texResource">テクスチャリソース。</param>
+    void    SetTextureResource(const DX12Resource& texResource);
 
     /// <summary>エフェクトを適用します。</summary>
     void    Apply() override;
@@ -60,7 +60,7 @@ public:
 
     // Setters
     /// <summary>入力テクスチャのハンドルを設定します。</summary>
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
 
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;

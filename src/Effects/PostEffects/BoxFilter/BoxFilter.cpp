@@ -31,14 +31,14 @@ void BoxFilter::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void BoxFilter::Enable(bool _flag)
+void BoxFilter::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void BoxFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void BoxFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool BoxFilter::Enabled() const

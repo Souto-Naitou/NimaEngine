@@ -2,19 +2,19 @@
 
 #include <cassert>
 
-void BlendDesc::Initialize(BlendModes _mode)
+void BlendDesc::Initialize(BlendModes mode)
 {
     desc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     desc_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
     desc_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
     desc_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-    ChangeMode(_mode);
+    ChangeMode(mode);
 }
 
-void BlendDesc::ChangeMode(BlendModes _mode)
+void BlendDesc::ChangeMode(BlendModes mode)
 {
-    currentMode_ = _mode;
-    switch (_mode)
+    currentMode_ = mode;
+    switch (mode)
     {
     case BlendDesc::BlendModes::None:
         desc_.RenderTarget[0].BlendEnable = false;

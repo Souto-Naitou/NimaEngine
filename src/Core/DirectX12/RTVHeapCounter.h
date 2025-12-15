@@ -16,13 +16,13 @@ public:
     RTVHeapCounter() = default;
     ~RTVHeapCounter() = default;
 
-    void Initialize(ID3D12Device* _device, uint32_t _numDescriptor);
+    void Initialize(ID3D12Device* device, uint32_t numDescriptor);
     uint32_t Allocate();
-    void Deallocate(uint32_t _index);
+    void Deallocate(uint32_t index);
 
 
 public:
-    D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandle(uint32_t _index);
+    D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandle(uint32_t index);
     ID3D12DescriptorHeap* GetRTVDescriptorHeap() const { return rtvHeap_.Get(); }
 
 

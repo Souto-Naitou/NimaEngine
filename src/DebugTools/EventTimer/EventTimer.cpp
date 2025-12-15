@@ -12,25 +12,25 @@ void EventTimer::NewFrame()
     globalTimer_.Start();
 }
 
-void EventTimer::BeginEvent(const std::string& _eventName)
+void EventTimer::BeginEvent(const std::string& eventName)
 {
-    timers_[_eventName].Reset();
-    timers_[_eventName].Start();
+    timers_[eventName].Reset();
+    timers_[eventName].Start();
 }
 
-void EventTimer::EndEvent(const std::string& _eventName)
+void EventTimer::EndEvent(const std::string& eventName)
 {
-    float now = timers_[_eventName].GetNow<float>();
-    events_[_eventName] = now;
-    if (maxTime_[_eventName] < now)
+    float now = timers_[eventName].GetNow<float>();
+    events_[eventName] = now;
+    if (maxTime_[eventName] < now)
     {
-        maxTime_[_eventName] = now;
-        maxTimeResetTimers_[_eventName].Reset();
-        maxTimeResetTimers_[_eventName].Start();
+        maxTime_[eventName] = now;
+        maxTimeResetTimers_[eventName].Reset();
+        maxTimeResetTimers_[eventName].Start();
     }
-    if (maxTimeResetTimers_[_eventName].GetNow<float>() > static_cast<float>(durationMaxTimeDisplay_))
+    if (maxTimeResetTimers_[eventName].GetNow<float>() > static_cast<float>(durationMaxTimeDisplay_))
     {
-        maxTime_[_eventName] = 0.0f;
+        maxTime_[eventName] = 0.0f;
     }
 }
 
@@ -40,11 +40,11 @@ void EventTimer::Reset()
     events_.clear();
 }
 
-void EventTimer::Measure(const std::string& _eventName, const std::function<void()>& _func)
+void EventTimer::Measure(const std::string& eventName, const std::function<void()>& func)
 {
-    BeginEvent(_eventName);
-    _func();
-    EndEvent(_eventName);
+    BeginEvent(eventName);
+    func();
+    EndEvent(eventName);
 }
 
 void EventTimer::EndFrame()

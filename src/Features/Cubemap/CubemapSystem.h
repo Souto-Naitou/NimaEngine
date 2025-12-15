@@ -28,7 +28,7 @@ public:
     void DrawSetting(ID3D12GraphicsCommandList* cl);
 
     GameEye** GetGlobalEye() { return &pGlobalEye_; }
-    void SetGlobalEye(GameEye* _pGameEye) { pGlobalEye_ = _pGameEye; }
+    void SetGlobalEye(GameEye* pGameEye) { pGlobalEye_ = pGameEye; }
 
 private:
     void _CreatePSO();

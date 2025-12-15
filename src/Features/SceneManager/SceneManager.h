@@ -43,20 +43,20 @@ public:
     /// <summary>
     /// シーン生成に使用するファクトリを設定します。
     /// </summary>
-    /// <param name="_pSceneFactory">シーンファクトリ。</param>
-    void SetSceneFactory(ISceneFactory* _pSceneFactory);
+    /// <param name="pSceneFactory">シーンファクトリ。</param>
+    void SetSceneFactory(ISceneFactory* pSceneFactory);
 
     /// <summary>
     /// 次回シーン生成に渡す引数を設定します。
     /// </summary>
-    /// <param name="_pSceneArgs">所有権を移動するシーン引数。</param>
-    void SetSceneArgs(std::unique_ptr<ISceneArgs> _pSceneArgs);
+    /// <param name="pSceneArgs">所有権を移動するシーン引数。</param>
+    void SetSceneArgs(std::unique_ptr<ISceneArgs> pSceneArgs);
 
     /// <summary>
     /// モデルマネージャを設定します。
     /// </summary>
-    /// <param name="_pModelManager">モデルマネージャ。</param>
-    void SetModelManager(ModelManager* _pModelManager);
+    /// <param name="pModelManager">モデルマネージャ。</param>
+    void SetModelManager(ModelManager* pModelManager);
 
     // すべてのシーンに渡す初期引数を追加
     //   - 値はコピーされるため所有権の移動はできない
@@ -65,25 +65,25 @@ public:
     /// すべてのシーンに渡す初期引数を追加します。
     /// 値はコピーされ、同一キーは上書きされます。
     /// </summary>
-    /// <param name="_key">引数キー。</param>
-    /// <param name="_value">引数値。</param>
+    /// <param name="key">引数キー。</param>
+    /// <param name="value">引数値。</param>
     /// <returns>自身への参照。</returns>
-    SceneManager& AddInitialArg(const std::string& _key, const std::any& _value);
+    SceneManager& AddInitialArg(const std::string& key, const std::any& value);
 
 
 public:
     /// <summary>
     /// 次フレームで遷移するシーン名を予約します。
     /// </summary>
-    /// <param name="_sceneName">遷移先シーン名</param>
-    void ReserveScene(const std::string& _sceneName);
+    /// <param name="sceneName">遷移先シーン名</param>
+    void ReserveScene(const std::string& sceneName);
     
     /// <summary>
     /// 次フレームで遷移するシーンを予約します。(遷移付き)
     /// </summary>
-    /// <param name="_sceneName">遷移先シーン名</param>
+    /// <param name="sceneName">遷移先シーン名</param>
     /// <param name="transition">トランジションインスタンス</param>
-    void ReserveScene(const std::string& _sceneName, std::unique_ptr<TransBase>&& transition);
+    void ReserveScene(const std::string& sceneName, std::unique_ptr<TransBase>&& transition);
     
     /// <summary>
     /// 開始シーンの予約を行います（設定に基づく）。

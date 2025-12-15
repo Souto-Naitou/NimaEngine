@@ -33,14 +33,14 @@ void RadialBlur::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void RadialBlur::Enable(bool _flag)
+void RadialBlur::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void RadialBlur::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void RadialBlur::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool RadialBlur::Enabled() const

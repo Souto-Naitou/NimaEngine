@@ -13,7 +13,7 @@
 
 using namespace Type::ParticleEmitter;
 
-void Particle::Initialize(IModel* _pModel)
+void Particle::Initialize(IModel* pModel)
 {
 #if defined _DEBUG
     pDebugEntry_ = std::make_unique<DebugEntry<Particle>>("Particle", "unnamed", this, true);
@@ -30,7 +30,7 @@ void Particle::Initialize(IModel* _pModel)
     if (!currentInstancingSize_) reserve(1, true);
 
     /// モデルを読み込む
-    pModel_ = _pModel;
+    pModel_ = pModel;
     if (pModel_->IsEndLoading()) this->GetModelData();
 
     /// 正面を向く行列を作成
@@ -118,19 +118,19 @@ void Particle::DrawCall(ID3D12GraphicsCommandList* cl)
     //pSystem_->AddCommandListData(data);
 }
 
-void Particle::reserve(size_t _size, bool _isInit)
+void Particle::reserve(size_t size, bool isInit)
 {
-    currentInstancingSize_ = static_cast<uint32_t>(_size);
+    currentInstancingSize_ = static_cast<uint32_t>(size);
 
     CreateParticleForGPUResource();
-    if (!_isInit) SRVManager::GetInstance()->Deallocate(srvIndex_);
+    if (!isInit) SRVManager::GetInstance()->Deallocate(srvIndex_);
     CreateSRV();
     InitializeTransform();
 }
 
-void Particle::emplace_back(const ParticleData& _data)
+void Particle::emplace_back(const ParticleData& data)
 {
-    auto& newData = particleData_.emplace_back(_data);
+    auto& newData = particleData_.emplace_back(data);
     newData.seed = pRandomGenerator_->Generate(0.0f, 10000.0f);
 
     if (particleData_.size() > currentInstancingSize_)
@@ -186,25 +186,25 @@ void Particle::InitializeTransform()
     }
 }
 
-void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
+void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& itr)
 {
     bool isGround = false;
     float deltaTime = DeltaTimeManager::GetInstance()->GetDeltaTime(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));
 
-    TimeMeasurerByDt&   timer = _itr->timer;
-    EulerTransform&     transform = _itr->transform;
-    Vector3&            velocity = _itr->velocity;
+    TimeMeasurerByDt&   timer = itr->timer;
+    EulerTransform&     transform = itr->transform;
+    Vector3&            velocity = itr->velocity;
 
-    float               frictionCoef = _itr->frictionCoef;
+    float               frictionCoef = itr->frictionCoef;
 
-    Vector4&            currentColor = _itr->currentColor;
-    const auto&         colorRange = _itr->colorRange;
+    Vector4&            currentColor = itr->currentColor;
+    const auto&         colorRange = itr->colorRange;
 
-    const float         lifeTime = _itr->lifeTime;
-    float&              currentLifeTime = _itr->currentLifeTime;
-    bool&               enableCollisionFloor = _itr->enableCollisionFloor;
-    float               radius = _itr->radius;
-    v3::CollisionFloor& collisionFloor = _itr->collisionFloor;
+    const float         lifeTime = itr->lifeTime;
+    float&              currentLifeTime = itr->currentLifeTime;
+    bool&               enableCollisionFloor = itr->enableCollisionFloor;
+    float               radius = itr->radius;
+    v3::CollisionFloor& collisionFloor = itr->collisionFloor;
     
 
     /// タイマーの更新
@@ -220,13 +220,13 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& _itr)
     if (currentLifeTime < 0.0f) currentLifeTime = 0.0f;
 
     /// 位置の更新
-    this->ParticlePositionUpdate(_itr, deltaTime);
+    this->ParticlePositionUpdate(itr, deltaTime);
 
     /// 色の更新
-    this->ParticleColorUpdate(_itr);
+    this->ParticleColorUpdate(itr);
 
     /// スケールの更新
-    this->ParticleScaleUpdate(_itr);
+    this->ParticleScaleUpdate(itr);
 
     // 当たり判定(座標計算後に実行する)
     if (enableCollisionFloor)
@@ -363,37 +363,37 @@ void Particle::ImGui()
 #endif
 }
 
-bool Particle::UpdateByCollisionFloor(Vector3& _position, Vector3& _velocity, const v3::CollisionFloor& _floor, float _radius)
+bool Particle::UpdateByCollisionFloor(Vector3& position, Vector3& velocity, const v3::CollisionFloor& floor, float radius)
 {
-    if (_position.y - _radius < _floor.elevation && _velocity.y < 0.0f)
+    if (position.y - radius < floor.elevation && velocity.y < 0.0f)
     {
-        _position.y = _floor.elevation + _radius / 2.0f;
-        _velocity.y = -_velocity.y * _floor.bounce_power;
+        position.y = floor.elevation + radius / 2.0f;
+        velocity.y = -velocity.y * floor.bounce_power;
         return true;
     }
     return false;
 }
 
-void Particle::ApplyFriction(Vector3& _velocity, bool _isGround, float _frictionCoef, float _deltaTime)
+void Particle::ApplyFriction(Vector3& velocity, bool isGround, float frictionCoef, float deltaTime)
 {
-    if (!_isGround) return;
+    if (!isGround) return;
 
     // XZ 平面に摩擦を適用（Y方向の速度はジャンプや重力のため残す）
-    _velocity.x *= std::pow(1.0f - _frictionCoef, _deltaTime);
-    _velocity.z *= std::pow(1.0f - _frictionCoef, _deltaTime);
+    velocity.x *= std::pow(1.0f - frictionCoef, deltaTime);
+    velocity.z *= std::pow(1.0f - frictionCoef, deltaTime);
 }
 
-bool Particle::DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr)
+bool Particle::DeleteParticleByCondition(std::list<ParticleData>::iterator& itr)
 {
     bool isDelete = false;
 
-    switch (_itr->deleteCondition)
+    switch (itr->deleteCondition)
     {
     case ParticleDeleteCondition::LifeTime:
-        isDelete = DeleteByLifeTime(_itr);
+        isDelete = DeleteByLifeTime(itr);
         break;
     case ParticleDeleteCondition::ZeroAlpha:
-        isDelete = DeleteByZeroAlpha(_itr);
+        isDelete = DeleteByZeroAlpha(itr);
         break;
     default:
         break;
@@ -402,26 +402,26 @@ bool Particle::DeleteParticleByCondition(std::list<ParticleData>::iterator& _itr
     return isDelete;
 }
 
-bool Particle::DeleteByLifeTime(std::list<ParticleData>::iterator& _itr)
+bool Particle::DeleteByLifeTime(std::list<ParticleData>::iterator& itr)
 {
     bool isDelete = false;
 
-    if (_itr->currentLifeTime <= 0.0f)
+    if (itr->currentLifeTime <= 0.0f)
     {
-        _itr = particleData_.erase(_itr);
+        itr = particleData_.erase(itr);
         isDelete = true;
     }
 
     return isDelete;
 }
 
-bool Particle::DeleteByZeroAlpha(std::list<ParticleData>::iterator& _itr)
+bool Particle::DeleteByZeroAlpha(std::list<ParticleData>::iterator& itr)
 {
     bool isDelete = false;
 
-    if (_itr->currentColor.w <= 0.0f)
+    if (itr->currentColor.w <= 0.0f)
     {
-        _itr = particleData_.erase(_itr);
+        itr = particleData_.erase(itr);
         isDelete = true;
     }
 

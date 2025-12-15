@@ -15,8 +15,8 @@ public:
     /// <summary>
     /// フェードイン・アウトの初期化を行います。
     /// </summary>
-    /// <param name="_sceneName">遷移先のシーン名。</param>
-    void Initialize(const std::string& _sceneName, Canvas* canvas) override;
+    /// <param name="sceneName">遷移先のシーン名。</param>
+    void Initialize(const std::string& sceneName, Canvas* canvas) override;
     /// <summary>
     /// 状態を更新します。
     /// </summary>

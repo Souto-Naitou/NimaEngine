@@ -25,9 +25,9 @@ public:
     /// <summary>
     /// キーに対応する JSON への参照を取得（なければ生成）します。
     /// </summary>
-    /// <param name="_key">キー。</param>
+    /// <param name="key">キー。</param>
     /// <returns>JSON 参照。</returns>
-    json& operator[](const std::string& _key);
+    json& operator[](const std::string& key);
     
     /// <summary>
     /// 先頭イテレータを取得します。
@@ -42,28 +42,28 @@ public:
     /// <summary>
     /// 指定キーの要素を削除します。
     /// </summary>
-    /// <param name="_key">キー。</param>
+    /// <param name="key">キー。</param>
     /// <returns>削除件数。</returns>
-    size_t erase(const std::string& _key);
+    size_t erase(const std::string& key);
 
 public:
     /// <summary>
     /// 指定キーの JSON 参照を取得します（存在しない場合は例外）。
     /// </summary>
-    /// <param name="_key">キー。</param>
+    /// <param name="key">キー。</param>
     /// <returns>JSON 参照。</returns>
-    json& at(const std::string& _key);
+    json& at(const std::string& key);
     
     /// <summary>
     /// 指定キーのイテレータを取得します。
     /// </summary>
-    /// <param name="_key">キー。</param>
+    /// <param name="key">キー。</param>
     /// <returns>該当要素のイテレータ、見つからなければ end()。</returns>
-    Iterator find(const std::string& _key);
+    Iterator find(const std::string& key);
 
 
 private:
-    std::string ToAbsPathLower(const std::string& _filepath) const;
+    std::string ToAbsPathLower(const std::string& filepath) const;
 };
 
 class JSONStorage::Iterator
@@ -74,14 +74,14 @@ private:
 
 public:
     Iterator() = default;
-    Iterator(jsonmap::iterator _it) : it_(_it) {}
+    Iterator(jsonmap::iterator it) : it_(it) {}
 
 
     std::pair<const std::string, json> operator*() const;
     Iterator& operator++();
     Iterator& operator--();
-    bool operator==(const Iterator& _other) const;
-    bool operator!=(const Iterator& _other) const;
+    bool operator==(const Iterator& other) const;
+    bool operator!=(const Iterator& other) const;
 
 };
 
@@ -110,21 +110,21 @@ public:
     /// <summary>
     /// JSON ファイルを読み込み、ストレージにキャッシュします。
     /// </summary>
-    /// <param name="_path">ファイルパス。</param>
+    /// <param name="path">ファイルパス。</param>
     /// <returns>読み込んだ JSON 参照。</returns>
-    const json& Load(const std::string& _path);
+    const json& Load(const std::string& path);
     
     /// <summary>
     /// JSON データをファイルへ保存します。
     /// </summary>
-    /// <param name="_path">保存先ファイルパス。</param>
-    /// <param name="_jsonData">保存する JSON。</param>
-    void Save(const std::string& _path, const json& _jsonData);
+    /// <param name="path">保存先ファイルパス。</param>
+    /// <param name="jsonData">保存する JSON。</param>
+    void Save(const std::string& path, const json& jsonData);
     
     /// <summary>
     /// 指定パスの JSON をストレージからアンロードします。
     /// </summary>
-    /// <param name="_path">ファイルパス。</param>
+    /// <param name="path">ファイルパス。</param>
     /// <returns>アンロードできた場合は true。</returns>
-    bool Unload(const std::string& _path);
+    bool Unload(const std::string& path);
 };

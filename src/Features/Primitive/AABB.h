@@ -14,7 +14,7 @@ class AABB
 {
 public:
     AABB() = default;
-    AABB(const Vector3& _min, const Vector3& _max) : min_(_min), max_(_max) {}
+    AABB(const Vector3& min, const Vector3& max) : min_(min), max_(max) {}
     ~AABB();
 
     void Initialize();
@@ -23,13 +23,13 @@ public:
 
 
 public: /// Setter
-    void SetMinMax(const Vector3& _min, const Vector3& _max)
+    void SetMinMax(const Vector3& min, const Vector3& max)
     {
-        min_ = _min;
-        max_ = _max;
+        min_ = min;
+        max_ = max;
     }
-    void SetGameEye(GameEye** _eye) { pGameEye = _eye; ModifyGameEye(_eye); }
-    void SetColor(const RGBA& _color) { lines.SetColor(_color.to_Vector4()); }
+    void SetGameEye(GameEye** eye) { pGameEye = eye; ModifyGameEye(eye); }
+    void SetColor(const RGBA& color) { lines.SetColor(color.to_Vector4()); }
 
 
 public: /// Getter
@@ -44,7 +44,7 @@ private:
 
 
 private:
-    void ModifyGameEye(GameEye** _eye);
+    void ModifyGameEye(GameEye** eye);
 
 
 private:

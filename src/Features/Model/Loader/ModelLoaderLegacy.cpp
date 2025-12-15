@@ -18,9 +18,9 @@ void ModelLoaderLegacy::Update()
     }
 }
 
-std::shared_ptr<IModel> ModelLoaderLegacy::LoadModel(const std::string& _path)
+std::shared_ptr<IModel> ModelLoaderLegacy::LoadModel(const std::string& path)
 {
-    std::filesystem::path fsPath = _path;
+    std::filesystem::path fsPath = path;
     
     // OBJファイルでなければ例外を投げる
     if (fsPath.extension() != ".obj")
@@ -32,9 +32,9 @@ std::shared_ptr<IModel> ModelLoaderLegacy::LoadModel(const std::string& _path)
     model->SetDirectX12(pDx12_);
     model->Initialize();
 
-    auto loadObj = [model, this, _path]() -> void
+    auto loadObj = [model, this, path]() -> void
     {
-        *model->GetModelData() = Helper::Model::LoadObjFile({}, _path);
+        *model->GetModelData() = Helper::Model::LoadObjFile({}, path);
         this->EnqueueUpload(model.get());
     };
 
@@ -43,8 +43,8 @@ std::shared_ptr<IModel> ModelLoaderLegacy::LoadModel(const std::string& _path)
     return model;
 }
 
-void ModelLoaderLegacy::EnqueueUpload(IModel* _ptr)
+void ModelLoaderLegacy::EnqueueUpload(IModel* ptr)
 {
     std::lock_guard<std::mutex> lock(mtx_);
-    uploadQueue_.push(_ptr);
+    uploadQueue_.push(ptr);
 }

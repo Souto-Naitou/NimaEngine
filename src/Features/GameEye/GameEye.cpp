@@ -73,26 +73,26 @@ void GameEye::ImGui()
 #endif
 }
 
-void GameEye::Shake(const Vector3& _begin, const Vector3& _end)
+void GameEye::Shake(const Vector3& begin, const Vector3& end)
 {
     shakePositon_ = Vector3(
-        pRandomGenerator_->Generate(_begin.x, _end.x),
-        pRandomGenerator_->Generate(_begin.y, _end.y),
-        pRandomGenerator_->Generate(_begin.z, _end.z)
+        pRandomGenerator_->Generate(begin.x, end.x),
+        pRandomGenerator_->Generate(begin.y, end.y),
+        pRandomGenerator_->Generate(begin.z, end.z)
     );
 }
 
-void GameEye::Shake(float _power)
+void GameEye::Shake(float power)
 {
     shakePositon_ = Vector3(
-        pRandomGenerator_->Generate(-_power, _power),
-        pRandomGenerator_->Generate(-_power, _power),
-        pRandomGenerator_->Generate(-_power, _power)
+        pRandomGenerator_->Generate(-power, power),
+        pRandomGenerator_->Generate(-power, power),
+        pRandomGenerator_->Generate(-power, power)
     );
 }
 
-void GameEye::SetFocalLength(float _focalLength)
+void GameEye::SetFocalLength(float focalLength)
 {
-    focalLength_ = _focalLength;
+    focalLength_ = focalLength;
     _UpdateFovFromFocalLength();
 }

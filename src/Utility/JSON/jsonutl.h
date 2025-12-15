@@ -6,23 +6,23 @@ namespace utl
 {
     namespace json
     {
-        void try_assign(const nlohmann::json& _j, const std::string& _key, auto& _outval)
+        void try_assign(const nlohmann::json& j, const std::string& key, auto& outval)
         {
-            auto itr = _j.find(_key);
-            if (itr == _j.end()) _outval = {};
-            else itr->get_to(_outval);
+            auto itr = j.find(key);
+            if (itr == j.end()) outval = {};
+            else itr->get_to(outval);
         }
 
         void try_assign(
-            const nlohmann::json& _j,
-            const std::string& _key,
-            auto&& _func,
-            auto& _outval
+            const nlohmann::json& j,
+            const std::string& key,
+            auto&& func,
+            auto& outval
         )
         {
-            auto itr = _j.find(_key);
-            if (itr == _j.end()) _outval = {};
-            else _func(itr.value(), _outval);
+            auto itr = j.find(key);
+            if (itr == j.end()) outval = {};
+            else func(itr.value(), outval);
         }
     }
 }

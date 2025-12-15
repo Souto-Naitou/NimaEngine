@@ -11,7 +11,7 @@
 #include <filesystem>
 #include <Features/Model/GltfModel.h>
 
-ModelData Helper::Model::LoadObjFile(const std::string& _directoryPath, const std::string& _filename, const std::string& _texturePath)
+ModelData Helper::Model::LoadObjFile(const std::string& dirPath, const std::string& fname, const std::string& texturePath)
 {
     // 1 Decleare variable
     ModelData modelData;
@@ -23,13 +23,13 @@ ModelData Helper::Model::LoadObjFile(const std::string& _directoryPath, const st
     std::string allPath;
     std::string directoryPath;
     std::string filename;
-    if (_directoryPath.empty())
+    if (dirPath.empty())
     {
-        allPath = _filename;
+        allPath = fname;
     }
     else
     {
-        allPath = _directoryPath + "/" + _filename;
+        allPath = dirPath + "/" + fname;
     }
     std::filesystem::path filePath = allPath;
     directoryPath = filePath.parent_path().string();
@@ -118,7 +118,7 @@ ModelData Helper::Model::LoadObjFile(const std::string& _directoryPath, const st
             modelData.vertices.push_back(triangle[1]);
             modelData.vertices.push_back(triangle[0]);
         }
-        else if (identifier == "mtllib" && _texturePath.empty())
+        else if (identifier == "mtllib" && texturePath.empty())
         {
             // materialTemplateLibraryファイルの名前を取得
             std::string materialFilename;
@@ -126,24 +126,24 @@ ModelData Helper::Model::LoadObjFile(const std::string& _directoryPath, const st
             // 基本的にobjファイルと同一階層にmtlを配置するためディレクトリ名とファイル名を渡す
             modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
         }
-        else if (identifier == "mtllib" && !_texturePath.empty())
+        else if (identifier == "mtllib" && !texturePath.empty())
         {
             std::string materialFilename;
             s >> materialFilename;
-            LoadMaterialTemplateFile(directoryPath, materialFilename, _texturePath);
+            LoadMaterialTemplateFile(directoryPath, materialFilename, texturePath);
         }
     }
     // 4 Return ModelData
     return modelData;
 }
 
-MaterialData Helper::Model::LoadMaterialTemplateFile(const std::string& _directoryPath, const std::string& _filename, const std::string& _texturePath)
+MaterialData Helper::Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename, const std::string& texturePath)
 {
     // 1 Decleare variable
     MaterialData materialData;
     std::string line;
     // 2 Open file
-    std::ifstream file(_directoryPath + "/" + _filename);
+    std::ifstream file(directoryPath + "/" + filename);
     assert(file.is_open());
     // 3 Read file and construct MaterialData
     while (std::getline(file, line))
@@ -153,16 +153,16 @@ MaterialData Helper::Model::LoadMaterialTemplateFile(const std::string& _directo
         s >> identifier;
 
         // identifierに応じた処理
-        if (identifier == "map_Kd" && _texturePath.empty())
+        if (identifier == "map_Kd" && texturePath.empty())
         {
             std::string textureFilename;
             s >> textureFilename;
             // 連結してファイルパスに
-            materialData.textureFilePath = _directoryPath + "/" + textureFilename;
+            materialData.textureFilePath = directoryPath + "/" + textureFilename;
         }
-        else if (identifier == "map_Kd" && !_texturePath.empty())
+        else if (identifier == "map_Kd" && !texturePath.empty())
         {
-            materialData.textureFilePath = _texturePath;
+            materialData.textureFilePath = texturePath;
         }
         else if (identifier == "Kd")
         {
@@ -180,9 +180,9 @@ MaterialData Helper::Model::LoadMaterialTemplateFile(const std::string& _directo
     return materialData;
 }
 
-void Helper::Model::DispatchModel(IModel* _pModel)
+void Helper::Model::DispatchModel(IModel* pModel)
 {
-    auto ptr = dynamic_cast<GltfModel*>(_pModel);
+    auto ptr = dynamic_cast<GltfModel*>(pModel);
     if (!ptr) return;
 
     ptr->DispatchSkinning();
@@ -193,11 +193,11 @@ std::unique_ptr<ModelStorage> Helper::Model::CreateStorage()
     return std::make_unique<ModelStorage>();
 }
 
-std::unique_ptr<ModelManager> Helper::Model::CreateManager(IModelLoader* _pLoader, ModelStorage* _pStorage)
+std::unique_ptr<ModelManager> Helper::Model::CreateManager(IModelLoader* pLoader, ModelStorage* pStorage)
 {
     auto pModelManager = std::make_unique<ModelManager>();
     pModelManager->Initialize();
-    pModelManager->SetModelLoader(_pLoader);
-    pModelManager->SetModelStorage(_pStorage);
+    pModelManager->SetModelLoader(pLoader);
+    pModelManager->SetModelStorage(pStorage);
     return pModelManager;
 }

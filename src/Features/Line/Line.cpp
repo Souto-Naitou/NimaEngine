@@ -59,16 +59,16 @@ void Line::Draw()
     commandList->DrawInstanced(static_cast<UINT>(vertices_.size()), static_cast<UINT>(vertices_.size() / 2), 0, 0);
 }
 
-void Line::Resize(size_t _size)
+void Line::Resize(size_t size)
 {
-    vertices_.resize(_size);
+    vertices_.resize(size);
     vertexResource_.Reset();
     CreateVertexResource();
 }
 
-void Line::ResizeLine(size_t _numLines)
+void Line::ResizeLine(size_t numLines)
 {
-    this->Resize(_numLines * 2);
+    this->Resize(numLines * 2);
 }
 
 void Line::CreateVertexResource()

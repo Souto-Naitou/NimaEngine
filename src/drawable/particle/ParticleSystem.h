@@ -57,8 +57,8 @@ public:
 
 
 public: /// Setter
-    void SetGlobalEye(GameEye* _pGameEye) { pGlobalEye_ = _pGameEye; }
-    void AddCommandListData(CommandListData& _pData) { commandListDatas_.emplace_back(_pData); }
+    void SetGlobalEye(GameEye* pGameEye) { pGlobalEye_ = pGameEye; }
+    void AddCommandListData(CommandListData& pData) { commandListDatas_.emplace_back(pData); }
 
 public: /// Getter
     GameEye** GetGlobalEye() { return &pGlobalEye_; }

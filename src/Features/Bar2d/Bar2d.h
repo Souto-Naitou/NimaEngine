@@ -31,9 +31,7 @@ public:
     /// <summary>
     /// バー表示を初期化します。
     /// </summary>
-    /// <param name="_nameTexturePath">名称テクスチャの相対パス。</param>
-    /// <param name="_barSize">バーのサイズ。</param>
-    /// <param name="_enable_smoothing_color">色補間を有効にするか。</param>
+    /// <param name="params">初期化パラメータ。</param>
     void Initialize(const Bar2dInitParams& params);
 
     /// <summary>
@@ -58,16 +56,16 @@ public:
 
 public:
     void SetOpacity(float alpha);
-    void SetPosition(const Vector2& _pos) { position_ = _pos; }
-    void SetAnchorPoint(const Vector2& _anchor) { anchor_ = _anchor; }
-    void SetMaxValue(float _max) { maxValue_ = _max; }
-    void SetCurrentValue(float _current) { currentValue_ = _current; }
+    void SetPosition(const Vector2& pos) { position_ = pos; }
+    void SetAnchorPoint(const Vector2& anchor) { anchor_ = anchor; }
+    void SetMaxValue(float max) { maxValue_ = max; }
+    void SetCurrentValue(float current) { currentValue_ = current; }
 
     float GetCurrentValue() const { return currentValue_; }
     float GetMaxValue() const { return maxValue_; }
 
-    void operator=(const float& _val) { currentValue_ = _val; }
-    float& operator+=(const float& _val) { currentValue_ += _val; return currentValue_; }
+    void operator=(const float& val) { currentValue_ = val; }
+    float& operator+=(const float& val) { currentValue_ += val; return currentValue_; }
 
 private:
     using NumberImage = std::pair<uint32_t, std::unique_ptr<Sprite>>;

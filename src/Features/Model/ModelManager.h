@@ -20,19 +20,19 @@ public:
     /// </summary>
     void Initialize();
 
-    void SetModelLoader(IModelLoader* _loader);
-    void SetModelStorage(ModelStorage* _storage);
+    void SetModelLoader(IModelLoader* loader);
+    void SetModelStorage(ModelStorage* storage);
 
     /// <summary>
     /// 事前ロードの対象パスを追加します。
     /// </summary>
-    /// <param name="_path">モデルファイルまたはディレクトリのパス。</param>
-    void AddLoadPath(const std::string& _path); 
+    /// <param name="path">モデルファイルまたはディレクトリのパス。</param>
+    void AddLoadPath(const std::string& path); 
     /// <summary>
     /// 検索対象のパスを追加します。
     /// </summary>
-    /// <param name="_path">検索ディレクトリ。</param>
-    void AddSearchPath(const std::string& _path);
+    /// <param name="path">検索ディレクトリ。</param>
+    void AddSearchPath(const std::string& path);
     /// <summary>
     /// 登録済みのロードパスを全て読み込みます。
     /// </summary>
@@ -42,9 +42,9 @@ public:
     /// <summary>
     /// 単一のモデルを読み込みます。
     /// </summary>
-    /// <param name="_path">モデルファイルのパス。</param>
+    /// <param name="path">モデルファイルのパス。</param>
     /// <returns>読み込んだモデルのポインタ。失敗時は nullptr。</returns>
-    IModel* Load(const std::string& _path);
+    IModel* Load(const std::string& path);
 
 private:
     IModelLoader*           pModelLoader_   = nullptr;

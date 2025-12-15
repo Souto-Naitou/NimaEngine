@@ -32,29 +32,29 @@ void RandomFilter::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void RandomFilter::Enable(bool _flag)
+void RandomFilter::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void RandomFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void RandomFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
-void RandomFilter::SetOpacity(float _opacity)
+void RandomFilter::SetOpacity(float opacity)
 {
     if (pOption_ != nullptr)
     {
-        pOption_->opacity = _opacity;
+        pOption_->opacity = opacity;
     }
 }
 
-void RandomFilter::SetSeed(float _seed)
+void RandomFilter::SetSeed(float seed)
 {
     if (pOption_ != nullptr)
     {
-        pOption_->seed = _seed;
+        pOption_->seed = seed;
     }
 }
 
@@ -167,12 +167,12 @@ void RandomFilter::CreateRootSignature()
             .SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
             .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
         Logger::GetInstance()->LogError(
             "RandomFilter",
             __func__,
-            _e.what()
+            e.what()
         );
     }
 
@@ -251,12 +251,12 @@ void RandomFilter::CreatePipelineStateObject()
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
             .Build(device_);
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
         Logger::GetInstance()->LogError(
             "RandomFilter",
             __func__,
-            _e.what()
+            e.what()
         );
     }
 

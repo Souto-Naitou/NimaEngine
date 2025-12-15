@@ -4,7 +4,7 @@
 #include <sstream>
 #include <Utility/Debug/dbgutl.h>
 
-Collider::Collider(bool _enableDebugWindow) : isEnableDebugWindow_(_enableDebugWindow)
+Collider::Collider(bool enableDebugWindow) : isEnableDebugWindow_(enableDebugWindow)
 {
     hexID_ = utl::debug::generate_name_default(this);
     if (isEnableDebugWindow_)
@@ -55,26 +55,26 @@ void Collider::EraseCollidingPtr(const Collider* _ptr)
     return;
 }
 
-void Collider::SetColliderID(const std::string& _id)
+void Collider::SetColliderID(const std::string& id)
 {
-    colliderID_ = _id;
-    hexID_ = utl::debug::generate_name(_id, this);
+    colliderID_ = id;
+    hexID_ = utl::debug::generate_name(id, this);
 }
 
-void Collider::SetAttribute(uint32_t _attribute)
+void Collider::SetAttribute(uint32_t attribute)
 {
-    collisionAttribute_ = _attribute;
+    collisionAttribute_ = attribute;
 }
 
-void Collider::SetMask(uint32_t* _mask)
+void Collider::SetMask(uint32_t* mask)
 {
-    pCollisionMask_ = _mask;
+    pCollisionMask_ = mask;
 }
 
-void Collider::OnCollisionTrigger(const Collider* _other)
+void Collider::OnCollisionTrigger(const Collider* other)
 {
     if (onCollisionTriggerFunction_)
-        onCollisionTriggerFunction_(_other);
+        onCollisionTriggerFunction_(other);
     return;
 }
 

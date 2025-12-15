@@ -32,14 +32,14 @@ void PrewittOutline::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void PrewittOutline::Enable(bool _flag)
+void PrewittOutline::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void PrewittOutline::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void PrewittOutline::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool PrewittOutline::Enabled() const

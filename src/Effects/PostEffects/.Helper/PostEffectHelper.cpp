@@ -6,14 +6,14 @@
 #include <utility>
 #include <config/EngineSetting.h>
 
-void Helper::CreateRenderTexture(DirectX12* _pDx12, ID3D12Device* _pDevice, DX12Resource& resource, const std::string& name)
+void Helper::CreateRenderTexture(DirectX12* pDx12, ID3D12Device* pDevice, DX12Resource& resource, const std::string& name)
 {
     const auto kFormat = NimaEngine::Config::kRenderTargetFormat;
 
     /// リソースの作成と初期化
     {
         auto temp = DX12Helper::CreateResourceForRenderTarget(
-            _pDevice,
+            pDevice,
             WinSystem::clientWidth,
             WinSystem::clientHeight,
             kFormat,
@@ -22,7 +22,7 @@ void Helper::CreateRenderTexture(DirectX12* _pDx12, ID3D12Device* _pDevice, DX12
 
         DX12Resource::Params param{};
         param.resource = temp;
-        param.pRTVCounter = _pDx12->GetRTVHeapCounter();
+        param.pRTVCounter = pDx12->GetRTVHeapCounter();
         param.format = kFormat;
         param.state = D3D12_RESOURCE_STATE_RENDER_TARGET;
         param.name = name;
@@ -37,20 +37,20 @@ void Helper::CreateRenderTexture(DirectX12* _pDx12, ID3D12Device* _pDevice, DX12
 
     if (resource.GetRTVHandle().ptr == 0)
     {
-        const auto rtvHandleIndex = _pDx12->GetRTVHeapCounter()->Allocate();
-        const auto rtvCPUHandle = _pDx12->GetRTVHeapCounter()->GetRTVHandle(rtvHandleIndex);
+        const auto rtvHandleIndex = pDx12->GetRTVHeapCounter()->Allocate();
+        const auto rtvCPUHandle = pDx12->GetRTVHeapCounter()->GetRTVHandle(rtvHandleIndex);
         resource.SetRTV(rtvHandleIndex, rtvCPUHandle);
     }
 
-    _pDevice->CreateRenderTargetView(
+    pDevice->CreateRenderTargetView(
         resource.GetResource().Get(),
         &rtvDesc,
         resource.GetRTVHandle()
     );
 }
 
-void Helper::CreateCommandList(ID3D12Device* _pDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& _commandList,  Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& _Allocator)
+void Helper::CreateCommandList(ID3D12Device* pDevice, Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList,  Microsoft::WRL::ComPtr<ID3D12CommandAllocator>& Allocator)
 {
-    _pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(_Allocator.GetAddressOf()));
-    _pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, _Allocator.Get(), nullptr, IID_PPV_ARGS(_commandList.GetAddressOf()));
+    pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(Allocator.GetAddressOf()));
+    pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, Allocator.Get(), nullptr, IID_PPV_ARGS(commandList.GetAddressOf()));
 }

@@ -35,8 +35,8 @@ public:
     /// <summary>
     /// 有効・無効を設定します。
     /// </summary>
-    /// <param name="_flag">true で有効。</param>
-    void    Enable(bool _flag) override;
+    /// <param name="flag">true で有効。</param>
+    void    Enable(bool flag) override;
     /// <summary>
     /// 有効かどうかを返します。
     /// </summary>
@@ -44,11 +44,11 @@ public:
 
     // Setter (Additional)
     /// <summary>ブラーの中心位置を設定します（0.0～1.0）。</summary>
-    void    SetCenter(float _center) { pOption_->center = _center; }
+    void    SetCenter(float center) { pOption_->center = center; }
     /// <summary>サンプル数を設定します。</summary>
-    void    SetSamples(int _sample) { pOption_->samples = _sample; }
+    void    SetSamples(int sample) { pOption_->samples = sample; }
     /// <summary>ブラー幅を設定します。</summary>
-    void    SetBlurWidth(float _width) { pOption_->blurWidth = _width; }
+    void    SetBlurWidth(float width) { pOption_->blurWidth = width; }
 
     /// <summary>
     /// エフェクトを適用します。
@@ -79,7 +79,7 @@ public:
     /// <summary>
     /// 入力テクスチャのハンドルを設定します。
     /// </summary>
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
 
     // =============================================
     // [Getters Begin]

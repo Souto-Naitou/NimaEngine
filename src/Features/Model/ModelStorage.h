@@ -18,24 +18,24 @@ public:
     /// <summary>
     /// モデルデータを取得
     /// </summary>
-    /// <param name="_filePath">ファイルパス</param>
+    /// <param name="filePath">ファイルパス</param>
     /// <returns>モデルデータ</returns>
-    IModel* FindModel(const std::string& _path);
+    IModel* FindModel(const std::string& path);
 
     /// <summary>
     /// 指定パスが既に読み込まれているか判定します。
     /// </summary>
-    /// <param name="_path">ファイルパス。</param>
+    /// <param name="path">ファイルパス。</param>
     /// <returns>読み込み済みなら true。</returns>
-    bool IsLoaded(const std::filesystem::path& _path);
+    bool IsLoaded(const std::filesystem::path& path);
 
     /// <summary>
     /// モデルをストレージに追加し、参照を返します。
     /// </summary>
-    /// <param name="_path">キーとなるファイルパス。</param>
-    /// <param name="_model">追加するモデル（共有所有）。</param>
+    /// <param name="path">キーとなるファイルパス。</param>
+    /// <param name="model">追加するモデル（共有所有）。</param>
     /// <returns>追加されたモデルの生ポインタ。</returns>
-    IModel* AddModel(const std::filesystem::path& _path, std::shared_ptr<IModel> _model);
+    IModel* AddModel(const std::filesystem::path& path, std::shared_ptr<IModel> model);
 
 private:
     std::unordered_map<std::filesystem::path, std::shared_ptr<IModel>> models_;

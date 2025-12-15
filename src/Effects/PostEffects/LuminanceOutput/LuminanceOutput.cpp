@@ -34,14 +34,14 @@ void LuminanceOutput::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void LuminanceOutput::Enable(bool _flag)
+void LuminanceOutput::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void LuminanceOutput::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void LuminanceOutput::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool LuminanceOutput::Enabled() const

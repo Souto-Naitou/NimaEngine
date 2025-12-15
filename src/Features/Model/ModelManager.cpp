@@ -14,11 +14,11 @@ void ModelManager::Initialize()
     }
 }
 
-void ModelManager::SetModelLoader(IModelLoader* _loader)
+void ModelManager::SetModelLoader(IModelLoader* loader)
 {
-    if (_loader != nullptr)
+    if (loader != nullptr)
     {
-        pModelLoader_ = _loader;
+        pModelLoader_ = loader;
     }
     else
     {
@@ -26,11 +26,11 @@ void ModelManager::SetModelLoader(IModelLoader* _loader)
     }
 }
 
-void ModelManager::SetModelStorage(ModelStorage* _storage)
+void ModelManager::SetModelStorage(ModelStorage* storage)
 {
-    if (_storage != nullptr)
+    if (storage != nullptr)
     {
-        pModelStorage_ = _storage;
+        pModelStorage_ = storage;
     }
     else
     {
@@ -38,9 +38,9 @@ void ModelManager::SetModelStorage(ModelStorage* _storage)
     }
 }
 
-void ModelManager::AddLoadPath(const std::string& _path)
+void ModelManager::AddLoadPath(const std::string& path)
 {
-    auto lowerPath = utl::string::to_lower(_path);
+    auto lowerPath = utl::string::to_lower(path);
 
     for (const auto& path : loadPaths_)
     {
@@ -54,9 +54,9 @@ void ModelManager::AddLoadPath(const std::string& _path)
     loadPaths_.push_back(lowerPath);
 }
 
-void ModelManager::AddSearchPath(const std::string& _path)
+void ModelManager::AddSearchPath(const std::string& path)
 {
-    auto lowerPath = utl::string::to_lower(_path);
+    auto lowerPath = utl::string::to_lower(path);
     pathResolver_.AddSearchPath(lowerPath);
 }
 
@@ -82,9 +82,9 @@ int ModelManager::LoadAll()
     return count;
 }
 
-IModel* ModelManager::Load(const std::string& _path)
+IModel* ModelManager::Load(const std::string& path)
 {
-    auto resolvedPath = pathResolver_.GetFilePath(_path);
+    auto resolvedPath = pathResolver_.GetFilePath(path);
     if (pModelStorage_->IsLoaded(resolvedPath))
     {
         // If the model is already loaded, return it

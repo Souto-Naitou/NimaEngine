@@ -43,8 +43,8 @@ public:
     /// <summary>
     /// エフェクトの有効/無効を設定します。
     /// </summary>
-    /// <param name="_flag">true で有効。</param>
-    void    Enable(bool _flag)          override;
+    /// <param name="flag">true で有効。</param>
+    void    Enable(bool flag)          override;
     
     /// <summary>
     /// エフェクトが有効かどうかを返します。
@@ -85,8 +85,8 @@ public:
     /// <summary>
     /// 入力テクスチャの GPU ハンドルを設定します。
     /// </summary>
-    /// <param name="_gpuHandle">SRV ハンドル。</param>
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
+    /// <param name="gpuHandle">SRV ハンドル。</param>
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
 
     // =============================================
     // [Getter Begin]
@@ -111,10 +111,10 @@ public:
 
     // =============================================
     // [Option Begin]
-    void    SetKernelSize(int _size);
-    void    SetSigma(float _sigma);
-    void    SetThreshold(float _threshold);
-    void    SetBloomIntensity(float _intensity);
+    void    SetKernelSize(int size);
+    void    SetSigma(float sigma);
+    void    SetThreshold(float threshold);
+    void    SetBloomIntensity(float intensity);
     // [Option End]
     // =============================================
 
@@ -169,9 +169,9 @@ private:
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
-    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE _outputCpuHandle);
+    void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle);
     void    InitializeLuminanceOutputFilter();
     void    InitializeSeparatedGaussianFilter();
     void    CreateResourceCBuffer();
-    D3D12_GPU_DESCRIPTOR_HANDLE     ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE _inputGpuHandle, IPostEffect* _pEffect);
+    D3D12_GPU_DESCRIPTOR_HANDLE     ApplyFilter(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, IPostEffect* pEffect);
 };

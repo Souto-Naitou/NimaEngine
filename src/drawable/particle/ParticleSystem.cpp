@@ -37,19 +37,19 @@ void ParticleSystem::DrawCall()
 {
     if(commandListDatas_.empty()) return;
 
-    auto record = [&](ID3D12GraphicsCommandList* _commandList)
+    auto record = [&](ID3D12GraphicsCommandList* commandList)
     {
         /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, _commandList);
+        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
 
         /// ルートシグネチャをセットする
-        _commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_.Get());
 
         /// グラフィックスパイプラインステートをセットする
-        _commandList->SetPipelineState(graphicsPipelineState_.Get());
+        commandList->SetPipelineState(graphicsPipelineState_.Get());
 
         /// プリミティブトポロジーをセットする
-        _commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         // DSVハンドル取得
         auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
@@ -64,13 +64,13 @@ void ParticleSystem::DrawCall()
             if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
             {
                 rtvHandleCurrent = data.rtvHandle;
-                _commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
+                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
             }
 
-            _commandList->IASetVertexBuffers(0, 1, data.pVBV);
-            _commandList->SetGraphicsRootDescriptorTable(0, data.srvHandle);
-            _commandList->SetGraphicsRootDescriptorTable(1, data.textureSrvHandle);
-            _commandList->DrawInstanced(data.vertexCount, data.instanceCount, 0, 0);
+            commandList->IASetVertexBuffers(0, 1, data.pVBV);
+            commandList->SetGraphicsRootDescriptorTable(0, data.srvHandle);
+            commandList->SetGraphicsRootDescriptorTable(1, data.textureSrvHandle);
+            commandList->DrawInstanced(data.vertexCount, data.instanceCount, 0, 0);
         }
     };
 

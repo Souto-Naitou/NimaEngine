@@ -7,6 +7,12 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/DX12Resource/DX12Resource.h>
 
+struct alignas(16) GrayscaleOption
+{
+    float power = 1.0f; // Luminance threshold
+    float padding[3]; // 16バイト境界に揃えるためのパディング
+};
+
 /// グレースケール
 class Grayscale : public IPostEffect
 {
@@ -22,7 +28,7 @@ public:
     void    OnResizeBefore() override;
     void    OnResizeAfter() override;
     void    ToShaderResourceState() override;
-    void    DebugOverlay() override {};
+    void    DebugOverlay() override;
 
     // Setters
     void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
@@ -32,6 +38,9 @@ public:
     const std::string&              GetName() const override;
     /// <summary>適用後のリソースを取得します。</summary>
     DX12Resource*      GetOutputResource() const override;
+    /// <summary>オプションへの参照を取得します。</summary>
+    GrayscaleOption&   GetOption() { return *pOption_; }
+    const GrayscaleOption& GetOption() const { return *pOption_; }
 
 private:
     DirectX12*                                          pDx12_                  = nullptr;
@@ -48,8 +57,12 @@ private:
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Grayscale.VS.hlsl";
     const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Grayscale.PS.hlsl";
+    GrayscaleOption*                                    pOption_                = {};
+    Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
+
 
     // Internal functions
     void    CreateRootSignature();
     void    CreatePipelineStateObject();
+    void    CreateResorceCBuffer();
 };

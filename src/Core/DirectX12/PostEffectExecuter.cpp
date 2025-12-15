@@ -148,10 +148,12 @@ void PostEffectExecuter::ImGui()
     static const ImVec4 kColorRed(1.0f, 0.0f, 0.0f, 1.0f);
     static const ImVec4 kColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
 
+    if (currentSelectedEffect_ == PostEffectClassName::None) ImGui::BeginDisabled();
     if (ImGui::Button("Add"))
     {
         this->AddEffect(currentSelectedEffect_);
     }
+    if (currentSelectedEffect_ == PostEffectClassName::None) ImGui::EndDisabled();
     ImGui::SameLine();
     if (ImGui::BeginCombo("##EffectNames", PostEffectFactory::nameMap_.at(currentSelectedEffect_).c_str()))
     {

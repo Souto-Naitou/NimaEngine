@@ -24,7 +24,7 @@ void Viewport::Initialize()
 
     device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(commandAllocator_.GetAddressOf()));
     device_->CreateCommandList(
-        0, 
+        0,
         D3D12_COMMAND_LIST_TYPE_DIRECT,
         commandAllocator_.Get(),
         nullptr,
@@ -131,7 +131,7 @@ void Viewport::CreatePSO()
     psoDesc.CS = { csBlob_->GetBufferPointer(), csBlob_->GetBufferSize() };
 
     device_->CreateComputePipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState_));
-    
+
 }
 
 void Viewport::CreateSRV()
@@ -204,16 +204,14 @@ void Viewport::DrawWindow()
 {
     #ifdef _DEBUG
 
-    auto gpuHnd = SRVManager::GetInstance()->GetGPUDescriptorHandle(outputSRVIndex_);
-    auto vp = pDx12_->GetViewport();
 
+    auto gpuHnd = SRVManager::GetInstance()->GetGPUDescriptorHandle(outputSRVIndex_);
+    auto& vp = pDx12_->GetViewport();
     auto width = static_cast<uint32_t>(vp.Width);
     auto height = static_cast<uint32_t>(vp.Height);
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-
-    auto flags = ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     ImVec2 pad = ImGui::GetStyle().FramePadding;
     float fontsize = ImGui::GetFontSize();
@@ -221,14 +219,14 @@ void Viewport::DrawWindow()
 
     ImVec2 windowsize = nextContentRegionSize_;
     windowsize.y += titleHeight;
-
     if (windowsize.x && windowsize.y) ImGui::SetNextWindowSize(windowsize);
 
+    ImVec2 imagePosInClient{};
     bool isHover = false;
-    if(ImGui::Begin("Viewport", nullptr, flags))
+    auto flags = ImGuiWindowFlags_NoBringToFrontOnFocus;
+    if (ImGui::Begin("Viewport", nullptr, flags))
     {
         isHover |= ImGui::IsWindowHovered();
-
         auto cliSize = ImGui::GetContentRegionAvail();
 
         float aspect = 1.0f; // Default aspect ratio
@@ -237,18 +235,22 @@ void Viewport::DrawWindow()
             aspect = static_cast<float>(width) / static_cast<float>(height);
         }
         ImVec2 imageSizeAdjusted = cliSize;
-
         if (cliSize.x / aspect <= cliSize.y) imageSizeAdjusted.y = cliSize.x / aspect;
         else imageSizeAdjusted.x = cliSize.y * aspect;
 
         // Imageを中央に配置
         Vector2 offset = { (cliSize.x - imageSizeAdjusted.x) / 2.0f, (cliSize.y - imageSizeAdjusted.y) / 2.0f };
         ImGui::SetCursorPos(offset + ImGui::GetCursorPos());
-        
+
+        // Imageが表示されるクライアント領域内の位置を取得
+        imagePosInClient = ImGui::GetCursorScreenPos();
+
+        // 画像の表示
         ImGui::Image((ImTextureID)gpuHnd.ptr, imageSizeAdjusted);
 
+        // 次回のウィンドウサイズ調整用に保存
         nextContentRegionSize_ = imageSizeAdjusted;
-        
+
         auto itempos = ImGui::GetItemRectMin();
         vpPos_ = { itempos.x, itempos.y };
         auto itemsize = ImGui::GetItemRectSize();
@@ -259,7 +261,20 @@ void Viewport::DrawWindow()
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();
 
-    Input::GetInstance()->Enable(isHover);
+    Input* pInput = Input::GetInstance();
+    pInput->Enable(isHover);
+    pInput->SetWindowOffset(
+        POINT{
+            static_cast<LONG>(imagePosInClient.x),
+            static_cast<LONG>(imagePosInClient.y)
+        }
+    );
+    pInput->SetWindowSize(
+        SIZE{
+            static_cast<LONG>(vpSize_.x),
+            static_cast<LONG>(vpSize_.y)
+        }
+    );
 
     #endif // _DEBUG
 }

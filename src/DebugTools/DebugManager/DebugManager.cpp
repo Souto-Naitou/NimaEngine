@@ -103,13 +103,13 @@ void DebugManager::SwitchEnableWindow()
     if (pInput_->TriggerKey(DIK_F1))
     {
         isDisplay_ = true;
-        windowFuncs_[WindowType::DebugInfo].first = true;
-        windowFuncs_[WindowType::DebugInfoBar].first = true;
-        windowFuncs_[WindowType::Inspector].first = true;
-        windowFuncs_[WindowType::ObjectList].first = true;
-        windowFuncs_[WindowType::Logger].first = true;
-        windowFuncs_[WindowType::Viewport].first = true;
-        windowFuncs_[WindowType::EventTimer].first = true;
+        windowFuncs_[WindowType::DebugInfo].first       = true;
+        windowFuncs_[WindowType::DebugInfoBar].first    = true;
+        windowFuncs_[WindowType::Inspector].first       = true;
+        windowFuncs_[WindowType::ObjectList].first      = true;
+        windowFuncs_[WindowType::Logger].first          = true;
+        windowFuncs_[WindowType::Viewport].first        = true;
+        windowFuncs_[WindowType::EventTimer].first      = true;
     }
 
     // デバッグウィンドウの表示/非表示切り替え
@@ -117,25 +117,25 @@ void DebugManager::SwitchEnableWindow()
     {
         isDisplay_ = !isDisplay_;
 
-        windowFuncs_[WindowType::DebugInfo].first = isDisplay_;
-        windowFuncs_[WindowType::DebugInfoBar].first = isDisplay_;
-        windowFuncs_[WindowType::Inspector].first = isDisplay_;
-        windowFuncs_[WindowType::ObjectList].first = isDisplay_;
-        windowFuncs_[WindowType::Logger].first = isDisplay_;
-        windowFuncs_[WindowType::Viewport].first = true;
-        windowFuncs_[WindowType::EventTimer].first = isDisplay_;
+        windowFuncs_[WindowType::DebugInfo].first       = isDisplay_;
+        windowFuncs_[WindowType::DebugInfoBar].first    = isDisplay_;
+        windowFuncs_[WindowType::Inspector].first       = isDisplay_;
+        windowFuncs_[WindowType::ObjectList].first      = isDisplay_;
+        windowFuncs_[WindowType::Logger].first          = isDisplay_;
+        windowFuncs_[WindowType::Viewport].first        = true;
+        windowFuncs_[WindowType::EventTimer].first      = isDisplay_;
     }
 
-    // Inspectorウィンドウが独占
+    // InspectorウィンドウとViewportが独占
     if (pInput_->TriggerKey(DIK_F4))
     {
-        windowFuncs_[WindowType::DebugInfo].first = false;
-        windowFuncs_[WindowType::DebugInfoBar].first = false;
-        windowFuncs_[WindowType::Inspector].first = true;
-        windowFuncs_[WindowType::ObjectList].first = false;
-        windowFuncs_[WindowType::Logger].first = false;
-        windowFuncs_[WindowType::Viewport].first = false;
-        windowFuncs_[WindowType::EventTimer].first = false;
+        windowFuncs_[WindowType::DebugInfo].first       = false;
+        windowFuncs_[WindowType::DebugInfoBar].first    = false;
+        windowFuncs_[WindowType::Inspector].first       = true;
+        windowFuncs_[WindowType::ObjectList].first      = false;
+        windowFuncs_[WindowType::Logger].first          = false;
+        windowFuncs_[WindowType::Viewport].first        = true;
+        windowFuncs_[WindowType::EventTimer].first      = false;
     }
 }
 

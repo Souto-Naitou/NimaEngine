@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma warning(disable: 4324) // 構造体のメンバがアライメントのためにパディングされる
-
 #include "LineSystem.h"
 #include <d3d12.h>
 #include <Matrix4x4.h>

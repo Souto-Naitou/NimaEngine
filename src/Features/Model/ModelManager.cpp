@@ -32,9 +32,9 @@ void ModelManager::AddLoadPath(const std::string& path)
 {
     auto lowerPath = utl::string::to_lower(path);
 
-    for (const auto& path : loadPaths_)
+    for (const auto& pathExist : loadPaths_)
     {
-        if (path == lowerPath)
+        if (pathExist == lowerPath)
         {
             // The path already exists, no need to add it again
             return;

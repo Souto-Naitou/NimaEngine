@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オーディオシステム詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">オーディオシステム詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>オーディオシステム</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#architecture">アーキテクチャ</a></li>
+                    <li><a href="#audiomanager">AudioManager</a></li>
+                    <li><a href="#audio">Audioクラス</a></li>
+                    <li><a href="#usage">基本的な使い方</a></li>
+                    <li><a href="#categories">カテゴリによる管理</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                    <li><a href="#tips">Tips & ベストプラクティス</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p>NimaEngineのオーディオシステムは、XAudio2を基盤として、BGMと効果音の再生を管理します。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>XAudio2による高品質な音声再生</li>
+                        <li>カテゴリベースの音声管理</li>
+                        <li>複数のAudioインスタンスによる同時再生</li>
+                        <li>ループ再生のサポート</li>
+                        <li>リアルタイムなボリューム調整</li>
+                        <li>WAV形式の完全サポート</li>
+                        <li>パス検索機能による柔軟なファイル配置</li>
+                    </ul>
+
+                    <h3>対応フォーマット</h3>
+                    <ul>
+                        <li><strong>WAV</strong> - 推奨フォーマット（非圧縮、低遅延）</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>アーキテクチャ</h2>
+                <div class="card">
+                    <h3>クラス構成</h3>
+                    <div class="architecture-grid">
+                        <div class="arch-item">
+                            <h4>AudioManager</h4>
+                            <p>シングルトンクラス。音声ファイルの読み込み、Audioインスタンスの作成と管理を担当します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>Audio</h4>
+                            <p>個別の音声再生を制御するクラス。ループ再生、ボリューム調整などを行います。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>SoundData</h4>
+                            <p>WAVファイルから読み込んだ音声データを保持する構造体。</p>
+                        </div>
+                    </div>
+
+                    <h3>データフロー</h3>
+                    <pre><code>WAVファイル
+    ↓
+AudioManager::LoadWave()
+    ↓
+SoundData（メモリ上）
+    ↓
+AudioManager::GetNewAudio()
+    ↓
+Audio インスタンス
+    ↓
+Audio::Play()
+    ↓
+XAudio2 → スピーカー出力</code></pre>
+                </div>
+            </section>
+
+            <section id="audiomanager" class="section">
+                <h2>AudioManager</h2>
+                <div class="card">
+                    <p class="class-description">オーディオシステム全体を管理するシングルトンクラス。</p>
+
+                    <h3>インスタンスの取得</h3>
+                    <pre><code>auto audioManager = AudioManager::GetInstance();</code></pre>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize()</code>
+                            <p>XAudio2を初期化し、マスタリングボイスを作成します。フレームワークによって自動的に呼ばれます。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Update()</code>
+                            <p>オーディオシステムの状態を更新します（再生キューの処理など）。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Finalize()</code>
+                            <p>すべてのオーディオリソースを解放します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void AddSearchPath(const std::string& path)</code>
+                            <p>音声ファイルの検索パスを追加します。</p>
+                        </div>
+                        <div class="method">
+                            <code>Audio* GetNewAudio(const std::string& category, const std::string& filename)</code>
+                            <p>新しいAudioインスタンスを作成して返します。ファイルが未読み込みの場合は自動的にロードされます。</p>
+                        </div>
+                    </div>
+
+                    <h3>GetNewAudio の詳細</h3>
+                    <div class="card" style="background-color: var(--code-bg);">
+                        <h4>パラメータ</h4>
+                        <ul>
+                            <li><code>category</code> - カテゴリ名（"BGM", "Effect", "Voice" など）</li>
+                            <li><code>filename</code> - 音声ファイルのパス</li>
+                        </ul>
+                        
+                        <h4>戻り値</h4>
+                        <p><code>Audio*</code> - 作成されたAudioインスタンスへのポインタ</p>
+                        
+                        <h4>動作</h4>
+                        <ol>
+                            <li>指定されたファイルがロード済みかチェック</li>
+                            <li>未ロードの場合、WAVファイルを読み込む</li>
+                            <li>新しいAudioインスタンスを作成</li>
+                            <li>指定されたカテゴリに登録</li>
+                            <li>Audioポインタを返す</li>
+                        </ol>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>auto audioManager = AudioManager::GetInstance();
+
+// BGMカテゴリで音声を取得
+auto bgm = audioManager->GetNewAudio("BGM", "resources/audio/title.wav");
+
+// Effectカテゴリで効果音を取得
+auto shotSE = audioManager->GetNewAudio("Effect", "resources/audio/shot.wav");
+auto jumpSE = audioManager->GetNewAudio("Effect", "resources/audio/jump.wav");</code></pre>
+                </div>
+            </section>
+
+            <section id="audio" class="section">
+                <h2>Audioクラス</h2>
+                <div class="card">
+                    <p class="class-description">個別の音声再生を制御するクラス。</p>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize()</code>
+                            <p>Audioインスタンスを初期化します。通常、AudioManagerによって自動的に呼ばれます。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Play(bool isLoop = false)</code>
+                            <p>音声を再生します。</p>
+                            <ul>
+                                <li><code>isLoop</code> - <code>true</code>でループ再生</li>
+                            </ul>
+                        </div>
+                        <div class="method">
+                            <code>void SetVolume(float volume)</code>
+                            <p>ボリュームを設定します。</p>
+                            <ul>
+                                <li><code>volume</code> - 0.0f（無音）～ 1.0f（最大音量）</li>
+                            </ul>
+                        </div>
+                        <div class="method">
+                            <code>float GetVolume() const</code>
+                            <p>現在のボリュームを取得します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Unload(SoundData* soundData)</code>
+                            <p>音声データをアンロードします。内部で使用されるメソッドです。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Finalize()</code>
+                            <p>Audioリソースを解放します。</p>
+                        </div>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>// 音声の取得
+auto bgm = audioManager->GetNewAudio("BGM", "title.wav");
+
+// ループ再生
+bgm->Play(true);
+
+// ボリューム調整
+bgm->SetVolume(0.7f); // 70%の音量
+
+// 単発再生（効果音）
+auto shotSE = audioManager->GetNewAudio("Effect", "shot.wav");
+shotSE->Play(false); // ループなし</code></pre>
+                </div>
+            </section>
+
+            <section id="usage" class="section">
+                <h2>基本的な使い方</h2>
+                <div class="card">
+                    <h3>1. 初期化（自動）</h3>
+                    <p>オーディオシステムは<code>NimaFramework</code>によって自動的に初期化されます。</p>
+
+                    <h3>2. 音声ハンドルの取得</h3>
+                    <pre><code>class Player
+{
+private:
+    Audio* audioShot_ = nullptr;
+    Audio* audioDeath_ = nullptr;
+    
+public:
+    void Initialize()
+    {
+        auto audioManager = AudioManager::GetInstance();
+        
+        // 効果音を取得
+        audioShot_ = audioManager->GetNewAudio("Effect", "resources/audio/shot.wav");
+        audioDeath_ = audioManager->GetNewAudio("Effect", "resources/audio/death.wav");
+        
+        // ボリュームを設定
+        audioShot_->SetVolume(0.8f);
+    }
+};</code></pre>
+
+                    <h3>3. 再生</h3>
+                    <pre><code>void Player::Shoot()
+{
+    // 弾を発射
+    CreateBullet();
+    
+    // 効果音を再生
+    audioShot_->Play();
+}
+
+void Player::OnDeath()
+{
+    // 死亡音を再生
+    audioDeath_->Play();
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="categories" class="section">
+                <h2>カテゴリによる管理</h2>
+                <div class="card">
+                    <p>カテゴリを使用することで、音声を論理的にグループ化できます。</p>
+
+                    <h3>推奨カテゴリ</h3>
+                    <ul>
+                        <li><strong>"BGM"</strong> - バックグラウンドミュージック</li>
+                        <li><strong>"Effect"</strong> - 効果音（SE）</li>
+                        <li><strong>"Voice"</strong> - ボイス、ナレーション</li>
+                        <li><strong>"UI"</strong> - UIの効果音</li>
+                        <li><strong>"Ambient"</strong> - 環境音</li>
+                    </ul>
+
+                    <h3>カテゴリ別の管理例</h3>
+                    <pre><code>class AudioController
+{
+private:
+    std::vector&lt;Audio*&gt; bgmTracks_;
+    std::vector&lt;Audio*&gt; effectSounds_;
+    
+public:
+    void Initialize()
+    {
+        auto audioManager = AudioManager::GetInstance();
+        
+        // BGMの登録
+        bgmTracks_.push_back(
+            audioManager->GetNewAudio("BGM", "title.wav")
+        );
+        bgmTracks_.push_back(
+            audioManager->GetNewAudio("BGM", "battle.wav")
+        );
+        
+        // 効果音の登録
+        effectSounds_.push_back(
+            audioManager->GetNewAudio("Effect", "button.wav")
+        );
+        effectSounds_.push_back(
+            audioManager->GetNewAudio("Effect", "explosion.wav")
+        );
+    }
+    
+    // カテゴリ全体のボリューム調整
+    void SetBGMVolume(float volume)
+    {
+        for (auto& bgm : bgmTracks_)
+        {
+            bgm->SetVolume(volume);
+        }
+    }
+    
+    void SetEffectVolume(float volume)
+    {
+        for (auto& effect : effectSounds_)
+        {
+            effect->SetVolume(volume);
+        }
+    }
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>BGMのフェードイン/フェードアウト</h3>
+                    <pre><code>class BGMController
+{
+private:
+    Audio* currentBGM_ = nullptr;
+    float targetVolume_ = 1.0f;
+    float currentVolume_ = 0.0f;
+    float fadeSpeed_ = 0.5f; // 1秒でフェード完了
+    
+public:
+    void PlayBGM(Audio* bgm, bool fadeIn = true)
+    {
+        currentBGM_ = bgm;
+        
+        if (fadeIn)
+        {
+            currentVolume_ = 0.0f;
+            targetVolume_ = 1.0f;
+        }
+        else
+        {
+            currentVolume_ = 1.0f;
+            targetVolume_ = 1.0f;
+        }
+        
+        currentBGM_->SetVolume(currentVolume_);
+        currentBGM_->Play(true); // ループ再生
+    }
+    
+    void StopBGM(bool fadeOut = true)
+    {
+        if (fadeOut)
+        {
+            targetVolume_ = 0.0f;
+        }
+        else
+        {
+            if (currentBGM_)
+            {
+                // 即座に停止（XAudio2のStop実装が必要）
+                currentVolume_ = 0.0f;
+                currentBGM_->SetVolume(0.0f);
+            }
+        }
+    }
+    
+    void Update(float deltaTime)
+    {
+        if (!currentBGM_) return;
+        
+        // フェード処理
+        if (std::abs(currentVolume_ - targetVolume_) > 0.01f)
+        {
+            float step = fadeSpeed_ * deltaTime;
+            
+            if (currentVolume_ < targetVolume_)
+            {
+                currentVolume_ = std::min(currentVolume_ + step, targetVolume_);
+            }
+            else
+            {
+                currentVolume_ = std::max(currentVolume_ - step, targetVolume_);
+            }
+            
+            currentBGM_->SetVolume(currentVolume_);
+        }
+    }
+};</code></pre>
+
+                    <h3>効果音の管理システム</h3>
+                    <pre><code>class SoundEffectManager
+{
+private:
+    std::unordered_map&lt;std::string, Audio*&gt; soundEffects_;
+    
+public:
+    void Initialize()
+    {
+        auto audioManager = AudioManager::GetInstance();
+        
+        // 効果音を事前ロード
+        RegisterSound("button", "resources/audio/button.wav");
+        RegisterSound("explosion", "resources/audio/explosion.wav");
+        RegisterSound("pickup", "resources/audio/pickup.wav");
+        RegisterSound("jump", "resources/audio/jump.wav");
+        RegisterSound("hit", "resources/audio/hit.wav");
+    }
+    
+    void RegisterSound(const std::string& name, const std::string& filepath)
+    {
+        auto audioManager = AudioManager::GetInstance();
+        soundEffects_[name] = audioManager->GetNewAudio("Effect", filepath);
+    }
+    
+    void PlaySound(const std::string& name, float volume = 1.0f)
+    {
+        auto it = soundEffects_.find(name);
+        if (it != soundEffects_.end())
+        {
+            it->second->SetVolume(volume);
+            it->second->Play();
+        }
+    }
+    
+    // 距離減衰を考慮した3D音響
+    void PlaySound3D(const std::string& name, 
+                     const Vector3& soundPos, 
+                     const Vector3& listenerPos,
+                     float maxDistance = 50.0f)
+    {
+        auto it = soundEffects_.find(name);
+        if (it == soundEffects_.end()) return;
+        
+        // 距離を計算
+        float distance = (soundPos - listenerPos).Length();
+        
+        // 距離減衰を計算
+        float attenuation = 1.0f - std::min(distance / maxDistance, 1.0f);
+        attenuation = attenuation * attenuation; // 二次減衰
+        
+        // ボリュームを設定して再生
+        it->second->SetVolume(attenuation);
+        it->second->Play();
+    }
+};</code></pre>
+
+                    <h3>シーン別BGM管理</h3>
+                    <pre><code>class SceneBGMManager
+{
+private:
+    std::unordered_map&lt;std::string, Audio*&gt; sceneBGMs_;
+    Audio* currentBGM_ = nullptr;
+    
+public:
+    void Initialize()
+    {
+        auto audioManager = AudioManager::GetInstance();
+        
+        // シーンごとのBGMを登録
+        sceneBGMs_["Title"] = audioManager->GetNewAudio("BGM", "title.wav");
+        sceneBGMs_["Game"] = audioManager->GetNewAudio("BGM", "game.wav");
+        sceneBGMs_["Boss"] = audioManager->GetNewAudio("BGM", "boss.wav");
+        sceneBGMs_["GameOver"] = audioManager->GetNewAudio("BGM", "gameover.wav");
+        sceneBGMs_["Clear"] = audioManager->GetNewAudio("BGM", "clear.wav");
+    }
+    
+    void PlaySceneBGM(const std::string& sceneName, float volume = 0.8f)
+    {
+        // 現在のBGMを停止
+        if (currentBGM_)
+        {
+            currentBGM_->SetVolume(0.0f);
+            // ※ 実際には停止処理が必要
+        }
+        
+        // 新しいBGMを再生
+        auto it = sceneBGMs_.find(sceneName);
+        if (it != sceneBGMs_.end())
+        {
+            currentBGM_ = it->second;
+            currentBGM_->SetVolume(volume);
+            currentBGM_->Play(true); // ループ再生
+        }
+    }
+    
+    void StopCurrentBGM()
+    {
+        if (currentBGM_)
+        {
+            currentBGM_->SetVolume(0.0f);
+            // ※ 実際には停止処理が必要
+            currentBGM_ = nullptr;
+        }
+    }
+};</code></pre>
+
+                    <h3>実際のゲームでの使用例（Calms参照）</h3>
+                    <pre><code>// Player.hでメンバ変数として宣言
+class Player
+{
+private:
+    Audio* audioShot_ = nullptr;
+    Audio* audioDeath_ = nullptr;
+    Audio* audioSlowOn_ = nullptr;
+    Audio* audioSlowOff_ = nullptr;
+};
+
+// Player.cppで初期化
+void Player::AudioHandleInitialize()
+{
+    auto audioManager = AudioManager::GetInstance();
+    
+    audioShot_ = audioManager->GetNewAudio("Effect", Path::Audio::kSePlayerShoot);
+    audioShot_->SetVolume(0.3f); // 音量を30%に設定
+    
+    audioDeath_ = audioManager->GetNewAudio("Effect", Path::Audio::kSePlayerDeath);
+    audioDeath_->SetVolume(0.5f);
+    
+    audioSlowOn_ = audioManager->GetNewAudio("Effect", Path::Audio::kSePlayerSlowOn);
+    audioSlowOn_->SetVolume(0.4f);
+    
+    audioSlowOff_ = audioManager->GetNewAudio("Effect", Path::Audio::kSePlayerSlowOff);
+    audioSlowOff_->SetVolume(0.4f);
+}
+
+// 使用箇所
+void Player::ActivateSlowMotion()
+{
+    audioSlowOn_->Play();
+    // スローモーション処理...
+}
+
+void Player::DeactivateSlowMotion()
+{
+    audioSlowOff_->Play();
+    // 通常速度に戻す...
+}
+
+void Player::Shoot()
+{
+    if (canShoot)
+    {
+        CreateBullet();
+        audioShot_->Play(); // 射撃音を再生
+    }
+}
+
+void Player::OnDeath()
+{
+    audioDeath_->Play();
+    // 死亡処理...
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>Tips & ベストプラクティス</h2>
+                <div class="card">
+                    <h3>1. 事前ロードの推奨</h3>
+                    <p>頻繁に使用する音声は、シーンの初期化時に事前にロードしておくことで、再生時の遅延を防げます。</p>
+                    <pre><code>// 良い例：初期化時に取得
+void GameScene::Initialize()
+{
+    audioExplosion_ = audioManager->GetNewAudio("Effect", "explosion.wav");
+}
+
+void GameScene::OnExplosion()
+{
+    audioExplosion_->Play(); // 即座に再生
+}</code></pre>
+
+                    <h3>2. ボリュームの適切な設定</h3>
+                    <ul>
+                        <li><strong>BGM</strong>: 0.5～0.8（控えめに）</li>
+                        <li><strong>効果音</strong>: 0.3～0.6（BGMより小さめ）</li>
+                        <li><strong>重要な音</strong>: 0.7～1.0（明確に聞こえるように）</li>
+                    </ul>
+
+                    <h3>3. カテゴリの活用</h3>
+                    <p>設定画面でカテゴリごとのボリューム調整を実装する際に便利です。</p>
+
+                    <h3>4. メモリ管理</h3>
+                    <p>Audioインスタンスは<code>AudioManager</code>が管理するため、手動でdeleteする必要はありません。</p>
+
+                    <h3>5. パスの管理</h3>
+                    <p>音声ファイルのパスは定数や設定ファイルで一元管理することを推奨します。</p>
+                    <pre><code>// 定数での管理
+namespace Path::Audio
+{
+    constexpr const char* kSePlayerShoot = "resources/audio/shoot.wav";
+    constexpr const char* kSePlayerDeath = "resources/audio/death.wav";
+    constexpr const char* kBgmTitle = "resources/audio/bgm_title.wav";
+}</code></pre>
+
+                    <h3>6. 同時再生数の制限</h3>
+                    <p>同じ効果音が大量に同時再生されると音が割れる可能性があります。必要に応じて再生数を制限しましょう。</p>
+
+                    <h3>7. WAVファイルの最適化</h3>
+                    <ul>
+                        <li>サンプリングレート: 44.1kHz または 48kHz</li>
+                        <li>ビット深度: 16bit（通常の効果音）、24bit（高音質BGM）</li>
+                        <li>チャンネル: モノラル（効果音）、ステレオ（BGM）</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

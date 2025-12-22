@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入力システム詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">入力システム詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>入力システム</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#initialization">初期化</a></li>
+                    <li><a href="#keyboard">キーボード入力</a></li>
+                    <li><a href="#mouse">マウス入力</a></li>
+                    <li><a href="#gamepad">ゲームパッド入力</a></li>
+                    <li><a href="#methods">主要メソッド</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                    <li><a href="#tips">Tips & ベストプラクティス</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p><code>Input</code>クラスは、DirectInputを使用してキーボード、マウス、ゲームパッドの入力を統一的に管理するシングルトンクラスです。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>DirectInput 8ベースの入力処理</li>
+                        <li>キーボード、マウス、ゲームパッドの統合管理</li>
+                        <li>プレス（継続）とトリガー（瞬間）の区別</li>
+                        <li>ゲームパッドのデッドゾーン設定</li>
+                        <li>ビューポートオフセットに対応したマウス座標</li>
+                        <li>入力の有効/無効の切り替え</li>
+                    </ul>
+
+                    <h3>インスタンスの取得</h3>
+                    <pre><code>auto input = Input::GetInstance();</code></pre>
+                </div>
+            </section>
+
+            <section id="initialization" class="section">
+                <h2>初期化</h2>
+                <div class="card">
+                    <p>入力システムは<code>NimaFramework</code>によって自動的に初期化されます。手動で初期化する必要はありません。</p>
+
+                    <pre><code>// フレームワーク内で自動的に呼ばれる
+input->Initialize(hInstance, hwnd);
+input->Update(); // 毎フレーム自動更新</code></pre>
+                </div>
+            </section>
+
+            <section id="keyboard" class="section">
+                <h2>キーボード入力</h2>
+                <div class="card">
+                    <h3>PushKey / PushKeyC（プレス判定）</h3>
+                    <p>キーが押されている間、<code>true</code>を返し続けます。</p>
+
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool PushKey(BYTE keyNumber) const</code>
+                            <p>DirectInputのキーコード（<code>DIK_*</code>）で判定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>bool PushKeyC(char key) const</code>
+                            <p>文字（'A', 'B', '1'など）で判定します。大文字で指定してください。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// DirectInputキーコードで判定
+if (input->PushKey(DIK_SPACE)) {
+    // スペースキーが押されている間、毎フレーム実行
+    player->Jump();
+}
+
+// 文字で判定
+if (input->PushKeyC('W')) {
+    // Wキーが押されている間、前進
+    player->MoveForward();
+}</code></pre>
+
+                    <h3>TriggerKey / TriggerKeyC（トリガー判定）</h3>
+                    <p>キーが押された<strong>瞬間</strong>のみ<code>true</code>を返します。連打を防ぐのに有効です。</p>
+
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool TriggerKey(BYTE keyNumber) const</code>
+                            <p>DirectInputのキーコードでトリガー判定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>bool TriggerKeyC(char key) const</code>
+                            <p>文字でトリガー判定します。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// ジャンプは一度押したら一回だけ
+if (input->TriggerKey(DIK_SPACE)) {
+    player->Jump();
+}
+
+// アイテム使用も一回だけ
+if (input->TriggerKeyC('E')) {
+    player->UseItem();
+}</code></pre>
+
+                    <h3>主要なDirectInputキーコード</h3>
+                    <div class="card" style="background-color: var(--code-bg);">
+                        <h4>文字キー</h4>
+                        <p><code>DIK_A</code> ~ <code>DIK_Z</code></p>
+                        
+                        <h4>数字キー</h4>
+                        <p><code>DIK_1</code> ~ <code>DIK_0</code></p>
+                        
+                        <h4>ファンクションキー</h4>
+                        <p><code>DIK_F1</code> ~ <code>DIK_F12</code></p>
+                        
+                        <h4>移動キー（WASD）</h4>
+                        <ul>
+                            <li><code>DIK_W</code> - W（前進/上）</li>
+                            <li><code>DIK_A</code> - A（左）</li>
+                            <li><code>DIK_S</code> - S（後退/下）</li>
+                            <li><code>DIK_D</code> - D（右）</li>
+                        </ul>
+                        
+                        <h4>矢印キー</h4>
+                        <ul>
+                            <li><code>DIK_UP</code> - 上矢印</li>
+                            <li><code>DIK_DOWN</code> - 下矢印</li>
+                            <li><code>DIK_LEFT</code> - 左矢印</li>
+                            <li><code>DIK_RIGHT</code> - 右矢印</li>
+                        </ul>
+                        
+                        <h4>特殊キー</h4>
+                        <ul>
+                            <li><code>DIK_SPACE</code> - スペース</li>
+                            <li><code>DIK_RETURN</code> - Enter</li>
+                            <li><code>DIK_ESCAPE</code> - Esc</li>
+                            <li><code>DIK_LSHIFT</code> / <code>DIK_RSHIFT</code> - Shift</li>
+                            <li><code>DIK_LCONTROL</code> / <code>DIK_RCONTROL</code> - Ctrl</li>
+                            <li><code>DIK_LALT</code> / <code>DIK_RALT</code> - Alt</li>
+                            <li><code>DIK_TAB</code> - Tab</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mouse" class="section">
+                <h2>マウス入力</h2>
+                <div class="card">
+                    <h3>MouseNum 列挙型</h3>
+                    <div class="enum-list">
+                        <div class="enum">
+                            <code>enum class MouseNum</code>
+                            <ul>
+                                <li><code>Left</code> - 左ボタン</li>
+                                <li><code>Right</code> - 右ボタン</li>
+                                <li><code>Center</code> - 中央ボタン（ホイールクリック）</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>PushMouse（マウスボタンプレス）</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool PushMouse(MouseNum mouseNum) const</code>
+                            <p>指定されたマウスボタンが押されている間、<code>true</code>を返します。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// 左クリックで連続射撃
+if (input->PushMouse(Input::MouseNum::Left)) {
+    player->Shoot();
+}
+
+// 右クリックでズーム
+if (input->PushMouse(Input::MouseNum::Right)) {
+    camera->Zoom(2.0f);
+}</code></pre>
+
+                    <h3>TriggerMouse（マウスボタントリガー）</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool TriggerMouse(MouseNum mouseNum) const</code>
+                            <p>指定されたマウスボタンが押された<strong>瞬間</strong>のみ<code>true</code>を返します。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// 左クリックで単発射撃
+if (input->TriggerMouse(Input::MouseNum::Left)) {
+    player->ShootOnce();
+}
+
+// 右クリックでアイテム選択
+if (input->TriggerMouse(Input::MouseNum::Right)) {
+    ui->OpenContextMenu();
+}</code></pre>
+
+                    <h3>GetCursorPosition（マウス座標）</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>POINT GetCursorPosition() const</code>
+                            <p>マウスカーソルの現在位置を取得します。ビューポートオフセットが考慮されます。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>POINT mousePos = input->GetCursorPosition();
+
+// マウス位置にオブジェクトを配置
+sprite->SetPosition(Vector2(
+    static_cast&lt;float&gt;(mousePos.x),
+    static_cast&lt;float&gt;(mousePos.y)
+));</code></pre>
+
+                    <h3>GetWheelDelta（マウスホイール）</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>int32_t GetWheelDelta() const</code>
+                            <p>マウスホイールの回転量を取得します。正の値が上方向、負の値が下方向です。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>int32_t wheelDelta = input->GetWheelDelta();
+
+if (wheelDelta > 0) {
+    // ホイールを上に回転：ズームイン
+    camera->ZoomIn();
+} else if (wheelDelta < 0) {
+    // ホイールを下に回転：ズームアウト
+    camera->ZoomOut();
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="gamepad" class="section">
+                <h2>ゲームパッド入力</h2>
+                <div class="card">
+                    <h3>アナログスティック</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>Vector2 GetLeftStickPosition() const</code>
+                            <p>左アナログスティックの位置を取得します。範囲は-1.0～1.0です。</p>
+                        </div>
+                        <div class="method">
+                            <code>Vector2 GetRightStickPosition() const</code>
+                            <p>右アナログスティックの位置を取得します。範囲は-1.0～1.0です。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// 左スティックで移動
+Vector2 leftStick = input->GetLeftStickPosition();
+if (leftStick.Length() > 0.1f) { // デッドゾーンチェック
+    Vector3 moveDir(leftStick.x, 0.0f, leftStick.y);
+    player->Move(moveDir);
+}
+
+// 右スティックでカメラ回転
+Vector2 rightStick = input->GetRightStickPosition();
+if (rightStick.Length() > 0.1f) {
+    camera->Rotate(rightStick.x * sensitivity, rightStick.y * sensitivity);
+}</code></pre>
+
+                    <h3>デッドゾーン設定</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void SetDeadZoneRange(float deadZoneRange)</code>
+                            <p>スティックのデッドゾーン範囲を設定します。デフォルトは0.1f（10%）です。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// デッドゾーンを15%に設定
+input->SetDeadZoneRange(0.15f);</code></pre>
+
+                    <p class="text-muted">※ ボタン入力については内部的にサポートされていますが、公開APIは実装に依存します。</p>
+                </div>
+            </section>
+
+            <section id="methods" class="section">
+                <h2>主要メソッド</h2>
+                <div class="card">
+                    <h3>システム制御</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Enable(bool flag)</code>
+                            <p>入力処理の有効/無効を切り替えます。メニュー表示時などに入力を無効化できます。</p>
+                        </div>
+                    </div>
+
+                    <h4>使用例</h4>
+                    <pre><code>// ポーズメニューを開く時
+void OpenPauseMenu()
+{
+    isPaused = true;
+    input->Enable(false); // ゲーム内の入力を無効化
+}
+
+// ポーズメニューを閉じる時
+void ClosePauseMenu()
+{
+    isPaused = false;
+    input->Enable(true); // 入力を再度有効化
+}</code></pre>
+
+                    <h3>ビューポート設定</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void SetWindowOffset(POINT offset)</code>
+                            <p>ウィンドウのオフセットを設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetWindowSize(SIZE size)</code>
+                            <p>ウィンドウサイズを設定します。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>WASDキーで移動</h3>
+                    <pre><code>void Player::UpdateMovement()
+{
+    auto input = Input::GetInstance();
+    
+    // 移動方向を計算
+    int dirX = input->PushKey(DIK_D) - input->PushKey(DIK_A);
+    int dirZ = input->PushKey(DIK_W) - input->PushKey(DIK_S);
+    
+    Vector3 moveDir(static_cast&lt;float&gt;(dirX), 0.0f, static_cast&lt;float&gt;(dirZ));
+    
+    // 正規化（斜め移動が速くならないように）
+    if (moveDir.Length() > 0.0f) {
+        moveDir = moveDir.Normalized();
+        position += moveDir * moveSpeed * deltaTime;
+    }
+}</code></pre>
+
+                    <h3>射撃システム</h3>
+                    <pre><code>void Player::UpdateShooting()
+{
+    auto input = Input::GetInstance();
+    
+    // 連射（プレス判定）
+    if (input->PushMouse(Input::MouseNum::Left))
+    {
+        // クールダウンチェック
+        if (shotTimer.GetElapsedTime() > shotCooldown)
+        {
+            Shoot();
+            shotTimer.Reset();
+        }
+    }
+    
+    // 特殊弾（トリガー判定）
+    if (input->TriggerMouse(Input::MouseNum::Right))
+    {
+        if (specialAmmo > 0)
+        {
+            ShootSpecial();
+            specialAmmo--;
+        }
+    }
+}</code></pre>
+
+                    <h3>スロー機能のトグル</h3>
+                    <pre><code>void GameScene::UpdateSlowMotion()
+{
+    auto input = Input::GetInstance();
+    
+    // Shiftキーのトリガーでスローモーションのオン/オフを切り替え
+    if (input->TriggerKey(DIK_LSHIFT))
+    {
+        isSlowMotion = !isSlowMotion;
+        
+        if (isSlowMotion)
+        {
+            pDeltaTimeManager_->SetTimeScale(0.3f);
+            // エフェクトを有効化
+            pViewport_->GetPostEffect&lt;RadialBlur&gt;()->Enable(true);
+        }
+        else
+        {
+            pDeltaTimeManager_->SetTimeScale(1.0f);
+            // エフェクトを無効化
+            pViewport_->GetPostEffect&lt;RadialBlur&gt;()->Enable(false);
+        }
+    }
+}</code></pre>
+
+                    <h3>マウスで照準</h3>
+                    <pre><code>void Player::UpdateAiming()
+{
+    auto input = Input::GetInstance();
+    
+    // マウス位置を取得
+    POINT mousePos = input->GetCursorPosition();
+    
+    // スクリーン座標をワールド座標に変換
+    Vector3 worldPos = ScreenToWorld(
+        Vector2(static_cast&lt;float&gt;(mousePos.x), static_cast&lt;float&gt;(mousePos.y))
+    );
+    
+    // プレイヤーからマウス位置への方向を計算
+    Vector3 aimDirection = (worldPos - playerPosition).Normalized();
+    
+    // 照準UIを更新
+    crosshair->SetPosition(Vector2(
+        static_cast&lt;float&gt;(mousePos.x),
+        static_cast&lt;float&gt;(mousePos.y)
+    ));
+    
+    // プレイヤーを回転
+    float angle = std::atan2(aimDirection.x, aimDirection.z);
+    playerRotation.y = angle;
+}</code></pre>
+
+                    <h3>ゲームパッドとキーボードの併用</h3>
+                    <pre><code>void Player::UpdateInput()
+{
+    auto input = Input::GetInstance();
+    Vector3 moveDir(0.0f, 0.0f, 0.0f);
+    
+    // ゲームパッド入力をチェック
+    Vector2 leftStick = input->GetLeftStickPosition();
+    if (leftStick.Length() > 0.1f)
+    {
+        // ゲームパッドで移動
+        moveDir = Vector3(leftStick.x, 0.0f, leftStick.y);
+    }
+    else
+    {
+        // キーボードで移動（ゲームパッドが無い場合のフォールバック）
+        int dirX = input->PushKey(DIK_D) - input->PushKey(DIK_A);
+        int dirZ = input->PushKey(DIK_W) - input->PushKey(DIK_S);
+        moveDir = Vector3(static_cast&lt;float&gt;(dirX), 0.0f, static_cast&lt;float&gt;(dirZ));
+    }
+    
+    // 移動を適用
+    if (moveDir.Length() > 0.0f)
+    {
+        moveDir = moveDir.Normalized();
+        position += moveDir * moveSpeed * deltaTime;
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>Tips & ベストプラクティス</h2>
+                <div class="card">
+                    <h3>1. プレスとトリガーの使い分け</h3>
+                    <ul>
+                        <li><strong>Push系</strong>: 移動、射撃（連射）、ズームなど、<strong>継続的な動作</strong></li>
+                        <li><strong>Trigger系</strong>: ジャンプ、アイテム使用、メニュー開閉など、<strong>一回だけの動作</strong></li>
+                    </ul>
+
+                    <h3>2. 入力バッファリング</h3>
+                    <p>素早い入力を逃さないために、短時間の入力バッファを実装することを推奨します。</p>
+                    <pre><code>// ジャンプ入力を0.1秒間バッファリング
+if (input->TriggerKey(DIK_SPACE))
+{
+    jumpBufferTimer = 0.1f;
+}
+
+jumpBufferTimer -= deltaTime;
+
+if (jumpBufferTimer > 0.0f && player->IsGrounded())
+{
+    player->Jump();
+    jumpBufferTimer = 0.0f;
+}</code></pre>
+
+                    <h3>3. デッドゾーンの適切な設定</h3>
+                    <p>コントローラーのドリフトを防ぐため、デッドゾーンを適切に設定しましょう。</p>
+                    <pre><code>// 推奨デッドゾーン: 10%～20%
+input->SetDeadZoneRange(0.15f);</code></pre>
+
+                    <h3>4. 入力の無効化を活用</h3>
+                    <p>カットシーンやメニュー表示時は入力を無効化することで、意図しない操作を防げます。</p>
+
+                    <h3>5. キー配置のカスタマイズ</h3>
+                    <p>将来的なキーコンフィグ実装を考慮して、キーコードを直接書くのではなく、定数や設定ファイルから読み込むようにしましょう。</p>
+                    <pre><code>// 良い例
+const BYTE KEY_JUMP = DIK_SPACE;
+if (input->TriggerKey(KEY_JUMP)) { ... }
+
+// 悪い例
+if (input->TriggerKey(DIK_SPACE)) { ... }</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

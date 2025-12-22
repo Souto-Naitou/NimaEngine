@@ -18,10 +18,7 @@ public:
     /// モデル管理の初期化を行います。
     /// パスリゾルバやストレージの初期設定を行います。
     /// </summary>
-    void Initialize();
-
-    void SetModelLoader(IModelLoader* loader);
-    void SetModelStorage(ModelStorage* storage);
+    void Initialize(IModelLoader* loader, ModelStorage* storage);
 
     /// <summary>
     /// 事前ロードの対象パスを追加します。

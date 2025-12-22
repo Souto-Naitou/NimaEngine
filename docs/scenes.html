@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シーンシステム詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">シーンシステム詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>シーンシステム</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#architecture">アーキテクチャ</a></li>
+                    <li><a href="#scenemanager">SceneManager</a></li>
+                    <li><a href="#scenebase">SceneBase</a></li>
+                    <li><a href="#sceneargs">SceneArgs</a></li>
+                    <li><a href="#lifecycle">ライフサイクル</a></li>
+                    <li><a href="#transition">シーン遷移</a></li>
+                    <li><a href="#usage">基本的な使い方</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                    <li><a href="#tips">Tips & ベストプラクティス</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p>NimaEngineのシーンシステムは、ゲームの各場面（タイトル、ゲーム、リザルトなど）を管理します。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>シーンの自動的なライフサイクル管理</li>
+                        <li>シーン間のデータ受け渡し（SceneArgs）</li>
+                        <li>トランジションエフェクト付きシーン遷移</li>
+                        <li>ファクトリパターンによる柔軟なシーン生成</li>
+                        <li>レイヤーシステムとの統合</li>
+                        <li>初期引数の一括設定機能</li>
+                    </ul>
+
+                    <h3>典型的なシーン構成</h3>
+                    <ul>
+                        <li><strong>TitleScene</strong> - タイトル画面</li>
+                        <li><strong>LoadScene</strong> - ロード画面</li>
+                        <li><strong>GameScene</strong> - ゲームプレイ</li>
+                        <li><strong>ClearScene</strong> - ゲームクリア</li>
+                        <li><strong>GameOverScene</strong> - ゲームオーバー</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>アーキテクチャ</h2>
+                <div class="card">
+                    <h3>クラス構成</h3>
+                    <div class="architecture-grid">
+                        <div class="arch-item">
+                            <h4>SceneManager</h4>
+                            <p>シングルトンクラス。シーンの遷移、ライフサイクル管理を担当します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>SceneBase</h4>
+                            <p>すべてのシーンが継承する基底クラス。Initialize, Update, Draw等を実装します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>ISceneFactory</h4>
+                            <p>シーン生成のインターフェース。プロジェクトごとに実装します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>ISceneArgs</h4>
+                            <p>シーン間でデータを受け渡すための引数インターフェース。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>TransBase</h4>
+                            <p>シーン遷移エフェクトの基底クラス。TransShutter等が実装します。</p>
+                        </div>
+                    </div>
+
+                    <h3>シーン遷移のフロー</h3>
+                    <pre><code>現在のシーン
+    ↓
+SceneManager::ReserveScene("NextScene")
+    ↓（次フレーム）
+[Transition Out]（現在のシーンがフェードアウト）
+    ↓
+現在のシーン::Finalize()
+    ↓
+ISceneFactory::CreateScene("NextScene", args)
+    ↓
+新しいシーン::Initialize()
+    ↓
+[Transition In]（新しいシーンがフェードイン）
+    ↓
+新しいシーン::Update(), Draw()</code></pre>
+                </div>
+            </section>
+
+            <section id="scenemanager" class="section">
+                <h2>SceneManager</h2>
+                <div class="card">
+                    <p class="class-description">シーン全体を管理するシングルトンクラス。</p>
+
+                    <h3>インスタンスの取得</h3>
+                    <pre><code>auto sceneManager = SceneManager::GetInstance();</code></pre>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize(const Params& param)</code>
+                            <p>SceneManagerを初期化します。フレームワークによって自動的に呼ばれます。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Update()</code>
+                            <p>現在のシーンを更新します。遷移予約がある場合は実行します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SceneDraw()</code>
+                            <p>現在のシーンを描画します（テキスト以外）。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SceneDrawText()</code>
+                            <p>現在のシーンのテキスト描画を行います。</p>
+                        </div>
+                        <div class="method">
+                            <code>void ReserveScene(const std::string& sceneName)</code>
+                            <p>次フレームで遷移するシーン名を予約します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void ReserveScene(const std::string& sceneName, std::unique_ptr&lt;TransBase&gt;&& transition)</code>
+                            <p>トランジションエフェクト付きでシーンを予約します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetSceneFactory(ISceneFactory* pSceneFactory)</code>
+                            <p>シーン生成に使用するファクトリを設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetSceneArgs(std::unique_ptr&lt;ISceneArgs&gt; pSceneArgs)</code>
+                            <p>次回シーン生成に渡す引数を設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>SceneManager& AddInitialArg(const std::string& key, const std::any& value)</code>
+                            <p>すべてのシーンに渡す初期引数を追加します。</p>
+                        </div>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>auto sceneManager = SceneManager::GetInstance();
+
+// 通常のシーン遷移
+sceneManager->ReserveScene("GameScene");
+
+// トランジション付き遷移
+auto transition = std::make_unique&lt;TransShutter&gt;();
+sceneManager->ReserveScene("TitleScene", std::move(transition));</code></pre>
+                </div>
+            </section>
+
+            <section id="scenebase" class="section">
+                <h2>SceneBase</h2>
+                <div class="card">
+                    <p class="class-description">すべてのシーンが継承する基底クラス。</p>
+
+                    <h3>コンストラクタ</h3>
+                    <pre><code>SceneBase(ISceneArgs* pArgs)</code></pre>
+
+                    <h3>純粋仮想関数（必須実装）</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>virtual void Initialize() = 0</code>
+                            <p>シーンの初期化処理。リソースの読み込み、オブジェクトの生成などを行います。</p>
+                        </div>
+                        <div class="method">
+                            <code>virtual void Finalize() = 0</code>
+                            <p>シーンの終了処理。リソースの解放を行います。</p>
+                        </div>
+                        <div class="method">
+                            <code>virtual void Update() = 0</code>
+                            <p>シーンの更新処理。毎フレーム呼ばれます。</p>
+                        </div>
+                        <div class="method">
+                            <code>virtual void Draw() = 0</code>
+                            <p>シーンの描画処理（テキスト以外）。</p>
+                        </div>
+                        <div class="method">
+                            <code>virtual void DrawTexts() = 0</code>
+                            <p>テキストの描画処理。Draw()の後に呼ばれます。</p>
+                        </div>
+                    </div>
+
+                    <h3>保護メンバ変数</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>ISceneArgs* pArgs_</code>
+                            <p>シーンに渡された引数。エンジンの各システムへのポインタが含まれます。</p>
+                        </div>
+                        <div class="method">
+                            <code>Layer* pLayer_</code>
+                            <p>レイヤーシステムへのポインタ。</p>
+                        </div>
+                    </div>
+
+                    <h3>シーン実装の基本構造</h3>
+                    <pre><code>class GameScene : public SceneBase
+{
+public:
+    GameScene(ISceneArgs* pArgs) : SceneBase(pArgs) {}
+    ~GameScene() override {}
+    
+    void Initialize() override;
+    void Finalize() override;
+    void Update() override;
+    void Draw() override;
+    void DrawTexts() override;
+    
+private:
+    // シーン固有のメンバ変数
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="sceneargs" class="section">
+                <h2>SceneArgs</h2>
+                <div class="card">
+                    <h3>概要</h3>
+                    <p><code>ISceneArgs</code>は、シーン間でデータを受け渡すためのインターフェースです。</p>
+
+                    <h3>主な用途</h3>
+                    <ul>
+                        <li>エンジンシステムへのポインタ取得（DirectX12、Input、AudioManagerなど）</li>
+                        <li>前のシーンからのデータ受け渡し（スコア、設定など）</li>
+                    </ul>
+
+                    <h3>引数の取得</h3>
+                    <pre><code>void GameScene::Initialize()
+{
+    // pArgs_からシステムポインタを取得
+    auto pDx12 = std::any_cast&lt;DirectX12*&gt;(pArgs_->Get("DirectX12"));
+    auto pInput = std::any_cast&lt;Input*&gt;(pArgs_->Get("Input"));
+    auto pCubemapSystem = std::any_cast&lt;CubemapSystem*&gt;(pArgs_->Get("CubemapSystem"));
+    
+    #ifdef _DEBUG
+    auto pImGuiManager = std::any_cast&lt;ImGuiManager*&gt;(pArgs_->Get("ImGuiManager"));
+    #endif
+}</code></pre>
+
+                    <h3>カスタム引数の設定と取得</h3>
+                    <pre><code>// シーンAからシーンBへデータを渡す
+
+// シーンA
+void SceneA::TransitionToSceneB()
+{
+    auto sceneManager = SceneManager::GetInstance();
+    
+    // カスタム引数を作成（ISceneArgsを実装）
+    auto args = std::make_unique&lt;CustomSceneArgs&gt;();
+    args->Set("PlayerScore", 12345);
+    args->Set("PlayerName", std::string("Hero"));
+    
+    sceneManager->SetSceneArgs(std::move(args));
+    sceneManager->ReserveScene("SceneB");
+}
+
+// シーンB
+void SceneB::Initialize()
+{
+    // カスタム引数を取得
+    int score = std::any_cast&lt;int&gt;(pArgs_->Get("PlayerScore"));
+    std::string name = std::any_cast&lt;std::string&gt;(pArgs_->Get("PlayerName"));
+    
+    std::cout << name << "'s score: " << score << std::endl;
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="lifecycle" class="section">
+                <h2>ライフサイクル</h2>
+                <div class="card">
+                    <h3>シーンのライフサイクル</h3>
+                    <pre><code>シーン生成
+    ↓
+Initialize() - 1回だけ呼ばれる
+    ↓
+┌─ Update() ─ 毎フレーム呼ばれる
+│   ↓
+│  Draw() ─ 毎フレーム呼ばれる
+│   ↓
+└─ DrawTexts() ─ 毎フレーム呼ばれる
+    ↓
+（シーン遷移が予約されたら）
+    ↓
+Finalize() - 1回だけ呼ばれる
+    ↓
+シーン破棄</code></pre>
+
+                    <h3>各メソッドの役割</h3>
+                    <div class="card" style="background-color: var(--code-bg);">
+                        <h4>Initialize()</h4>
+                        <ul>
+                            <li>リソースの読み込み（テクスチャ、モデル、音声）</li>
+                            <li>オブジェクトの生成と配置</li>
+                            <li>カメラの設定</li>
+                            <li>ポストエフェクトの設定</li>
+                            <li>Canvasの作成</li>
+                        </ul>
+
+                        <h4>Update()</h4>
+                        <ul>
+                            <li>入力の処理</li>
+                            <li>ゲームロジックの更新</li>
+                            <li>オブジェクトの更新</li>
+                            <li>カメラの更新</li>
+                            <li>シーン遷移の判定</li>
+                        </ul>
+
+                        <h4>Draw()</h4>
+                        <ul>
+                            <li>3Dオブジェクトの描画</li>
+                            <li>スプライトの描画</li>
+                            <li>パーティクルの描画</li>
+                            <li>ポストエフェクトの適用</li>
+                        </ul>
+
+                        <h4>DrawTexts()</h4>
+                        <ul>
+                            <li>UIテキストの描画</li>
+                            <li>スコア表示</li>
+                            <li>デバッグ情報</li>
+                        </ul>
+
+                        <h4>Finalize()</h4>
+                        <ul>
+                            <li>作成したオブジェクトの破棄</li>
+                            <li>Canvasの解放</li>
+                            <li>ポストエフェクトの削除</li>
+                            <li>レイヤーからのCanvas削除</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="transition" class="section">
+                <h2>シーン遷移</h2>
+                <div class="card">
+                    <h3>通常のシーン遷移</h3>
+                    <pre><code>void TitleScene::Update()
+{
+    if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+    {
+        auto sceneManager = SceneManager::GetInstance();
+        sceneManager->ReserveScene("GameScene");
+    }
+}</code></pre>
+
+                    <h3>トランジション付き遷移</h3>
+                    <p>シーン遷移時にフェードイン/フェードアウトなどのエフェクトを適用できます。</p>
+
+                    <h4>利用可能なトランジション</h4>
+                    <ul>
+                        <li><strong>TransShutter</strong> - シャッターエフェクト</li>
+                        <li>その他、TransBaseを継承したカスタムトランジション</li>
+                    </ul>
+
+                    <h4>使用例</h4>
+                    <pre><code>void TitleScene::Update()
+{
+    if (Input::GetInstance()->TriggerKey(DIK_SPACE) && !isChangingScene_)
+    {
+        // トランジションエフェクトを作成
+        auto transition = std::make_unique&lt;TransShutter&gt;();
+        
+        // トランジション付きで遷移予約
+        auto sceneManager = SceneManager::GetInstance();
+        sceneManager->ReserveScene("LoadScene", std::move(transition));
+        
+        isChangingScene_ = true; // 重複防止フラグ
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="usage" class="section">
+                <h2>基本的な使い方</h2>
+                <div class="card">
+                    <h3>1. シーンクラスの定義</h3>
+                    <pre><code>// GameScene.h
+#pragma once
+#include &lt;Scene/SceneBase.h&gt;
+#include &lt;memory&gt;
+
+class GameScene : public SceneBase
+{
+public:
+    GameScene(ISceneArgs* pArgs);
+    ~GameScene() override;
+    
+    void Initialize() override;
+    void Finalize() override;
+    void Update() override;
+    void Draw() override;
+    void DrawTexts() override;
+    
+private:
+    // メンバ変数
+    std::unique_ptr&lt;GameEye&gt; gameEye_;
+    std::unique_ptr&lt;Canvas&gt; pCanvas_;
+    Input* pInput_ = nullptr;
+    SceneManager* pSceneManager_ = nullptr;
+};</code></pre>
+
+                    <h3>2. シーンの実装</h3>
+                    <pre><code>// GameScene.cpp
+#include "GameScene.h"
+
+GameScene::GameScene(ISceneArgs* pArgs)
+    : SceneBase(pArgs)
+{
+}
+
+GameScene::~GameScene()
+{
+}
+
+void GameScene::Initialize()
+{
+    // システムポインタの取得
+    pInput_ = Input::GetInstance();
+    pSceneManager_ = SceneManager::GetInstance();
+    auto pDx12 = std::any_cast&lt;DirectX12*&gt;(pArgs_->Get("DirectX12"));
+    
+    // カメラの初期化
+    gameEye_ = std::make_unique&lt;GameEye&gt;();
+    gameEye_->Initialize();
+    gameEye_->SetTranslate(Vector3(0, 10, -30));
+    
+    // Canvasの初期化
+    Canvas::Params params = {};
+    params.name = "GameCanvas";
+    params.pDx12 = pDx12;
+    
+    pCanvas_ = std::make_unique&lt;Canvas&gt;();
+    pCanvas_->Initialize(params);
+    pLayer_->AddCanvas(pCanvas_.get());
+}
+
+void GameScene::Finalize()
+{
+    // Canvasの解放
+    pLayer_->RemoveCanvas(pCanvas_.get());
+    pCanvas_->Finalize();
+}
+
+void GameScene::Update()
+{
+    // カメラの更新
+    gameEye_->Update();
+    
+    // シーン遷移の判定
+    if (pInput_->TriggerKey(DIK_ESCAPE))
+    {
+        pSceneManager_->ReserveScene("TitleScene");
+    }
+}
+
+void GameScene::Draw()
+{
+    // 描画処理
+}
+
+void GameScene::DrawTexts()
+{
+    // テキスト描画
+}</code></pre>
+
+                    <h3>3. SceneFactoryへの登録</h3>
+                    <pre><code>// SceneFactory.cpp
+std::unique_ptr&lt;SceneBase&gt; SceneFactory::CreateScene(
+    const std::string& sceneName, 
+    ISceneArgs* sceneArgs)
+{
+    if (sceneName == "TitleScene")
+    {
+        return std::make_unique&lt;TitleScene&gt;(sceneArgs);
+    }
+    else if (sceneName == "GameScene")
+    {
+        return std::make_unique&lt;GameScene&gt;(sceneArgs);
+    }
+    else if (sceneName == "ClearScene")
+    {
+        return std::make_unique&lt;ClearScene&gt;(sceneArgs);
+    }
+    
+    return nullptr;
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>タイトルシーンの実装（Calms参照）</h3>
+                    <pre><code>class TitleScene : public SceneBase
+{
+private:
+    std::unique_ptr&lt;GameEye&gt; gameEye_;
+    std::unique_ptr&lt;Canvas&gt; pCanvasBack_;
+    std::unique_ptr&lt;Canvas&gt; pCanvasSprite_;
+    std::unique_ptr&lt;TransShutter&gt; pTransShutter_;
+    Input* pInput_ = nullptr;
+    SceneManager* pSceneManager_ = nullptr;
+    Audio* pSoundStartButton_ = nullptr;
+    bool isChangingScene_ = false;
+    
+public:
+    void Initialize() override
+    {
+        // インスタンスの取得
+        pInput_ = Input::GetInstance();
+        pSceneManager_ = SceneManager::GetInstance();
+        auto pDx12 = std::any_cast&lt;DirectX12*&gt;(pArgs_->Get("DirectX12"));
+        auto pCubemapSystem = std::any_cast&lt;CubemapSystem*&gt;(pArgs_->Get("CubemapSystem"));
+        
+        // Canvasの初期化
+        Canvas::Params params = {};
+        params.name = "TitleCanvas";
+        params.pDx12 = pDx12;
+        params.pCubemapSystem = pCubemapSystem;
+        
+        pCanvasBack_ = std::make_unique&lt;Canvas&gt;();
+        pCanvasBack_->Initialize(params);
+        pLayer_->AddCanvas(pCanvasBack_.get());
+        
+        // ゲームアイの初期化
+        gameEye_ = std::make_unique&lt;GameEye&gt;();
+        gameEye_->Initialize();
+        gameEye_->SetTranslate(Vector3(0, 0, -10));
+        
+        // ポストエフェクトの設定
+        auto bloom = pCanvasBack_->GetPostEffectExecuter().AddEffect(
+            PostEffectClassName::GaussianBloom
+        );
+        
+        // 効果音の設定
+        auto audioManager = AudioManager::GetInstance();
+        pSoundStartButton_ = audioManager->GetNewAudio("Effect", "button.wav");
+        pSoundStartButton_->SetVolume(0.1f);
+    }
+    
+    void Finalize() override
+    {
+        pLayer_->RemoveCanvas(pCanvasBack_.get());
+        pCanvasBack_->Finalize();
+    }
+    
+    void Update() override
+    {
+        // カメラの回転
+        Vector3 eyeRotate = gameEye_->GetTransform().rotate;
+        eyeRotate.y += 0.001f;
+        gameEye_->SetRotate(eyeRotate);
+        gameEye_->Update();
+        
+        // スペースキーでゲーム開始
+        if (pInput_->TriggerKey(DIK_SPACE) && !isChangingScene_)
+        {
+            pSoundStartButton_->Play();
+            
+            // トランジション付きでロードシーンへ遷移
+            pTransShutter_ = std::make_unique&lt;TransShutter&gt;();
+            pSceneManager_->ReserveScene("LoadScene", std::move(pTransShutter_));
+            
+            isChangingScene_ = true;
+        }
+    }
+    
+    void Draw() override
+    {
+        // 描画処理
+    }
+    
+    void DrawTexts() override
+    {
+        // テキスト描画
+    }
+};</code></pre>
+
+                    <h3>ゲームシーンからクリアシーンへの遷移</h3>
+                    <pre><code>class GameScene : public SceneBase
+{
+private:
+    bool isGameClear_ = false;
+    
+public:
+    void Update() override
+    {
+        // ゲームロジック...
+        
+        // クリア条件をチェック
+        if (CheckClearCondition())
+        {
+            isGameClear_ = true;
+        }
+        
+        // クリア時の処理
+        if (isGameClear_)
+        {
+            // スコアを次のシーンに渡す
+            auto args = std::make_unique&lt;CustomSceneArgs&gt;();
+            args->Set("FinalScore", currentScore_);
+            args->Set("ClearTime", clearTime_);
+            
+            auto sceneManager = SceneManager::GetInstance();
+            sceneManager->SetSceneArgs(std::move(args));
+            
+            // トランジション付きで遷移
+            auto transition = std::make_unique&lt;TransShutter&gt;();
+            sceneManager->ReserveScene("ClearScene", std::move(transition));
+        }
+    }
+};</code></pre>
+
+                    <h3>スコアを受け取るクリアシーン</h3>
+                    <pre><code>class ClearScene : public SceneBase
+{
+private:
+    int finalScore_ = 0;
+    float clearTime_ = 0.0f;
+    
+public:
+    void Initialize() override
+    {
+        // 前のシーンからスコアを取得
+        finalScore_ = std::any_cast&lt;int&gt;(pArgs_->Get("FinalScore"));
+        clearTime_ = std::any_cast&lt;float&gt;(pArgs_->Get("ClearTime"));
+        
+        std::cout << "Score: " << finalScore_ << std::endl;
+        std::cout << "Time: " << clearTime_ << "s" << std::endl;
+        
+        // UIの初期化...
+    }
+    
+    void Update() override
+    {
+        // Enterキーでタイトルに戻る
+        if (Input::GetInstance()->TriggerKey(DIK_RETURN))
+        {
+            SceneManager::GetInstance()->ReserveScene("TitleScene");
+        }
+    }
+};</code></pre>
+
+                    <h3>ローディングシーン</h3>
+                    <pre><code>class LoadScene : public SceneBase
+{
+private:
+    bool isLoadingComplete_ = false;
+    float loadingProgress_ = 0.0f;
+    
+public:
+    void Initialize() override
+    {
+        // ローディング画面のUIを表示
+    }
+    
+    void Update() override
+    {
+        // リソースの非同期ロード（疑似コード）
+        if (!isLoadingComplete_)
+        {
+            loadingProgress_ += 0.01f;
+            
+            if (loadingProgress_ >= 1.0f)
+            {
+                isLoadingComplete_ = true;
+            }
+        }
+        else
+        {
+            // ロード完了後、ゲームシーンへ
+            SceneManager::GetInstance()->ReserveScene("GameScene");
+        }
+    }
+    
+    void DrawTexts() override
+    {
+        // ローディングバーの描画
+        int progress = static_cast&lt;int&gt;(loadingProgress_ * 100);
+        // DrawText(...);
+    }
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>Tips & ベストプラクティス</h2>
+                <div class="card">
+                    <h3>1. シーン遷移の重複防止</h3>
+                    <p>連続でシーン遷移が呼ばれないようフラグで制御しましょう。</p>
+                    <pre><code>bool isChangingScene_ = false;
+
+if (input && !isChangingScene_)
+{
+    sceneManager->ReserveScene("NextScene");
+    isChangingScene_ = true;
+}</code></pre>
+
+                    <h3>2. Finalizeでのリソース解放</h3>
+                    <p>Initialize()で作成したものは、必ずFinalize()で解放してください。</p>
+
+                    <h3>3. pArgs_の活用</h3>
+                    <p>エンジンのシステムポインタはpArgs_から取得できます。</p>
+
+                    <h3>4. Canvasの管理</h3>
+                    <pre><code>// Initialize()
+pLayer_->AddCanvas(pCanvas_.get());
+
+// Finalize()
+pLayer_->RemoveCanvas(pCanvas_.get());
+pCanvas_->Finalize();</code></pre>
+
+                    <h3>5. トランジションの使い分け</h3>
+                    <ul>
+                        <li>重要なシーン遷移（タイトル→ゲーム）: トランジション付き</li>
+                        <li>軽微な遷移（設定画面など）: トランジションなし</li>
+                    </ul>
+
+                    <h3>6. シーン間のデータ受け渡し</h3>
+                    <p>大きなデータはシングルトンやグローバルストレージで管理し、SceneArgsは軽量なデータのみに使用しましょう。</p>
+
+                    <h3>7. デバッグ用のシーン直行</h3>
+                    <pre><code>#ifdef _DEBUG
+if (Input::GetInstance()->TriggerKey(DIK_F1))
+{
+    sceneManager->ReserveScene("TestScene");
+}
+#endif</code></pre>
+
+                    <h3>8. ライフサイクルの理解</h3>
+                    <p>Initialize()は1回、Update()とDraw()は毎フレーム、Finalize()は1回呼ばれることを意識してください。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

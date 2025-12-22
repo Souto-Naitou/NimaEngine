@@ -196,8 +196,6 @@ std::unique_ptr<ModelStorage> Helper::Model::CreateStorage()
 std::unique_ptr<ModelManager> Helper::Model::CreateManager(IModelLoader* pLoader, ModelStorage* pStorage)
 {
     auto pModelManager = std::make_unique<ModelManager>();
-    pModelManager->Initialize();
-    pModelManager->SetModelLoader(pLoader);
-    pModelManager->SetModelStorage(pStorage);
+    pModelManager->Initialize(pLoader, pStorage);
     return pModelManager;
 }

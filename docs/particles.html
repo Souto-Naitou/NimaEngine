@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パーティクルシステム詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">パーティクルシステム詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>パーティクルシステム</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#architecture">アーキテクチャ</a></li>
+                    <li><a href="#particlesystem">ParticleSystem</a></li>
+                    <li><a href="#particle">Particleクラス</a></li>
+                    <li><a href="#emitter">ParticleEmitter</a></li>
+                    <li><a href="#emitterdata">EmitterData（JSON）</a></li>
+                    <li><a href="#usage">基本的な使い方</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                    <li><a href="#tips">Tips & ベストプラクティス</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p>NimaEngineのパーティクルシステムは、爆発、煙、炎、魔法エフェクトなどの視覚効果を生成します。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>GPUインスタンシングによる高速描画（最大256個同時表示）</li>
+                        <li>JSON設定による柔軟なパーティクル定義</li>
+                        <li>ビルボード（常にカメラを向く）対応</li>
+                        <li>物理シミュレーション（重力、摩擦、床衝突）</li>
+                        <li>カラーグラデーション、スケールアニメーション</li>
+                        <li>手動モードと自動モードの切り替え</li>
+                        <li>3Dモデルベースのパーティクル</li>
+                    </ul>
+
+                    <h3>使用例</h3>
+                    <ul>
+                        <li>爆発エフェクト</li>
+                        <li>キャラクターの常時発生エフェクト（魔法オーラなど）</li>
+                        <li>環境パーティクル（雨、雪、火花）</li>
+                        <li>ダメージエフェクト（血しぶき、破片）</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>アーキテクチャ</h2>
+                <div class="card">
+                    <h3>クラス構成</h3>
+                    <div class="architecture-grid">
+                        <div class="arch-item">
+                            <h4>ParticleSystem</h4>
+                            <p>シングルトンクラス。パーティクルの共通描画処理を管理します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>Particle</h4>
+                            <p>パーティクルの描画と更新を担当。複数のパーティクルデータを保持します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>ParticleEmitter</h4>
+                            <p>パーティクルの発生を制御。JSON設定を読み込み、パーティクルを生成します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>EmitterData</h4>
+                            <p>エミッターの設定データ（発生数、速度、寿命など）を保持します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>ParticleData</h4>
+                            <p>個々のパーティクルの状態（位置、速度、寿命など）を保持します。</p>
+                        </div>
+                    </div>
+
+                    <h3>データフロー</h3>
+                    <pre><code>JSONファイル
+    ↓
+ParticleEmitter::Initialize()
+    ↓
+EmitterData（設定データ）
+    ↓
+ParticleEmitter::Emit()
+    ↓
+ParticleData（個別パーティクル）生成
+    ↓
+Particle::emplace_back()
+    ↓
+Particle::Update()
+    ↓（物理計算、寿命チェック）
+Particle::DrawCall()
+    ↓
+ParticleSystem::DrawCall()
+    ↓（GPUインスタンシング）
+画面に描画</code></pre>
+                </div>
+            </section>
+
+            <section id="particlesystem" class="section">
+                <h2>ParticleSystem</h2>
+                <div class="card">
+                    <p class="class-description">パーティクル描画の共通処理を管理するシングルトンクラス。</p>
+
+                    <h3>インスタンスの取得</h3>
+                    <pre><code>auto particleSystem = ParticleSystem::GetInstance();</code></pre>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize()</code>
+                            <p>パーティクルシステムを初期化します。ルートシグネチャとパイプラインステートを作成します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void DrawCall()</code>
+                            <p>キューされた描画コマンドを発行します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetGlobalEye(GameEye* pGameEye)</code>
+                            <p>グローバルカメラを設定します。</p>
+                        </div>
+                    </div>
+
+                    <h3>定数</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>static constexpr uint32_t kMaxInstance_ = 256u</code>
+                            <p>同時に描画できる最大インスタンス数。</p>
+                        </div>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>// 通常、フレームワークによって自動的に初期化・描画されます
+// 手動での操作は不要です</code></pre>
+                </div>
+            </section>
+
+            <section id="particle" class="section">
+                <h2>Particleクラス</h2>
+                <div class="card">
+                    <p class="class-description">パーティクルの描画と更新を担当するクラス。</p>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize(IModel* pModel)</code>
+                            <p>パーティクルを初期化します。使用するモデルを設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Update()</code>
+                            <p>すべてのパーティクルの状態を更新します（物理計算、寿命チェック）。</p>
+                        </div>
+                        <div class="method">
+                            <code>void DrawCall(ID3D12GraphicsCommandList* cl)</code>
+                            <p>パーティクルを描画します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Finalize()</code>
+                            <p>リソースを解放します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void reserve(size_t size, bool isInit = false)</code>
+                            <p>パーティクルデータのメモリを事前確保します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void emplace_back(const ParticleData& data)</code>
+                            <p>新しいパーティクルを追加します。</p>
+                        </div>
+                    </div>
+
+                    <h3>Setter</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void SetEnableBillboard(bool enable)</code>
+                            <p>ビルボード（常にカメラを向く）を有効/無効にします。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetGameEye(GameEye** pGameEye)</code>
+                            <p>カメラを設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetName(const std::string& name)</code>
+                            <p>デバッグ用の名前を設定します。</p>
+                        </div>
+                    </div>
+
+                    <h3>Getter</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool IsAbleDelete() const</code>
+                            <p>全てのパーティクルが消滅し、削除可能かを返します。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="emitter" class="section">
+                <h2>ParticleEmitter</h2>
+                <div class="card">
+                    <p class="class-description">パーティクルの発生を制御するクラス。</p>
+
+                    <h3>初期化パラメータ</h3>
+                    <pre><code>struct ParticleEmitterInitParams
+{
+    Particle* particle = nullptr;  // 使用するParticleインスタンス
+    std::string jsonPath = {};      // 設定JSONファイルのパス
+};</code></pre>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize(const ParticleEmitterInitParams& params)</code>
+                            <p>エミッターを初期化します。JSONファイルから設定を読み込みます。</p>
+                        </div>
+                        <div class="method">
+                            <code>void EnableManualMode()</code>
+                            <p>手動発生モードを有効にします。Emit()を明示的に呼ぶ必要があります。</p>
+                        </div>
+                        <div class="method">
+                            <code>void DisableManualMode()</code>
+                            <p>手動発生モードを無効にします。自動的に発生します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Update()</code>
+                            <p>エミッターの状態を更新します。自動モードの場合、タイミングに応じて発生します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Draw()</code>
+                            <p>パーティクルの描画を行います（内部でParticle::DrawCall()を呼びます）。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Emit()</code>
+                            <p>1回分のパーティクル発生を行います。手動モードで使用します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Finalize()</code>
+                            <p>リソースを解放します。</p>
+                        </div>
+                    </div>
+
+                    <h3>Setter</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void SetPosition(const Vector3& position)</code>
+                            <p>エミッターの位置を設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetEnableBillboard(bool enable)</code>
+                            <p>ビルボードを有効/無効にします。</p>
+                        </div>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>// エミッターの作成
+ParticleEmitterInitParams emitterParams = {};
+emitterParams.particle = particleInstance;
+emitterParams.jsonPath = "resources/json/particles/explosion.json";
+
+auto emitter = std::make_unique&lt;ParticleEmitter&gt;();
+emitter->Initialize(emitterParams);
+emitter->SetEnableBillboard(true);
+
+// 手動モード
+emitter->EnableManualMode();
+
+// 更新ループ
+emitter->Update();
+
+// 必要なタイミングで発生
+if (explosionTriggered)
+{
+    emitter->Emit();
+}
+
+// 描画
+emitter->Draw();</code></pre>
+                </div>
+            </section>
+
+            <section id="emitterdata" class="section">
+                <h2>EmitterData（JSON）</h2>
+                <div class="card">
+                    <h3>JSON設定ファイル</h3>
+                    <p>パーティクルの挙動はJSONファイルで設定します。</p>
+
+                    <h3>主要パラメータ</h3>
+                    <div class="card" style="background-color: var(--code-bg);">
+                        <h4>発生設定</h4>
+                        <ul>
+                            <li><code>emitCount</code> - 1回あたりの発生数</li>
+                            <li><code>emitInterval</code> - 発生間隔（秒）</li>
+                            <li><code>emitRadius</code> - 発生半径</li>
+                        </ul>
+
+                        <h4>物理パラメータ</h4>
+                        <ul>
+                            <li><code>velocity</code> - 初速度の範囲（min, max）</li>
+                            <li><code>acceleration</code> - 加速度（重力など）</li>
+                            <li><code>lifeTime</code> - 寿命（秒）の範囲</li>
+                            <li><code>friction</code> - 摩擦係数</li>
+                        </ul>
+
+                        <h4>外観パラメータ</h4>
+                        <ul>
+                            <li><code>colorStart</code> - 開始時の色</li>
+                            <li><code>colorEnd</code> - 終了時の色</li>
+                            <li><code>scaleStart</code> - 開始時のスケール</li>
+                            <li><code>scaleEnd</code> - 終了時のスケール</li>
+                        </ul>
+
+                        <h4>床衝突設定</h4>
+                        <ul>
+                            <li><code>enableCollisionFloor</code> - 床衝突の有効/無効</li>
+                            <li><code>floorHeight</code> - 床の高さ</li>
+                            <li><code>bounce</code> - 反発係数</li>
+                        </ul>
+                    </div>
+
+                    <h3>JSON設定例</h3>
+                    <pre><code>{
+    "emitter": {
+        "emitCount": 50,
+        "emitInterval": 0.1,
+        "emitRadius": 0.5,
+        "velocity": {
+            "min": { "x": -2.0, "y": 3.0, "z": -2.0 },
+            "max": { "x": 2.0, "y": 6.0, "z": 2.0 }
+        },
+        "acceleration": {
+            "x": 0.0,
+            "y": -9.8,
+            "z": 0.0
+        },
+        "lifeTime": {
+            "min": 0.5,
+            "max": 1.5
+        },
+        "colorStart": {
+            "r": 1.0,
+            "g": 0.5,
+            "b": 0.0,
+            "a": 1.0
+        },
+        "colorEnd": {
+            "r": 0.2,
+            "g": 0.2,
+            "b": 0.2,
+            "a": 0.0
+        },
+        "scaleStart": 1.0,
+        "scaleEnd": 0.2,
+        "friction": 0.95,
+        "enableCollisionFloor": true,
+        "floorHeight": 0.0,
+        "bounce": 0.4
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="usage" class="section">
+                <h2>基本的な使い方</h2>
+                <div class="card">
+                    <h3>1. Particleの作成（DIコンテナから取得）</h3>
+                    <pre><code>// Particleインスタンスを取得（通常はDIコンテナから）
+auto particle = DIContainer::Resolve&lt;Particle&gt;();</code></pre>
+
+                    <h3>2. ParticleEmitterの初期化</h3>
+                    <pre><code>class Player
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; emitterConstant_;
+    Particle* particle_;
+    
+public:
+    void ParticleEmittersInitialize()
+    {
+        // 初期化パラメータの設定
+        ParticleEmitterInitParams emitterParams = {};
+        emitterParams.particle = particle_;
+        emitterParams.jsonPath = "resources/json/particles/PlayerConstant.json";
+        
+        // エミッターの作成と初期化
+        emitterConstant_ = std::make_unique&lt;ParticleEmitter&gt;();
+        emitterConstant_->Initialize(emitterParams);
+        
+        // 手動モードを有効化
+        emitterConstant_->EnableManualMode();
+        
+        // ビルボードを有効化
+        emitterConstant_->SetEnableBillboard(true);
+    }
+};</code></pre>
+
+                    <h3>3. 更新と発生</h3>
+                    <pre><code>void Player::Update()
+{
+    // エミッターの位置を更新
+    emitterConstant_->SetPosition(position_);
+    
+    // エミッターの更新
+    emitterConstant_->Update();
+    
+    // 必要なタイミングで発生
+    if (shouldEmit)
+    {
+        emitterConstant_->Emit();
+    }
+}</code></pre>
+
+                    <h3>4. 描画</h3>
+                    <pre><code>void Player::Draw()
+{
+    // エミッターの描画
+    emitterConstant_->Draw();
+}</code></pre>
+
+                    <h3>5. 終了処理</h3>
+                    <pre><code>void Player::Finalize()
+{
+    // エミッターの解放
+    if (emitterConstant_)
+    {
+        emitterConstant_->Finalize();
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>プレイヤーの常時エフェクト（Calms参照）</h3>
+                    <pre><code>class Player
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; emitterConstant_;
+    Particle* particle_;
+    Vector3 position_;
+    
+public:
+    void ParticleEmittersInitialize()
+    {
+        // 初期化パラメータの設定
+        ParticleEmitterInitParams emitterParams = {};
+        emitterParams.particle = particle_;
+        emitterParams.jsonPath = "resources/json/particles/PlayerConstant.json";
+        
+        // エミッターの作成
+        emitterConstant_ = std::make_unique&lt;ParticleEmitter&gt;();
+        emitterConstant_->Initialize(emitterParams);
+        
+        // 手動モードを有効化（任意のタイミングで発生）
+        emitterConstant_->EnableManualMode();
+        
+        // ビルボードを有効化（常にカメラを向く）
+        emitterConstant_->SetEnableBillboard(true);
+    }
+    
+    void Update()
+    {
+        // エミッターの位置を更新
+        emitterConstant_->SetPosition(position_);
+        
+        // エミッターの更新
+        emitterConstant_->Update();
+        
+        // 毎フレーム発生
+        emitterConstant_->Emit();
+    }
+    
+    void DrawLine()
+    {
+        // パーティクルの描画
+        emitterConstant_->Draw();
+    }
+};</code></pre>
+
+                    <h3>爆発エフェクト</h3>
+                    <pre><code>class Explosion
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; emitter_;
+    Particle* particle_;
+    Vector3 position_;
+    bool hasEmitted_ = false;
+    
+public:
+    void Initialize(Particle* particle, const Vector3& position)
+    {
+        particle_ = particle;
+        position_ = position;
+        
+        // 爆発用のJSON設定
+        ParticleEmitterInitParams params = {};
+        params.particle = particle_;
+        params.jsonPath = "resources/json/particles/explosion.json";
+        
+        emitter_ = std::make_unique&lt;ParticleEmitter&gt;();
+        emitter_->Initialize(params);
+        
+        // 手動モード（1回だけ発生）
+        emitter_->EnableManualMode();
+        emitter_->SetEnableBillboard(true);
+        emitter_->SetPosition(position_);
+    }
+    
+    void Update()
+    {
+        if (!hasEmitted_)
+        {
+            // 最初のフレームで1回だけ発生
+            emitter_->Emit();
+            hasEmitted_ = true;
+        }
+        
+        emitter_->Update();
+    }
+    
+    void Draw()
+    {
+        emitter_->Draw();
+    }
+    
+    bool IsFinished() const
+    {
+        // すべてのパーティクルが消滅したか
+        return particle_->IsAbleDelete();
+    }
+};</code></pre>
+
+                    <h3>ダメージエフェクト（血しぶき）</h3>
+                    <pre><code>class Enemy
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; pParticleDeathShort_;
+    std::unique_ptr&lt;ParticleEmitter&gt; pParticleDeathSplatter_;
+    Particle* particle_;
+    
+public:
+    void InitializeParticleEmitters()
+    {
+        // 短いパーティクル（火花）
+        ParticleEmitterInitParams params;
+        params.particle = particle_;
+        params.jsonPath = "resources/json/particles/EnemyDeathShort.json";
+        
+        pParticleDeathShort_ = std::make_unique&lt;ParticleEmitter&gt;();
+        pParticleDeathShort_->Initialize(params);
+        pParticleDeathShort_->EnableManualMode();
+        pParticleDeathShort_->SetEnableBillboard(false); // 3D回転
+        
+        // 飛び散るパーティクル（血液）
+        params.jsonPath = "resources/json/particles/EnemyDeathSplatter.json";
+        pParticleDeathSplatter_ = std::make_unique&lt;ParticleEmitter&gt;();
+        pParticleDeathSplatter_->Initialize(params);
+        pParticleDeathSplatter_->EnableManualMode();
+        pParticleDeathSplatter_->SetEnableBillboard(false);
+    }
+    
+    void OnDeath()
+    {
+        // 死亡時にパーティクルを発生
+        pParticleDeathShort_->SetPosition(position_);
+        pParticleDeathShort_->Emit();
+        
+        pParticleDeathSplatter_->SetPosition(position_);
+        pParticleDeathSplatter_->Emit();
+    }
+    
+    void Update()
+    {
+        pParticleDeathShort_->Update();
+        pParticleDeathSplatter_->Update();
+    }
+    
+    void Draw()
+    {
+        pParticleDeathShort_->Draw();
+        pParticleDeathSplatter_->Draw();
+    }
+};</code></pre>
+
+                    <h3>連続発生（自動モード）</h3>
+                    <pre><code>class Torch
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; fireEmitter_;
+    Particle* particle_;
+    Vector3 position_;
+    
+public:
+    void Initialize()
+    {
+        // 炎のパーティクル
+        ParticleEmitterInitParams params = {};
+        params.particle = particle_;
+        params.jsonPath = "resources/json/particles/fire.json";
+        
+        fireEmitter_ = std::make_unique&lt;ParticleEmitter&gt;();
+        fireEmitter_->Initialize(params);
+        
+        // 自動モード（JSON設定の間隔で自動発生）
+        fireEmitter_->DisableManualMode();
+        fireEmitter_->SetEnableBillboard(true);
+        fireEmitter_->SetPosition(position_);
+    }
+    
+    void Update()
+    {
+        // 自動モードなので、Update()内で自動的に発生
+        fireEmitter_->Update();
+    }
+    
+    void Draw()
+    {
+        fireEmitter_->Draw();
+    }
+};</code></pre>
+
+                    <h3>複数エミッターの組み合わせ</h3>
+                    <pre><code>class GameClearAnimation
+{
+private:
+    std::unique_ptr&lt;ParticleEmitter&gt; pEmitter_;
+    Particle* particle_;
+    TimeMeasurer timer_;
+    
+public:
+    void Initialize(Particle* particle)
+    {
+        particle_ = particle;
+        
+        // クリアエフェクト用JSON
+        ParticleEmitterInitParams emitterParams = {};
+        emitterParams.particle = particle_;
+        emitterParams.jsonPath = "resources/json/particles/GameClearEffect.json";
+        
+        pEmitter_ = std::make_unique&lt;ParticleEmitter&gt;();
+        pEmitter_->Initialize(emitterParams);
+        pEmitter_->EnableManualMode();
+        pEmitter_->SetEnableBillboard(true);
+        pEmitter_->SetPosition(Vector3(0, 2, 0));
+        
+        timer_.Start();
+    }
+    
+    void Update()
+    {
+        float time = timer_.GetNow&lt;float&gt;();
+        
+        // 一定間隔で発生
+        if (static_cast&lt;int&gt;(time * 10) % 2 == 0)
+        {
+            pEmitter_->Emit();
+        }
+        
+        pEmitter_->Update();
+    }
+    
+    void Draw()
+    {
+        pEmitter_->Draw();
+    }
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>Tips & ベストプラクティス</h2>
+                <div class="card">
+                    <h3>1. 手動モードvs自動モード</h3>
+                    <ul>
+                        <li><strong>手動モード</strong>：爆発、ダメージエフェクトなど、特定タイミングで発生</li>
+                        <li><strong>自動モード</strong>：炎、煙など、連続的に発生</li>
+                    </ul>
+
+                    <h3>2. ビルボードの使い分け</h3>
+                    <ul>
+                        <li><strong>有効</strong>：炎、煙、魔法エフェクトなど平面的な表現</li>
+                        <li><strong>無効</strong>：破片、火花など3D的な回転が必要</li>
+                    </ul>
+
+                    <h3>3. JSON設定のチューニング</h3>
+                    <pre><code>// 爆発エフェクトの例
+{
+    "emitCount": 100,        // 多めに発生
+    "lifeTime": { "min": 0.3, "max": 0.8 },  // 短めの寿命
+    "velocity": { "max": { "y": 10.0 } },    // 上向きに強く
+    "acceleration": { "y": -20.0 },          // 強い重力
+    "bounce": 0.2                            // 低い反発
+}</code></pre>
+
+                    <h3>4. パフォーマンス</h3>
+                    <ul>
+                        <li>同時発生数を256個以下に制限</li>
+                        <li>寿命を適切に設定（長すぎると描画負荷増）</li>
+                        <li>不要なエミッターは<code>Finalize()</code>で解放</li>
+                    </ul>
+
+                    <h3>5. reserve()の活用</h3>
+                    <pre><code>// 大量のパーティクルを扱う場合、事前にメモリ確保
+particle->reserve(6000, true);</code></pre>
+
+                    <h3>6. JSON設定のホットリロード</h3>
+                    <p>開発中は、JSON設定を変更すると自動的にリロードされます（reloadInterval_設定による）。</p>
+
+                    <h3>7. 色のグラデーション</h3>
+                    <pre><code>// 炎の例：オレンジ → 赤 → 黒
+"colorStart": { "r": 1.0, "g": 0.5, "b": 0.0, "a": 1.0 },
+"colorEnd":   { "r": 0.1, "g": 0.1, "b": 0.1, "a": 0.0 }</code></pre>
+
+                    <h3>8. 床衝突の活用</h3>
+                    <pre><code>// 床で跳ね返るパーティクル
+"enableCollisionFloor": true,
+"floorHeight": 0.0,
+"bounce": 0.6,     // 反発係数
+"friction": 0.9    // 摩擦係数</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

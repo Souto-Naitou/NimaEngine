@@ -3,7 +3,7 @@
 #include <Utility/String/strutl.h>
 #include <Core/ConfigManager/ConfigManager.h>
 
-void ModelManager::Initialize()
+void ModelManager::Initialize(IModelLoader* loader, ModelStorage* storage)
 {
     // Configに記述されているフォルダの追加
     auto& cfgData = ConfigManager::GetInstance()->GetConfigData();
@@ -12,30 +12,20 @@ void ModelManager::Initialize()
         this->AddLoadPath(path);
         this->AddSearchPath(path);
     }
-}
 
-void ModelManager::SetModelLoader(IModelLoader* loader)
-{
-    if (loader != nullptr)
+    // ローダーの設定
+    if (loader == nullptr)
     {
-        pModelLoader_ = loader;
+        throw std::runtime_error("ModelManager::Initialize failed: loader is nullptr");
     }
-    else
-    {
-        throw std::invalid_argument("Model loader cannot be null");
-    }
-}
+    pModelLoader_ = loader;
 
-void ModelManager::SetModelStorage(ModelStorage* storage)
-{
-    if (storage != nullptr)
+    // ストレージの設定
+    if (storage == nullptr)
     {
-        pModelStorage_ = storage;
+        throw std::runtime_error("ModelManager::Initialize failed: storage is nullptr");
     }
-    else
-    {
-        throw std::invalid_argument("Model storage cannot be null");
-    }
+    pModelStorage_ = storage;
 }
 
 void ModelManager::AddLoadPath(const std::string& path)

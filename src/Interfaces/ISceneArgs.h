@@ -10,23 +10,23 @@ public:
     /// <summary>
     /// 指定キーの引数を取得します。
     /// </summary>
-    /// <param name="_key">引数キー。</param>
+    /// <param name="key">引数キー。</param>
     /// <returns>値（書き換え可能）。</returns>
-    virtual std::any& Get(const std::string& _key) = 0;
+    virtual std::any& Get(const std::string& key) = 0;
     
     /// <summary>
     /// 指定キーの引数を取得します（読み取り専用）。
     /// </summary>
-    /// <param name="_key">引数キー。</param>
+    /// <param name="key">引数キー。</param>
     /// <returns>値（読み取り専用）。</returns>
-    virtual const std::any& Get(const std::string& _key) const = 0;
+    virtual const std::any& Get(const std::string& key) const = 0;
     
     /// <summary>
     /// 指定キーに値を設定します。
     /// </summary>
-    /// <param name="_key">引数キー。</param>
-    /// <param name="_value">設定する値。</param>
-    virtual void Set(const std::string& _key, const std::any& _value) = 0;
+    /// <param name="key">引数キー。</param>
+    /// <param name="value">設定する値。</param>
+    virtual void Set(const std::string& key, const std::any& value) = 0;
     
     /// <summary>
     /// 登録済みの引数をすべてクリアします。
@@ -36,6 +36,6 @@ public:
     /// <summary>
     /// 指定キーの引数を削除します。
     /// </summary>
-    /// <param name="_key">削除する引数のキー。</param>
-    virtual void Erase(const std::string& _key) = 0;
+    /// <param name="key">削除する引数のキー。</param>
+    virtual void Erase(const std::string& key) = 0;
 };

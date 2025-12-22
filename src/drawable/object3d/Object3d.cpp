@@ -10,7 +10,7 @@
 #endif // _DEBUG
 
 
-void Object3d::Initialize(bool _enableDebugWindow)
+void Object3d::Initialize(bool enableDebugWindow)
 {
     /// 必要なインスタンスを取得
     pSystem_ = Object3dSystem::GetInstance();
@@ -18,7 +18,7 @@ void Object3d::Initialize(bool _enableDebugWindow)
     device_ = pDx12_->GetDevice();
     ppSystemGameEye_ = pSystem_->GetGlobalEye();
 
-    isEnableDebugWindow_ = _enableDebugWindow;
+    isEnableDebugWindow_ = enableDebugWindow;
 
 #if defined _DEBUG
     if (isEnableDebugWindow_)

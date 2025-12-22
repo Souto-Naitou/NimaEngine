@@ -37,9 +37,9 @@ public:
         deltaTimes_[channel] = deltaTime;
     }
 
-    float GetDeltaTime(uint32_t _channel) const
+    float GetDeltaTime(uint32_t channel) const
     {
-        return deltaTimes_.at(_channel);
+        return deltaTimes_.at(channel);
     }
 
 private:

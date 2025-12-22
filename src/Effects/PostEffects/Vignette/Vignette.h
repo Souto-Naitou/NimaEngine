@@ -36,15 +36,15 @@ public:
     void    Finalize() override;
 
     /// <summary>有効・無効を設定します。</summary>
-    void    Enable(bool _flag) override;
+    void    Enable(bool flag) override;
     /// <summary>有効かどうかを返します。</summary>
     bool    Enabled() const override;
 
     // Setter (Additional)
     /// <summary>スケールを設定します。</summary>
-    void    SetScale(float _scale) { pOption_->scale = _scale; }
+    void    SetScale(float scale) { pOption_->scale = scale; }
     /// <summary>強度（パワー）を設定します。</summary>
-    void    SetPower(float _power) { pOption_->power = _power; }
+    void    SetPower(float power) { pOption_->power = power; }
 
     /// <summary>エフェクトを適用します。</summary>
     void    Apply() override;
@@ -61,7 +61,7 @@ public:
 
     // Setters
     /// <summary>入力テクスチャのハンドルを設定します。</summary>
-    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle) override;
+    void    SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) override;
 
     // Getters
     D3D12_GPU_DESCRIPTOR_HANDLE     GetOutputTextureHandle() const override;

@@ -71,7 +71,7 @@ void AABB::Draw()
     return;
 }
 
-void AABB::ModifyGameEye(GameEye** _eye)
+void AABB::ModifyGameEye(GameEye** eye)
 {
-    lines.SetGameEye(_eye);
+    lines.SetGameEye(eye);
 }

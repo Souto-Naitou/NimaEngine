@@ -22,8 +22,8 @@ public:
     /// <summary>
     /// 検索パスを追加
     /// </summary>
-    /// <param name="_path">パス</param>
-    void AddSearchPath(const std::string& _path);
+    /// <param name="path">パス</param>
+    void AddSearchPath(const std::string& path);
 
 
     /// <summary>
@@ -31,13 +31,13 @@ public:
     /// </summary>
     /// <returns>親ディレクトリのパス</returns>
     [[nodiscard]]
-    std::string GetParentPath(const std::string& _fileName);
+    std::string GetParentPath(const std::string& fileName);
 
 
     /// <summary>
     /// 検索パスから検索し、ファイルパスを取得
     /// </summary>
-    /// <param name="_fileName">ファイル名</param>
+    /// <param name="fileName">ファイル名</param>
     /// <returns>ファイルパス</returns>
     [[nodiscard]]
     std::string GetFilePath(const std::string& fileName);

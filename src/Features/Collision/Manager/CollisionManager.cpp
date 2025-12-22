@@ -43,17 +43,17 @@ void CollisionManager::CheckAllCollision()
     }
 }
 
-void CollisionManager::RegisterCollider(Collider* _collider)
+void CollisionManager::RegisterCollider(Collider* collider)
 {
-    colliders_.push_back(_collider);
+    colliders_.push_back(collider);
 }
 
-void CollisionManager::DeleteCollider(Collider* _collider)
+void CollisionManager::DeleteCollider(Collider* collider)
 {
     for (int i = 0; i < colliders_.size(); i++)
     {
-        colliders_[i]->EraseCollidingPtr(_collider);
-        if (colliders_[i] == _collider)
+        colliders_[i]->EraseCollidingPtr(collider);
+        if (colliders_[i] == collider)
         {
             colliders_.erase(colliders_.begin() + i);
         }
@@ -68,16 +68,16 @@ void CollisionManager::ClearCollider()
     maskList_.clear();
 }
 
-uint32_t CollisionManager::GetNewAttribute(std::string _id)
+uint32_t CollisionManager::GetNewAttribute(std::string id)
 {
     if (attributeList_.size() == 0)
     {
-        attributeList_.push_back({ _id, 1 });
+        attributeList_.push_back({ id, 1 });
         return 1;
     }
     for (auto& attributePair : attributeList_)
     {
-        if (attributePair.first.compare(_id) == 0)
+        if (attributePair.first.compare(id) == 0)
         {
             return attributePair.second;
         }
@@ -85,7 +85,7 @@ uint32_t CollisionManager::GetNewAttribute(std::string _id)
 
     uint32_t result = static_cast<uint32_t>(attributeList_.back().second << 1);
 
-    attributeList_.push_back({ _id, result});
+    attributeList_.push_back({ id, result});
 
     return attributeList_.back().second;
 }

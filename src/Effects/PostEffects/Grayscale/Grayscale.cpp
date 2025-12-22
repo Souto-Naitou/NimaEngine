@@ -33,14 +33,14 @@ void Grayscale::Initialize(const PostEffectInitParams& desc)
     this->CreateResorceCBuffer();
 }
 
-void Grayscale::Enable(bool _flag)
+void Grayscale::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void Grayscale::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void Grayscale::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool Grayscale::Enabled() const
@@ -195,9 +195,9 @@ void Grayscale::CreatePipelineStateObject()
             .Build(device_);
         pso_ = psoBuilder.GetPSO();
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
-        Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, _e.what());
+        Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, e.what());
         assert(false);
     }
     return;

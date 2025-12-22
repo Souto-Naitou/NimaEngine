@@ -56,18 +56,18 @@ void GltfModel::Update()
     this->_UpdateSkinCluster();
 }
 
-void GltfModel::Draw(ID3D12GraphicsCommandList* _cl)
+void GltfModel::Draw(ID3D12GraphicsCommandList* cl)
 {
     if (isReadyDraw_ == false) return;
 
     // 頂点バッファビューを設定
-    _cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
+    cl->IASetVertexBuffers(0, 1, &vertexBufferView_);
     // インデックスバッファを設定
-    _cl->IASetIndexBuffer(&indexBufferView_);
+    cl->IASetIndexBuffer(&indexBufferView_);
     // SRVの設定
-    _cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+    cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
     // 描画！（DrawCall/ドローコール）
-    _cl->DrawIndexedInstanced(
+    cl->DrawIndexedInstanced(
         static_cast<UINT>(modelData_.indices.size()), // インデックス数
         1, // インスタンス数
         0, // インデックスバッファの開始オフセット
@@ -76,9 +76,9 @@ void GltfModel::Draw(ID3D12GraphicsCommandList* _cl)
     );
 }
 
-void GltfModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE _texSrvHnd)
+void GltfModel::ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd)
 {
-    textureSrvHandleGPU_ = _texSrvHnd;
+    textureSrvHandleGPU_ = texSrvHnd;
     isOverwroteTexture_ = true;
 }
 
@@ -108,14 +108,14 @@ bool GltfModel::IsEndLoading() const
     return isReadyDraw_;
 }
 
-void GltfModel::Clone(IModel* _src)
+void GltfModel::Clone(IModel* src)
 {
-    if (_src == nullptr) return;
+    if (src == nullptr) return;
 
     isOverwroteTexture_ = false;
 
     // クローン元がGltfModelでない場合はエラー
-    GltfModel* pSrc = dynamic_cast<GltfModel*>(_src);
+    GltfModel* pSrc = dynamic_cast<GltfModel*>(src);
     if (!pSrc)
     {
         throw std::runtime_error("GltfModel::Clone: Source model is not a GltfModel.");
@@ -281,20 +281,20 @@ void GltfModel::_LoadModelTexture()
 
 }
 
-void GltfModel::CopyFrom(GltfModel* _pCopySrc)
+void GltfModel::CopyFrom(GltfModel* pCopySrc)
 {
-    this->pDx12_ = _pCopySrc->pDx12_;
+    this->pDx12_ = pCopySrc->pDx12_;
     // モデルデータをコピー
-    this->modelData_ = _pCopySrc->modelData_;
-    this->animationData_ = _pCopySrc->animationData_;
+    this->modelData_ = pCopySrc->modelData_;
+    this->animationData_ = pCopySrc->animationData_;
     // テクスチャのSRVハンドルをコピー
     //   NOTE: クローン元のテクスチャを上書きしていない場合に限る
     if (!isOverwroteTexture_)
     {
-        this->textureSrvHandleGPU_ = _pCopySrc->textureSrvHandleGPU_;
+        this->textureSrvHandleGPU_ = pCopySrc->textureSrvHandleGPU_;
     }
-    this->skeleton_ = _pCopySrc->skeleton_;
-    this->skinCluster_ = _pCopySrc->skinCluster_;
+    this->skeleton_ = pCopySrc->skeleton_;
+    this->skinCluster_ = pCopySrc->skinCluster_;
     // リソースを作成
     this->CreateVertexResource();
     this->CreateIndexResource();

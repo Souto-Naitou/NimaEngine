@@ -13,7 +13,7 @@ public:
     template <typename T>
     void Register(std::function<std::shared_ptr<T>()> factory)
     {
-        container_[std::type_index(typeid(T))] = factory;
+        factories_[std::type_index(typeid(T))] = factory;
     }
 
     template <typename T>
@@ -28,7 +28,7 @@ public:
     std::shared_ptr<T> Resolve()
     {
         return std::static_pointer_cast<T>(
-            container_.at(std::type_index(typeid(T)))()
+            factories_.at(std::type_index(typeid(T)))()
         );
     }
 

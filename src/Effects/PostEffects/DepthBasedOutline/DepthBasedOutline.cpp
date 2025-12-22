@@ -34,14 +34,14 @@ void DepthBasedOutline::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void DepthBasedOutline::Enable(bool _flag)
+void DepthBasedOutline::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void DepthBasedOutline::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void DepthBasedOutline::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool DepthBasedOutline::Enabled() const

@@ -61,21 +61,21 @@ void TextSystem::OnResizedBuffers()
     CreateDefaultColorBrush();
 }
 
-void TextSystem::SetColorBrush(const std::string& _key, const D2D1::ColorF& _color)
+void TextSystem::SetColorBrush(const std::string& key, const D2D1::ColorF& color)
 {
-    if (colorBrushes_.find(_key) != colorBrushes_.end())
+    if (colorBrushes_.find(key) != colorBrushes_.end())
     {
         return;
     }
 
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> colorBrush;
-    d2dDeviceContext_->CreateSolidColorBrush(_color, colorBrush.GetAddressOf());
-    colorBrushes_[_key] = colorBrush;
+    d2dDeviceContext_->CreateSolidColorBrush(color, colorBrush.GetAddressOf());
+    colorBrushes_[key] = colorBrush;
 }
 
-IDWriteTextFormat* TextSystem::GetTextFormat(const std::string& _fontFamily, float _fontSize)
+IDWriteTextFormat* TextSystem::GetTextFormat(const std::string& fontFamily, float fontSize)
 {
-    std::pair<std::string, float> key = std::make_pair(_fontFamily, _fontSize);
+    std::pair<std::string, float> key = std::make_pair(fontFamily, fontSize);
 
     if (textFormats_.find(key) == textFormats_.end())
     {
@@ -83,12 +83,12 @@ IDWriteTextFormat* TextSystem::GetTextFormat(const std::string& _fontFamily, flo
 
         
         HRESULT hr = dwriteFactory_->CreateTextFormat(
-            ConvertString(_fontFamily).c_str(),
+            ConvertString(fontFamily).c_str(),
             nullptr,
             DWRITE_FONT_WEIGHT_NORMAL,
             DWRITE_FONT_STYLE_NORMAL,
             DWRITE_FONT_STRETCH_NORMAL,
-            _fontSize,
+            fontSize,
             L"ja-jp",
             textFormat.GetAddressOf()
         );

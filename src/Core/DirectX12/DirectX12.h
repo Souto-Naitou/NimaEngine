@@ -66,7 +66,7 @@ public:
     void CommandExecute();
     void DisplayFrame();
     void WaitForGPU();
-    void CopyFromRTV(ID3D12GraphicsCommandList* _commandList);
+    void CopyFromRTV(ID3D12GraphicsCommandList* commandList);
 
     /// <summary>
     /// ゲーム画面リソースの生成

@@ -15,7 +15,7 @@
 
 using namespace DX12Helper;
 
-void DX12Helper::CreateDevice(ComPtr<ID3D12Device>& _device, ComPtr<IDXGIAdapter4>& _adapter)
+void DX12Helper::CreateDevice(ComPtr<ID3D12Device>& device, ComPtr<IDXGIAdapter4>& adapter)
 {
     /// D3D12Deviceの生成
 
@@ -29,7 +29,7 @@ void DX12Helper::CreateDevice(ComPtr<ID3D12Device>& _device, ComPtr<IDXGIAdapter
     for (size_t i = 0; i < _countof(featureLevels); ++i)
     {
         // 採用したアダプターでデバイスを生成
-        HRESULT hr = D3D12CreateDevice(_adapter.Get(), featureLevels[i], IID_PPV_ARGS(_device.GetAddressOf()));
+        HRESULT hr = D3D12CreateDevice(adapter.Get(), featureLevels[i], IID_PPV_ARGS(device.GetAddressOf()));
         // 指定した機能レベルでデバイスが生成できたかを確認
         if (SUCCEEDED(hr))
         {
@@ -39,10 +39,10 @@ void DX12Helper::CreateDevice(ComPtr<ID3D12Device>& _device, ComPtr<IDXGIAdapter
         }
     }
     // デバイスの生成がうまくいかなかったので起動できない
-    if (!_device)
+    if (!device)
     {
         Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, "Failed to create");
-        assert(_device && "Failed to create device");
+        assert(device && "Failed to create device");
     }
 
     Logger::GetInstance()->LogInfo(__FILE__, __FUNCTION__, "Initilization succeeded"); // 初期化完了のログを出力
@@ -50,17 +50,17 @@ void DX12Helper::CreateDevice(ComPtr<ID3D12Device>& _device, ComPtr<IDXGIAdapter
 
 
 //#ifdef _DEBUG
-void DX12Helper::PauseError(ComPtr<ID3D12Device>& _device, ComPtr<ID3D12InfoQueue>& _infoQ)
+void DX12Helper::PauseError(ComPtr<ID3D12Device>& device, ComPtr<ID3D12InfoQueue>& infoQ)
 {
 
-    if (SUCCEEDED(_device->QueryInterface(IID_PPV_ARGS(_infoQ.GetAddressOf()))))
+    if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(infoQ.GetAddressOf()))))
     {
         // やばいエラー時に止まる
-        _infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+        infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
         // エラー時に止まる <- 解放忘れが判明したら、コメントアウト
-        _infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+        infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
         //警告時に止まる
-        _infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+        infoQ->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
         // 抑制するメッセージのID
         D3D12_MESSAGE_ID denyIds[] = {
@@ -77,17 +77,17 @@ void DX12Helper::PauseError(ComPtr<ID3D12Device>& _device, ComPtr<ID3D12InfoQueu
         filter.DenyList.NumSeverities = _countof(severities);
         filter.DenyList.pSeverityList = severities;
         // 指定したメッセージの表示を制限する
-        _infoQ->PushStorageFilter(&filter);
+        infoQ->PushStorageFilter(&filter);
     }
 
 }
 //#endif // _DEBUG
 
-ComPtr<ID3D12Resource> DX12Helper::CreateDepthStencilTextureResource(const ComPtr<ID3D12Device>& _device, int32_t _width, int32_t _height)
+ComPtr<ID3D12Resource> DX12Helper::CreateDepthStencilTextureResource(const ComPtr<ID3D12Device>& device, int32_t width, int32_t height)
 {
     D3D12_RESOURCE_DESC resourceDesc{};
-    resourceDesc.Width            = _width;                                     // 幅
-    resourceDesc.Height           = _height;                                    // 高さ
+    resourceDesc.Width            = width;                                     // 幅
+    resourceDesc.Height           = height;                                    // 高さ
     resourceDesc.MipLevels        = 1;                                          // mipmapの数
     resourceDesc.DepthOrArraySize = 1;	                                        // 奥行き or 配列Textureの配列数
     resourceDesc.Format           = DXGI_FORMAT_D24_UNORM_S8_UINT;              // フォーマット
@@ -109,7 +109,7 @@ ComPtr<ID3D12Resource> DX12Helper::CreateDepthStencilTextureResource(const ComPt
 
     /// Resourceの生成
     ComPtr<ID3D12Resource> resource = nullptr;
-    HRESULT hr = _device->CreateCommittedResource(
+    HRESULT hr = device->CreateCommittedResource(
         &heapProperties,
         D3D12_HEAP_FLAG_NONE,
         &resourceDesc,

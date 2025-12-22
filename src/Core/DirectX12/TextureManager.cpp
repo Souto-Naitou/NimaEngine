@@ -4,9 +4,9 @@
 #include <Utility/ConvertString/ConvertString.h>
 #include <Core/ConfigManager/ConfigManager.h>
 
-void TextureManager::Initialize(SRVManager* _srvManager)
+void TextureManager::Initialize(SRVManager* srvManager)
 {
-    srvManager_ = _srvManager;
+    srvManager_ = srvManager;
     textureDataMap_.reserve(DirectX12::kMaxSRVCount_);
 
     auto& cfgData = ConfigManager::GetInstance()->GetConfigData();

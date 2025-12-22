@@ -11,9 +11,9 @@ void ModelStorage::Finalize()
     }
 }
 
-IModel* ModelStorage::FindModel(const std::string& _path)
+IModel* ModelStorage::FindModel(const std::string& path)
 {
-    auto findPathLower = utl::filesystem::to_lower(_path);
+    auto findPathLower = utl::filesystem::to_lower(path);
     auto findPathLowerAbs = std::filesystem::absolute(findPathLower);
 
     IModel* result = nullptr;
@@ -33,12 +33,12 @@ IModel* ModelStorage::FindModel(const std::string& _path)
     return result;
 }
 
-bool ModelStorage::IsLoaded(const std::filesystem::path& _path)
+bool ModelStorage::IsLoaded(const std::filesystem::path& path)
 {
     for (auto& model : models_)
     {
         std::filesystem::path fsModelPath = utl::filesystem::to_lower(model.first);
-        std::filesystem::path fsFullPath = utl::filesystem::to_lower(_path);
+        std::filesystem::path fsFullPath = utl::filesystem::to_lower(path);
 
         if (fsModelPath == fsFullPath)
         {
@@ -49,14 +49,14 @@ bool ModelStorage::IsLoaded(const std::filesystem::path& _path)
     return false;
 }
 
-IModel* ModelStorage::AddModel(const std::filesystem::path& _path, std::shared_ptr<IModel> _model)
+IModel* ModelStorage::AddModel(const std::filesystem::path& path, std::shared_ptr<IModel> model)
 {
-    std::filesystem::path fsPath = utl::filesystem::to_lower(_path);
+    std::filesystem::path fsPath = utl::filesystem::to_lower(path);
     if (this->IsLoaded(fsPath))
     {
         // すでに登録されていたら登録済みを返す
         return models_.at(fsPath).get();
     }
-    auto itrPair =  models_.emplace(fsPath, _model);
+    auto itrPair =  models_.emplace(fsPath, model);
     return itrPair.first->second.get();
 }

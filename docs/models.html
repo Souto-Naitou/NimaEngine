@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モデルシステム詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">モデルシステム詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>モデルシステム</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#architecture">アーキテクチャ</a></li>
+                    <li><a href="#modelmanager">ModelManager</a></li>
+                    <li><a href="#imodel">IModelインターフェース</a></li>
+                    <li><a href="#gltf">GltfModel</a></li>
+                    <li><a href="#animation">アニメーションシステム</a></li>
+                    <li><a href="#skeleton">Skeleton & SkinCluster</a></li>
+                    <li><a href="#usage">基本的な使い方</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                    <li><a href="#tips">Tips & ベストプラクティス</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p>NimaEngineのモデルシステムは、3Dモデルの読み込み、管理、描画、アニメーションをサポートします。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>Assimpによる多様なフォーマット対応（GLTF/GLB、OBJ等）</li>
+                        <li>GPU スキニングアニメーション</li>
+                        <li>モデルのクローン機能（効率的なインスタンス生成）</li>
+                        <li>テクスチャの動的な変更</li>
+                        <li>階層的なボーン構造のサポート</li>
+                        <li>遅延ローディングと非同期処理</li>
+                        <li>パスリゾルバによる柔軟なファイル配置</li>
+                    </ul>
+
+                    <h3>対応フォーマット</h3>
+                    <ul>
+                        <li><strong>GLTF 2.0 / GLB</strong> - 推奨フォーマット（アニメーション、PBRマテリアル）</li>
+                        <li><strong>OBJ</strong> - シンプルな静的メッシュ</li>
+                        <li><strong>FBX</strong> - Assimpを通じて読み込み可能</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="architecture" class="section">
+                <h2>アーキテクチャ</h2>
+                <div class="card">
+                    <h3>クラス構成</h3>
+                    <div class="architecture-grid">
+                        <div class="arch-item">
+                            <h4>ModelManager</h4>
+                            <p>モデルの読み込みと管理を統括。ローダーとストレージを制御します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>IModelLoader</h4>
+                            <p>モデルローダーのインターフェース。実装クラスにModelLoaderAssimpがあります。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>ModelStorage</h4>
+                            <p>読み込まれたモデルデータをキャッシュして管理します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>IModel</h4>
+                            <p>モデルインターフェース。GltfModel、ObjModelなどが実装します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>GltfModel</h4>
+                            <p>GLTF形式のモデル。スケルトン、アニメーション、スキニングをサポート。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>Animation</h4>
+                            <p>アニメーションデータとキーフレームを管理します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>Skeleton</h4>
+                            <p>骨格構造とジョイント階層を表現します。</p>
+                        </div>
+                        <div class="arch-item">
+                            <h4>SkinCluster</h4>
+                            <p>スキニング情報を保持し、頂点のボーン変形を制御します。</p>
+                        </div>
+                    </div>
+
+                    <h3>データフロー</h3>
+                    <pre><code>GLTFファイル
+    ↓
+ModelLoaderAssimp::Load()
+    ↓
+ModelData + Animation + Skeleton
+    ↓
+ModelStorage（キャッシュ）
+    ↓
+ModelManager::Load()
+    ↓
+GltfModel インスタンス
+    ↓
+Cloned()
+    ↓
+新しいGltfModelインスタンス（独立）
+    ↓
+Object3d::SetModel()
+    ↓
+描画</code></pre>
+                </div>
+            </section>
+
+            <section id="modelmanager" class="section">
+                <h2>ModelManager</h2>
+                <div class="card">
+                    <p class="class-description">モデルの読み込みと管理を統括するクラス。</p>
+
+                    <h3>初期化</h3>
+                    <pre><code>// NimaFrameworkによって自動的に初期化されます
+// DIコンテナから取得
+auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize()</code>
+                            <p>モデル管理の初期化を行います。</p>
+                        </div>
+                        <div class="method">
+                            <code>void AddSearchPath(const std::string& path)</code>
+                            <p>モデルファイルの検索パスを追加します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void AddLoadPath(const std::string& path)</code>
+                            <p>事前ロードの対象パスを追加します。</p>
+                        </div>
+                        <div class="method">
+                            <code>int LoadAll()</code>
+                            <p>登録済みのロードパスを全て読み込みます。</p>
+                            <p><strong>戻り値</strong>: 読み込んだ件数</p>
+                        </div>
+                        <div class="method">
+                            <code>IModel* Load(const std::string& path)</code>
+                            <p>単一のモデルを読み込みます。既にロード済みの場合はキャッシュから返します。</p>
+                            <p><strong>戻り値</strong>: モデルのポインタ（失敗時は nullptr）</p>
+                        </div>
+                    </div>
+
+                    <h3>使用例</h3>
+                    <pre><code>// DIコンテナから取得
+auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+
+// 検索パスを追加（初期化時）
+modelManager->AddSearchPath("resources/models/");
+
+// モデルをロード
+auto playerModel = modelManager->Load("player.gltf");
+auto enemyModel = modelManager->Load("enemy.glb");</code></pre>
+                </div>
+            </section>
+
+            <section id="imodel" class="section">
+                <h2>IModelインターフェース</h2>
+                <div class="card">
+                    <p class="class-description">すべてのモデルクラスが実装する基底インターフェース。</p>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize()</code>
+                            <p>モデルを初期化します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Update()</code>
+                            <p>モデルの状態を更新します（アニメーション等）。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Draw(ID3D12GraphicsCommandList* cl)</code>
+                            <p>モデルを描画します。</p>
+                        </div>
+                        <div class="method">
+                            <code>std::unique_ptr&lt;IModel&gt; Cloned()</code>
+                            <p><strong>重要!</strong> モデルのクローンを作成します。元のモデルとは独立したインスタンスを返します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd)</code>
+                            <p>テクスチャを動的に変更します。</p>
+                        </div>
+                        <div class="method">
+                            <code>bool IsEndLoading() const</code>
+                            <p>モデルの読み込みが完了しているかを確認します。</p>
+                        </div>
+                        <div class="method">
+                            <code>ModelData* GetModelData()</code>
+                            <p>モデルデータを取得します。</p>
+                        </div>
+                    </div>
+
+                    <h3>Cloned() の重要性</h3>
+                    <div class="card" style="background-color: var(--code-bg);">
+                        <p><code>Cloned()</code>メソッドは、同じモデルを複数のオブジェクトで使用する際に必須です。</p>
+                        <h4>なぜクローンが必要か?</h4>
+                        <ul>
+                            <li>元のモデルはキャッシュされており、直接変更すべきではない</li>
+                            <li>各オブジェクトが独立したアニメーション状態を持つ必要がある</li>
+                            <li>テクスチャやマテリアルを個別に変更できる</li>
+                            <li>トランスフォームが独立している</li>
+                        </ul>
+                        <h4>クローンの仕組み</h4>
+                        <p>頂点バッファやインデックスバッファは共有され、アニメーション状態やマテリアルデータは独立します。これにより、メモリ効率と柔軟性を両立しています。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="gltf" class="section">
+                <h2>GltfModel</h2>
+                <div class="card">
+                    <p class="class-description">GLTF 2.0形式のモデルを扱うクラス。</p>
+
+                    <h3>特徴</h3>
+                    <ul>
+                        <li>スケルタルアニメーション対応</li>
+                        <li>GPUスキニング</li>
+                        <li>PBRマテリアル</li>
+                        <li>複数のテクスチャセット</li>
+                        <li>階層的なノード構造</li>
+                    </ul>
+
+                    <h3>固有メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>Animation* GetAnimationData()</code>
+                            <p>アニメーションデータを取得します。</p>
+                        </div>
+                        <div class="method">
+                            <code>Skeleton* GetSkeleton()</code>
+                            <p>スケルトンデータを取得します。</p>
+                        </div>
+                        <div class="method">
+                            <code>SkinCluster* GetSkinCluster()</code>
+                            <p>スキンクラスターを取得します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void DispatchSkinning()</code>
+                            <p>スキニング計算をGPUに送信します。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="animation" class="section">
+                <h2>アニメーションシステム</h2>
+                <div class="card">
+                    <h3>Animationクラス</h3>
+                    <p>キーフレームベースのアニメーションデータを管理します。</p>
+
+                    <h3>アニメーションの流れ</h3>
+                    <ol>
+                        <li>GLTFファイルからアニメーションデータを読み込み</li>
+                        <li>各ジョイントに対するキーフレーム（位置、回転、スケール）を保持</li>
+                        <li>Update()で現在の時間に基づいてキーフレーム間を補間</li>
+                        <li>Skeletonのローカル行列を更新</li>
+                        <li>スキニング行列を計算してGPUに送信</li>
+                        <li>GPUで頂点変形を実行</li>
+                    </ol>
+
+                    <h3>使用例</h3>
+                    <pre><code>// アニメーション付きモデルの使用
+auto characterModel = modelManager->Load("character.gltf");
+auto instance = characterModel->Cloned();
+
+// アニメーションの取得
+auto animationData = static_cast&lt;GltfModel*&gt;(instance.get())->GetAnimationData();
+
+// Update() でアニメーションが自動的に進行
+instance->Update();</code></pre>
+                </div>
+            </section>
+
+            <section id="skeleton" class="section">
+                <h2>Skeleton & SkinCluster</h2>
+                <div class="card">
+                    <h3>Skeleton（骨格）</h3>
+                    <p>ボーンの階層構造とその変換行列を管理します。</p>
+                    <ul>
+                        <li>ジョイント（ボーン）の階層を表現</li>
+                        <li>各ジョイントのローカル行列とグローバル行列を保持</li>
+                        <li>アニメーションによってローカル行列が更新される</li>
+                    </ul>
+
+                    <h3>SkinCluster（スキンクラスター）</h3>
+                    <p>頂点とボーンの関連付けを管理します。</p>
+                    <ul>
+                        <li>各頂点がどのボーンに影響を受けるかを定義</li>
+                        <li>ウェイト情報を保持</li>
+                        <li>スキニング行列を計算してGPUに送信</li>
+                    </ul>
+
+                    <h3>スキニングの仕組み</h3>
+                    <pre><code>// CPU側
+for (各ジョイント)
+{
+    ジョイントのワールド行列を計算;
+    スキニング行列 = 逆バインド行列 × ワールド行列;
+}
+
+// GPU側（コンピュートシェーダー）
+for (各頂点)
+{
+    最終位置 = 0;
+    for (影響を与える各ボーン)
+    {
+        最終位置 += (スキニング行列 × 元の位置) × ウェイト;
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section id="usage" class="section">
+                <h2>基本的な使い方</h2>
+                <div class="card">
+                    <h3>1. モデルのロード</h3>
+                    <pre><code>// ModelManagerの取得（DIコンテナから）
+auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+
+// モデルをロード（この時点ではキャッシュされたオリジナル）
+auto originalModel = modelManager->Load("resources/models/player.gltf");</code></pre>
+
+                    <h3>2. モデルのクローン</h3>
+                    <pre><code>// クローンを作成（独立したインスタンス）
+auto modelInstance = originalModel->Cloned();</code></pre>
+
+                    <h3>3. Object3dに設定</h3>
+                    <pre><code>// Object3dを作成
+auto object = std::make_unique&lt;Object3d&gt;();
+object->Initialize();
+
+// モデルを設定
+object->SetModel(modelInstance.get());
+
+// トランスフォームを設定
+object->SetTranslate(Vector3(0, 0, 0));
+object->SetRotate(Vector3(0, 0, 0));
+object->SetScale(Vector3(1, 1, 1));</code></pre>
+
+                    <h3>4. 描画</h3>
+                    <pre><code>// 更新（アニメーションの進行）
+object->Update();
+
+// 描画
+object->Draw1F();</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>プレイヤーモデルの初期化（Calms参照）</h3>
+                    <pre><code>class Player
+{
+private:
+    std::unique_ptr&lt;IModel&gt; pModelSelfBody_;
+    std::unique_ptr&lt;Object3d&gt; object_;
+    ModelManager* pModelManager_ = nullptr;
+    
+public:
+    void Initialize()
+    {
+        // DIコンテナからModelManagerを取得
+        pModelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
+        
+        // モデルの初期化
+        ObjectsInitialize();
+    }
+    
+    void ObjectsInitialize()
+    {
+        // オリジナルのモデルをロード
+        auto originalModel = pModelManager_->Load(Path::Model::kPlayer);
+        
+        // クローンを作成（独立したインスタンス）
+        pModelSelfBody_ = originalModel->Cloned();
+        
+        // Object3dの初期化
+        object_ = std::make_unique&lt;Object3d&gt;();
+        object_->Initialize();
+        object_->SetName("player");
+        
+        // トランスフォームを設定
+        object_->SetTranslate(Vector3(0, 0.5f, 0));
+        object_->SetRotate(Vector3(0, 0, 0));
+        
+        // モデルを設定
+        object_->SetModel(pModelSelfBody_.get());
+        
+        // マテリアルのカスタマイズ
+        auto& option = object_->GetOption();
+        option.materialData->environmentCoefficient = 0.0f;
+        option.materialData->color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+    }
+    
+    void Update()
+    {
+        // オブジェクトの更新（アニメーション等）
+        object_->Update();
+    }
+    
+    void Draw1F()
+    {
+        // オブジェクトの描画
+        object_->Draw1F();
+    }
+};</code></pre>
+
+                    <h3>複数の敵キャラクターの生成</h3>
+                    <pre><code>class EnemyManager
+{
+private:
+    struct EnemyInstance
+    {
+        std::unique_ptr&lt;IModel&gt; model;
+        std::unique_ptr&lt;Object3d&gt; object;
+        Vector3 position;
+        float health;
+    };
+    
+    std::vector&lt;EnemyInstance&gt; enemies_;
+    IModel* enemyModelOriginal_ = nullptr;
+    ModelManager* modelManager_ = nullptr;
+    
+public:
+    void Initialize()
+    {
+        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
+        
+        // 敵のオリジナルモデルをロード（1回だけ）
+        enemyModelOriginal_ = modelManager_->Load("enemy.gltf");
+    }
+    
+    void SpawnEnemy(const Vector3& position)
+    {
+        EnemyInstance enemy;
+        
+        // クローンを作成
+        enemy.model = enemyModelOriginal_->Cloned();
+        
+        // Object3dを設定
+        enemy.object = std::make_unique&lt;Object3d&gt;();
+        enemy.object->Initialize();
+        enemy.object->SetModel(enemy.model.get());
+        enemy.object->SetTranslate(position);
+        
+        enemy.position = position;
+        enemy.health = 100.0f;
+        
+        // リストに追加
+        enemies_.push_back(std::move(enemy));
+    }
+    
+    void Update()
+    {
+        for (auto& enemy : enemies_)
+        {
+            enemy.object->Update();
+            
+            // 敵のAI処理など
+            // ...
+        }
+    }
+    
+    void Draw()
+    {
+        for (auto& enemy : enemies_)
+        {
+            enemy.object->Draw1F();
+        }
+    }
+};</code></pre>
+
+                    <h3>テクスチャの動的変更</h3>
+                    <pre><code>class CharacterCustomizer
+{
+private:
+    std::unique_ptr&lt;IModel&gt; characterModel_;
+    std::vector&lt;D3D12_GPU_DESCRIPTOR_HANDLE&gt; skinTextures_;
+    int currentSkinIndex_ = 0;
+    
+public:
+    void Initialize()
+    {
+        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+        auto textureManager = DIContainer::Resolve&lt;TextureManager&gt;();
+        
+        // キャラクターモデルのロード
+        auto original = modelManager->Load("character.gltf");
+        characterModel_ = original->Cloned();
+        
+        // 複数のスキンテクスチャをロード
+        skinTextures_.push_back(
+            textureManager->GetGPUHandle("skin_default.png")
+        );
+        skinTextures_.push_back(
+            textureManager->GetGPUHandle("skin_red.png")
+        );
+        skinTextures_.push_back(
+            textureManager->GetGPUHandle("skin_blue.png")
+        );
+    }
+    
+    void ChangeSkin(int skinIndex)
+    {
+        if (skinIndex >= 0 && skinIndex < skinTextures_.size())
+        {
+            currentSkinIndex_ = skinIndex;
+            characterModel_->ChangeTexture(skinTextures_[skinIndex]);
+        }
+    }
+    
+    void NextSkin()
+    {
+        currentSkinIndex_ = (currentSkinIndex_ + 1) % skinTextures_.size();
+        ChangeSkin(currentSkinIndex_);
+    }
+};</code></pre>
+
+                    <h3>アニメーション制御</h3>
+                    <pre><code>class AnimatedCharacter
+{
+private:
+    std::unique_ptr&lt;IModel&gt; model_;
+    GltfModel* gltfModel_ = nullptr;
+    
+public:
+    void Initialize()
+    {
+        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+        
+        // アニメーション付きモデルのロード
+        auto original = modelManager->Load("animated_character.gltf");
+        model_ = original->Cloned();
+        
+        // GltfModelにキャスト
+        gltfModel_ = static_cast&lt;GltfModel*&gt;(model_.get());
+    }
+    
+    void Update()
+    {
+        // モデルの更新（アニメーションが自動で進行）
+        model_->Update();
+        
+        // スキニングをディスパッチ（GPU計算）
+        gltfModel_->DispatchSkinning();
+    }
+    
+    void SetAnimationSpeed(float speed)
+    {
+        auto animation = gltfModel_->GetAnimationData();
+        if (animation)
+        {
+            // アニメーション速度の変更（実装による）
+            // animation->SetSpeed(speed);
+        }
+    }
+};</code></pre>
+
+                    <h3>事前ロードシステム</h3>
+                    <pre><code>class GameScene
+{
+private:
+    ModelManager* modelManager_ = nullptr;
+    bool isLoadingComplete_ = false;
+    
+public:
+    void Initialize()
+    {
+        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
+        
+        // 検索パスを追加
+        modelManager_->AddSearchPath("resources/models/");
+        modelManager_->AddSearchPath("resources/models/characters/");
+        modelManager_->AddSearchPath("resources/models/weapons/");
+        
+        // ロード対象を登録
+        modelManager_->AddLoadPath("player.gltf");
+        modelManager_->AddLoadPath("enemy_basic.gltf");
+        modelManager_->AddLoadPath("enemy_boss.gltf");
+        modelManager_->AddLoadPath("weapon_sword.gltf");
+        modelManager_->AddLoadPath("weapon_gun.gltf");
+        
+        // 一括ロード（非同期）
+        int loadedCount = modelManager_->LoadAll();
+        
+        std::cout << "Loaded " << loadedCount << " models." << std::endl;
+    }
+    
+    void CheckLoadingStatus()
+    {
+        // 全てのモデルが読み込み完了しているか確認
+        auto playerModel = modelManager_->Load("player.gltf");
+        auto enemyModel = modelManager_->Load("enemy_basic.gltf");
+        
+        if (playerModel->IsEndLoading() && enemyModel->IsEndLoading())
+        {
+            isLoadingComplete_ = true;
+        }
+    }
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>Tips & ベストプラクティス</h2>
+                <div class="card">
+                    <h3>1. 必ずCloned()を使用する</h3>
+                    <p><code>ModelManager::Load()</code>で返されたモデルを直接使用せず、必ず<code>Cloned()</code>でコピーを作成してください。</p>
+                    <pre><code>// ❌ 悪い例：オリジナルを直接使用
+auto model = modelManager->Load("player.gltf");
+object->SetModel(model); // オリジナルを直接使用
+
+// ✅ 良い例：クローンを作成
+auto originalModel = modelManager->Load("player.gltf");
+auto modelInstance = originalModel->Cloned();
+object->SetModel(modelInstance.get());</code></pre>
+
+                    <h3>2. パスの一元管理</h3>
+                    <p>モデルファイルのパスは定数で管理しましょう。</p>
+                    <pre><code>namespace Path::Model
+{
+    constexpr const char* kPlayer = "resources/models/player.gltf";
+    constexpr const char* kEnemy = "resources/models/enemy.gltf";
+    constexpr const char* kBoss = "resources/models/boss.gltf";
+}</code></pre>
+
+                    <h3>3. メモリ効率の考慮</h3>
+                    <ul>
+                        <li>同じモデルを複数使う場合、<code>Cloned()</code>を使えば頂点データは共有される</li>
+                        <li>アニメーション状態やマテリアルだけが独立するため、メモリ効率が良い</li>
+                    </ul>
+
+                    <h3>4. 読み込み完了の確認</h3>
+                    <p>非同期ロードの場合、<code>IsEndLoading()</code>で完了を確認してから使用しましょう。</p>
+
+                    <h3>5. GLTF形式の推奨</h3>
+                    <ul>
+                        <li>アニメーションが必要な場合はGLTF/GLBを使用</li>
+                        <li>静的メッシュのみならOBJも可</li>
+                        <li>GLBはバイナリ形式でファイルサイズが小さい</li>
+                    </ul>
+
+                    <h3>6. スキニングのパフォーマンス</h3>
+                    <p>スキニングはGPUで実行されるため、大量のアニメーションキャラクターでも高速に動作します。</p>
+
+                    <h3>7. モデルデータの確認</h3>
+                    <pre><code>auto modelData = model->GetModelData();
+std::cout << "Vertex count: " << model->GetVertexCount() << std::endl;
+std::cout << "Material name: " << modelData->material.name << std::endl;</code></pre>
+
+                    <h3>8. テクスチャの事前ロード</h3>
+                    <p>モデルと一緒にテクスチャも事前にロードしておくことで、描画開始時の遅延を防げます。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

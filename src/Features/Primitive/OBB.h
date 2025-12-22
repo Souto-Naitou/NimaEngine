@@ -22,28 +22,28 @@ public:
 
 
 public: /// Setter
-    void SetCenter(const Vector3& _center) { center_ = _center; }
-    void SetOrientations(const Vector3& _orientation1, const Vector3& _orientation2, const Vector3& _orientation3)
+    void SetCenter(const Vector3& center) { center_ = center; }
+    void SetOrientations(const Vector3& orientation1, const Vector3& orientation2, const Vector3& orientation3)
     {
-        orientations_[0] = _orientation1;
-        orientations_[1] = _orientation2;
-        orientations_[2] = _orientation3;
+        orientations_[0] = orientation1;
+        orientations_[1] = orientation2;
+        orientations_[2] = orientation3;
     }
-    void SetOrientations(const Matrix4x4& _rotateMatrix)
+    void SetOrientations(const Matrix4x4& rotateMatrix)
     {
-        orientations_[0] = Vector3(_rotateMatrix.m[0][0], _rotateMatrix.m[1][0], _rotateMatrix.m[2][0]);
-        orientations_[1] = Vector3(_rotateMatrix.m[0][1], _rotateMatrix.m[1][1], _rotateMatrix.m[2][1]);
-        orientations_[2] = Vector3(_rotateMatrix.m[0][2], _rotateMatrix.m[1][2], _rotateMatrix.m[2][2]);
+        orientations_[0] = Vector3(rotateMatrix.m[0][0], rotateMatrix.m[1][0], rotateMatrix.m[2][0]);
+        orientations_[1] = Vector3(rotateMatrix.m[0][1], rotateMatrix.m[1][1], rotateMatrix.m[2][1]);
+        orientations_[2] = Vector3(rotateMatrix.m[0][2], rotateMatrix.m[1][2], rotateMatrix.m[2][2]);
 
-        rotateMatrix_ = _rotateMatrix;
+        rotateMatrix_ = rotateMatrix;
     }
-    void SetSize(const Vector3& _size) { size_ = _size; }
-    void SetGameEye(GameEye** _eye) { pGameEye = _eye; ModifyGameEye(_eye); }
+    void SetSize(const Vector3& size) { size_ = size; }
+    void SetGameEye(GameEye** eye) { pGameEye = eye; ModifyGameEye(eye); }
 
 
 public: /// Getter
     const Vector3& GetCenter() const { return center_; }
-    const Vector3& GetOrientation(int _index) const { return orientations_[_index]; }
+    const Vector3& GetOrientation(int index) const { return orientations_[index]; }
     const Vector3& GetSize() const { return size_; }
     const Matrix4x4& GetRotateMatrix() const { return rotateMatrix_; }
 
@@ -59,7 +59,7 @@ private:
 
 
 private:
-    void ModifyGameEye(GameEye** _eye);
+    void ModifyGameEye(GameEye** eye);
 
 
 private:

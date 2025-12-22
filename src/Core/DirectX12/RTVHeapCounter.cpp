@@ -2,10 +2,10 @@
 #include "Helper/DX12HeapHelper.h"
 #include <cassert>
 
-void RTVHeapCounter::Initialize(ID3D12Device* _device, uint32_t _numDescriptor)
+void RTVHeapCounter::Initialize(ID3D12Device* device, uint32_t numDescriptor)
 {   
-    device_             = _device;
-    rtvHeap_            = DX12HeapHelper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, _numDescriptor, false);
+    device_             = device;
+    rtvHeap_            = DX12HeapHelper::CreateDescriptorHeap(device_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, numDescriptor, false);
     kDescriptorSizeRTV_ = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 }
 
@@ -28,15 +28,15 @@ uint32_t RTVHeapCounter::Allocate()
     return UINT32_MAX;
 }
 
-void RTVHeapCounter::Deallocate(uint32_t _index)
+void RTVHeapCounter::Deallocate(uint32_t index)
 {
-    assert(isAllocated_[_index] && "すでに開放されています。");
-    isAllocated_[_index] = false;
+    assert(isAllocated_[index] && "すでに開放されています。");
+    isAllocated_[index] = false;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE RTVHeapCounter::GetRTVHandle(uint32_t _index)
+D3D12_CPU_DESCRIPTOR_HANDLE RTVHeapCounter::GetRTVHandle(uint32_t index)
 {
     D3D12_CPU_DESCRIPTOR_HANDLE handle = rtvHeap_->GetCPUDescriptorHandleForHeapStart();
-    handle.ptr += kDescriptorSizeRTV_ * _index;
+    handle.ptr += kDescriptorSizeRTV_ * index;
     return handle;
 }

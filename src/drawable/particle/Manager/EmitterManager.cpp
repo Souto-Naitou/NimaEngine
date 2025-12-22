@@ -2,52 +2,52 @@
 
 using EmitterData = Type::ParticleEmitter::v3::Data;
 
-const EmitterData& EmitterManager::LoadFile(const std::string& _path)
+const EmitterData& EmitterManager::LoadFile(const std::string& path)
 {
     if (!pjsonio_) pjsonio_ = JSONIO::GetInstance();
 
     EmitterData data = {};
-    auto& root = pjsonio_->Load(_path);
+    auto& root = pjsonio_->Load(path);
 
     Deserialize(root, data);
 
-    emitterMap_[_path] = data;
+    emitterMap_[path] = data;
 
-    return emitterMap_[_path];
+    return emitterMap_[path];
 }
 
-const EmitterData& EmitterManager::ReloadFile(const std::string& _path)
+const EmitterData& EmitterManager::ReloadFile(const std::string& path)
 {
     if (!pjsonio_) pjsonio_ = JSONIO::GetInstance();
-    pjsonio_->Unload(_path);
-    return LoadFile(_path);
+    pjsonio_->Unload(path);
+    return LoadFile(path);
 }
 
-void EmitterManager::SaveFile(const std::string& _path, const EmitterData& _data)
+void EmitterManager::SaveFile(const std::string& path, const EmitterData& data)
 {
-    pjsonio_->Save(_path, _data);
+    pjsonio_->Save(path, data);
 }
 
-void EmitterManager::Deserialize(const json& _root, EmitterData& _data)
+void EmitterManager::Deserialize(const json& root, EmitterData& data)
 {
-    int version = _root["version"].get<int>();
+    int version = root["version"].get<int>();
     switch (version)
     {
     case 1:
-        _data = Type::ParticleEmitter::v1::Data(_root);
+        data = Type::ParticleEmitter::v1::Data(root);
         break;
     case 2:
-        _data = Type::ParticleEmitter::v2::Data(_root);
+        data = Type::ParticleEmitter::v2::Data(root);
         break;
     case 3:
-        _data = Type::ParticleEmitter::v3::Data(_root);
+        data = Type::ParticleEmitter::v3::Data(root);
         break;
 
     default: break;
     }
 }
 
-void EmitterManager::Serialize(json& _root, const EmitterData& _data)
+void EmitterManager::Serialize(json& root, const EmitterData& data)
 {
-    _root = _data;
+    root = data;
 }

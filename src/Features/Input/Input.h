@@ -34,8 +34,8 @@ public:
     /// <summary>
     /// 入力システムを初期化します。
     /// </summary>
-    /// <param name="_hInstance">アプリケーションインスタンス。</param>
-    /// <param name="_hwnd">ウィンドウハンドル。</param>
+    /// <param name="hInstance">アプリケーションインスタンス。</param>
+    /// <param name="hwnd">ウィンドウハンドル。</param>
     void        Initialize(HINSTANCE hInstance, HWND hwnd);
     /// <summary>
     /// 入力状態を更新します。
@@ -46,7 +46,7 @@ public:
     /// <summary>
     /// 入力処理の有効/無効を切り替えます。
     /// </summary>
-    /// <param name="_flag">trueで有効。</param>
+    /// <param name="flag">trueで有効。</param>
     void        Enable(bool flag);
 
     void        SetDeadZoneRange(float deadZoneRange) { deadZoneRange_ = deadZoneRange; }

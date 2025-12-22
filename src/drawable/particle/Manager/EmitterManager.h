@@ -28,17 +28,17 @@ public:
         return &instance;
     }
 
-    const EmitterData& LoadFile(const std::string& _path);
-    const EmitterData& ReloadFile(const std::string& _path);
-    void SaveFile(const std::string& _path, const EmitterData& _data);
+    const EmitterData& LoadFile(const std::string& path);
+    const EmitterData& ReloadFile(const std::string& path);
+    void SaveFile(const std::string& path, const EmitterData& data);
 
 
 private:
     EmitterManager() = default;
     ~EmitterManager() = default;
 
-    void Deserialize(const json& _root, EmitterData& _data);
-    void Serialize(json& _root, const EmitterData& _data);
+    void Deserialize(const json& root, EmitterData& data);
+    void Serialize(json& root, const EmitterData& data);
 
 
 private:

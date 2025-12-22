@@ -30,8 +30,8 @@ public:
     /// <summary>
     /// スプライトを初期化します。
     /// </summary>
-    /// <param name="_filepath">使用するテクスチャのパス。</param>
-    void                Initialize(std::string _filepath);
+    /// <param name="filepath">使用するテクスチャのパス。</param>
+    void                Initialize(std::string filepath);
     
     /// <summary>
     /// スプライトの状態更新を行います。

@@ -27,8 +27,8 @@ public:
     /// <summary>
     /// テクスチャ管理を初期化します。
     /// </summary>
-    /// <param name="_srvManager">SRV 管理クラス。</param>
-    void Initialize(SRVManager* _srvManager);
+    /// <param name="srvManager">SRV 管理クラス。</param>
+    void Initialize(SRVManager* srvManager);
 
     /// <summary>
     /// 中間リソース（アップロードバッファ等）を解放します。
@@ -38,33 +38,33 @@ public:
     /// <summary>
     /// テクスチャファイルの読み込み
     /// </summary>
-    /// <param name="_filePath">テクスチャファイルのパス</param>
+    /// <param name="filePath">テクスチャファイルのパス</param>
     /// <returns>実際に読み込んだファイルパス</returns>
     /// <remarks>ファイルが見つからなかった場合はデフォルトで読み込まれるテクスチャのパスを返します</remarks>
-    std::string LoadTexture(const std::string& _filePath);
+    std::string LoadTexture(const std::string& filePath);
 
     /// <summary>
     /// 指定されたファイルパスのテクスチャをアンロードします。
     /// </summary>
-    /// <param name="_filePath">アンロードするテクスチャのファイルパス。</param>
-    void UnloadTexture(const std::string& _filePath);
+    /// <param name="filePath">アンロードするテクスチャのファイルパス。</param>
+    void UnloadTexture(const std::string& filePath);
 
     /// <summary>
     /// 指定されたファイルパスのテクスチャを再読み込みします。
     /// </summary>
-    /// <param name="_filePath">再読み込みするテクスチャファイルのパス。</param>
-    inline void ReloadTexture(const std::string& _filePath)
+    /// <param name="filePath">再読み込みするテクスチャファイルのパス。</param>
+    inline void ReloadTexture(const std::string& filePath)
     {
-        UnloadTexture(_filePath);
-        LoadTexture(_filePath);
+        UnloadTexture(filePath);
+        LoadTexture(filePath);
     }
 
 
 public: /// Getter
-    [[nodiscard]] const DirectX::TexMetadata&   GetMetaData(const std::string& _filePath);
-    [[nodiscard]] uint32_t                      GetSrvIndex(const std::string& _filePath);
-    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& _filePath);
-    [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& _filePath);
+    [[nodiscard]] const DirectX::TexMetadata&   GetMetaData(const std::string& filePath);
+    [[nodiscard]] uint32_t                      GetSrvIndex(const std::string& filePath);
+    [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& filePath);
+    [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath);
 
 private:
     struct TextureData

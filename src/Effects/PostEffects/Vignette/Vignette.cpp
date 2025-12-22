@@ -32,14 +32,14 @@ void Vignette::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void Vignette::Enable(bool _flag)
+void Vignette::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void Vignette::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void Vignette::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool Vignette::Enabled() const
@@ -147,12 +147,12 @@ void Vignette::CreateRootSignature()
             .SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
             .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
         Logger::GetInstance()->LogError(
             "Vignette",
             __func__,
-            _e.what()
+            e.what()
         );
     }
 
@@ -231,12 +231,12 @@ void Vignette::CreatePipelineStateObject()
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)
             .Build(device_);
     }
-    catch (const std::exception& _e)
+    catch (const std::exception& e)
     {
         Logger::GetInstance()->LogError(
             "Vignette",
             __func__,
-            _e.what()
+            e.what()
         );
     }
 

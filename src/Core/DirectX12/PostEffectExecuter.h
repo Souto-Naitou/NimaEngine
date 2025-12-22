@@ -145,14 +145,14 @@ private:
     /// <summary>
     /// 指定インデックスのエフェクトのみを単独実行するモードを切り替えます。
     /// </summary>
-    /// <param name="_index">エフェクトのインデックス。</param>
-    void EnableSolo(const size_t _index);
+    /// <param name="index">エフェクトのインデックス。</param>
+    void EnableSolo(const size_t index);
     
     /// <summary>
     /// 中央寄せテーブルにUIを配置するヘルパ。
     /// </summary>
-    /// <param name="_fn">描画関数。</param>
-    void ImGuiCenterTable(const std::function<void()>& _fn);
+    /// <param name="fn">描画関数。</param>
+    void ImGuiCenterTable(const std::function<void()>& fn);
 
 
 private:

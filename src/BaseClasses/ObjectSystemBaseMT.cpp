@@ -21,14 +21,14 @@ GameEye** ObjectSystemBaseMT::GetGlobalEye()
     return &pGlobalEye_;
 }
 
-void ObjectSystemBaseMT::SetGlobalEye(GameEye* _pGameEye)
+void ObjectSystemBaseMT::SetGlobalEye(GameEye* pGameEye)
 {
-    pGlobalEye_ = _pGameEye;
+    pGlobalEye_ = pGameEye;
 }
 
-void ObjectSystemBaseMT::SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE* _handle)
+void ObjectSystemBaseMT::SetRTVHandle(const D3D12_CPU_DESCRIPTOR_HANDLE* handle)
 {
-    rtvHandle_ = _handle;
+    rtvHandle_ = handle;
 }
 
 void ObjectSystemBaseMT::CreateCommandList()

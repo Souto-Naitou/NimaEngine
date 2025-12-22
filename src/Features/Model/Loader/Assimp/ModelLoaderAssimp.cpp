@@ -20,9 +20,9 @@ void ModelLoaderAssimp::Update()
 {
 }
 
-std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
+std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& path)
 {
-    std::filesystem::path fsPath = _path;
+    std::filesystem::path fsPath = path;
 
     std::shared_ptr<IModel> model = nullptr;
     if (fsPath.extension() == ".obj")
@@ -31,7 +31,7 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
         objModel->SetDirectX12(pDx12_);
         objModel->Initialize();
 
-        *objModel->GetModelData() = this->LoadModelByAssimp(_path);
+        *objModel->GetModelData() = this->LoadModelByAssimp(path);
         objModel->CreateGPUResource();
         model = objModel;
     }
@@ -41,8 +41,8 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
         gltfModel->SetDirectX12(pDx12_);
         gltfModel->Initialize();
 
-        *gltfModel->GetModelData() = this->LoadModelByAssimp(_path);
-        *gltfModel->GetAnimationData() = this->LoadAnimation(_path);
+        *gltfModel->GetModelData() = this->LoadModelByAssimp(path);
+        *gltfModel->GetAnimationData() = this->LoadAnimation(path);
         *gltfModel->GetSkeleton() = this->CreateSkeleton(gltfModel->GetModelData()->rootNode);
         *gltfModel->GetSkinCluster() = this->CreateSkinCluster(
             pDx12_->GetDevice(),
@@ -56,20 +56,20 @@ std::shared_ptr<IModel> ModelLoaderAssimp::LoadModel(const std::string& _path)
     return model;
 }
 
-ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
+ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& path)
 {
     ModelData result = {};
     Assimp::Importer importer;
-    std::string parentPath = utl::filesystem::get_parent_path_string(_path);
+    std::string parentPath = utl::filesystem::get_parent_path_string(path);
 
     // 三角形の並びを反転させ、UV座標を反転させるフラグを設定
     uint32_t flags = aiProcess_FlipWindingOrder | aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_FixInfacingNormals ;
 
-    const aiScene* scene = importer.ReadFile(_path.c_str(), flags);
+    const aiScene* scene = importer.ReadFile(path.c_str(), flags);
 
     if (!scene->HasMeshes()) 
     {
-        throw std::runtime_error("Failed to load model: " + _path);
+        throw std::runtime_error("Failed to load model: " + path);
     }
 
     // Meshの解析
@@ -78,7 +78,7 @@ ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
         const aiMesh* mesh = scene->mMeshes[meshIndex];
         if (!mesh->HasNormals()) [[unlikely]]
         {
-            throw std::runtime_error("Mesh does not have normals: " + _path);
+            throw std::runtime_error("Mesh does not have normals: " + path);
         }
         //if (!mesh->HasTextureCoords(0)) [[unlikely]]
         //{
@@ -94,7 +94,7 @@ ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
             // 三角面でない場合は例外を投げる(Triangulateが有効なので、通常は発生しないはず)
             if (face.mNumIndices != 3) [[unlikely]]
             {
-                throw std::runtime_error("Mesh face is not a triangle: " + _path);
+                throw std::runtime_error("Mesh face is not a triangle: " + path);
             }
 
             // インデックスの追加
@@ -176,25 +176,25 @@ ModelData ModelLoaderAssimp::LoadModelByAssimp(const std::string& _path)
     return result;
 }
 
-Animation ModelLoaderAssimp::LoadAnimation(const std::string& _path)
+Animation ModelLoaderAssimp::LoadAnimation(const std::string& path)
 {
     Animation result = {};
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(_path.c_str(), 0);
+    const aiScene* scene = importer.ReadFile(path.c_str(), 0);
     return this->LoadAnimation(scene);
 }
 
-Animation ModelLoaderAssimp::LoadAnimation(const aiScene* _scene)
+Animation ModelLoaderAssimp::LoadAnimation(const aiScene* scene)
 {
     Animation result = {};
 
-    if (_scene->mNumAnimations == 0) [[unlikely]]
+    if (scene->mNumAnimations == 0) [[unlikely]]
     {
         throw std::runtime_error("No animations found in the scene.");
     }
 
     // TODO: 複数のアニメーションに対応する
-    aiAnimation* animationAssimp = _scene->mAnimations[0];
+    aiAnimation* animationAssimp = scene->mAnimations[0];
 
     // アニメーションの情報を取り出す
     const float kAiDuration = static_cast<float>(animationAssimp->mDuration);
@@ -256,39 +256,39 @@ Animation ModelLoaderAssimp::LoadAnimation(const aiScene* _scene)
     return result;
 }
 
-Node ModelLoaderAssimp::ReadNode(aiNode* _node)
+Node ModelLoaderAssimp::ReadNode(aiNode* node)
 {
-    Node node;
+    Node resultNode;
 
     aiVector3D scale, translate;
     aiQuaternion rotate;
 
-    _node->mTransformation.Decompose(scale, rotate, translate);
-    node.transform.scale = Vector3(scale.x, scale.y, scale.z);
-    node.transform.rotate = Quaternion(rotate.x, -rotate.y, -rotate.z, rotate.w);
-    node.transform.translate = Vector3(-translate.x, translate.y, translate.z);
-    node.localMatrix = Matrix4x4::AffineMatrix(
-        node.transform.scale,
-        node.transform.rotate,
-        node.transform.translate
+    node->mTransformation.Decompose(scale, rotate, translate);
+    resultNode.transform.scale = Vector3(scale.x, scale.y, scale.z);
+    resultNode.transform.rotate = Quaternion(rotate.x, -rotate.y, -rotate.z, rotate.w);
+    resultNode.transform.translate = Vector3(-translate.x, translate.y, translate.z);
+    resultNode.localMatrix = Matrix4x4::AffineMatrix(
+        resultNode.transform.scale,
+        resultNode.transform.rotate,
+        resultNode.transform.translate
     );
 
-    node.name = _node->mName.C_Str();
-    node.children.resize(_node->mNumChildren);
-    for (uint32_t childIndex = 0; childIndex < _node->mNumChildren; ++childIndex)
+    resultNode.name = node->mName.C_Str();
+    resultNode.children.resize(node->mNumChildren);
+    for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex)
     {
-        node.children[childIndex] = ReadNode(_node->mChildren[childIndex]);
+        resultNode.children[childIndex] = ReadNode(node->mChildren[childIndex]);
     }
 
-    return node;
+    return resultNode;
 }
 
-Skeleton ModelLoaderAssimp::CreateSkeleton(const Node& _rootNode)
+Skeleton ModelLoaderAssimp::CreateSkeleton(const Node& rootNode)
 {
     Skeleton skeleton;
     skeleton.Initialize();
     SkeletonData& skeletonData = skeleton.GetSkeletonData();
-    skeletonData.rootIndex = CreateJoint(_rootNode, {}, skeletonData.joints);
+    skeletonData.rootIndex = CreateJoint(rootNode, {}, skeletonData.joints);
 
     // 名前とindexのマッピングを行いアクセスしやすくする
     for (const Joint& joint : skeletonData.joints)
@@ -321,45 +321,45 @@ Skeleton ModelLoaderAssimp::CreateSkeleton(const Node& _rootNode)
     return skeleton;
 }
 
-int32_t ModelLoaderAssimp::CreateJoint(const Node& _node, const std::optional<int32_t>& _parentIndex, std::vector<Joint>& _joints)
+int32_t ModelLoaderAssimp::CreateJoint(const Node& node, const std::optional<int32_t>& parentIndex, std::vector<Joint>& joints)
 {
     Joint joint;
     joint.Initialize();
     JointData& jointData = joint.GetJointData();
-    jointData.name = _node.name;
-    jointData.localMatrix = _node.localMatrix;
+    jointData.name = node.name;
+    jointData.localMatrix = node.localMatrix;
     jointData.skeletonSpaceMatrix = Matrix4x4::Identity();
-    jointData.transform = _node.transform;
-    jointData.index = static_cast<int32_t>(_joints.size());
-    jointData.parentIndex = _parentIndex;
-    _joints.push_back(joint);
-    for (const Node& child : _node.children)
+    jointData.transform = node.transform;
+    jointData.index = static_cast<int32_t>(joints.size());
+    jointData.parentIndex = parentIndex;
+    joints.push_back(joint);
+    for (const Node& child : node.children)
     {
         // 子Jointを作成してそのIndexを登録
-        int32_t childIndex = this->CreateJoint(child, jointData.index, _joints);
-        _joints[jointData.index].GetJointData().childrenIndices.push_back(childIndex);
+        int32_t childIndex = this->CreateJoint(child, jointData.index, joints);
+        joints[jointData.index].GetJointData().childrenIndices.push_back(childIndex);
     }
     return jointData.index;
 }
 
 SkinCluster ModelLoaderAssimp::CreateSkinCluster(
-    const Microsoft::WRL::ComPtr<ID3D12Device>& _device,
-    const Skeleton& _skeleton, 
-    const ModelData& _modelData
+    const Microsoft::WRL::ComPtr<ID3D12Device>& device,
+    const Skeleton& skeleton, 
+    const ModelData& modelData
 )
 {
     SkinCluster skinCluster;
 
-    auto& skeletonData = _skeleton.GetSkeletonData();
+    auto& skeletonData = skeleton.GetSkeletonData();
 
     // Palette用のResourceを作成
     skinCluster.resourcePalette = DX12Helper::CreateBufferResource(
-        _device,
-        sizeof(WellForGPU) * _skeleton.GetSkeletonData().joints.size()
+        device,
+        sizeof(WellForGPU) * skeleton.GetSkeletonData().joints.size()
     );
     WellForGPU* mappedPalette = nullptr;
     skinCluster.resourcePalette->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
-    skinCluster.mappedPalette = { mappedPalette, _skeleton.GetSkeletonData().joints.size() };
+    skinCluster.mappedPalette = { mappedPalette, skeleton.GetSkeletonData().joints.size() };
     
     // SRVを割り当てる
     auto* sm = SRVManager::GetInstance();
@@ -377,13 +377,13 @@ SkinCluster ModelLoaderAssimp::CreateSkinCluster(
 
     // インフルエンス用のResourceを作成
     skinCluster.resourceInfluence = DX12Helper::CreateBufferResource(
-        _device,
-        sizeof(VertexInfluence) * _modelData.vertices.size()
+        device,
+        sizeof(VertexInfluence) * modelData.vertices.size()
     );
     VertexInfluence* mappedInfluences = nullptr;
     skinCluster.resourceInfluence->Map(0, nullptr, reinterpret_cast<void**>(&mappedInfluences));
-    std::memset(mappedInfluences, 0, sizeof(VertexInfluence) * _modelData.vertices.size());
-    skinCluster.mappedInfluences = { mappedInfluences, _modelData.vertices.size() };
+    std::memset(mappedInfluences, 0, sizeof(VertexInfluence) * modelData.vertices.size());
+    skinCluster.mappedInfluences = { mappedInfluences, modelData.vertices.size() };
 
     // SRVを割り当てる
     skinCluster.srvIndexInfluence = sm->Allocate();
@@ -394,18 +394,18 @@ SkinCluster ModelLoaderAssimp::CreateSkinCluster(
     sm->CreateForStructuredBuffer(
         skinCluster.srvIndexInfluence,
         skinCluster.resourceInfluence.Get(),
-        static_cast<uint32_t>(_modelData.vertices.size()),
+        static_cast<uint32_t>(modelData.vertices.size()),
         sizeof(VertexInfluence)
     );
 
     // SkinningInformation用のResourceを作成
     skinCluster.resourceSkinningInformation = DX12Helper::CreateBufferResource(
-        _device,
+        device,
         sizeof(SkinningInformation)
     );
     SkinningInformation* mappedSkinningInformation = nullptr;
     skinCluster.resourceSkinningInformation->Map(0, nullptr, reinterpret_cast<void**>(&mappedSkinningInformation));
-    mappedSkinningInformation->numVertices = static_cast<uint32_t>(_modelData.vertices.size());
+    mappedSkinningInformation->numVertices = static_cast<uint32_t>(modelData.vertices.size());
     skinCluster.mappedSkinningInformation = { mappedSkinningInformation, 1 };
 
     // SRVを割り当てる
@@ -416,7 +416,7 @@ SkinCluster ModelLoaderAssimp::CreateSkinCluster(
     ibpm.resize(skeletonData.joints.size());
     std::generate(ibpm.begin(), ibpm.end(), Matrix4x4::Identity);
     
-    for (const auto& jointWeight : _modelData.skinClusterData)
+    for (const auto& jointWeight : modelData.skinClusterData)
     {
         auto it = skeletonData.jointMap.find(jointWeight.first);
         if (it == skeletonData.jointMap.end())

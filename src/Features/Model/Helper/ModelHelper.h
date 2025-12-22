@@ -13,21 +13,21 @@ struct MaterialData;
 
 namespace Helper::Model
 {
-    ModelData LoadObjFile(const std::string& _directoryPath, const std::string& _filename, const std::string& _texturePath = {});
-    MaterialData LoadMaterialTemplateFile(const std::string& _directoryPath, const std::string& _filename, const std::string& _texturePath = {});
-    void DispatchModel(IModel* _pModel);
+    ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& texturePath = {});
+    MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename, const std::string& texturePath = {});
+    void DispatchModel(IModel* pModel);
 
     template <typename _Loader>
-    std::unique_ptr<_Loader> CreateLoader(DirectX12* _pDx12)
+    std::unique_ptr<_Loader> CreateLoader(DirectX12* pDx12)
     {
         // IModelLoaderを継承しているかどうか
         static_assert(std::is_base_of<IModelLoader, _Loader>::value, "Loader must inherit from IModelLoader");
 
         auto pLoader = std::make_unique<_Loader>();
-        pLoader->SetDirectX12(_pDx12);
+        pLoader->SetDirectX12(pDx12);
         pLoader->Initialize();
         return pLoader;
     }
     std::unique_ptr<ModelStorage> CreateStorage();
-    std::unique_ptr<ModelManager> CreateManager(IModelLoader* _pLoader, ModelStorage* _pStorage);
+    std::unique_ptr<ModelManager> CreateManager(IModelLoader* pLoader, ModelStorage* pStorage);
 }

@@ -1,11 +1,11 @@
 #include "AnimationHelper.h"
 #include <cassert>
 
-Vector3 Helper::Animation::CalculateValue(const AnimationCurve<Vector3>& _keyframes, float _time)
+Vector3 Helper::Animation::CalculateValue(const AnimationCurve<Vector3>& kf, float time)
 {
     Vector3 result = {};
 
-    const auto& keyframes = _keyframes.keyframes;
+    const auto& keyframes = kf.keyframes;
 
     if (keyframes.empty())
     {
@@ -14,7 +14,7 @@ Vector3 Helper::Animation::CalculateValue(const AnimationCurve<Vector3>& _keyfra
         #endif
         return result;
     }
-    if (keyframes.size() == 1 || _time <= keyframes.front().time)
+    if (keyframes.size() == 1 || time <= keyframes.front().time)
     {
         // キーが1つだけ、または時間が最初のキーの時間以下の場合は、最初のキーの値を返す
         result = keyframes.front().value;
@@ -24,10 +24,10 @@ Vector3 Helper::Animation::CalculateValue(const AnimationCurve<Vector3>& _keyfra
     for (size_t index = 0; index < keyframes.size() - 1; ++index)
     {
         size_t nextIndex = index + 1;
-        if (keyframes[index].time <= _time && _time <= keyframes[nextIndex].time)
+        if (keyframes[index].time <= time && time <= keyframes[nextIndex].time)
         {
             // 現在のキーと次のキーの間に時間がある場合、線形補間を行う
-            float t = (_time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+            float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
             result.Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
             return result;
         }
@@ -38,10 +38,10 @@ Vector3 Helper::Animation::CalculateValue(const AnimationCurve<Vector3>& _keyfra
     return result;
 }
 
-Quaternion Helper::Animation::CalculateValue(const AnimationCurve<Quaternion>& _keyframes, float _time)
+Quaternion Helper::Animation::CalculateValue(const AnimationCurve<Quaternion>& kf, float time)
 {
     Quaternion result = {};
-    const auto& keyframes = _keyframes.keyframes;
+    const auto& keyframes = kf.keyframes;
     if (keyframes.empty())
     {
         #ifdef _ENGINE_DEBUG_ANIMATION
@@ -49,7 +49,7 @@ Quaternion Helper::Animation::CalculateValue(const AnimationCurve<Quaternion>& _
         #endif
         return result;
     }
-    if (keyframes.size() == 1 || _time <= keyframes.front().time)
+    if (keyframes.size() == 1 || time <= keyframes.front().time)
     {
         // キーが1つだけ、または時間が最初のキーの時間以下の場合は、最初のキーの値を返す
         result = keyframes.front().value;
@@ -58,10 +58,10 @@ Quaternion Helper::Animation::CalculateValue(const AnimationCurve<Quaternion>& _
     for (size_t index = 0; index < keyframes.size() - 1; ++index)
     {
         size_t nextIndex = index + 1;
-        if (keyframes[index].time <= _time && _time <= keyframes[nextIndex].time)
+        if (keyframes[index].time <= time && time <= keyframes[nextIndex].time)
         {
             // 現在のキーと次のキーの間に時間がある場合、線形補間を行う
-            float t = (_time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+            float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
             result = Quaternion::Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
 
             return result;

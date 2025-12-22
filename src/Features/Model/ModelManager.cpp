@@ -3,7 +3,7 @@
 #include <Utility/String/strutl.h>
 #include <Core/ConfigManager/ConfigManager.h>
 
-void ModelManager::Initialize()
+void ModelManager::Initialize(IModelLoader* loader, ModelStorage* storage)
 {
     // Configに記述されているフォルダの追加
     auto& cfgData = ConfigManager::GetInstance()->GetConfigData();
@@ -12,39 +12,29 @@ void ModelManager::Initialize()
         this->AddLoadPath(path);
         this->AddSearchPath(path);
     }
+
+    // ローダーの設定
+    if (loader == nullptr)
+    {
+        throw std::runtime_error("ModelManager::Initialize failed: loader is nullptr");
+    }
+    pModelLoader_ = loader;
+
+    // ストレージの設定
+    if (storage == nullptr)
+    {
+        throw std::runtime_error("ModelManager::Initialize failed: storage is nullptr");
+    }
+    pModelStorage_ = storage;
 }
 
-void ModelManager::SetModelLoader(IModelLoader* _loader)
+void ModelManager::AddLoadPath(const std::string& path)
 {
-    if (_loader != nullptr)
-    {
-        pModelLoader_ = _loader;
-    }
-    else
-    {
-        throw std::invalid_argument("Model loader cannot be null");
-    }
-}
+    auto lowerPath = utl::string::to_lower(path);
 
-void ModelManager::SetModelStorage(ModelStorage* _storage)
-{
-    if (_storage != nullptr)
+    for (const auto& pathExist : loadPaths_)
     {
-        pModelStorage_ = _storage;
-    }
-    else
-    {
-        throw std::invalid_argument("Model storage cannot be null");
-    }
-}
-
-void ModelManager::AddLoadPath(const std::string& _path)
-{
-    auto lowerPath = utl::string::to_lower(_path);
-
-    for (const auto& path : loadPaths_)
-    {
-        if (path == lowerPath)
+        if (pathExist == lowerPath)
         {
             // The path already exists, no need to add it again
             return;
@@ -54,9 +44,9 @@ void ModelManager::AddLoadPath(const std::string& _path)
     loadPaths_.push_back(lowerPath);
 }
 
-void ModelManager::AddSearchPath(const std::string& _path)
+void ModelManager::AddSearchPath(const std::string& path)
 {
-    auto lowerPath = utl::string::to_lower(_path);
+    auto lowerPath = utl::string::to_lower(path);
     pathResolver_.AddSearchPath(lowerPath);
 }
 
@@ -82,9 +72,9 @@ int ModelManager::LoadAll()
     return count;
 }
 
-IModel* ModelManager::Load(const std::string& _path)
+IModel* ModelManager::Load(const std::string& path)
 {
-    auto resolvedPath = pathResolver_.GetFilePath(_path);
+    auto resolvedPath = pathResolver_.GetFilePath(path);
     if (pModelStorage_->IsLoaded(resolvedPath))
     {
         // If the model is already loaded, return it

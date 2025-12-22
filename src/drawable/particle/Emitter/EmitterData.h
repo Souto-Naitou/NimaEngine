@@ -23,8 +23,8 @@ namespace Type
         {
             struct Data;
 
-            void from_json(const nlohmann::json& _j, Data& _data);
-            void to_json(nlohmann::json& _j, const Data& _data);
+            void from_json(const nlohmann::json& j, Data& data);
+            void to_json(nlohmann::json& j, const Data& data);
         }
 
         namespace v2
@@ -35,8 +35,8 @@ namespace Type
             struct Flags;
             struct Data;
 
-            void from_json(const nlohmann::json& _j, Data& _data);
-            void to_json(nlohmann::json& _j, const Data& _data);
+            void from_json(const nlohmann::json& j, Data& data);
+            void to_json(nlohmann::json& j, const Data& data);
         }
 
         namespace v3
@@ -48,8 +48,8 @@ namespace Type
             struct CollisionFloor;
             struct Data;
 
-            void from_json(const nlohmann::json& _j, Data& _data);
-            void to_json(nlohmann::json& _j, const Data& _data);
+            void from_json(const nlohmann::json& j, Data& data);
+            void to_json(nlohmann::json& j, const Data& data);
         }
     }
 }
@@ -85,7 +85,7 @@ struct Type::ParticleEmitter::v1::Data
 
 struct Type::ParticleEmitter::v2::Common
 {
-    Common& operator=(const Common& _rv) = default;
+    Common& operator=(const Common& rv) = default;
     Vector3         scaleFixed                  = {};                   // 固定スケール
     float           emitInterval                = {};                   // 発生間隔
     int32_t         emitNum                     = {};                   // 発生数
@@ -127,7 +127,7 @@ struct Type::ParticleEmitter::v2::PhysicsData
 struct Type::ParticleEmitter::v2::Data
 {
     Data() = default;
-    Data(const Type::ParticleEmitter::v1::Data& _rv);
+    Data(const Type::ParticleEmitter::v1::Data& rv);
     static constexpr uint32_t version           = 2;                    // バージョン番号
     std::string     name                        = {};                   // 名前
     Common          common                      = {};                   // 共通データ
@@ -168,8 +168,8 @@ struct Type::ParticleEmitter::v3::CollisionFloor
 struct Type::ParticleEmitter::v3::Data
 {
     Data() = default;
-    Data(const Type::ParticleEmitter::v2::Data& _rv);
-    Data(const Type::ParticleEmitter::v1::Data& _rv);
+    Data(const Type::ParticleEmitter::v2::Data& rv);
+    Data(const Type::ParticleEmitter::v1::Data& rv);
     
     static constexpr uint32_t version           = 3;                    // バージョン番号
     std::string     name                        = {};

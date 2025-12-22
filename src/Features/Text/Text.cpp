@@ -59,17 +59,17 @@ void Text::Finalize()
 {
 }
 
-void Text::SetText(const std::string& _text)
+void Text::SetText(const std::string& text)
 {
-    if (text_ == _text) return;
+    if (text_ == text) return;
 
-    text_ = _text;
+    text_ = text;
     isChanged_ = true;
 }
 
-void Text::SetPosition(const Vector2& _pos)
+void Text::SetPosition(const Vector2& pos)
 {
-    position_ = _pos;
+    position_ = pos;
 
     if (pParent_)
     {
@@ -108,9 +108,9 @@ void Text::SetPosition(const Vector2& _pos)
     callCount_UpdatePosition_++;
 }
 
-void Text::SetParent(Text* _parent)
+void Text::SetParent(Text* parent)
 {
-    pParent_ = _parent; 
+    pParent_ = parent; 
     pParent_->SetChild(this);
     isChangedParent_ = true;
 }
@@ -194,11 +194,11 @@ void Text::ImGui()
 #endif // _DEBUG
 }
 
-Vector2 Text::ComputeStandardPosition(TextStandardPoint _stdpoint)
+Vector2 Text::ComputeStandardPosition(TextStandardPoint stdpoint)
 {
     Vector2 result = {};
 
-    switch (_stdpoint)
+    switch (stdpoint)
     {
     case TextStandardPoint::TopLeft:
         result.x = 0.0f;

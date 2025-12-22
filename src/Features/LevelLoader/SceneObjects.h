@@ -29,9 +29,9 @@ public:
     std::string GetName() const override;
     void ImGui();
 
-    void SetLevelData(const BlenderLevel::LevelData& _levelData);
-    void SetDirectionalLight(DirectionalLight* _light);
-    void Build(ModelManager* _modelManager);
+    void SetLevelData(const BlenderLevel::LevelData& levelData);
+    void SetDirectionalLight(DirectionalLight* light);
+    void Build(ModelManager* modelManager);
 
 private:
     std::list<std::shared_ptr<Object3d>> objects_;

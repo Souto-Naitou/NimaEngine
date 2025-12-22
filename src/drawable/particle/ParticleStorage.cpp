@@ -33,12 +33,12 @@ Particle* ParticleStorage::CreateParticle()
     return ref.get();
 }
 
-void ParticleStorage::ReleaseParticle(Particle* _particle)
+void ParticleStorage::ReleaseParticle(Particle* particle)
 {
     for (auto itr = particles_.begin(); itr != particles_.end(); ++itr)
     {
         auto ptr = itr->get();
-        if (ptr == _particle)
+        if (ptr == particle)
         {
             ptr->Finalize();
             particles_.erase(itr);
@@ -47,9 +47,9 @@ void ParticleStorage::ReleaseParticle(Particle* _particle)
     }
 }
 
-void ParticleStorage::ReserveDeleteParticle(Particle* _particle)
+void ParticleStorage::ReserveDeleteParticle(Particle* particle)
 {
-    deleteParticles_.push_back(_particle);
+    deleteParticles_.push_back(particle);
 }
 
 void ParticleStorage::ReleaseAllParticle()

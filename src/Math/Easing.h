@@ -6,33 +6,33 @@
 namespace Math::Easing
 {
     /// イージング関数郡
-    float EaseNone(float _t);
+    float EaseNone(float t);
 
-    float EaseInSine(float _t);
-    float EaseOutSine(float _t);
-    float EaseInOutSine(float _t);
+    float EaseInSine(float t);
+    float EaseOutSine(float t);
+    float EaseInOutSine(float t);
 
-    float EaseInQuad(float _t);
-    float EaseOutQuad(float _t);
-    float EaseInOutQuad(float _t);
+    float EaseInQuad(float t);
+    float EaseOutQuad(float t);
+    float EaseInOutQuad(float t);
 
-    float EaseInCubic(float _t);
-    float EaseOutCubic(float _t);
-    float EaseInOutCubic(float _t);
+    float EaseInCubic(float t);
+    float EaseOutCubic(float t);
+    float EaseInOutCubic(float t);
 
-    float EaseInQuart(float _t);
-    float EaseOutQuart(float _t);
-    float EaseInOutQuart(float _t);
+    float EaseInQuart(float t);
+    float EaseOutQuart(float t);
+    float EaseInOutQuart(float t);
 
-    float EaseInBack(float _t);
-    float EaseOutBack(float _t);
-    float EaseInOutBack(float _t);
+    float EaseInBack(float t);
+    float EaseOutBack(float t);
+    float EaseInOutBack(float t);
 
-    float EaseInElastic(float _t);
-    float EaseOutElastic(float _t);
-    float EaseInOutElastic(float _t);
+    float EaseInElastic(float t);
+    float EaseOutElastic(float t);
+    float EaseInOutElastic(float t);
 
-    float EaseInBounce(float _t);
-    float EaseOutBounce(float _t);
-    float EaseInOutBounce(float _t);
+    float EaseInBounce(float t);
+    float EaseOutBounce(float t);
+    float EaseInOutBounce(float t);
 }

@@ -38,8 +38,8 @@ void NiGuiDrawer::Draw()
     return;
 }
 
-void NiGuiDrawer::PlayAudio(void* _audioHandler)
+void NiGuiDrawer::PlayAudio(void* audioHandler)
 {
-    Audio* audio = static_cast<Audio*>(_audioHandler);
+    Audio* audio = static_cast<Audio*>(audioHandler);
     audio->Play();
 }

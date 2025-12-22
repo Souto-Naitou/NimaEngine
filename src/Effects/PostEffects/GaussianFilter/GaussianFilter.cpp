@@ -32,14 +32,14 @@ void GaussianFilter::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void GaussianFilter::Enable(bool _flag)
+void GaussianFilter::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void GaussianFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void GaussianFilter::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool GaussianFilter::Enabled() const

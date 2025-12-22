@@ -1,7 +1,7 @@
 #include "TransShutter.h"
 #include <Features/SceneManager/SceneManager.h>
 
-void TransShutter::Initialize(const std::string& _sceneName, Canvas* pCanvas)
+void TransShutter::Initialize(const std::string& sceneName, Canvas* pCanvas)
 {
     pCanvas_ = pCanvas;
 
@@ -13,7 +13,7 @@ void TransShutter::Initialize(const std::string& _sceneName, Canvas* pCanvas)
 
     pDebugEntry_ = std::make_unique<DebugEntry<TransShutter>>("Transition", "Shutter", this);
 
-    sceneName_ = _sceneName;
+    sceneName_ = sceneName;
 
     animDeltaY_.Start();
 }

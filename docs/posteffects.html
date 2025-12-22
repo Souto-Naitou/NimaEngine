@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポストエフェクト詳細 - NimaEngine リファレンス</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><a href="index.html" style="color: white; text-decoration: none;">NimaEngine</a></h1>
+                <p class="subtitle">ポストエフェクト詳細リファレンス</p>
+            </div>
+            <nav class="breadcrumb">
+                <a href="index.html">ホーム</a> &gt; <span>ポストエフェクト</span>
+            </nav>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-section">
+                <h3>目次</h3>
+                <ul id="navList">
+                    <li><a href="#overview">概要</a></li>
+                    <li><a href="#interface">IPostEffect インターフェース</a></li>
+                    <li><a href="#usage">基本的な使い方</a></li>
+                    <li><a href="#effects">利用可能なエフェクト</a>
+                        <ul>
+                            <li><a href="#bloom">GaussianBloom</a></li>
+                            <li><a href="#blur">GaussianFilter / SeparatedGaussianFilter</a></li>
+                            <li><a href="#outline-depth">DepthBasedOutline</a></li>
+                            <li><a href="#outline-prewitt">PrewittOutline</a></li>
+                            <li><a href="#radialblur">RadialBlur</a></li>
+                            <li><a href="#vignette">Vignette</a></li>
+                            <li><a href="#grayscale">Grayscale</a></li>
+                            <li><a href="#dissolve">Dissolve</a></li>
+                            <li><a href="#random">RandomFilter</a></li>
+                            <li><a href="#luminance">LuminanceOutput</a></li>
+                            <li><a href="#box">BoxFilter</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#custom">カスタムエフェクトの作成</a></li>
+                    <li><a href="#examples">サンプルコード</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="overview" class="section">
+                <h2>概要</h2>
+                <div class="card">
+                    <p>ポストエフェクトは、レンダリング済みの画像に対して適用される画面全体のエフェクトです。NimaEngineでは、複数のポストエフェクトを組み合わせて使用できます。</p>
+                    
+                    <h3>主な特徴</h3>
+                    <ul>
+                        <li>DirectX12のコンピュートシェーダーを活用した高速処理</li>
+                        <li>複数のエフェクトをチェーン可能</li>
+                        <li>リアルタイムでのパラメータ調整</li>
+                        <li>リソース状態の自動管理</li>
+                        <li>ウィンドウリサイズへの自動対応</li>
+                    </ul>
+
+                    <h3>処理フロー</h3>
+                    <pre><code>シーン描画 → PostEffect 1 → PostEffect 2 → ... → 最終出力</code></pre>
+                </div>
+            </section>
+
+            <section id="interface" class="section">
+                <h2>IPostEffect インターフェース</h2>
+                <div class="card">
+                    <p>すべてのポストエフェクトは<code>IPostEffect</code>インターフェースを実装しています。</p>
+
+                    <h3>主要メソッド</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Initialize(const PostEffectInitParams& desc)</code>
+                            <p>エフェクトを初期化し、必要なリソースを確保します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Finalize()</code>
+                            <p>リソースを解放します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Enable(bool flag)</code>
+                            <p>エフェクトの有効/無効を設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>bool Enabled() const</code>
+                            <p>エフェクトが有効かどうかを返します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Apply()</code>
+                            <p>エフェクトを適用します。コマンドリストにGPU命令を記録します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void Setting()</code>
+                            <p>描画のための設定を行います。ディスクリプタやリソースの準備を実施します。</p>
+                        </div>
+                        <div class="method">
+                            <code>void SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)</code>
+                            <p>入力テクスチャのGPUハンドルを設定します。</p>
+                        </div>
+                        <div class="method">
+                            <code>D3D12_GPU_DESCRIPTOR_HANDLE GetOutputTextureHandle() const</code>
+                            <p>出力テクスチャのGPUハンドルを取得します。</p>
+                        </div>
+                        <div class="method">
+                            <code>DX12Resource* GetOutputResource() const</code>
+                            <p>適用後のリソースを取得します。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="usage" class="section">
+                <h2>基本的な使い方</h2>
+                <div class="card">
+                    <h3>1. エフェクトの取得と有効化</h3>
+                    <pre><code>// Viewportから特定のポストエフェクトを取得
+auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
+
+// エフェクトを有効化
+if (bloom) {
+    bloom->Enable(true);
+}</code></pre>
+
+                    <h3>2. パラメータの調整</h3>
+                    <pre><code>// ブルームの強度を調整
+auto& bloomOption = bloom->GetOption();
+// オプション構造体の値を変更（エフェクトにより異なる）
+
+// または専用のSetterメソッドを使用
+auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
+if (vignette) {
+    vignette->SetScale(0.8f);
+    vignette->SetPower(2.0f);
+}</code></pre>
+
+                    <h3>3. 複数のエフェクトの組み合わせ</h3>
+                    <pre><code>// 複数のエフェクトを有効化
+pViewport_->GetPostEffect&lt;GaussianBloom&gt;()->Enable(true);
+pViewport_->GetPostEffect&lt;Vignette&gt;()->Enable(true);
+pViewport_->GetPostEffect&lt;DepthBasedOutline&gt;()->Enable(true);
+
+// エフェクトは登録順に適用されます</code></pre>
+                </div>
+            </section>
+
+            <section id="effects" class="section">
+                <h2>利用可能なエフェクト</h2>
+
+                <div id="bloom" class="subsection">
+                    <h3>GaussianBloom（ガウシアンブルーム）</h3>
+                    <div class="card">
+                        <p class="class-description">明るい領域を発光させるエフェクト。光源や反射を強調し、幻想的な雰囲気を演出します。</p>
+
+                        <h4>処理フロー</h4>
+                        <ol>
+                            <li>入力画像から輝度（ルミナンス）を抽出</li>
+                            <li>高輝度領域にガウシアンフィルタを適用</li>
+                            <li>元画像とブレンド</li>
+                        </ol>
+
+                        <h4>パラメータ</h4>
+                        <div class="member-list">
+                            <div class="member">
+                                <code>float bloomIntensity</code>
+                                <p>ブルームの強度（デフォルト: 1.0f）</p>
+                            </div>
+                        </div>
+
+                        <h4>使用例</h4>
+                        <pre><code>auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
+if (bloom) {
+    bloom->Enable(true);
+    auto& option = bloom->GetOption();
+    option.bloomIntensity = 1.5f; // 強度を1.5倍に
+}</code></pre>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>光源の発光表現</li>
+                            <li>魔法エフェクトの強調</li>
+                            <li>金属や水面の反射の強調</li>
+                            <li>夢幻的な雰囲気の演出</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="blur" class="subsection">
+                    <h3>GaussianFilter / SeparatedGaussianFilter（ガウシアンぼかし）</h3>
+                    <div class="card">
+                        <p class="class-description">画像をぼかすエフェクト。SeparatedGaussianFilterは水平・垂直方向に分離して処理することで高速化を実現。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>自然で滑らかなぼかし効果</li>
+                            <li>分離処理による高速化</li>
+                            <li>カーネルサイズの調整が可能</li>
+                        </ul>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>被写界深度（DOF）の実装</li>
+                            <li>ブルームエフェクトの中間処理</li>
+                            <li>ソフトフォーカス効果</li>
+                            <li>モーションブラーの基礎</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="outline-depth" class="subsection">
+                    <h3>DepthBasedOutline（深度ベースアウトライン）</h3>
+                    <div class="card">
+                        <p class="class-description">深度バッファを利用してエッジを検出し、アウトライン（輪郭線）を描画するエフェクト。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>深度の変化が大きい部分を検出</li>
+                            <li>オブジェクトの輪郭を強調</li>
+                            <li>トゥーンシェーディングとの相性が良い</li>
+                        </ul>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>セルシェーディング（トゥーンレンダリング）</li>
+                            <li>オブジェクトの視認性向上</li>
+                            <li>アニメ調の表現</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="outline-prewitt" class="subsection">
+                    <h3>PrewittOutline（プレウィットアウトライン）</h3>
+                    <div class="card">
+                        <p class="class-description">プレウィットオペレータを使用したエッジ検出アルゴリズム。色の変化からエッジを検出します。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>色情報ベースのエッジ検出</li>
+                            <li>深度バッファ不要</li>
+                            <li>テクスチャの境界も検出</li>
+                        </ul>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>スケッチ風の表現</li>
+                            <li>イラスト調の輪郭線</li>
+                            <li>画像解析的な表現</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="radialblur" class="subsection">
+                    <h3>RadialBlur（放射ブラー）</h3>
+                    <div class="card">
+                        <p class="class-description">指定した中心点から放射状にぼかすエフェクト。スピード感や衝撃を表現できます。</p>
+
+                        <h4>パラメータ</h4>
+                        <div class="member-list">
+                            <div class="member">
+                                <code>Vector2 center</code>
+                                <p>ブラーの中心位置（0.0～1.0の正規化座標、デフォルト: (0.5, 0.5)）</p>
+                            </div>
+                            <div class="member">
+                                <code>int samples</code>
+                                <p>サンプル数（デフォルト: 16）。多いほど滑らかだが重くなる。</p>
+                            </div>
+                            <div class="member">
+                                <code>float blurWidth</code>
+                                <p>ブラー幅（0.0～1.0、デフォルト: 0.01f）</p>
+                            </div>
+                        </div>
+
+                        <h4>使用例</h4>
+                        <pre><code>auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
+if (radialBlur) {
+    radialBlur->Enable(true);
+    radialBlur->SetCenter(Vector2(0.5f, 0.5f)); // 画面中央
+    radialBlur->SetSamples(24); // サンプル数を増やして滑らかに
+    radialBlur->SetBlurWidth(0.02f); // ブラー幅を設定
+}</code></pre>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>高速移動の表現</li>
+                            <li>爆発やインパクトの演出</li>
+                            <li>集中線効果</li>
+                            <li>ワープ/テレポート演出</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="vignette" class="subsection">
+                    <h3>Vignette（ビネット）</h3>
+                    <div class="card">
+                        <p class="class-description">画面の周辺を暗くする（または特定色で染める）エフェクト。視線誘導や雰囲気作りに有効です。</p>
+
+                        <h4>パラメータ</h4>
+                        <div class="member-list">
+                            <div class="member">
+                                <code>Vector3 color</code>
+                                <p>ビネットの色</p>
+                            </div>
+                            <div class="member">
+                                <code>float scale</code>
+                                <p>ビネットのスケール（範囲）</p>
+                            </div>
+                            <div class="member">
+                                <code>float power</code>
+                                <p>ビネットの強度（パワー）</p>
+                            </div>
+                            <div class="member">
+                                <code>int enableMultiply</code>
+                                <p>乗算モードの有効/無効</p>
+                            </div>
+                        </div>
+
+                        <h4>使用例</h4>
+                        <pre><code>auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
+if (vignette) {
+                            vignette->Enable(true);
+    vignette->SetScale(0.8f); // スケールを設定
+    vignette->SetPower(2.0f); // 強度を設定
+    
+    // オプションで色も調整可能
+    auto& option = vignette->GetOption();
+    option.color = Vector3(0.0f, 0.0f, 0.0f); // 黒
+}</code></pre>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>視線の中心への誘導</li>
+                            <li>没入感の向上</li>
+                            <li>ダメージ表現（赤いビネット）</li>
+                            <li>ホラー演出（暗いビネット）</li>
+                            <li>回想シーン（セピア調ビネット）</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="grayscale" class="subsection">
+                    <h3>Grayscale（グレースケール）</h3>
+                    <div class="card">
+                        <p class="class-description">画像をモノクロ（白黒）に変換するエフェクト。</p>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>回想シーンの演出</li>
+                            <li>ゲームオーバー時の演出</li>
+                            <li>時間停止の表現</li>
+                            <li>古い写真風の表現</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="dissolve" class="subsection">
+                    <h3>Dissolve（ディゾルブ）</h3>
+                    <div class="card">
+                        <p class="class-description">ノイズテクスチャを使用して画像を溶解させるエフェクト。フェードとは異なる独特の遷移を実現します。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>ノイズテクスチャベースの溶解パターン</li>
+                            <li>閾値による溶解度の制御</li>
+                            <li>エッジカラーの設定が可能</li>
+                        </ul>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>シーントランジション</li>
+                            <li>オブジェクトの出現/消滅演出</li>
+                            <li>魔法的な消失効果</li>
+                            <li>テレポート演出</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="random" class="subsection">
+                    <h3>RandomFilter（ランダムフィルタ）</h3>
+                    <div class="card">
+                        <p class="class-description">ランダムノイズを画像に適用するエフェクト。</p>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>フィルムグレイン効果</li>
+                            <li>グリッチ演出</li>
+                            <li>古いテレビ風の表現</li>
+                            <li>ホラー演出</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="luminance" class="subsection">
+                    <h3>LuminanceOutput（輝度出力）</h3>
+                    <div class="card">
+                        <p class="class-description">画像から輝度情報を抽出して出力するエフェクト。主にブルームエフェクトの中間処理として使用されます。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>RGB値から輝度を計算</li>
+                            <li>閾値による高輝度領域の抽出</li>
+                            <li>他のエフェクトのパイプライン要素として機能</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="box" class="subsection">
+                    <h3>BoxFilter（ボックスフィルタ）</h3>
+                    <div class="card">
+                        <p class="class-description">シンプルな平均化フィルタ。周囲のピクセルの平均を取ってぼかしを適用します。</p>
+
+                        <h4>特徴</h4>
+                        <ul>
+                            <li>高速な処理</li>
+                            <li>単純な平均化</li>
+                            <li>ガウシアンフィルタより軽量</li>
+                        </ul>
+
+                        <h4>用途</h4>
+                        <ul>
+                            <li>簡易的なぼかし効果</li>
+                            <li>ダウンサンプリング</li>
+                            <li>ノイズ除去</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="custom" class="section">
+                <h2>カスタムエフェクトの作成</h2>
+                <div class="card">
+                    <p><code>IPostEffect</code>インターフェースを実装することで、独自のポストエフェクトを作成できます。</p>
+
+                    <h3>実装手順</h3>
+                    <ol>
+                        <li><code>IPostEffect</code>を継承したクラスを作成</li>
+                        <li>必要なシェーダーファイル（.hlsl）を作成</li>
+                        <li>パイプラインステートオブジェクトの作成</li>
+                        <li>リソース（テクスチャ、バッファ）の作成</li>
+                        <li><code>Apply()</code>メソッドでGPU命令を記録</li>
+                    </ol>
+
+                    <h3>基本的な構造</h3>
+                    <pre><code>class CustomEffect : public IPostEffect
+{
+public:
+    void Initialize(const PostEffectInitParams& desc) override {
+        // DirectX12オブジェクトの取得
+        // パイプラインの作成
+        // リソースの確保
+    }
+    
+    void Apply() override {
+        // コマンドリストに描画命令を記録
+        // ディスパッチ（コンピュートシェーダー）
+        // または描画（ピクセルシェーダー）
+    }
+    
+    // その他の必須メソッドを実装
+};</code></pre>
+                </div>
+            </section>
+
+            <section id="examples" class="section">
+                <h2>サンプルコード</h2>
+                
+                <div class="card">
+                    <h3>シンプルな使用例</h3>
+                    <pre><code>// 初期化時（NimaFramework::Initialize内など）
+// ポストエフェクトは自動的に登録されているため、取得して有効化するだけ
+
+void MyGame::Initialize()
+{
+    NimaFramework::Initialize();
+    
+    // ブルームを有効化
+    auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
+    if (bloom) {
+        bloom->Enable(true);
+    }
+}</code></pre>
+
+                    <h3>動的なパラメータ変更</h3>
+                    <pre><code>void MyGame::Update()
+{
+    NimaFramework::Update();
+    
+    // プレイヤーのHP が低い時にビネットを強くする
+    auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
+    if (vignette) {
+        float hpRatio = player->GetHP() / player->GetMaxHP();
+        
+        if (hpRatio < 0.3f) {
+            vignette->Enable(true);
+            vignette->SetPower(3.0f * (1.0f - hpRatio)); // HPが低いほど強く
+            
+            auto& option = vignette->GetOption();
+            option.color = Vector3(1.0f, 0.0f, 0.0f); // 赤いビネット
+        } else {
+            vignette->Enable(false);
+        }
+    }
+}</code></pre>
+
+                    <h3>スローモーション演出</h3>
+                    <pre><code>void GameScene::ActivateSlowMotion()
+{
+    // 時間を遅くする
+    pDeltaTimeManager_->SetTimeScale(0.3f);
+    
+    // ラジアルブラーで視覚効果を追加
+    auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
+    if (radialBlur) {
+        radialBlur->Enable(true);
+        radialBlur->SetBlurWidth(0.015f);
+        radialBlur->SetSamples(20);
+    }
+    
+    // グレースケールで色彩を抑える
+    auto grayscale = pViewport_->GetPostEffect&lt;Grayscale&gt;();
+    if (grayscale) {
+        grayscale->Enable(true);
+    }
+}
+
+void GameScene::DeactivateSlowMotion()
+{
+    pDeltaTimeManager_->SetTimeScale(1.0f);
+    
+    auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
+    if (radialBlur) radialBlur->Enable(false);
+    
+    auto grayscale = pViewport_->GetPostEffect&lt;Grayscale&gt;();
+    if (grayscale) grayscale->Enable(false);
+}</code></pre>
+
+                    <h3>エフェクトの組み合わせ</h3>
+                    <pre><code>// 幻想的なシーンの演出
+void CreateDreamyScene()
+{
+    // ブルームで発光効果
+    auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
+    if (bloom) {
+        bloom->Enable(true);
+        auto& option = bloom->GetOption();
+        option.bloomIntensity = 2.0f; // 強めのブルーム
+    }
+    
+    // ビネットで周辺を暗く
+    auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
+    if (vignette) {
+        vignette->Enable(true);
+        vignette->SetScale(0.7f);
+        vignette->SetPower(1.5f);
+    }
+    
+    // 軽いガウシアンブラーでソフトフォーカス
+    auto blur = pViewport_->GetPostEffect&lt;SeparatedGaussianFilter&gt;();
+    if (blur) {
+        blur->Enable(true);
+        // ブラーの強さを調整（実装依存）
+    }
+}</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 NimaEngine. All rights reserved. | <a href="index.html" style="color: white;">トップに戻る</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

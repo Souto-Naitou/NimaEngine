@@ -34,16 +34,16 @@ public:
     /// <summary>
     /// 一定時間バーを表示します。
     /// </summary>
-    /// <param name="_sec">表示時間（秒）。</param>
-    void Display(float _sec);
+    /// <param name="sec">表示時間（秒）。</param>
+    void Display(float sec);
     void Display(bool flag) { isDisplay_ = flag; }
 
 
 public:
-    void SetMaxValue(float _value) { valueMax_ = _value; }
-    void SetCurrentValue(float _value) { valueCurrent_ = _value; }
-    void SetPosition(const Vector2& _position);
-    void SetSize(const Vector2& _size);
+    void SetMaxValue(float value) { valueMax_ = value; }
+    void SetCurrentValue(float value) { valueCurrent_ = value; }
+    void SetPosition(const Vector2& position);
+    void SetSize(const Vector2& size);
     void SetEnableTimer(bool flag) { enableTimer_ = flag; }
 
 
@@ -51,16 +51,16 @@ public:
     /// <summary>
     /// ワールド座標からスクリーン上のヘッドアップ位置を計算します。
     /// </summary>
-    /// <param name="_targetPos">対象のワールド座標。</param>
-    /// <param name="_hpbarSize">バーサイズ。</param>
-    /// <param name="_camera">参照するカメラ。</param>
-    /// <param name="_offsetY">Y 方向のオフセット。</param>
+    /// <param name="targetPos">対象のワールド座標。</param>
+    /// <param name="hpbarSize">バーサイズ。</param>
+    /// <param name="camera">参照するカメラ。</param>
+    /// <param name="offsetY">Y 方向のオフセット。</param>
     /// <returns>スクリーン座標。</returns>
     static Vector2 GetHeadUpPositionOnScreen(
-        const Vector3& _targetPos, 
-        const Vector2& _hpbarSize,
-        const GameEye& _camera,
-        float _offsetY = 0.0f);
+        const Vector3& targetPos, 
+        const Vector2& hpbarSize,
+        const GameEye& camera,
+        float offsetY = 0.0f);
 
 private:
     std::unique_ptr<Sprite> sprite_current_;
@@ -77,7 +77,7 @@ private:
 
 
 private:
-    void InitializeSprite(std::unique_ptr<Sprite>& _sprite, const RGBA& _color);
+    void InitializeSprite(std::unique_ptr<Sprite>& sprite, const RGBA& color);
     void CurrentValueSpriteUpdate();
     void UpdateDisplayFlagByTimer();
 };

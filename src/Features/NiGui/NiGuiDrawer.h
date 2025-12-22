@@ -15,8 +15,8 @@ public:
     ~NiGuiDrawer() = default;
 
     void Draw() override;
-    void PlayAudio([[maybe_unused]]uint32_t _handle) override {};
-    void PlayAudio(void* _audioHandler) override;
+    void PlayAudio([[maybe_unused]]uint32_t handle) override {};
+    void PlayAudio(void* audioHandler) override;
 
 private:
     using SpriteList = std::vector<std::unique_ptr<Sprite>>;

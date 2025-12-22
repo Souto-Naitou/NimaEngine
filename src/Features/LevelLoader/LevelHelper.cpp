@@ -3,10 +3,10 @@
 #include <Utility/JSONIO/jsonio.h>
 #include <numbers>
 
-SceneObjects Helper::Level::LoadScene(const std::string& _path, ModelManager* _pModelManager)
+SceneObjects Helper::Level::LoadScene(const std::string& path, ModelManager* pModelManager)
 {
     JSONIO* jsonio = JSONIO::GetInstance();
-    const auto& json = jsonio->Load(_path);
+    const auto& json = jsonio->Load(path);
     BlenderLevel::LevelData levelData;
     levelData = json;
     
@@ -36,12 +36,12 @@ SceneObjects Helper::Level::LoadScene(const std::string& _path, ModelManager* _p
     SceneObjects sceneObjects;
     sceneObjects.Initialize();
     sceneObjects.SetLevelData(levelData);
-    sceneObjects.Build(_pModelManager);
+    sceneObjects.Build(pModelManager);
     return std::move(sceneObjects);
 }
 
-void Helper::Level::Unload(const std::string& _path)
+void Helper::Level::Unload(const std::string& path)
 {
     JSONIO* jsonio = JSONIO::GetInstance();
-    jsonio->Unload(_path);
+    jsonio->Unload(path);
 }

@@ -9,7 +9,7 @@
 
 namespace Helper::Animation
 {
-    Vector3 CalculateValue(const AnimationCurve<Vector3>& _keyframes, float _time);
-    Quaternion CalculateValue(const AnimationCurve<Quaternion>& _keyframes, float _time);
+    Vector3 CalculateValue(const AnimationCurve<Vector3>& keyframes, float time);
+    Quaternion CalculateValue(const AnimationCurve<Quaternion>& keyframes, float time);
 }
 

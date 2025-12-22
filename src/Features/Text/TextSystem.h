@@ -33,14 +33,14 @@ public:
     void OnResizedBuffers();
 
 public:
-    void SetColorBrush(const std::string& _key, const D2D1::ColorF& _color);
-    void SetViewport(Viewport* _viewport) { pViewport_ = _viewport; }
+    void SetColorBrush(const std::string& key, const D2D1::ColorF& color);
+    void SetViewport(Viewport* viewport) { pViewport_ = viewport; }
 
 
 public: /// Getter
     IDWriteFactory7* GetDWriteFactory() const { return dwriteFactory_.Get(); }
-    IDWriteTextFormat* GetTextFormat(const std::string& _fontFamily, float _fontSize);
-    ID2D1SolidColorBrush* GetColorBrush(const std::string& _key);
+    IDWriteTextFormat* GetTextFormat(const std::string& fontFamily, float fontSize);
+    ID2D1SolidColorBrush* GetColorBrush(const std::string& key);
     ID2D1DeviceContext2* GetD2D1DeviceContext() const { return d2dDeviceContext_; }
     Viewport* GetViewport() const { return pViewport_; }
 

@@ -22,15 +22,15 @@ public:
     /// <summary>
     /// 指定範囲でカメラをランダムシェイクさせます。
     /// </summary>
-    /// <param name="_begin">シェイク範囲の最小値。</param>
-    /// <param name="_end">シェイク範囲の最大値。</param>
-    void Shake(const Vector3& _begin, const Vector3& _end);
+    /// <param name="begin">シェイク範囲の最小値。</param>
+    /// <param name="end">シェイク範囲の最大値。</param>
+    void Shake(const Vector3& begin, const Vector3& end);
 
     /// <summary>
     /// 指定強度でカメラをシェイクさせます。
     /// </summary>
-    /// <param name="_power">シェイク強度。</param>
-    void Shake(float _power);
+    /// <param name="power">シェイク強度。</param>
+    void Shake(float power);
 
 public: /// Getter
     const EulerTransform&   GetTransform() const            { return transform_; }
@@ -41,15 +41,15 @@ public: /// Getter
     const std::string&      GetName() const                 { return name_; }
 
 public: /// Setter
-    void SetTransform(const EulerTransform& _transform)     { transform_ = _transform; }
-    void SetRotate(const Vector3& _rotate)                  { transform_.rotate = _rotate; }
-    void SetTranslate(const Vector3& _translate)            { transform_.translate = _translate; }
-    void SetFov(float _fov)                                 { fovY_ = _fov; }
-    void SetAspectRatio(float _aspect)                      { aspectRatio_ = _aspect; }
-    void SetNearClip(float _near)                           { nearClip_ = _near; }
-    void SetFarClip(float _far)                             { farClip_ = _far; }
-    void SetName(const std::string& _name)                  { name_ = _name; }
-    void SetFocalLength(float _focalLength);
+    void SetTransform(const EulerTransform& transform)     { transform_ = transform; }
+    void SetRotate(const Vector3& rotate)                  { transform_.rotate = rotate; }
+    void SetTranslate(const Vector3& translate)            { transform_.translate = translate; }
+    void SetFov(float fov)                                 { fovY_ = fov; }
+    void SetAspectRatio(float aspect)                      { aspectRatio_ = aspect; }
+    void SetNearClip(float val)                            { nearClip_ = val; }
+    void SetFarClip(float val)                             { farClip_ = val; }
+    void SetName(const std::string& name)                  { name_ = name; }
+    void SetFocalLength(float focalLength);
 
 private: /// メンバ変数
     std::string         name_           = "unnamed";

@@ -76,7 +76,7 @@ void OBB::Draw()
     lines_.Draw();
 }
 
-void OBB::ModifyGameEye(GameEye** _eye)
+void OBB::ModifyGameEye(GameEye** eye)
 {
-    lines_.SetGameEye(_eye);
+    lines_.SetGameEye(eye);
 }

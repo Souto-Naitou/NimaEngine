@@ -19,29 +19,29 @@ namespace DX12Helper
     /// <summary>
     /// デバイスを生成する
     /// </summary>
-    /// <param name="_device">生成先</param>
-    /// <param name="_adapter">使用するアダプタ</param>
-    void CreateDevice(ComPtr<ID3D12Device>& _device, ComPtr<IDXGIAdapter4>& _adapter);
+    /// <param name="device">生成先</param>
+    /// <param name="adapter">使用するアダプタ</param>
+    void CreateDevice(ComPtr<ID3D12Device>& device, ComPtr<IDXGIAdapter4>& adapter);
 
 
     //#ifdef _DEBUG
     /// <summary>
     /// エラー時に停止する
     /// </summary>
-    /// <param name="_device">デバイス</param>
-    /// <param name="_infoQ">情報キュー</param>
-    void PauseError(ComPtr<ID3D12Device>& _device, ComPtr<ID3D12InfoQueue>& _infoQ);
+    /// <param name="device">デバイス</param>
+    /// <param name="infoQ">情報キュー</param>
+    void PauseError(ComPtr<ID3D12Device>& device, ComPtr<ID3D12InfoQueue>& infoQ);
     //#endif // _DEBUG
 
 
     /// <summary>
     /// DepthStencilTextureリソースを生成
     /// </summary>
-    /// <param name="_device">デバイス</param>
-    /// <param name="_width">幅</param>
-    /// <param name="_height">高さ</param>
+    /// <param name="device">デバイス</param>
+    /// <param name="width">幅</param>
+    /// <param name="height">高さ</param>
     /// <returns>リソース</returns>
-    ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(const ComPtr<ID3D12Device>& _device, int32_t _width, int32_t _height);
+    ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(const ComPtr<ID3D12Device>& device, int32_t width, int32_t height);
 
 
     /// <summary>
@@ -64,11 +64,11 @@ namespace DX12Helper
     /// <summary>
     /// バッファリソースを生成
     /// </summary>
-    /// <param name="_device">デバイス</param>
-    /// <param name="_sizeInBytes">バイト数</param>
+    /// <param name="device">デバイス</param>
+    /// <param name="sizeInBytes">バイト数</param>
     /// <returns>リソース</returns>
-    ComPtr<ID3D12Resource> CreateBufferResource(const ComPtr<ID3D12Device>& _device, size_t _sizeInBytes);
-    ComPtr<ID3D12Resource> CreateBufferResource(const ComPtr<ID3D12Device>& _device, size_t _sizeInBytes, D3D12_RESOURCE_FLAGS _flag);
+    ComPtr<ID3D12Resource> CreateBufferResource(const ComPtr<ID3D12Device>& device, size_t sizeInBytes);
+    ComPtr<ID3D12Resource> CreateBufferResource(const ComPtr<ID3D12Device>& device, size_t sizeInBytes, D3D12_RESOURCE_FLAGS flag);
 
     ComPtr<ID3D12Resource> CreateTextureResource(const ComPtr<ID3D12Device>& _device, const DirectX::TexMetadata& _metadata);
     
@@ -80,10 +80,10 @@ namespace DX12Helper
 
     [[nodiscard]]
     ComPtr<ID3D12Resource> UploadTextureData(
-        const ComPtr<ID3D12Resource>& _texture,
-        const DirectX::ScratchImage& _mipImages,
-        const ComPtr<ID3D12Device>& _device,
-        const ComPtr<ID3D12GraphicsCommandList>& _commandList
+        const ComPtr<ID3D12Resource>& texture,
+        const DirectX::ScratchImage& mipImages,
+        const ComPtr<ID3D12Device>& device,
+        const ComPtr<ID3D12GraphicsCommandList>& commandList
     );
     D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const ComPtr<ID3D12DescriptorHeap>& _descriptorHeap, uint32_t _descriptorSize, uint32_t _index);
     D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const ComPtr<ID3D12DescriptorHeap>& _descriptorHeap, uint32_t _descriptorSize, uint32_t _index);
@@ -91,8 +91,8 @@ namespace DX12Helper
     /// <summary>
     /// 頂点リソースを生成
     /// </summary>
-    /// <param name="_device">デバイス</param>
-    ComPtr<ID3D12Resource> CreateVertexResource(const ComPtr<ID3D12Device>& _device, unsigned int _countVertex);
+    /// <param name="device">デバイス</param>
+    ComPtr<ID3D12Resource> CreateVertexResource(const ComPtr<ID3D12Device>& device, unsigned int countVertex);
 
     void ChangeStateResource(
         const ComPtr<ID3D12GraphicsCommandList>& _commandList, 
@@ -102,8 +102,8 @@ namespace DX12Helper
     );
 
     void CommandListCommonSetting(
-        const DirectX12* _pDx12, 
-        ID3D12GraphicsCommandList* _commandList, 
+        const DirectX12* pDx12, 
+        ID3D12GraphicsCommandList* commandList, 
         const D3D12_CPU_DESCRIPTOR_HANDLE* rtvHandle = nullptr);
 
     /// <summary>

@@ -5,9 +5,9 @@
 #include <Core/Win32/WinSystem.h>
 #include <MathExtension/mathExtension.h>
 
-void TransFadeInOut::Initialize(const std::string& _sceneName, Canvas* canvas)
+void TransFadeInOut::Initialize(const std::string& sceneName, Canvas* canvas)
 {
-    sceneName_ = _sceneName;
+    sceneName_ = sceneName;
 
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("white1x1.png");

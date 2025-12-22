@@ -28,7 +28,7 @@ public:
     /// <summary>
     /// パーティクルを初期化します。
     /// </summary>
-    /// <param name="_pModel">使用するモデル。</param>
+    /// <param name="pModel">使用するモデル。</param>
     void Initialize(IModel* pModel);
 
     /// <summary>

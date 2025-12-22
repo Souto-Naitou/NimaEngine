@@ -6,40 +6,40 @@
 
 #include <nlohmann/json.hpp>
 
-inline void from_json(const nlohmann::json& _j, Vector3& _v)
+inline void from_json(const nlohmann::json& j, Vector3& v)
 {
-    _j.at("x").get_to(_v.x);
-    _j.at("y").get_to(_v.y);
-    _j.at("z").get_to(_v.z);
+    j.at("x").get_to(v.x);
+    j.at("y").get_to(v.y);
+    j.at("z").get_to(v.z);
 }
 
-inline void to_json(nlohmann::json& _j, const Vector3& _v)
+inline void to_json(nlohmann::json& j, const Vector3& v)
 {
-    _j = nlohmann::json{ {"x", _v.x}, {"y", _v.y}, {"z", _v.z} };
+    j = nlohmann::json{ {"x", v.x}, {"y", v.y}, {"z", v.z} };
 }
 
-inline void from_json(const nlohmann::json& _j, Vector4& _v)
+inline void from_json(const nlohmann::json& j, Vector4& v)
 {
-    _j.at("x").get_to(_v.x);
-    _j.at("y").get_to(_v.y);
-    _j.at("z").get_to(_v.z);
-    _j.at("w").get_to(_v.w);
+    j.at("x").get_to(v.x);
+    j.at("y").get_to(v.y);
+    j.at("z").get_to(v.z);
+    j.at("w").get_to(v.w);
 }
 
-inline void to_json(nlohmann::json& _j, const Vector4& _v)
+inline void to_json(nlohmann::json& j, const Vector4& v)
 {
-    _j = nlohmann::json{ {"x", _v.x}, {"y", _v.y}, {"z", _v.z}, {"w", _v.w} };
-}
-
-template <typename T>
-inline void from_json(const nlohmann::json& _j, Range<T>& _v)
-{
-    _j.at("start").get_to(_v.start);
-    _j.at("end").get_to(_v.end);
+    j = nlohmann::json{ {"x", v.x}, {"y", v.y}, {"z", v.z}, {"w", v.w} };
 }
 
 template <typename T>
-inline void to_json(nlohmann::json& _j, const Range<T>& _v)
+inline void from_json(const nlohmann::json& j, Range<T>& v)
 {
-    _j = nlohmann::json{ {"start", _v.start}, {"end", _v.end} };
+    j.at("start").get_to(v.start);
+    j.at("end").get_to(v.end);
+}
+
+template <typename T>
+inline void to_json(nlohmann::json& j, const Range<T>& v)
+{
+    j = nlohmann::json{ {"start", v.start}, {"end", v.end} };
 }

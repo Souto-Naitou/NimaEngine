@@ -34,14 +34,14 @@ void Dissolve::Initialize(const PostEffectInitParams& desc)
     this->CreateResourceCBuffer();
 }
 
-void Dissolve::Enable(bool _flag)
+void Dissolve::Enable(bool flag)
 {
-    isEnabled_ = _flag;
+    isEnabled_ = flag;
 }
 
-void Dissolve::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE _gpuHandle)
+void Dissolve::SetInputTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
 {
-    inputGpuHandle_ = _gpuHandle;
+    inputGpuHandle_ = gpuHandle;
 }
 
 bool Dissolve::Enabled() const
@@ -49,9 +49,9 @@ bool Dissolve::Enabled() const
     return isEnabled_;
 }
 
-void Dissolve::SetTextureResource(const DX12Resource& _texResource)
+void Dissolve::SetTextureResource(const DX12Resource& texResource)
 {
-    maskTexture_ = _texResource;
+    maskTexture_ = texResource;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE Dissolve::GetOutputTextureHandle() const

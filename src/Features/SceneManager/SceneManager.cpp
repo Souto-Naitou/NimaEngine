@@ -7,31 +7,31 @@
 
 #include <cassert>
 
-void SceneManager::SetSceneFactory(ISceneFactory* _pSceneFactory)
+void SceneManager::SetSceneFactory(ISceneFactory* pSceneFactory)
 {
-    pSceneFactory_ = _pSceneFactory;
+    pSceneFactory_ = pSceneFactory;
 }
 
-void SceneManager::SetSceneArgs(std::unique_ptr<ISceneArgs> _pSceneArgs)
+void SceneManager::SetSceneArgs(std::unique_ptr<ISceneArgs> pSceneArgs)
 {
-    pSceneArgs_ = std::move(_pSceneArgs);
+    pSceneArgs_ = std::move(pSceneArgs);
 }
 
-void SceneManager::SetModelManager(ModelManager* _pModelManager)
+void SceneManager::SetModelManager(ModelManager* pModelManager)
 {
-    pModelManager_ = _pModelManager;
+    pModelManager_ = pModelManager;
 }
 
-SceneManager& SceneManager::AddInitialArg(const std::string& _key, const std::any& _value)
+SceneManager& SceneManager::AddInitialArg(const std::string& key, const std::any& value)
 {
-    initialArgs_[_key] = _value;
+    initialArgs_[key] = value;
     return *this;
 }
 
-void SceneManager::ReserveScene(const std::string& _name)
+void SceneManager::ReserveScene(const std::string& name)
 {
     isReserveScene_ = true;
-    nextSceneName_ = _name;
+    nextSceneName_ = name;
 }
 
 void SceneManager::ReserveScene(const std::string& sceneName, std::unique_ptr<TransBase>&& transition)

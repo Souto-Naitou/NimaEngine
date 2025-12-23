@@ -687,7 +687,7 @@
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Layer\Layer.cpp">
+    <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
     <ClCompile Include="drawable\base\DrawableBase.cpp">
@@ -1124,7 +1124,7 @@
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Layer\Layer.h">
+    <ClInclude Include="Features\Layer\OrderedCanvasLayer.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
     <ClInclude Include="drawable\base\DrawableBase.h">

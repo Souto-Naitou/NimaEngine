@@ -1,4 +1,4 @@
-#include "Layer.h"
+#include "OrderedCanvasLayer.h"
 
 
 
@@ -9,12 +9,12 @@ bool IsCanvasEnabled(Canvas* canvas)
     return isEnabled;
 }
 
-void Layer::Initialize()
+void OrderedCanvasLayer::Initialize()
 {
 
 }
 
-uint32_t Layer::AddCanvas(Canvas* canvas, uint32_t zOrder)
+uint32_t OrderedCanvasLayer::AddCanvas(Canvas* canvas, uint32_t zOrder)
 {
     uint32_t assignedZOrder = zOrder;
 
@@ -40,7 +40,7 @@ uint32_t Layer::AddCanvas(Canvas* canvas, uint32_t zOrder)
     return assignedZOrder;
 }
 
-void Layer::RemoveCanvas(uint32_t zOrder)
+void OrderedCanvasLayer::RemoveCanvas(uint32_t zOrder)
 {
     auto it = canvases_.find(zOrder);
     if (it != canvases_.end())
@@ -49,7 +49,7 @@ void Layer::RemoveCanvas(uint32_t zOrder)
     }
 }
 
-void Layer::RemoveCanvas(Canvas* canvas)
+void OrderedCanvasLayer::RemoveCanvas(Canvas* canvas)
 {
     for (auto it = canvases_.begin(); it != canvases_.end(); ++it)
     {
@@ -61,7 +61,7 @@ void Layer::RemoveCanvas(Canvas* canvas)
     }
 }
 
-void Layer::PreDraw()
+void OrderedCanvasLayer::PreDraw()
 {
     for (auto& canvas : canvases_)
     {
@@ -69,7 +69,7 @@ void Layer::PreDraw()
     }
 }
 
-void Layer::PostDraw()
+void OrderedCanvasLayer::PostDraw()
 {
     for (auto& canvas : canvases_)
     {
@@ -77,7 +77,7 @@ void Layer::PostDraw()
     }
 }
 
-void Layer::DrawObjects()
+void OrderedCanvasLayer::DrawObjects()
 {
     // リストに格納された順番通りにCanvasのオブジェクトを描画する
     for (auto& canvas : canvases_)
@@ -89,7 +89,7 @@ void Layer::DrawObjects()
     }
 }
 
-void Layer::ApplyPostEffects()
+void OrderedCanvasLayer::ApplyPostEffects()
 {
     for (auto& canvas : canvases_)
     {
@@ -100,7 +100,7 @@ void Layer::ApplyPostEffects()
     }
 }
 
-void Layer::DrawCanvases()
+void OrderedCanvasLayer::DrawCanvases()
 {
     for (auto& canvas : canvases_)
     {

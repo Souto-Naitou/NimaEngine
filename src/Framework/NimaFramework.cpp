@@ -129,7 +129,7 @@ void NimaFramework::Initialize()
     pDebugManager_->SetViewportWindow(pViewport_.get());
 
     /// レイヤーの初期化
-    pLayer_ = std::make_unique<Layer>();
+    pLayer_ = std::make_unique<OrderedCanvasLayer>();
 
     /// シーンマネージャの初期化
     SceneManager::Params sceneManagerParams;

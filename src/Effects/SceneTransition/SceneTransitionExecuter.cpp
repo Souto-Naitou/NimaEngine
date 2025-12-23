@@ -1,7 +1,10 @@
 #include "SceneTransitionExecuter.h"
+#include <cassert>
 
-void SceneTransitionExecuter::Initialize(Canvas::Params canvasParams, Layer* pLayer)
+void SceneTransitionExecuter::Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer)
 {
+    assert(pLayer && "pLayer is nullptr");
+
     pCanvas_ = std::make_unique<Canvas>();
     pCanvas_->Initialize(canvasParams);
     pLayer_ = pLayer;

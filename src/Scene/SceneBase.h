@@ -1,6 +1,6 @@
 #pragma once
 #include <Interfaces/ISceneArgs.h>
-#include <Features/Layer/Layer.h>
+#include <Features/Layer/OrderedCanvasLayer.h>
 
 /// <summary>
 /// シーン基底クラス
@@ -31,6 +31,6 @@ public:
     virtual void DrawTexts() = 0;
 
 protected:
-    ISceneArgs* pArgs_  = nullptr;
-    Layer*      pLayer_ = nullptr;      // !< レイヤー
+    ISceneArgs*         pArgs_  = nullptr;
+    OrderedCanvasLayer* pLayer_ = nullptr;      // !< レイヤー
 };

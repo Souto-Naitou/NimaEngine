@@ -8,7 +8,7 @@
 #include <Interfaces/ISceneArgs.h>
 #include <unordered_map>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
-#include <Features/Layer/Layer.h>
+#include <Features/Layer/OrderedCanvasLayer.h>
 #include <Core/DirectX12/DirectX12.h>
 
 /// <summary>
@@ -20,7 +20,7 @@ public:
     struct Params
     {
         DirectX12*          pDx12           = nullptr;
-        Layer*              pLayer          = nullptr;
+        OrderedCanvasLayer* pLayer          = nullptr;
         #ifdef _DEBUG
         ImGuiManager*       pImGuiManager   = nullptr;
         #endif // _DEBUG

@@ -2,11 +2,11 @@
 #include <list>
 #include <Features/Layer/Canvas.h>
 
-class Layer
+class OrderedCanvasLayer
 {
 public:
-    Layer() = default;
-    ~Layer() = default;
+    OrderedCanvasLayer() = default;
+    ~OrderedCanvasLayer() = default;
     
     void Initialize();
 

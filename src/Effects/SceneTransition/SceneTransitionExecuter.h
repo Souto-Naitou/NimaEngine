@@ -5,7 +5,7 @@
 #include <string>
 #include <Core/DirectX12/DirectX12.h>
 #include <Features/Layer/Canvas.h>
-#include <Features/Layer/Layer.h>
+#include <Features/Layer/OrderedCanvasLayer.h>
 
 /// <summary>
 /// シーン遷移管理クラス
@@ -16,7 +16,7 @@ public:
     SceneTransitionExecuter() = default;
     ~SceneTransitionExecuter() = default;
 
-    void Initialize(Canvas::Params canvasParams, Layer* pLayer);
+    void Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer);
     void Finalize();
 
     /// <summary>
@@ -36,7 +36,7 @@ public:
     void Draw();
 
 private:
-    std::unique_ptr<TransBase> pTransition_;
-    std::unique_ptr<Canvas> pCanvas_;
-    Layer* pLayer_ = nullptr;
+    std::unique_ptr<TransBase>  pTransition_;
+    std::unique_ptr<Canvas>     pCanvas_;
+    OrderedCanvasLayer*         pLayer_ = nullptr;
 };

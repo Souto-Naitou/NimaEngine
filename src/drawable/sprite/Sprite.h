@@ -32,6 +32,7 @@ public:
     /// </summary>
     /// <param name="filepath">使用するテクスチャのパス。</param>
     void                Initialize(std::string filepath);
+    void                Initialize(D3D12_GPU_DESCRIPTOR_HANDLE handle);
     
     /// <summary>
     /// スプライトの状態更新を行います。
@@ -85,7 +86,7 @@ public: /// Setter
     void                SetFlipY(const bool isFlipY)               { isFlipY_ = isFlipY; }
     void                SetTextureLeftTop(const Vector2& lt)       { textureLeftTop_ = lt; }
     void                SetTextureSize(const Vector2& size)        { textureSize_ = size; }
-
+    void                SetTextureHandle(const D3D12_GPU_DESCRIPTOR_HANDLE& srvHandle) { textureSrvHandleGPU_ = srvHandle; }
 
 private: /// 他クラスが所持するインスタンスへのポインタ
     SpriteSystem*                               pSpriteSystem_                  = nullptr;
@@ -114,6 +115,8 @@ private: /// メンバ変数
 
     std::string                                 texturePath_                    = {};                   // テクスチャファイルパス
 
+    const DirectX::TexMetadata*                 metadata_                       = nullptr;              // テクスチャメタデータ
+
     /// ディスクリプタハンドル
     D3D12_GPU_DESCRIPTOR_HANDLE                 textureSrvHandleGPU_            = {};                   // テクスチャハンドルGPU
 
@@ -136,9 +139,6 @@ private: /// メンバ変数
     /// 変換行列
     Microsoft::WRL::ComPtr<ID3D12Resource>      transformationMatrixResource_   = nullptr;              // 変換行列リソース
     TransformationMatrix*                       transformationMatrixData_       = nullptr;              // 変換行列データ
-
-    /// メタデータ
-    DirectX::TexMetadata                        metadata_                       = {};                   // テクスチャのメタデータ
 
     /// ImGui用
     #ifdef _DEBUG
@@ -190,5 +190,7 @@ private: /// メンバ関数
     /// <summary>
     /// テクスチャのアスペクトなどから適切なスプライトサイズに調整します。
     /// </summary>
-    void AdjustSpriteSize();
+    void AdjustSpriteSize(const DirectX::TexMetadata* metadata);
+
+    const DirectX::TexMetadata& GetMetadata() const;
 };

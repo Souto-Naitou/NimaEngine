@@ -91,14 +91,6 @@ void SceneManager::SceneDraw()
     pTransitionExecuter_->Draw();
 }
 
-void SceneManager::SceneDrawText()
-{
-    if (pCurrentScene_ != nullptr)
-    {
-        pCurrentScene_->DrawTexts();
-    }
-}
-
 void SceneManager::Finalize()
 {
     if (pCurrentScene_ != nullptr)

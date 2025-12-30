@@ -4,6 +4,7 @@
 #include <Features/Model/Loader/IModelLoader.h>
 #include <Features/Model/ModelStorage.h> // ModelStorage(Concrete)
 #include <Utility/PathResolver/PathResolver.h>
+#include <list>
 
 class Particle;
 
@@ -47,5 +48,5 @@ private:
     IModelLoader*           pModelLoader_   = nullptr;
     ModelStorage*           pModelStorage_  = nullptr;
     PathResolver            pathResolver_   = {};
-    std::list<std::string>  loadPaths_      = {};
+    std::list<std::string>  loadPathList_   = {};
 };

@@ -32,7 +32,7 @@ void ModelManager::AddLoadPath(const std::string& path)
 {
     auto lowerPath = utl::string::to_lower(path);
 
-    for (const auto& pathExist : loadPaths_)
+    for (const auto& pathExist : loadPathList_)
     {
         if (pathExist == lowerPath)
         {
@@ -41,7 +41,7 @@ void ModelManager::AddLoadPath(const std::string& path)
         }
     }
 
-    loadPaths_.push_back(lowerPath);
+    loadPathList_.push_back(lowerPath);
 }
 
 void ModelManager::AddSearchPath(const std::string& path)
@@ -53,7 +53,7 @@ void ModelManager::AddSearchPath(const std::string& path)
 int ModelManager::LoadAll()
 {
     int count = 0;
-    for (const auto& path : loadPaths_)
+    for (const auto& path : loadPathList_)
     {
         for (auto itr = std::filesystem::recursive_directory_iterator(path, std::filesystem::directory_options::skip_permission_denied);
             itr != std::filesystem::recursive_directory_iterator();

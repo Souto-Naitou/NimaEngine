@@ -313,11 +313,6 @@ void NimaFramework::Draw()
 
     /// コマンドの実行
     pDirectX_->CommandExecute();
-
-    /// テキストの描画
-    pTextSystem_->PresentDraw();
-    pSceneManager_->SceneDrawText();
-    pTextSystem_->PostDraw();
 }
 
 void NimaFramework::PreProcess()

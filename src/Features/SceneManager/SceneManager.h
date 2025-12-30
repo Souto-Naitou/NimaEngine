@@ -108,11 +108,6 @@ public: /// シーン動作
     void SceneDraw();
     
     /// <summary>
-    /// シーンのテキスト描画を行います。
-    /// </summary>
-    void SceneDrawText();
-    
-    /// <summary>
     /// シーン終了処理を行います。
     /// </summary>
     void Finalize();

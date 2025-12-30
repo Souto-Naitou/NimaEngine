@@ -62,6 +62,7 @@ public:
 
 public: /// Getter
     [[nodiscard]] const DirectX::TexMetadata&   GetMetaData(const std::string& filePath);
+    [[nodiscard]] const DirectX::TexMetadata&   GetMetaData(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
     [[nodiscard]] uint32_t                      GetSrvIndex(const std::string& filePath);
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& filePath);
     [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath);

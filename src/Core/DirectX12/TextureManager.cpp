@@ -228,6 +228,20 @@ const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& fileP
     return textureData.metadata;
 }
 
+const DirectX::TexMetadata& TextureManager::GetMetaData(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle)
+{
+    for (const auto& [key, value] : textureDataMap_)
+    {
+        if (value.textureResource.GetSRVHandleGPU().ptr == gpuHandle.ptr)
+        {
+            return value.metadata;
+        }
+    }
+    assert(false && "テクスチャが見つかりません");
+    static DirectX::TexMetadata emptyMetadata{};
+    return emptyMetadata;
+}
+
 uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 {
     std::string resolvedPath = this->ResolveFilePath(filePath);

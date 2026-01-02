@@ -10,11 +10,11 @@
 /// <summary>
 /// シーン遷移管理クラス
 /// </summary>
-class SceneTransitionExecuter
+class SceneTransitionExecutor
 {
 public:
-    SceneTransitionExecuter() = default;
-    ~SceneTransitionExecuter() = default;
+    SceneTransitionExecutor() = default;
+    ~SceneTransitionExecutor() = default;
 
     void Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer);
     void Finalize();

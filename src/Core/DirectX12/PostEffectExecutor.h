@@ -18,12 +18,12 @@
 /// - 最終描画先: Back Buffer
 /// - 中間描画先: pResourceIntermediate_
 /// - 入力テクスチャ: pResourceInput_ (最初のみ)
-class PostEffectExecuter
+class PostEffectExecutor
 {
 public:
     /// ctor , dtor
-    PostEffectExecuter() = default;
-    ~PostEffectExecuter() = default;
+    PostEffectExecutor() = default;
+    ~PostEffectExecutor() = default;
     
     /// <summary>
     /// 実行に必要なリソース・パイプラインを初期化します。
@@ -109,7 +109,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   commandListForDraw_     = nullptr;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      commandAllocator_       = nullptr;
-    std::unique_ptr<DebugEntry<PostEffectExecuter>>     pDebugEntry_            = nullptr;
+    std::unique_ptr<DebugEntry<PostEffectExecutor>>     pDebugEntry_            = nullptr;
     std::unique_ptr<PostEffectFactory>                  pEffectFactory_         = nullptr;
 
     std::list<std::unique_ptr<IPostEffect>>             postEffects_            = {};

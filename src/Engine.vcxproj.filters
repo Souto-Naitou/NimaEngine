@@ -483,7 +483,7 @@
     <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecuter.cpp">
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecutor.cpp">
       <Filter>Effect\SceneTransition\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Features\Collision\Manager\CollisionManager.cpp">
@@ -525,7 +525,7 @@
     <ClCompile Include="Features\NiGui\NiGuiDrawer.cpp">
       <Filter>Feature\NiGuiDerived</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\PostEffectExecuter.cpp">
+    <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp">
       <Filter>Core\DirectX12\PostEffect</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp">
@@ -848,7 +848,7 @@
     <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecuter.h">
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecutor.h">
       <Filter>Effect\SceneTransition\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Features\Collision\Manager\CollisionManager.h">
@@ -896,7 +896,7 @@
     <ClInclude Include="Features\NiGui\NiGuiDebug.h">
       <Filter>Feature\NiGuiDerived</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\PostEffectExecuter.h">
+    <ClInclude Include="Core\DirectX12\PostEffectExecutor.h">
       <Filter>Core\DirectX12\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h">
@@ -1151,6 +1151,7 @@
     <ClInclude Include="Math\Easing.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="io\loader\TaskExecutor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

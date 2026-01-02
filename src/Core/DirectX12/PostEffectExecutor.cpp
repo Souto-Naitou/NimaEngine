@@ -1,4 +1,4 @@
-#include "PostEffectExecuter.h"
+#include "PostEffectExecutor.h"
 
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/Win32/WinSystem.h>
@@ -13,7 +13,7 @@
 #include "BlendDesc.h"
 #include <iterator>
 
-void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow)
+void PostEffectExecutor::Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow)
 {
     pDx12_ = pDx12;
 
@@ -35,7 +35,7 @@ void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, b
     #ifdef _DEBUG
     if (isRegisterDebugWindow)
     {
-        pDebugEntry_ = std::make_unique<DebugEntry<PostEffectExecuter>>("PostEffect", "EffectList", this);
+        pDebugEntry_ = std::make_unique<DebugEntry<PostEffectExecutor>>("PostEffect", "EffectList", this);
     }
     #else
     isRegisterDebugWindow;
@@ -44,17 +44,17 @@ void PostEffectExecuter::Initialize(DirectX12* pDx12, DX12Resource* pResource, b
     pEffectFactory_ = std::make_unique<PostEffectFactory>(pDx12_, commandListForDraw_.Get());
 }
 
-void PostEffectExecuter::Finalize()
+void PostEffectExecutor::Finalize()
 {
-    pDx12_->RemoveCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get());
+    pDx12_->RemoveCommandList(DirectX12::CommandListType::PostEffectExecutor, commandListForDraw_.Get());
 }
 
-void PostEffectExecuter::RegisterCommandListToDirectX12(uint32_t order) const
+void PostEffectExecutor::RegisterCommandListToDirectX12(uint32_t order) const
 {
-    pDx12_->AddCommandList(DirectX12::CommandListType::PostEffectExecuter, commandListForDraw_.Get(), order);
+    pDx12_->AddCommandList(DirectX12::CommandListType::PostEffectExecutor, commandListForDraw_.Get(), order);
 }
 
-void PostEffectExecuter::ApplyPostEffects()
+void PostEffectExecutor::ApplyPostEffects()
 {
     pResourceInput_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
@@ -81,7 +81,7 @@ void PostEffectExecuter::ApplyPostEffects()
     }
 }
 
-void PostEffectExecuter::Draw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle)
+void PostEffectExecutor::Draw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle)
 {
     uint32_t indexBuckbuffer = pDx12_->GetBackBufferIndex();
     if (rtvHandle.ptr == 0)
@@ -100,7 +100,7 @@ void PostEffectExecuter::Draw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle)
     pResourceInput_->GetStateTracker().ChangeState(commandListForDraw_.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
-void PostEffectExecuter::PreDraw()
+void PostEffectExecutor::PreDraw()
 {
     // コマンドリストの設定
     uint32_t indexBackbuffer = pDx12_->GetBackBufferIndex();
@@ -124,23 +124,23 @@ void PostEffectExecuter::PreDraw()
     commandListMain_->RSSetScissorRects(1, &pDx12_->GetScissorRect());
 }
 
-void PostEffectExecuter::PostDraw()
+void PostEffectExecutor::PostDraw()
 {
     commandAllocator_->Reset();
     commandListForDraw_->Reset(commandAllocator_.Get(), nullptr);
 }
 
-void PostEffectExecuter::OnResizeBefore()
+void PostEffectExecutor::OnResizeBefore()
 {
     for (auto& posteffect : postEffects_) posteffect->OnResizeBefore();
 }
 
-void PostEffectExecuter::OnResizeAfter()
+void PostEffectExecutor::OnResizeAfter()
 {
     for (auto& posteffect : postEffects_) posteffect->OnResizeAfter();
 }
 
-void PostEffectExecuter::ImGui()
+void PostEffectExecutor::ImGui()
 {
     #ifdef _DEBUG
 
@@ -327,7 +327,7 @@ void PostEffectExecuter::ImGui()
     #endif //_DEBUG
 }
 
-IPostEffect* PostEffectExecuter::AddEffect(PostEffectClassName name)
+IPostEffect* PostEffectExecutor::AddEffect(PostEffectClassName name)
 {
     auto effect = pEffectFactory_->CreatePostEffect(name);
     PostEffectInitParams initParams{};
@@ -339,7 +339,7 @@ IPostEffect* PostEffectExecuter::AddEffect(PostEffectClassName name)
     return postEffects_.back().get();
 }
 
-bool PostEffectExecuter::RemoveEffect(IPostEffect* pEffect)
+bool PostEffectExecutor::RemoveEffect(IPostEffect* pEffect)
 {
     auto it = std::find_if(
         postEffects_.begin(), 
@@ -358,7 +358,7 @@ bool PostEffectExecuter::RemoveEffect(IPostEffect* pEffect)
     return false;
 }
 
-void PostEffectExecuter::ObtainInstances()
+void PostEffectExecutor::ObtainInstances()
 {
     /// 必要なインスタンスを取得
     rtvHeapCounter_ = pDx12_->GetRTVHeapCounter();
@@ -369,7 +369,7 @@ void PostEffectExecuter::ObtainInstances()
     rtvHeap_ = pDx12_->GetRTVDescriptorHeap();
 }
 
-void PostEffectExecuter::CreateRootSignature()
+void PostEffectExecutor::CreateRootSignature()
 {
     D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
     descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
@@ -426,7 +426,7 @@ void PostEffectExecuter::CreateRootSignature()
 
 }
 
-void PostEffectExecuter::CreatePipelineState()
+void PostEffectExecutor::CreatePipelineState()
 {
     ID3D12Device* device = pDx12_->GetDevice();
     IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
@@ -485,12 +485,12 @@ void PostEffectExecuter::CreatePipelineState()
     return;
 }
 
-void PostEffectExecuter::CreateCommandList()
+void PostEffectExecutor::CreateCommandList()
 {
     Helper::CreateCommandList(pDevice_, commandListForDraw_, commandAllocator_);
 }
 
-void PostEffectExecuter::EnableSolo(const size_t index)
+void PostEffectExecutor::EnableSolo(const size_t index)
 {
     if (index < postEffects_.size())
     {
@@ -511,7 +511,7 @@ void PostEffectExecuter::EnableSolo(const size_t index)
     }
 }
 
-void PostEffectExecuter::ImGuiCenterTable(const std::function<void()>& fn)
+void PostEffectExecutor::ImGuiCenterTable(const std::function<void()>& fn)
 {
     #ifdef _DEBUG
 

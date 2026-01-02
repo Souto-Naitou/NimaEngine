@@ -221,7 +221,7 @@
     <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp" />
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp" />
-    <ClCompile Include="Core\DirectX12\PostEffectExecuter.cpp" />
+    <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp" />
     <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp" />
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp" />
     <ClCompile Include="Core\DirectX12\SRVManager.cpp" />
@@ -305,7 +305,7 @@
     <ClCompile Include="Features\Primitive\OBB.cpp" />
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp" />
     <ClCompile Include="Features\SceneManager\SceneManager.cpp" />
-    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecuter.cpp" />
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecutor.cpp" />
     <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp" />
     <ClCompile Include="drawable\sprite\Sprite.cpp" />
     <ClCompile Include="drawable\sprite\SpriteSystem.cpp" />
@@ -339,7 +339,7 @@
     <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
-    <ClInclude Include="Core\DirectX12\PostEffectExecuter.h" />
+    <ClInclude Include="Core\DirectX12\PostEffectExecutor.h" />
     <ClInclude Include="Core\DirectX12\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
     <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
@@ -395,6 +395,7 @@
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
+    <ClInclude Include="io\loader\TaskExecutor.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />
     <ClInclude Include="Features\GameEye\GameEye.h" />
@@ -441,7 +442,7 @@
     <ClInclude Include="Features\Primitive\OBB.h" />
     <ClInclude Include="Features\RandomGenerator\RandomGenerator.h" />
     <ClInclude Include="Features\SceneManager\SceneManager.h" />
-    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecuter.h" />
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecutor.h" />
     <ClInclude Include="Effects\SceneTransition\TransBase.h" />
     <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h" />
     <ClInclude Include="drawable\sprite\Sprite.h" />

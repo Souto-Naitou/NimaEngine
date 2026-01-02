@@ -36,7 +36,7 @@ void SceneManager::ReserveScene(const std::string& name)
 
 void SceneManager::ReserveScene(const std::string& sceneName, std::unique_ptr<TransBase>&& transition)
 {
-    pTransitionExecuter_->Run(sceneName, std::move(transition));
+    pTransitionExecutor_->Run(sceneName, std::move(transition));
 }
 
 void SceneManager::ReserveStartupScene()
@@ -52,7 +52,7 @@ void SceneManager::Initialize(const Params& param)
     DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SceneManager::ImGui, this), true);
     pSceneArgs_ = std::make_unique<SceneArgs>();
 
-    pTransitionExecuter_ = std::make_unique<SceneTransitionExecuter>();
+    pTransitionExecutor_ = std::make_unique<SceneTransitionExecutor>();
     Canvas::Params canvasParam = {};
     canvasParam.name = "SceneTransitionCanvas";
     canvasParam.pDx12 = parameters_.pDx12;
@@ -60,7 +60,7 @@ void SceneManager::Initialize(const Params& param)
     #ifdef _DEBUG
     canvasParam.pImGuiManager = param.pImGuiManager;
     #endif // _DEBUG
-    pTransitionExecuter_->Initialize(canvasParam, param.pLayer);
+    pTransitionExecutor_->Initialize(canvasParam, param.pLayer);
 
     this->ReserveStartupScene();
 }
@@ -78,7 +78,7 @@ void SceneManager::Update()
         pCurrentScene_->Update();
     }
 
-    pTransitionExecuter_->Update();
+    pTransitionExecutor_->Update();
 }
 
 void SceneManager::SceneDraw()
@@ -88,7 +88,7 @@ void SceneManager::SceneDraw()
         pCurrentScene_->Draw();
     }
 
-    pTransitionExecuter_->Draw();
+    pTransitionExecutor_->Draw();
 }
 
 void SceneManager::Finalize()
@@ -98,7 +98,7 @@ void SceneManager::Finalize()
         pCurrentScene_->Finalize();
     }
 
-    pTransitionExecuter_->Finalize();
+    pTransitionExecutor_->Finalize();
 
     DebugManager::GetInstance()->DeleteComponent("Core", name_);
 }

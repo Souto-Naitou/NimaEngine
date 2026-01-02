@@ -12,6 +12,9 @@ public:
     SceneBase(ISceneArgs* pArgs);
     virtual ~SceneBase() {}
 
+    /// ロードシーンで実行する処理
+    virtual void OnLoadScene() {}
+
     /// 初期化
     virtual void Initialize() = 0;
 

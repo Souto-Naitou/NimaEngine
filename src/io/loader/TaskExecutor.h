@@ -51,7 +51,7 @@ public:
 
             const auto& task = taskList_.front();
             task();
-            taskList_.pop_back();
+            taskList_.pop_front();
         }
     }
 

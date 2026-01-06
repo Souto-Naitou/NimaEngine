@@ -3,7 +3,6 @@
 #include <functional>
 
 
-template <typename RETURN_TYPE = void, typename... ARGS>
 class TaskExecutor
 {
 public:
@@ -22,7 +21,7 @@ public:
     /// タスクを追加します。
     /// </summary>
     /// <param name="task">追加する実行可能な関数オブジェクト</param>
-    inline void AddTask(const std::function<RETURN_TYPE(ARGS)> task)
+    inline void AddTask(const std::function<void()> task)
     {
         taskList_.emplace_back(task);
     }
@@ -57,5 +56,5 @@ public:
 
 
 private:
-    std::list<std::function<RETURN_TYPE(ARGS)>> taskList_ = {};
+    std::list<std::function<void()>> taskList_ = {};
 };

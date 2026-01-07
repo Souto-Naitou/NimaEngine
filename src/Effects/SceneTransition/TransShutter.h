@@ -3,7 +3,7 @@
 #include <Effects/SceneTransition/TransBase.h>
 #include <string>
 #include <drawable/sprite/Sprite.h>
-#include <Features/Animation/AnimationTimeline.h>
+#include <Features/Animation/AnimationTween.hpp>
 #include <Core/Win32/WinSystem.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
@@ -21,44 +21,54 @@ public:
     /// <summary>
     /// シャッター遷移の初期化を行います。
     /// </summary>
-    /// <param name="_sceneName">遷移先のシーン名。</param>
-    void Initialize(const std::string& sceneName, Canvas* pCanvas) override;
+    void Initialize() override;
+
     /// <summary>
     /// 状態を更新します。
     /// </summary>
     void Update() override;
+
     /// <summary>
     /// エフェクトを描画します。
     /// </summary>
-    void Draw() override;
+    void Draw1F() override;
+
     /// <summary>
     /// 後始末を行います。
     /// </summary>
     void Finalize() override;
+
     /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
     void ImGui() override;
 
+    /// <summary>
+    /// シャッターを下ろします。
+    /// </summary>
+    void PlayInAnimation() override;
 
+    /// <summary>
+    /// シャッターを上げます。
+    /// </summary>
+    void PlayOutAnimation() override;
 
 private:
-    const float kHalfHeight = WinSystem::clientHeight / 2.0f;
+    enum class Phase : uint32_t
+    {
+        ShutterIn = 0,
+        ShutterOut = 1,
+        End = 2,
+    } phase_ = Phase::End;
 
+    static constexpr float kDuration_ = 2.0f;
+    const float kHalfHeight_ = WinSystem::clientHeight / 2.0f;
 
-    std::string name_;
-    bool        isChangedScene_ = false;
-    float       duration_ = 2.0f;
-
-
-    std::string sceneName_;
-    std::unique_ptr<Sprite> spriteUpper_;
-    std::unique_ptr<Sprite> spriteLower_;
-    AnimationTimeline<float> animDeltaY_ = {};
+    std::unique_ptr<Sprite> pSpriteUpper_ = nullptr;
+    std::unique_ptr<Sprite> pSpriteLower_ = nullptr;
+    std::unique_ptr<AnimationTween<float>> pTweenIn_ = nullptr;
+    std::unique_ptr<AnimationTween<float>> pTweenOut_ = nullptr;
     std::unique_ptr<DebugEntry<TransShutter>> pDebugEntry_ = nullptr;  //< デバッグエントリ
-
-
-    Canvas*     pCanvas_ = nullptr;
 
     /// <summary>
     /// アニメーションの初期化を行います。

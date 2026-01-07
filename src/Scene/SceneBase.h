@@ -1,6 +1,7 @@
 #pragma once
 #include <Interfaces/ISceneArgs.h>
 #include <Features/Layer/OrderedCanvasLayer.h>
+#include <io/loader/TaskExecutor.h>
 
 /// <summary>
 /// シーン基底クラス
@@ -8,12 +9,9 @@
 class SceneBase
 {
 public:
-    /// dtor
+    /// ctor/dtor
     SceneBase(ISceneArgs* pArgs);
     virtual ~SceneBase() {}
-
-    /// ロードシーンで実行する処理
-    virtual void OnLoadScene() {}
 
     /// 初期化
     virtual void Initialize() = 0;
@@ -30,4 +28,15 @@ public:
 protected:
     ISceneArgs*         pArgs_  = nullptr;
     OrderedCanvasLayer* pLayer_ = nullptr;      // !< レイヤー
+};
+
+class ILoadableScene : public SceneBase
+{
+public:
+    /// ctor/dtor
+    ILoadableScene(ISceneArgs* pArgs) : SceneBase(pArgs) {}
+    virtual ~ILoadableScene() {}
+
+    /// ロードシーンで実行する処理
+    virtual void PreLoad(TaskExecutor& executor) = 0;
 };

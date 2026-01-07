@@ -1,95 +1,116 @@
 #include "TransShutter.h"
-#include <Features/SceneManager/SceneManager.h>
 
-void TransShutter::Initialize(const std::string& sceneName, Canvas* pCanvas)
+void TransShutter::Initialize()
 {
-    pCanvas_ = pCanvas;
-
     this->SpriteInitialize();
-    pCanvas_->RegisterDrawable(spriteLower_.get());
-    pCanvas_->RegisterDrawable(spriteUpper_.get());
-
     this->AnimationInitialize();
 
     pDebugEntry_ = std::make_unique<DebugEntry<TransShutter>>("Transition", "Shutter", this);
-
-    sceneName_ = sceneName;
-
-    animDeltaY_.Start();
 }
 
 void TransShutter::Update()
 {
-    float deltaY = animDeltaY_.Update();
-    spriteUpper_->SetPosition({ 0.0f, deltaY });
-    spriteLower_->SetPosition({ 0.0f, WinSystem::clientHeight - deltaY });
-    spriteUpper_->Update();
-    spriteLower_->Update();
+    if (phase_ == Phase::End)
+    {
+        return;
+    }
+
+    const float now = timer_.GetNow<float>();
+    float deltaY = 0.0f;
+    if (phase_ == Phase::ShutterIn)
+    {
+        pTweenIn_->Update(now, deltaY);
+    }
+    else if (phase_ == Phase::ShutterOut)
+    {
+        pTweenOut_->Update(now, deltaY);
+    }
+
+    /// スプライトの位置更新
+    pSpriteUpper_->SetPosition({ 0.0f, deltaY });
+    pSpriteLower_->SetPosition({ 0.0f, WinSystem::clientHeight - deltaY });
+    pSpriteUpper_->Update();
+    pSpriteLower_->Update();
 }
 
-void TransShutter::Draw()
+void TransShutter::Draw1F()
 {
-    spriteUpper_->Draw1F();
-    spriteLower_->Draw1F();
+    pSpriteUpper_->Draw1F();
+    pSpriteLower_->Draw1F();
 }
 
 void TransShutter::Finalize()
 {
-    pCanvas_->UnregisterDrawable(spriteLower_.get());
-    pCanvas_->UnregisterDrawable(spriteUpper_.get());
 }
 
 void TransShutter::ImGui()
 {
     #ifdef _DEBUG
 
-    animDeltaY_.ImGui("Shutter");
+    pTweenIn_->ImGui("In");
+    pTweenOut_->ImGui("Out");
 
     #endif // _DEBUG
 }
 
+void TransShutter::PlayInAnimation()
+{
+    phase_ = Phase::ShutterIn;
+    isPlayed_ = true;
+    isEnd_ = false;
+    timer_.Reset();
+    timer_.Start();
+    pTweenIn_->Reset();
+}
+
+void TransShutter::PlayOutAnimation()
+{
+    phase_ = Phase::ShutterOut;
+    isPlayed_ = true;
+    isEnd_ = false;
+    timer_.Reset();
+    timer_.Start();
+    pTweenOut_->Reset();
+}
+
 void TransShutter::AnimationInitialize()
 {
-    float halfDuration = duration_ / 2.0f;
+    float halfDuration = kDuration_ / 2.0f;
 
-    AnimationTween<float> tweenFirstHalf(0.0f, halfDuration, 0.0f, kHalfHeight);
-    AnimationTween<float> tweenSecondHalf(halfDuration + 0.02f, halfDuration, kHalfHeight, 0.0f);
+    pTweenIn_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, 0.0f, kHalfHeight_);
+    pTweenOut_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, kHalfHeight_, 0.0f);
 
     // シーン切り替え用のコールバックを設定
-    auto changeScene = [this]() {
-        if (!isChangedScene_)
-        {
-            isChangedScene_ = true;
-            SceneManager::GetInstance()->ReserveScene(sceneName_);
-        }
+    auto finish = [this]()
+    {
+        isEnd_ = true;
+        phase_ = Phase::End;
     };
 
-    auto easeInOutCubic = [](float t) {
-        return t < 0.5f ? 4.0f * t * t * t : 1.0f - std::powf(-2.0f * t + 2.0f, 3) / 2.0f;
+    auto easeInOutCubic = [](float t)
+    {
+        return t < 0.5f ? 4.0f * std::powf(t, 3) : 1.0f - std::powf(-2.0f * t + 2.0f, 3) / 2.0f;
     };
 
-    // 前半のアニメーションが終了したらシーンを切り替える
-    tweenFirstHalf.SetOnFinished(changeScene);
-    tweenFirstHalf.SetTransitionFunction(easeInOutCubic);
-    tweenSecondHalf.SetTransitionFunction(easeInOutCubic);
-
-    animDeltaY_.AddTween(tweenFirstHalf);
-    animDeltaY_.AddTween(tweenSecondHalf);
+    pTweenIn_->SetOnFinished(finish);
+    pTweenOut_->SetOnFinished(finish);
+    pTweenIn_->SetTransitionFunction(easeInOutCubic);
+    pTweenOut_->SetTransitionFunction(easeInOutCubic);
 }
 
 void TransShutter::SpriteInitialize()
 {
-    spriteUpper_ = std::make_unique<Sprite>();
-    spriteUpper_->Initialize("white1x1.png");
-    spriteUpper_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-    spriteUpper_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight });
-    spriteUpper_->SetAnchorPoint({ 0.0f, 1.0f });
-    spriteUpper_->SetPosition({ 0.0f, 0.0f });
+    pSpriteUpper_ = std::make_unique<Sprite>();
+    pSpriteUpper_->Initialize("white1x1.png");
+    pSpriteUpper_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+    pSpriteUpper_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight_ });
+    pSpriteUpper_->SetAnchorPoint({ 0.0f, 1.0f });
+    pSpriteUpper_->SetPosition({ 0.0f, 0.0f });
 
-    spriteLower_ = std::make_unique<Sprite>();
-    spriteLower_->Initialize("white1x1.png");
-    spriteLower_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-    spriteLower_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight });
-    spriteLower_->SetAnchorPoint({ 0.0f, 0.0f });
-    spriteLower_->SetPosition({ 0.0f, static_cast<float>(WinSystem::clientHeight) });
+    pSpriteLower_ = std::make_unique<Sprite>();
+    pSpriteLower_->Initialize("white1x1.png");
+    pSpriteLower_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
+    pSpriteLower_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight_ });
+    pSpriteLower_->SetAnchorPoint({ 0.0f, 0.0f });
+    pSpriteLower_->SetPosition({ 0.0f, static_cast<float>(WinSystem::clientHeight) });
 }

@@ -77,14 +77,15 @@ protected:
     static constexpr char kEnvTexturePathDefault[] = "EngineResources/Textures/white32x32.dds";
 
     /// システムクラスのインスタンス
-    std::unique_ptr<DirectX12>          pDirectX_                   = nullptr;
-    std::unique_ptr<ISceneFactory>      pSceneFactory_              = nullptr;
-    std::unique_ptr<Viewport>           pViewport_                  = nullptr;
-    std::unique_ptr<NiGuiDrawer>        pDrawer_                    = nullptr;
-    std::unique_ptr<NiGuiDebug>         pNiGuiDebug_                = nullptr;
-    std::unique_ptr<GltfModelSystem>    pGltfModelSystem_           = nullptr;
-    std::unique_ptr<CubemapSystem>      pCubemapSystem_             = nullptr;
-    std::unique_ptr<OrderedCanvasLayer> pLayer_                     = nullptr;
+    std::unique_ptr<DirectX12>                  pDirectX_                   = nullptr;
+    std::unique_ptr<ISceneFactory>              pSceneFactory_              = nullptr;
+    std::unique_ptr<Viewport>                   pViewport_                  = nullptr;
+    std::unique_ptr<NiGuiDrawer>                pDrawer_                    = nullptr;
+    std::unique_ptr<NiGuiDebug>                 pNiGuiDebug_                = nullptr;
+    std::unique_ptr<GltfModelSystem>            pGltfModelSystem_           = nullptr;
+    std::unique_ptr<CubemapSystem>              pCubemapSystem_             = nullptr;
+    std::unique_ptr<OrderedCanvasLayer>         pLayer_                     = nullptr;
+    std::unique_ptr<SceneTransitionExecutor>    pTransitionExecutor_        = nullptr;
 
     #ifdef _DEBUG
     std::unique_ptr<ImGuiManager>   pImGuiManager_              = nullptr;

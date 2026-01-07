@@ -4,55 +4,46 @@
 #include <Features/SceneManager/SceneManager.h>
 #include <Core/Win32/WinSystem.h>
 #include <MathExtension/mathExtension.h>
+#include <cmath>
 
-void TransFadeInOut::Initialize(const std::string& sceneName, Canvas* canvas)
+TransFadeInOut::~TransFadeInOut()
 {
-    sceneName_ = sceneName;
+    OutputDebugStringA("deleted TransFadeInOut\n");
+}
 
+void TransFadeInOut::Initialize()
+{
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("white1x1.png");
     sprite_->SetColor({ 0,0,0,0 });
     sprite_->SetSize({ WinSystem::clientWidth, WinSystem::clientHeight });
     timer_.Start();
     pDebugEntry_ = std::make_unique<DebugEntry<TransFadeInOut>>("Transition", "FadeInOut", this, false);
-
-    pCanvas_ = canvas;
-    pCanvas_->RegisterDrawable(sprite_.get());
 }
 
 void TransFadeInOut::Update()
 {
-    if (countPhase_ == 2)
+    if (timer_.GetNow<float>() >= kDuration_)
     {
+        phase_ = Phase::End;
         isEnd_ = true;
         return;
     }
-    if (timer_.GetNow<double>() > duration_)
-    {
-        timer_.Reset();
-        timer_.Start();
-        countPhase_++;
-    }
-    if (!isChangedScene_ && countPhase_ == 1)
-    {
-        isChangedScene_ = true;
-        SceneManager::GetInstance()->ReserveScene(sceneName_);
-    }
 
-    if (countPhase_ == 0)
+    if (phase_ == Phase::FadeIn)
     {
-        opacity_ = Math::Lerp(0.0f, 1.0f, static_cast<float>(timer_.GetNow<double>() / duration_));
+        UpdateFadeInAnimation();
     }
-    else if (countPhase_ == 1)
+    else if (phase_ == Phase::FadeOut)
     {
-        opacity_ = Math::Lerp(1.0f, 0.0f, static_cast<float>(timer_.GetNow<double>() / duration_));
+        UpdateFadeOutAnimation();
     }
 
     sprite_->SetColor(Vector4(0, 0, 0, opacity_));
     sprite_->Update();
 }
 
-void TransFadeInOut::Draw()
+void TransFadeInOut::Draw1F()
 {
     sprite_->Draw1F();
 }
@@ -60,7 +51,6 @@ void TransFadeInOut::Draw()
 void TransFadeInOut::Finalize()
 {
     sprite_->Finalize();
-    pCanvas_->UnregisterDrawable(sprite_.get());
 }
 
 void TransFadeInOut::ImGui()
@@ -69,9 +59,8 @@ void TransFadeInOut::ImGui()
 
     auto pFunc = [&]()
     {
-        ImGuiTemplate::VariableTableRow("Scene Name", sceneName_);
         ImGuiTemplate::VariableTableRow("Timer", timer_.GetNow<double>());
-        ImGuiTemplate::VariableTableRow("Phase", countPhase_);
+        ImGuiTemplate::VariableTableRow("Phase", static_cast<uint32_t>(phase_));
         ImGuiTemplate::VariableTableRow("Opacity", opacity_);
     };
 
@@ -80,7 +69,30 @@ void TransFadeInOut::ImGui()
 #endif
 }
 
-TransFadeInOut::~TransFadeInOut()
+void TransFadeInOut::PlayInAnimation()
 {
-    OutputDebugStringA("deleted TransFadeInOut\n");
+    timer_.Reset();
+    timer_.Start();
+    isPlayed_ = true;
+    isEnd_ = false;
+    phase_ = Phase::FadeIn;
+}
+
+void TransFadeInOut::PlayOutAnimation()
+{
+    timer_.Reset();
+    timer_.Start();
+    isPlayed_ = true;
+    isEnd_ = false;
+    phase_ = Phase::FadeOut;
+}
+
+void TransFadeInOut::UpdateFadeInAnimation()
+{
+    opacity_ = std::lerp(0.0f, 1.0f, timer_.GetNow<float>() / kDuration_);
+}
+
+void TransFadeInOut::UpdateFadeOutAnimation()
+{
+    opacity_ = std::lerp(1.0f, 0.0f, timer_.GetNow<float>() / kDuration_);
 }

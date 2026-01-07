@@ -54,6 +54,11 @@ public:
         }
     }
 
+    inline size_t GetCount() const
+    {
+        return taskList_.size();
+    }
+
 
 private:
     std::list<std::function<void()>> taskList_ = {};

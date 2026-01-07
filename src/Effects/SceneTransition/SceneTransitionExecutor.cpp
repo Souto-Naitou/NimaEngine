@@ -1,7 +1,7 @@
-#include "SceneTransitionExecuter.h"
+#include "SceneTransitionExecutor.h"
 #include <cassert>
 
-void SceneTransitionExecuter::Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer)
+void SceneTransitionExecutor::Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer)
 {
     assert(pLayer && "pLayer is nullptr");
 
@@ -11,19 +11,19 @@ void SceneTransitionExecuter::Initialize(const Canvas::Params& canvasParams, Ord
     pLayer_->AddCanvas(pCanvas_.get(), 100);
 }
 
-void SceneTransitionExecuter::Finalize()
+void SceneTransitionExecutor::Finalize()
 {
     pLayer_->RemoveCanvas(pCanvas_.get());
 }
 
-void SceneTransitionExecuter::Run(const std::string& sceneName, std::unique_ptr<TransBase>&& transition)
+void SceneTransitionExecutor::Run(const std::string& sceneName, std::unique_ptr<TransBase>&& transition)
 {
     if (pTransition_) pTransition_->Finalize();
     pTransition_ = std::move(transition);
     pTransition_->Initialize(sceneName, pCanvas_.get());
 }
 
-void SceneTransitionExecuter::Update()
+void SceneTransitionExecutor::Update()
 {
     if (!pTransition_) return;
     pTransition_->Update();
@@ -33,7 +33,7 @@ void SceneTransitionExecuter::Update()
     }
 }
 
-void SceneTransitionExecuter::Draw()
+void SceneTransitionExecutor::Draw()
 {
     if (!pTransition_) return;
     pTransition_->Draw();

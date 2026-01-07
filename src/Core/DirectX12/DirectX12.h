@@ -49,7 +49,7 @@ public:
     {
         Common,
         DrawableObject,
-        PostEffectExecuter,
+        PostEffectExecutor,
         Viewport,
         ImGui,
     };

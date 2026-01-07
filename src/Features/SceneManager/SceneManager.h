@@ -2,7 +2,7 @@
 
 #include <Scene/SceneBase.h>
 #include <Interfaces/ISceneFactory.h>
-#include <Effects/SceneTransition/SceneTransitionExecuter.h>
+#include <Effects/SceneTransition/SceneTransitionExecutor.h>
 #include <Features/Model/ModelManager.h>
 #include <memory>
 #include <Interfaces/ISceneArgs.h>
@@ -108,11 +108,6 @@ public: /// シーン動作
     void SceneDraw();
     
     /// <summary>
-    /// シーンのテキスト描画を行います。
-    /// </summary>
-    void SceneDrawText();
-    
-    /// <summary>
     /// シーン終了処理を行います。
     /// </summary>
     void Finalize();
@@ -150,7 +145,7 @@ private:
 
 private: /// 他クラスのインスタンス
     ISceneFactory* pSceneFactory_ = nullptr;
-    std::unique_ptr<SceneTransitionExecuter> pTransitionExecuter_ = nullptr;
+    std::unique_ptr<SceneTransitionExecutor> pTransitionExecutor_ = nullptr;
 
     ModelManager* pModelManager_ = nullptr;
 };

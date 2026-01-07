@@ -35,7 +35,7 @@ uint32_t OrderedCanvasLayer::AddCanvas(Canvas* canvas, uint32_t zOrder)
 
     canvases_.emplace(assignedZOrder, canvas);
 
-    canvas->GetPostEffectExecuter().RegisterCommandListToDirectX12(assignedZOrder);
+    canvas->GetPostEffectExecutor().RegisterCommandListToDirectX12(assignedZOrder);
 
     return assignedZOrder;
 }
@@ -65,7 +65,7 @@ void OrderedCanvasLayer::PreDraw()
 {
     for (auto& canvas : canvases_)
     {
-        canvas.second->GetPostEffectExecuter().PreDraw();
+        canvas.second->GetPostEffectExecutor().PreDraw();
     }
 }
 
@@ -73,7 +73,7 @@ void OrderedCanvasLayer::PostDraw()
 {
     for (auto& canvas : canvases_)
     {
-        canvas.second->GetPostEffectExecuter().PostDraw();
+        canvas.second->GetPostEffectExecutor().PostDraw();
     }
 }
 

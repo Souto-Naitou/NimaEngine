@@ -26,9 +26,20 @@ Sprite::~Sprite()
 
 void Sprite::Initialize(std::string filepath)
 {
+    texturePath_ = TextureManager::GetInstance()->LoadTexture(filepath);
+
+    textureSrvHandleGPU_ = TextureManager::GetInstance()->GetSrvHandleGPU(texturePath_);
+
+    Initialize(textureSrvHandleGPU_);
+}
+
+
+void Sprite::Initialize(D3D12_GPU_DESCRIPTOR_HANDLE handle)
+{
     pSpriteSystem_ = SpriteSystem::GetInstance();
     pDx12_ = pSpriteSystem_->GetDirectX12();
     device_ = pDx12_->GetDevice();
+    textureSrvHandleGPU_ = handle;
 
     // デバッグウィンドウの登録
     pDebugEntry_ = std::make_unique<DebugEntry<Sprite>>("Sprite", "unnamed", this, false);
@@ -63,13 +74,10 @@ void Sprite::Initialize(std::string filepath)
     // 座標変換行列を表すデータを作成する
     CreateTransformationMatrixResource();
 
-    texturePath_ = TextureManager::GetInstance()->LoadTexture(filepath);
+    metadata_ = &this->GetMetadata();
 
-    textureSrvHandleGPU_ = TextureManager::GetInstance()->GetSrvHandleGPU(texturePath_);
-
-    AdjustSpriteSize();
+    AdjustSpriteSize(metadata_);
 }
-
 
 void Sprite::Update()
 {
@@ -80,7 +88,8 @@ void Sprite::Update()
 
     uint32_t clientWidth = WinSystem::clientWidth;
     uint32_t clientHeight = WinSystem::clientHeight;
-    const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetaData(texturePath_);
+
+    metadata_ = &this->GetMetadata();
 
     // 左下
     vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
@@ -115,10 +124,10 @@ void Sprite::Update()
     vertexData_[3].position = { right, top, 0.0f, 1.0f };
 
     /// UV座標の設定と適用 (範囲指定)
-    float tex_left = textureLeftTop_.x / metadata.width;
-    float tex_top = textureLeftTop_.y / metadata.height;
-    float tex_right = (textureLeftTop_.x + textureSize_.x) / metadata.width;
-    float tex_bottom = (textureLeftTop_.y + textureSize_.y) / metadata.height;
+    float tex_left = textureLeftTop_.x / metadata_->width;
+    float tex_top = textureLeftTop_.y / metadata_->height;
+    float tex_right = (textureLeftTop_.x + textureSize_.x) / metadata_->width;
+    float tex_bottom = (textureLeftTop_.y + textureSize_.y) / metadata_->height;
 
     vertexData_[0].texcoord = { tex_left, tex_bottom };
     vertexData_[1].texcoord = { tex_left, tex_top };
@@ -167,8 +176,8 @@ void Sprite::Finalize()
 void Sprite::SetSizeWithFactor(float factor)
 {
     size_ = Vector2(
-        static_cast<float>(metadata_.width), 
-        static_cast<float>(metadata_.height)
+        static_cast<float>(metadata_->width), 
+        static_cast<float>(metadata_->height)
     ) * factor;
 }
 
@@ -249,14 +258,11 @@ void Sprite::CreateTransformationMatrixResource()
     transformationMatrixData_->world = Matrix4x4::Identity();
 }
 
-void Sprite::AdjustSpriteSize()
+void Sprite::AdjustSpriteSize(const DirectX::TexMetadata* metadata)
 {
     // テクスチャのサイズを取得
-    metadata_ = TextureManager::GetInstance()->GetMetaData(texturePath_);
-
-    // テクスチャのサイズを取得
-    auto textureWidth = static_cast<float>(metadata_.width);
-    auto textureHeight = static_cast<float>(metadata_.height);
+    auto textureWidth = static_cast<float>(metadata->width);
+    auto textureHeight = static_cast<float>(metadata->height);
 
     // サイズを調整
     size_ = Vector2(textureWidth, textureHeight);
@@ -264,6 +270,18 @@ void Sprite::AdjustSpriteSize()
     textureSize_ = Vector2(textureWidth, textureHeight);
 
     aspectRatio_ = size_.x / size_.y;
+}
+
+const DirectX::TexMetadata& Sprite::GetMetadata() const
+{
+    if (texturePath_.empty())
+    {
+        return TextureManager::GetInstance()->GetMetaData(textureSrvHandleGPU_);
+    }
+    else
+    {
+        return TextureManager::GetInstance()->GetMetaData(texturePath_);
+    }
 }
 
 void Sprite::ImGui()

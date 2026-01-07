@@ -52,12 +52,12 @@ void Canvas::Initialize(const Canvas::Params& params)
     resource_.CreateSRV();
 
     // ポストエフェクト実行クラスの生成
-    pPostEffectExecuter_ = std::make_unique<PostEffectExecuter>();
-    pPostEffectExecuter_->Initialize(params.pDx12, &resource_, false);
+    pPostEffectExecutor_ = std::make_unique<PostEffectExecutor>();
+    pPostEffectExecutor_->Initialize(params.pDx12, &resource_, false);
 
     // リサイズ時のコールバック登録
-    params.pDx12->AddOnResizeBefore("PostEffect"+params.name, std::bind(&PostEffectExecuter::OnResizeBefore, pPostEffectExecuter_.get()));
-    params.pDx12->AddOnResizeAfter("PostEffect"+params.name, std::bind(&PostEffectExecuter::OnResizeAfter, pPostEffectExecuter_.get()));
+    params.pDx12->AddOnResizeBefore("PostEffect"+params.name, std::bind(&PostEffectExecutor::OnResizeBefore, pPostEffectExecutor_.get()));
+    params.pDx12->AddOnResizeAfter("PostEffect"+params.name, std::bind(&PostEffectExecutor::OnResizeAfter, pPostEffectExecutor_.get()));
 }
 
 void Canvas::Finalize()
@@ -66,10 +66,10 @@ void Canvas::Finalize()
     params_.pDx12->DeleteOnResizeAfter("PostEffect" + params_.name);
 
     #ifdef _DEBUG
-    params_.pImGuiManager->RemoveImageResource(pPostEffectExecuter_->GetIntermediateResource());
+    params_.pImGuiManager->RemoveImageResource(pPostEffectExecutor_->GetIntermediateResource());
     #endif // _DEBUG
 
-    pPostEffectExecuter_->Finalize();
+    pPostEffectExecutor_->Finalize();
 
     for (auto& drawable : drawables_)
     {
@@ -79,7 +79,7 @@ void Canvas::Finalize()
 
 void Canvas::DrawObjects()
 {
-    auto cl = pPostEffectExecuter_->GetCommandList();
+    auto cl = pPostEffectExecutor_->GetCommandList();
     auto clDx12 = params_.pDx12->GetCommandList();
     auto& rtvHandle = resource_.GetRTVHandle();
     DX12Helper::CommandListCommonSetting(params_.pDx12, cl, &rtvHandle);
@@ -106,7 +106,7 @@ void Canvas::DrawObjects()
 
 void Canvas::ApplyPostEffects()
 {
-    pPostEffectExecuter_->ApplyPostEffects();
+    pPostEffectExecutor_->ApplyPostEffects();
 }
 
 void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
@@ -116,12 +116,12 @@ void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
     if (rtvHandle_.ptr)
     {
         this->DrawObjects();
-        pPostEffectExecuter_->ApplyPostEffects();
-        pPostEffectExecuter_->Draw(rtvHandle_);
+        pPostEffectExecutor_->ApplyPostEffects();
+        pPostEffectExecutor_->Draw(rtvHandle_);
     }
     else 
     {
-        pPostEffectExecuter_->Draw();
+        pPostEffectExecutor_->Draw();
     }
 }
 
@@ -131,7 +131,7 @@ void Canvas::ImGui()
     ImGui::Checkbox("Enable", &isEnabled_);
     this->ImGuiPreview();
 
-    pPostEffectExecuter_->ImGui();
+    pPostEffectExecutor_->ImGui();
 
 #endif // _DEBUG
 }
@@ -170,8 +170,8 @@ void Canvas::ImGuiPreview()
     }
 
     /// キャンバスの内容を表示 
-    /// PostEffectExecuterの中間リソースを使用
-    DX12Resource* resourceOutput = pPostEffectExecuter_->GetIntermediateResource();
+    /// PostEffectExecutorの中間リソースを使用
+    DX12Resource* resourceOutput = pPostEffectExecutor_->GetIntermediateResource();
     ImGui::Image((ImTextureID)resourceOutput->GetSRVHandleGPU().ptr, imageSize);
     params_.pImGuiManager->AddImageResource(resourceOutput);
 

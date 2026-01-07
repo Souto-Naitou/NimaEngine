@@ -12,6 +12,9 @@ public:
     SceneBase(ISceneArgs* pArgs);
     virtual ~SceneBase() {}
 
+    /// ロードシーンで実行する処理
+    virtual void OnLoadScene() {}
+
     /// 初期化
     virtual void Initialize() = 0;
 
@@ -21,14 +24,8 @@ public:
     /// 更新
     virtual void Update() = 0;
 
-    /// 描画(テキスト描画を除く)
-    ///   - テキスト描画はDrawTexts()で行う
-    ///   - 描画前処理も同時に行う。pArgs_から必要なポインタを取得できる
-    ///   - pArgsに含まれるデータはNimaFramework::Initialize()を参照
+    /// 描画
     virtual void Draw() = 0;
-
-    /// テキスト描画
-    virtual void DrawTexts() = 0;
 
 protected:
     ISceneArgs*         pArgs_  = nullptr;

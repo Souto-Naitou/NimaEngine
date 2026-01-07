@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 #include <DebugTools/DebugEntry/DebugEntry.h>
-#include <Core/DirectX12/PostEffectExecuter.h>
+#include <Core/DirectX12/PostEffectExecutor.h>
 #include <d3d12.h>
 #include <Features/Cubemap/Skybox.h>
 #include <drawable/base/DrawableBase.h>
@@ -69,11 +69,11 @@ public:
     [[nodiscard]]
     inline const DX12Resource& GetResource() const { return resource_; }
     [[nodiscard]]
-    inline PostEffectExecuter& GetPostEffectExecuter() const { return *pPostEffectExecuter_.get(); }
+    inline PostEffectExecutor& GetPostEffectExecutor() const { return *pPostEffectExecutor_.get(); }
     [[nodiscard]]
     inline ID3D12GraphicsCommandList* GetCommandList() const
     {
-        return pPostEffectExecuter_->GetCommandList();
+        return pPostEffectExecutor_->GetCommandList();
     }
 
     /// <summary>
@@ -117,5 +117,5 @@ private:
     std::list<Skybox*> skyboxes_;
 
     std::unique_ptr<DebugEntry<Canvas>> pDebugEntry_ = nullptr;
-    std::unique_ptr<PostEffectExecuter> pPostEffectExecuter_ = nullptr;
+    std::unique_ptr<PostEffectExecutor> pPostEffectExecutor_ = nullptr;
 };

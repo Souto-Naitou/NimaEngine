@@ -250,6 +250,8 @@
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\Vignette\Vignette.cpp" />
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp" />
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp" />
     <ClCompile Include="Effects\SceneTransition\TransShutter.cpp" />
     <ClCompile Include="Features\Audio\Audio.cpp" />
     <ClCompile Include="Features\Audio\AudioManager.cpp" />
@@ -373,7 +375,7 @@
     <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h" />
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
-    <ClInclude Include="Features\Animation\AnimationTimeline.h" />
+    <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
     <ClInclude Include="Features\Audio\AudioManager.h" />
@@ -394,7 +396,9 @@
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />
+    <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
+    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
     <ClInclude Include="io\loader\TaskExecutor.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h" />

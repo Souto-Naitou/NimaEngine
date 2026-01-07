@@ -11,33 +11,48 @@ class TransBase
 {
 public:
     virtual ~TransBase() {};
+
     /// <summary>
     /// 遷移の初期化を行います。
     /// </summary>
-    /// <param name="sceneName">遷移先のシーン名。</param>
-    virtual void Initialize(const std::string& sceneName, Canvas* pCanvas) = 0;
+    virtual void Initialize() = 0;
+
     /// <summary>
     /// 遷移の状態を更新します。
     /// </summary>
     virtual void Update() = 0;
+
     /// <summary>
     /// 遷移の描画を行います。
     /// </summary>
-    virtual void Draw() = 0;
+    virtual void Draw1F() = 0;
+
     /// <summary>
     /// 後始末を行います。
     /// </summary>
     virtual void Finalize() = 0;
+
     /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
     virtual void ImGui() = 0;
 
+    /// <summary>
+    /// イン アニメーションを再生します。
+    /// </summary>
+    virtual void PlayInAnimation() = 0;
+
+    /// <summary>
+    /// アウトアニメーションを再生します。
+    /// </summary>
+    virtual void PlayOutAnimation() = 0;
+
     bool IsEnd() const { return isEnd_; }
+    bool IsPlayed() const { return isPlayed_; }
+    void Reset() { isEnd_ = false; isPlayed_ = false; timer_.Reset(); }
 
 protected:
     TimeMeasurer timer_;
     bool isEnd_ = false;
-
-private:
+    bool isPlayed_ = false;
 };

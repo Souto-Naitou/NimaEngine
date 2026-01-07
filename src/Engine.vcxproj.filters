@@ -714,6 +714,8 @@
     <ClCompile Include="Math\Easing.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp" />
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1091,7 +1093,7 @@
     <ClInclude Include="Common\SingletonPattern.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Animation\AnimationTimeline.h">
+    <ClInclude Include="Features\Animation\AnimationTimeline.hpp">
       <Filter>Feature\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Features\Animation\AnimationTween.hpp">
@@ -1152,6 +1154,8 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="io\loader\TaskExecutor.h" />
+    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
+    <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

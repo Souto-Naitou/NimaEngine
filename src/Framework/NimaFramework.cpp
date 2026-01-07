@@ -131,15 +131,22 @@ void NimaFramework::Initialize()
     /// レイヤーの初期化
     pLayer_ = std::make_unique<OrderedCanvasLayer>();
 
-    /// シーンマネージャの初期化
-    SceneManager::Params sceneManagerParams;
-    sceneManagerParams.pDx12 = pDirectX_.get();
-    sceneManagerParams.pLayer = pLayer_.get();
-    #ifdef _DEBUG
-    sceneManagerParams.pImGuiManager = pImGuiManager_.get();
-    #endif // _DEBUG
+    /// シーン遷移エグゼキューターの初期化
+    Canvas::Params canvasParam =
+    {
+        .name = "SceneTransitionCanvas",
+        .pDx12 = pDirectX_.get(),
+        .pCubemapSystem = nullptr,
+        #ifdef _DEBUG
+        .pImGuiManager = pImGuiManager_.get()
+        #endif // _DEBUG
+    };
+    pTransitionExecutor_ = std::make_unique<SceneTransitionExecutor>();
+    pTransitionExecutor_->Initialize(canvasParam, pLayer_.get());
 
-    pSceneManager_->Initialize(sceneManagerParams);
+    /// シーンマネージャの初期化
+    pSceneManager_->Initialize();
+    pSceneManager_->SetTransitionExecutor(pTransitionExecutor_.get());
 
     pParticleStorage_->SetDirectX12(pDirectX_.get());
 

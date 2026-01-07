@@ -2,6 +2,7 @@
 
 #include <Scene/SceneBase.h>
 #include <Interfaces/ISceneFactory.h>
+#include <Interfaces/IIntermediateScreenFactory.h>
 #include <Effects/SceneTransition/SceneTransitionExecutor.h>
 #include <Features/Model/ModelManager.h>
 #include <memory>
@@ -10,6 +11,7 @@
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
 #include <Features/Layer/OrderedCanvasLayer.h>
 #include <Core/DirectX12/DirectX12.h>
+#include <io/loader/TaskExecutor.h>
 
 /// <summary>
 /// シーン保守クラス
@@ -17,15 +19,6 @@
 class SceneManager
 {
 public:
-    struct Params
-    {
-        DirectX12*          pDx12           = nullptr;
-        OrderedCanvasLayer* pLayer          = nullptr;
-        #ifdef _DEBUG
-        ImGuiManager*       pImGuiManager   = nullptr;
-        #endif // _DEBUG
-    };
-
     SceneManager(SceneManager const&) = delete;
     void operator=(SceneManager const&) = delete;
     SceneManager(SceneManager&&) = delete;
@@ -45,6 +38,12 @@ public:
     /// </summary>
     /// <param name="pSceneFactory">シーンファクトリ。</param>
     void SetSceneFactory(ISceneFactory* pSceneFactory);
+
+    /// <summary>
+    /// シーン遷移エグゼキューターを設定します。
+    /// </summary>
+    /// <param name="pTransitionExecutor">設定するシーン遷移エグゼキューターへのポインター。</param>
+    void SetTransitionExecutor(SceneTransitionExecutor* pTransitionExecutor);
 
     /// <summary>
     /// 次回シーン生成に渡す引数を設定します。
@@ -84,6 +83,14 @@ public:
     /// <param name="sceneName">遷移先シーン名</param>
     /// <param name="transition">トランジションインスタンス</param>
     void ReserveScene(const std::string& sceneName, std::unique_ptr<TransBase>&& transition);
+
+    /// <summary>
+    /// 次フレームで遷移するシーンを予約します。(ロードシーン付き)
+    /// </summary>
+    /// <param name="sceneName">遷移先シーン名</param>
+    /// <param name="loadingName">ロードスクリーン名</param>
+    /// <param name="transition">トランジションインスタンス</param>
+    void ReserveScene(const std::string& sceneName, const std::string& loadingName, std::unique_ptr<TransBase>&& transition);
     
     /// <summary>
     /// 開始シーンの予約を行います（設定に基づく）。
@@ -95,7 +102,7 @@ public: /// シーン動作
     /// <summary>
     /// シーンマネージャを初期化します。
     /// </summary>
-    void Initialize(const Params& param);
+    void Initialize();
     
     /// <summary>
     /// シーンの更新を行います（遷移処理を含む）。
@@ -111,6 +118,12 @@ public: /// シーン動作
     /// シーン終了処理を行います。
     /// </summary>
     void Finalize();
+
+    /// <summary>
+    /// シーンを事前読み込みします。
+    /// </summary>
+    /// <param name="sceneName">事前読み込みするシーンの名前。</param>
+    void ScenePreload(const std::string& sceneName, TaskExecutor& taskExec);
 
 
 private:
@@ -136,16 +149,16 @@ private:
 
     bool isReserveScene_ = false;
 
-    Params parameters_ = {};
-
     std::string nextSceneName_;
     std::unique_ptr<SceneBase> pCurrentScene_ = nullptr;
     std::unique_ptr<ISceneArgs> pSceneArgs_ = nullptr;
+    /// 一時保持用のインスタンス。 ChangeSceneでCurrentScene_に移動する。
+    std::unique_ptr<ILoadableScene> pPreloadedScene_ = nullptr;
     std::unordered_map<std::string, std::any> initialArgs_;
 
 private: /// 他クラスのインスタンス
     ISceneFactory* pSceneFactory_ = nullptr;
-    std::unique_ptr<SceneTransitionExecutor> pTransitionExecutor_ = nullptr;
+    SceneTransitionExecutor* pTransitionExecutor_ = nullptr;
 
     ModelManager* pModelManager_ = nullptr;
 };

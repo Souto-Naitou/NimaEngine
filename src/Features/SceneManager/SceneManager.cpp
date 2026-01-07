@@ -12,6 +12,11 @@ void SceneManager::SetSceneFactory(ISceneFactory* pSceneFactory)
     pSceneFactory_ = pSceneFactory;
 }
 
+void SceneManager::SetTransitionExecutor(SceneTransitionExecutor* pTransitionExecutor)
+{
+    pTransitionExecutor_ = pTransitionExecutor;
+}
+
 void SceneManager::SetSceneArgs(std::unique_ptr<ISceneArgs> pSceneArgs)
 {
     pSceneArgs_ = std::move(pSceneArgs);
@@ -39,29 +44,22 @@ void SceneManager::ReserveScene(const std::string& sceneName, std::unique_ptr<Tr
     pTransitionExecutor_->Run(sceneName, std::move(transition));
 }
 
+void SceneManager::ReserveScene(const std::string& sceneName, const std::string& loadingName, std::unique_ptr<TransBase>&& transition)
+{
+    this->PackSceneArgs();
+    pTransitionExecutor_->Run(sceneName, loadingName, std::move(transition), pSceneArgs_.get());
+}
+
 void SceneManager::ReserveStartupScene()
 {
     auto& cfgData = ConfigManager::GetInstance()->GetConfigData();
     this->ReserveScene(cfgData.start_scene);
 }
 
-void SceneManager::Initialize(const Params& param)
+void SceneManager::Initialize()
 {
-    parameters_ = param;
-
     DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SceneManager::ImGui, this), true);
     pSceneArgs_ = std::make_unique<SceneArgs>();
-
-    pTransitionExecutor_ = std::make_unique<SceneTransitionExecutor>();
-    Canvas::Params canvasParam = {};
-    canvasParam.name = "SceneTransitionCanvas";
-    canvasParam.pDx12 = parameters_.pDx12;
-    canvasParam.pCubemapSystem = nullptr;
-    #ifdef _DEBUG
-    canvasParam.pImGuiManager = param.pImGuiManager;
-    #endif // _DEBUG
-    pTransitionExecutor_->Initialize(canvasParam, param.pLayer);
-
     this->ReserveStartupScene();
 }
 
@@ -103,6 +101,13 @@ void SceneManager::Finalize()
     DebugManager::GetInstance()->DeleteComponent("Core", name_);
 }
 
+void SceneManager::ScenePreload(const std::string& sceneName, TaskExecutor& taskExec)
+{
+    assert(pSceneFactory_);
+    pPreloadedScene_ = pSceneFactory_->CreateLoadable(sceneName, pSceneArgs_.get());
+    pPreloadedScene_->PreLoad(taskExec);
+}
+
 void SceneManager::ChangeScene()
 {
     assert(pSceneFactory_);
@@ -114,15 +119,25 @@ void SceneManager::ChangeScene()
 
     this->PackSceneArgs();
 
-    pCurrentScene_ = pSceneFactory_->CreateScene(nextSceneName_, pSceneArgs_.get());
-    pCurrentScene_->Initialize();
+    if (pPreloadedScene_)
+    {
+        pCurrentScene_ = std::move(pPreloadedScene_);
+        pPreloadedScene_ = nullptr;
+        pCurrentScene_->Initialize();
+        return;
+    }
+    else
+    {
+        pCurrentScene_ = pSceneFactory_->Create(nextSceneName_, pSceneArgs_.get());
+        pCurrentScene_->Initialize();
+    }
 }
 
 void SceneManager::ImGui()
 {
 #ifdef _DEBUG
 
-    ImGui::InputText("Next Scene Name", buffer, 128);
+    ImGui::InputText("Next Scene Name", buffer, 128, ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::SameLine();
     if (ImGui::Button("Change"))
     {

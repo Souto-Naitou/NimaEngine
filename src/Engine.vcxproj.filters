@@ -716,6 +716,8 @@
     </ClCompile>
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp" />
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp" />
+    <ClCompile Include="drawable\font\NumericView.cpp" />
+    <ClCompile Include="Features\font\FontLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1156,6 +1158,8 @@
     <ClInclude Include="io\loader\TaskExecutor.h" />
     <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
     <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
+    <ClInclude Include="drawable\font\NumericView.h" />
+    <ClInclude Include="Features\font\FontLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

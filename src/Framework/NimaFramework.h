@@ -4,7 +4,7 @@
 #include <DebugTools/Logger/Logger.h>
 #include <Features/Audio/AudioManager.h>
 #include <Features/Input/Input.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
@@ -95,7 +95,7 @@ protected:
     ConfigManager*                  pConfigManager_             = nullptr;
     Logger*                         pLogger_                    = nullptr;
     DebugManager*                   pDebugManager_              = nullptr;
-    WinSystem*                      pWinSystem_                 = nullptr;
+    Window*                      pWinSystem_                 = nullptr;
     SRVManager*                     pSRVManager_                = nullptr;
     TextureManager*                 pTextureManager_            = nullptr;
     SceneManager*                   pSceneManager_              = nullptr;

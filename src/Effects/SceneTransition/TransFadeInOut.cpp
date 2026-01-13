@@ -2,7 +2,7 @@
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #include <Features/SceneManager/SceneManager.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <MathExtension/mathExtension.h>
 #include <cmath>
 
@@ -16,7 +16,7 @@ void TransFadeInOut::Initialize()
     sprite_ = std::make_unique<Sprite>();
     sprite_->Initialize("white1x1.png");
     sprite_->SetColor({ 0,0,0,0 });
-    sprite_->SetSize({ WinSystem::clientWidth, WinSystem::clientHeight });
+    sprite_->SetSize({ Window::clientWidth, Window::clientHeight });
     timer_.Start();
     pDebugEntry_ = std::make_unique<DebugEntry<TransFadeInOut>>("Transition", "FadeInOut", this, false);
 }

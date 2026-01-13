@@ -16,7 +16,7 @@
 #endif // _DEBUG
 
 #include <dxcapi.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <config/EngineSetting.h>
 #include "Helper/DX12HeapHelper.h"
 #pragma comment(lib, "dxcompiler.lib")
@@ -120,8 +120,8 @@ void DirectX12::CreateSwapChainAndResource()
 {
     /// スワップチェーンの設定
     swapChainDesc_ = {};
-    swapChainDesc_.Width            = WinSystem::clientWidth;                   // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
-    swapChainDesc_.Height           = WinSystem::clientHeight;                  // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+    swapChainDesc_.Width            = Window::clientWidth;                   // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
+    swapChainDesc_.Height           = Window::clientHeight;                  // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
     swapChainDesc_.Format           = NimaEngine::Config::kRenderTargetFormat; // 色の形式
     swapChainDesc_.SampleDesc.Count = 1;                                        // マルチサンプルしない
     swapChainDesc_.BufferUsage      = DXGI_USAGE_RENDER_TARGET_OUTPUT;          // 描画のターゲットとして利用する
@@ -306,7 +306,7 @@ void DirectX12::CreateDSVAndSettingState()
 {
     /// リソースの生成
     Microsoft::WRL::ComPtr<ID3D12Resource> tempResource = nullptr;
-    tempResource = DX12Helper::CreateDepthStencilTextureResource(device_, WinSystem::clientWidth, WinSystem::clientHeight);
+    tempResource = DX12Helper::CreateDepthStencilTextureResource(device_, Window::clientWidth, Window::clientHeight);
 
     DX12Resource::Params params{};
     params.format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -347,8 +347,8 @@ void DirectX12::CreateFenceAndEvent()
 void DirectX12::SetViewportAndScissorRect()
 {
     /// ビューポート
-    viewport_.Width    = static_cast<FLOAT>(WinSystem::clientWidth);
-    viewport_.Height   = static_cast<FLOAT>(WinSystem::clientHeight);
+    viewport_.Width    = static_cast<FLOAT>(Window::clientWidth);
+    viewport_.Height   = static_cast<FLOAT>(Window::clientHeight);
     viewport_.TopLeftX = 0;
     viewport_.TopLeftY = 0;
     viewport_.MinDepth = 0.0f;
@@ -357,9 +357,9 @@ void DirectX12::SetViewportAndScissorRect()
     /// シザー矩形
     // 基本的にビューポートと同じ矩形が構成されるようにする
     scissorRect_.left   = 0;
-    scissorRect_.right  = WinSystem::clientWidth;
+    scissorRect_.right  = Window::clientWidth;
     scissorRect_.top    = 0;
-    scissorRect_.bottom = WinSystem::clientHeight;
+    scissorRect_.bottom = Window::clientHeight;
 }
 
 void DirectX12::CreateDirectXShaderCompiler()
@@ -555,8 +555,8 @@ void DirectX12::ResizeBuffers()
     swapChain_->GetDesc1(&desc);
     hr_ = swapChain_->ResizeBuffers(
         2,
-        WinSystem::clientWidth,
-        WinSystem::clientHeight,
+        Window::clientWidth,
+        Window::clientHeight,
         desc.Format,
         desc.Flags
     );
@@ -590,10 +590,10 @@ void DirectX12::ResizeBuffers()
     backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();
 
     // ビューポート・シザーも更新
-    viewport_.Width     = static_cast<float>(WinSystem::clientWidth);
-    viewport_.Height    = static_cast<float>(WinSystem::clientHeight);
-    scissorRect_.right  = static_cast<LONG>(WinSystem::clientWidth);
-    scissorRect_.bottom = static_cast<LONG>(WinSystem::clientHeight);
+    viewport_.Width     = static_cast<float>(Window::clientWidth);
+    viewport_.Height    = static_cast<float>(Window::clientHeight);
+    scissorRect_.right  = static_cast<LONG>(Window::clientWidth);
+    scissorRect_.bottom = static_cast<LONG>(Window::clientHeight);
 
     auto& cl = commandLists_[DirectX12::CommandListType::Common].begin()->second;
     cl->RSSetViewports(1, &viewport_);

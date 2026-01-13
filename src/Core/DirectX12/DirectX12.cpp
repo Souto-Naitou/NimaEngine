@@ -1,7 +1,7 @@
 #include "DirectX12.h"
 
 #include <Utility/ConvertString/ConvertString.h>        // wideとの互換
-#include <Core/Win32/WinSystem.h>                       // Window関連
+#include <Core/Window/Window.h>                          // Window関連
 #include <Core/DirectX12/Helper/DX12Helper.h>           // ヘルパー
 #include <Core/DirectX12/SRVManager.h>                  // SRV管理
 
@@ -44,7 +44,7 @@ void DirectX12::Initialize()
     pLogger_ = Logger::GetInstance();
 
     // ウィンドウハンドルを取得
-    hwnd_ = WinSystem::GetInstance()->GetHwnd();
+    hwnd_ = Window::GetInstance()->GetHwnd();
 
     hr_ = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
 

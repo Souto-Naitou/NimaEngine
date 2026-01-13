@@ -1,6 +1,6 @@
 #include "PostEffectHelper.h"
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <utility>
@@ -14,8 +14,8 @@ void Helper::CreateRenderTexture(DirectX12* pDx12, ID3D12Device* pDevice, DX12Re
     {
         auto temp = DX12Helper::CreateResourceForRenderTarget(
             pDevice,
-            WinSystem::clientWidth,
-            WinSystem::clientHeight,
+            Window::clientWidth,
+            Window::clientHeight,
             kFormat,
             NimaEngine::Config::kEditorBGColor
         );

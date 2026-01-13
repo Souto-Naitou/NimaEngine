@@ -2,7 +2,7 @@
 
 #ifdef _DEBUG
 
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
@@ -19,7 +19,7 @@ void ImGuiManager::Initialize()
     SRVManager* srvManager = SRVManager::GetInstance();
     srvIndex_ = srvManager->Allocate();
 
-    WinSystem* pWin32App = WinSystem::GetInstance();
+    Window* pWin32App = Window::GetInstance();
     ID3D12Device* device = pDx12_->GetDevice();
     const DXGI_SWAP_CHAIN_DESC1& swapChainDesc = pDx12_->GetSwapChainDesc();
     srvDescHeap_ = srvManager->GetDescriptorHeap();
@@ -59,11 +59,11 @@ void ImGuiManager::Finalize()
 
 void ImGuiManager::OnResizedBuffers()
 {
-    io_->DisplaySize.x = static_cast<float>(WinSystem::clientWidth);
-    io_->DisplaySize.y = static_cast<float>(WinSystem::clientHeight);
+    io_->DisplaySize.x = static_cast<float>(Window::clientWidth);
+    io_->DisplaySize.y = static_cast<float>(Window::clientHeight);
 
-    float scaleX = static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::preClientWidth);
-    float scaleY = static_cast<float>(WinSystem::clientHeight) / static_cast<float>(WinSystem::preClientHeight);
+    float scaleX = static_cast<float>(Window::clientWidth) / static_cast<float>(Window::preClientWidth);
+    float scaleY = static_cast<float>(Window::clientHeight) / static_cast<float>(Window::preClientHeight);
 
     io_->DisplayFramebufferScale = ImVec2(scaleX, scaleY);
 

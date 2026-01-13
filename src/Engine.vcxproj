@@ -228,7 +228,7 @@
     <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp" />
     <ClCompile Include="Core\DirectX12\TextureManager.cpp" />
     <ClCompile Include="Core\DirectX12\DX12Resource\DX12Resource.cpp" />
-    <ClCompile Include="Core\Win32\WinSystem.cpp" />
+    <ClCompile Include="Core\Window\Window.cpp" />
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp" />
     <ClCompile Include="DebugTools\EventTimer\EventTimer.cpp" />
     <ClCompile Include="DebugTools\ImGuiManager\ImGuiManager.cpp" />
@@ -353,7 +353,7 @@
     <ClInclude Include="Core\DirectX12\TextureManager.h" />
     <ClInclude Include="Core\DirectX12\DX12Resource\DX12Resource.h" />
     <ClInclude Include="Core\Localization\LanguageData.h" />
-    <ClInclude Include="Core\Win32\WinSystem.h" />
+    <ClInclude Include="Core\Window\Window.h" />
     <ClInclude Include="DebugTools\DebugEntry\DebugEntry.h" />
     <ClInclude Include="DebugTools\DebugManager\DebugManager.h" />
     <ClInclude Include="DebugTools\EventTimer\EventTimer.h" />
@@ -467,6 +467,7 @@
     <ClInclude Include="Interfaces\ISceneFactory.h" />
     <ClInclude Include="Math\Functions.hpp" />
     <ClInclude Include="Math\Transform.h" />
+    <ClInclude Include="Math\ViewportUnits.hpp" />
     <ClInclude Include="Presets\Object3d\Grid\Preset_Grid.h" />
     <ClInclude Include="Scene\Args\SceneArgs.h" />
     <ClInclude Include="Scene\SceneBase.h" />

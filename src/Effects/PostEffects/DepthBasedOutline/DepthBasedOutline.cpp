@@ -4,7 +4,7 @@
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <imgui.h>
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
@@ -243,7 +243,7 @@ void DepthBasedOutline::CreateResourceCBuffer()
 
     // 初期化
     pOption_->weightMultiply = 1.0f;
-    auto projection = Matrix4x4::PerspectiveFovMatrix(0.45f, static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::clientHeight), 0.1f, 1000.0f);
+    auto projection = Matrix4x4::PerspectiveFovMatrix(0.45f, static_cast<float>(Window::clientWidth) / static_cast<float>(Window::clientHeight), 0.1f, 1000.0f);
     pMaterial_->projectionInverse = projection.Inverse();
 }
 

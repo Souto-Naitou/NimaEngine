@@ -7,7 +7,7 @@
 /// <summary>
 /// Windowsアプリ統合
 /// </summary>
-class WinSystem
+class Window
 {
 public:
     static uint32_t clientWidth;
@@ -15,12 +15,12 @@ public:
     static uint32_t preClientWidth;
     static uint32_t preClientHeight;
 
-    WinSystem(const WinSystem&) = delete;
-    WinSystem(const WinSystem&&) = delete;
-    WinSystem& operator=(const WinSystem&) = delete;
-    WinSystem& operator=(const WinSystem&&) = delete;
+    Window(const Window&) = delete;
+    Window(const Window&&) = delete;
+    Window& operator=(const Window&) = delete;
+    Window& operator=(const Window&&) = delete;
 
-    static WinSystem* GetInstance() { static WinSystem instance;return &instance; };
+    static Window* GetInstance() { static Window instance;return &instance; };
 
     HWND GetHwnd() const { return hwnd_; }
     HINSTANCE GetInstanceHandle() const { return wc_.hInstance; }
@@ -34,8 +34,8 @@ public:
     bool IsResized();
 
 private:
-    WinSystem() = default;
-    ~WinSystem() = default;
+    Window() = default;
+    ~Window() = default;
 
     static LRESULT __stdcall WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 

@@ -3,7 +3,7 @@
 #include <Core/DirectX12/Helper/DX12HeapHelper.h>
 #include <DebugTools/Logger/Logger.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
 #include <config/EngineSetting.h>
 #include <Core/DirectX12/BlendDesc.h>
@@ -173,8 +173,8 @@ void SpriteSystem::CreatePipelineState()
     IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
     IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
     IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
-    uint32_t clientWidth = WinSystem::clientWidth;
-    uint32_t clientHeight = WinSystem::clientHeight;
+    uint32_t clientWidth = Window::clientWidth;
+    uint32_t clientHeight = Window::clientHeight;
 
     /// InputLayout
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};

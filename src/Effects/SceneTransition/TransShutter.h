@@ -4,7 +4,7 @@
 #include <string>
 #include <drawable/sprite/Sprite.h>
 #include <Features/Animation/AnimationTween.hpp>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
 #include <array>
@@ -62,7 +62,6 @@ private:
     } phase_ = Phase::End;
 
     static constexpr float kDuration_ = 2.0f;
-    const float kHalfHeight_ = WinSystem::clientHeight / 2.0f;
 
     std::unique_ptr<Sprite> pSpriteUpper_ = nullptr;
     std::unique_ptr<Sprite> pSpriteLower_ = nullptr;

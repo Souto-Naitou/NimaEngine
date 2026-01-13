@@ -1,7 +1,7 @@
 #include "./Bar3d.h"
-#include <Core/Win32/WinSystem.h>
 #include <Matrix4x4.h>
 #include <Vector3.h>
+#include <Math/ViewportUnits.hpp>
 
 void Bar3d::Initialize(const RGBA& colorContext, const RGBA& colorBG)
 {
@@ -58,7 +58,7 @@ Vector2 Bar3d::GetHeadUpPositionOnScreen(const Vector3& targetPos, const Vector2
     pos3d.y += offsetY;
 
     const auto& vpMatrix    = camera.GetViewProjectionMatrix();
-    auto        vMatrix     = Matrix4x4::ViewportMatrix(0, 0, static_cast<float>(WinSystem::clientWidth), static_cast<float>(WinSystem::clientHeight), 0.0f, 1.0f);
+    auto        vMatrix     = Matrix4x4::ViewportMatrix(0, 0, 100.0_vw, 100.0_vh, 0.0f, 1.0f);
     auto        vpvMatrix   = vpMatrix * vMatrix;
     auto        pos2d       = FMath::Transform(pos3d, vpvMatrix);
 

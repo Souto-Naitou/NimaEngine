@@ -1,5 +1,5 @@
 #include "GameEye.h"
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 
 #ifdef _DEBUG
@@ -9,7 +9,7 @@
 GameEye::GameEye()
     : transform_({ Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f) })
     , fovY_(0.45f)
-    , aspectRatio_(static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::clientHeight))
+    , aspectRatio_(static_cast<float>(Window::clientWidth) / static_cast<float>(Window::clientHeight))
     , nearClip_(0.1f)
     , farClip_(1000.0f)
     , wMatrix_(Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate))

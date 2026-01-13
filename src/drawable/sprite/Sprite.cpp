@@ -10,7 +10,7 @@
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <cmath>
 
 Sprite::Sprite()
@@ -86,8 +86,8 @@ void Sprite::Update()
     isUpdateCalled_ = true;
     #endif // _DEBUG
 
-    uint32_t clientWidth = WinSystem::clientWidth;
-    uint32_t clientHeight = WinSystem::clientHeight;
+    uint32_t clientWidth = Window::clientWidth;
+    uint32_t clientHeight = Window::clientHeight;
 
     metadata_ = &this->GetMetadata();
 

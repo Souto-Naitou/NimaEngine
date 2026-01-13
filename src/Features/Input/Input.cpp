@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <stdexcept>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -329,7 +329,7 @@ void Input::UpdateCursorPosition()
     POINT point;
     if (GetCursorPos(&point))
     {
-        ScreenToClient(WinSystem::GetInstance()->GetHwnd(), &point);
+        ScreenToClient(Window::GetInstance()->GetHwnd(), &point);
         point.x -= viewportOffset_.x;
         point.y -= viewportOffset_.y;
         mousePosition_ = point;
@@ -337,7 +337,7 @@ void Input::UpdateCursorPosition()
 
     // 異なる画面サイズ用に補正をかける (縦横比が同じである前提)
     if (viewportSize_.cy == 0) return; // ゼロ除算防止
-    float ratio = static_cast<float>(WinSystem::clientHeight) / static_cast<float>(viewportSize_.cy);
+    float ratio = static_cast<float>(Window::clientHeight) / static_cast<float>(viewportSize_.cy);
     mousePosition_.x = static_cast<LONG>(static_cast<float>(mousePosition_.x) * ratio);
     mousePosition_.y = static_cast<LONG>(static_cast<float>(mousePosition_.y) * ratio);
 }

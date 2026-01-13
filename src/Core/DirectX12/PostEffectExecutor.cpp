@@ -1,7 +1,7 @@
 #include "PostEffectExecutor.h"
 
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 

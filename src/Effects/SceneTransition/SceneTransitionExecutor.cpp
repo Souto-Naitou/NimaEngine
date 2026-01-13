@@ -1,8 +1,6 @@
 #include "SceneTransitionExecutor.h"
 #include <Features/Layer/CanvasScope.h>
 #include <cassert>
-#include "./STEUpdateWithoutLoading.cpp"
-#include "./STEUpdateWithLoading.cpp"
 
 void SceneTransitionExecutor::Initialize(const Canvas::Params& canvasParams, OrderedCanvasLayer* pLayer)
 {

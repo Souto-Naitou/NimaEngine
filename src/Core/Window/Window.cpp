@@ -1,4 +1,4 @@
-#include "WinSystem.h"
+#include "Window.h"
 #include <cassert>
 
 #include <NiGui/NiGui.h>
@@ -11,21 +11,21 @@
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif // _DEBUG
 
-uint32_t WinSystem::clientWidth     = 1600;
-uint32_t WinSystem::clientHeight    = 900;
-uint32_t WinSystem::preClientWidth  = 1600;
-uint32_t WinSystem::preClientHeight = 900;
+uint32_t Window::clientWidth     = 1600;
+uint32_t Window::clientHeight    = 900;
+uint32_t Window::preClientWidth  = 1600;
+uint32_t Window::preClientHeight = 900;
 
-bool WinSystem::isMoving_           = false;
-bool WinSystem::isResized_          = false;
-bool WinSystem::isFullScreen_       = false;
+bool Window::isMoving_           = false;
+bool Window::isResized_          = false;
+bool Window::isFullScreen_       = false;
 
-void WinSystem::Initialize()
+void Window::Initialize()
 {
     HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
     if (FAILED(hr)) assert(false && "COMの初期化失敗");
 
-    wc_.lpfnWndProc   = WinSystem::WindowProcedure;
+    wc_.lpfnWndProc   = Window::WindowProcedure;
     wc_.lpszClassName = L"DXWindowClass";
     wc_.hInstance     = GetModuleHandle(nullptr);
     wc_.hCursor       = LoadCursor(nullptr, IDC_ARROW);
@@ -37,13 +37,13 @@ void WinSystem::Initialize()
     title_            = ConvertString(cfgData.window_title);
 }
 
-void WinSystem::Finalize() const
+void Window::Finalize() const
 {
     CloseWindow(hwnd_);
     CoUninitialize();
 }
 
-void WinSystem::ShowWnd()
+void Window::ShowWnd()
 {
     RECT wrc = { 0,0,static_cast<LONG>(clientWidth), static_cast<LONG>(clientHeight) };
     long flag = WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX;
@@ -64,7 +64,7 @@ void WinSystem::ShowWnd()
     ShowWindow(hwnd_, SW_SHOW);
 }
 
-UINT WinSystem::GetMsg()
+UINT Window::GetMsg()
 {
     // Windowにメッセージが来てたら最優先で処理させる
     if(PeekMessage(&msg_, NULL, 0, 0, PM_REMOVE))
@@ -75,7 +75,7 @@ UINT WinSystem::GetMsg()
     return msg_.message;
 }
 
-void WinSystem::ToggleFullScreen()
+void Window::ToggleFullScreen()
 {
     isFullScreen_ = !isFullScreen_;
     if(isFullScreen_)
@@ -97,7 +97,7 @@ void WinSystem::ToggleFullScreen()
     }
 }
 
-bool WinSystem::IsResized()
+bool Window::IsResized()
 {
     if(isResized_)
     {
@@ -127,7 +127,7 @@ bool WinSystem::IsResized()
     return false;
 }
 
-LRESULT CALLBACK WinSystem::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Window::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     NiGui::NiGui_WndProcHandler(hwnd, msg, wparam, lparam);
 

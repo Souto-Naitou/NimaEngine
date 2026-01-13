@@ -373,6 +373,18 @@
     <Filter Include="Feature\Event">
       <UniqueIdentifier>{5d9bd20b-26a0-4fec-bb43-cf77d179c10f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Drawable\Font">
+      <UniqueIdentifier>{3eb537d9-ae5a-41ee-9425-1299a018a97f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Screen">
+      <UniqueIdentifier>{c8d7b7c4-ddac-4900-bb24-72d05dba1b46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Font">
+      <UniqueIdentifier>{2972a9eb-a603-4dbc-84c3-c79eef9b024f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{1c516a18-2530-44f5-af79-d75c33710602}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -429,7 +441,7 @@
     <ClCompile Include="DebugTools\Logger\Logger.cpp">
       <Filter>DebugTools\Logger</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Win32\WinSystem.cpp">
+    <ClCompile Include="Core\Window\Window.cpp">
       <Filter>Core\WinSystem</Filter>
     </ClCompile>
     <ClCompile Include="Features\GameEye\GameEye.cpp">
@@ -714,10 +726,18 @@
     <ClCompile Include="Math\Easing.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp" />
-    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp" />
-    <ClCompile Include="drawable\font\NumericView.cpp" />
-    <ClCompile Include="Features\font\FontLayout.cpp" />
+    <ClCompile Include="drawable\font\NumericView.cpp">
+      <Filter>Drawable\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\font\FontLayout.cpp">
+      <Filter>Feature\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp">
+      <Filter>Effect\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
+      <Filter>Effect\SceneTransition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -783,7 +803,7 @@
     <ClInclude Include="Utility\ConvertString\ConvertString.h">
       <Filter>Utility\ConvertString</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Win32\WinSystem.h">
+    <ClInclude Include="Core\Window\Window.h">
       <Filter>Core\WinSystem</Filter>
     </ClInclude>
     <ClInclude Include="Features\GameEye\GameEye.h">
@@ -1155,11 +1175,24 @@
     <ClInclude Include="Math\Easing.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="io\loader\TaskExecutor.h" />
-    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
-    <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
-    <ClInclude Include="drawable\font\NumericView.h" />
-    <ClInclude Include="Features\font\FontLayout.h" />
+    <ClInclude Include="drawable\font\NumericView.h">
+      <Filter>Drawable\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\screen\IntermediateScreenBase.h">
+      <Filter>Feature\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\font\FontLayout.h">
+      <Filter>Feature\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="io\loader\TaskExecutor.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\ViewportUnits.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

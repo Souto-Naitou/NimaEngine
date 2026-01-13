@@ -1,6 +1,6 @@
 #include "Canvas.h"
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Config/EngineSetting.h>
 #include <imgui.h>
 #include "CurrentCanvas.h"
@@ -17,8 +17,8 @@ void Canvas::Initialize(const Canvas::Params& params)
     /// レンダーターゲット用リソースの作成
     auto tempResource = DX12Helper::CreateResourceForRenderTarget(
         params.pDx12->GetDevice(),
-        WinSystem::clientWidth,
-        WinSystem::clientHeight,
+        Window::clientWidth,
+        Window::clientHeight,
         NimaEngine::Config::kRenderTargetFormat,
         NimaEngine::Config::kEditorBGColor
     );
@@ -156,7 +156,7 @@ void Canvas::ImGuiPreview()
     #ifdef _DEBUG
 
     ImVec2 imageSize = {};
-    float aspect = static_cast<float>(WinSystem::clientWidth) / static_cast<float>(WinSystem::clientHeight);
+    float aspect = static_cast<float>(Window::clientWidth) / static_cast<float>(Window::clientHeight);
     auto cliSize = ImGui::GetContentRegionAvail();
     if (aspect >= 1.0f)
     {

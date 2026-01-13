@@ -1,4 +1,8 @@
 #include "TransShutter.h"
+#include <Math/ViewportUnits.hpp>
+#include <Math/Easing.h>
+
+using namespace Math::Viewport;
 
 void TransShutter::Initialize()
 {
@@ -28,7 +32,7 @@ void TransShutter::Update()
 
     /// スプライトの位置更新
     pSpriteUpper_->SetPosition({ 0.0f, deltaY });
-    pSpriteLower_->SetPosition({ 0.0f, WinSystem::clientHeight - deltaY });
+    pSpriteLower_->SetPosition({ 0.0f, 100.0_vh - deltaY });
     pSpriteUpper_->Update();
     pSpriteLower_->Update();
 }
@@ -77,8 +81,8 @@ void TransShutter::AnimationInitialize()
 {
     float halfDuration = kDuration_ / 2.0f;
 
-    pTweenIn_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, 0.0f, kHalfHeight_);
-    pTweenOut_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, kHalfHeight_, 0.0f);
+    pTweenIn_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, 0.0f, 50.0_vh);
+    pTweenOut_ = std::make_unique<AnimationTween<float>>(0.0f, halfDuration, 50.0_vh, 0.0f);
 
     // シーン切り替え用のコールバックを設定
     auto finish = [this]()
@@ -87,15 +91,10 @@ void TransShutter::AnimationInitialize()
         phase_ = Phase::End;
     };
 
-    auto easeInOutCubic = [](float t)
-    {
-        return t < 0.5f ? 4.0f * std::powf(t, 3) : 1.0f - std::powf(-2.0f * t + 2.0f, 3) / 2.0f;
-    };
-
     pTweenIn_->SetOnFinished(finish);
     pTweenOut_->SetOnFinished(finish);
-    pTweenIn_->SetTransitionFunction(easeInOutCubic);
-    pTweenOut_->SetTransitionFunction(easeInOutCubic);
+    pTweenIn_->SetTransitionFunction(Math::Easing::EaseInOutCubic);
+    pTweenOut_->SetTransitionFunction(Math::Easing::EaseInOutCubic);
 }
 
 void TransShutter::SpriteInitialize()
@@ -103,14 +102,14 @@ void TransShutter::SpriteInitialize()
     pSpriteUpper_ = std::make_unique<Sprite>();
     pSpriteUpper_->Initialize("white1x1.png");
     pSpriteUpper_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-    pSpriteUpper_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight_ });
+    pSpriteUpper_->SetSize({ 100.0_vw, 50.0_vh });
     pSpriteUpper_->SetAnchorPoint({ 0.0f, 1.0f });
     pSpriteUpper_->SetPosition({ 0.0f, 0.0f });
 
     pSpriteLower_ = std::make_unique<Sprite>();
     pSpriteLower_->Initialize("white1x1.png");
     pSpriteLower_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-    pSpriteLower_->SetSize({ static_cast<float>(WinSystem::clientWidth), kHalfHeight_ });
+    pSpriteLower_->SetSize({ 100.0_vw, 50.0_vh });
     pSpriteLower_->SetAnchorPoint({ 0.0f, 0.0f });
-    pSpriteLower_->SetPosition({ 0.0f, static_cast<float>(WinSystem::clientHeight) });
+    pSpriteLower_->SetPosition({ 0.0f, 100.0_vh });
 }

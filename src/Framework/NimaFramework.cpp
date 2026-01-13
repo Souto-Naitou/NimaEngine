@@ -36,7 +36,7 @@ void NimaFramework::Initialize()
     pDirectX_ = std::make_unique<DirectX12>();
 
     pDebugManager_ = DebugManager::GetInstance();
-    pWinSystem_ = WinSystem::GetInstance();
+    pWinSystem_ = Window::GetInstance();
     pSpriteSystem_ = SpriteSystem::GetInstance();
     pObject3dSystem_ = Object3dSystem::GetInstance();
     pParticleSystem_ = ParticleSystem::GetInstance();
@@ -153,7 +153,7 @@ void NimaFramework::Initialize()
     /// UIの初期化
     D3D12_VIEWPORT vp = pDirectX_->GetViewport();
     NiGui::Initialize({ vp.Width, vp.Height }, { vp.TopLeftX, vp.TopLeftY });
-    NiGui::SetClientSize({WinSystem::clientWidth, WinSystem::clientHeight});
+    NiGui::SetClientSize({Window::clientWidth, Window::clientHeight});
     
     NiGui::SetConfirmSound(pAudioManager_->GetNewAudio("UI", "ui_common_confirm.wav"));
     NiGui::SetHoverSound(pAudioManager_->GetNewAudio("UI", "ui_common_hover.wav"));

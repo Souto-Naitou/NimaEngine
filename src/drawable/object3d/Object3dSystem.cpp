@@ -2,7 +2,7 @@
 #include <DebugTools/Logger/Logger.h>
 #include <cassert>
 #include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12HeapHelper.h>
 #include <config/EngineSetting.h>
@@ -217,8 +217,8 @@ void Object3dSystem::CreateMainPipelineState()
     IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
     IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
     IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
-    uint32_t clientWidth = WinSystem::clientWidth;
-    uint32_t clientHeight = WinSystem::clientWidth;
+    uint32_t clientWidth = Window::clientWidth;
+    uint32_t clientHeight = Window::clientWidth;
 
     /// InputLayout
     inputElementDescs_[0].SemanticName = "POSITION";
@@ -320,8 +320,8 @@ void Object3dSystem::CreateMainPipelineState()
 void Object3dSystem::CreateDepthPipelineState()
 {
     ID3D12Device* device = pDx12_->GetDevice();
-    uint32_t clientWidth = WinSystem::clientWidth;
-    uint32_t clientHeight = WinSystem::clientHeight;
+    uint32_t clientWidth = Window::clientWidth;
+    uint32_t clientHeight = Window::clientHeight;
 
 
     /// BlendDesc

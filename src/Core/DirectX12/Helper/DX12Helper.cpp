@@ -11,7 +11,7 @@
 #include <Core/DirectX12/SRVManager.h>
 #include <d3dx12.h>
 #include <config/EngineSetting.h>
-#include <Core/Win32/WinSystem.h>
+#include <Core/Window/Window.h>
 
 using namespace DX12Helper;
 
@@ -330,8 +330,8 @@ DX12Resource DX12Helper::CreateDX12ResourceForRender(
     {
         auto temp = DX12Helper::CreateResourceForRenderTarget(
             device,
-            WinSystem::clientWidth,
-            WinSystem::clientHeight,
+            Window::clientWidth,
+            Window::clientHeight,
             kFormat,
             NimaEngine::Config::kEditorBGColor
         );

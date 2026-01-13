@@ -30,14 +30,11 @@ void Logger::Initialize()
     auto now = std::chrono::system_clock::now();
     auto now_sec = std::chrono::floor<std::chrono::seconds>(now);
     fileName_ = std::format("{:%Y%m%d_%H%M%S}", now_sec);
-
-    return;
 }
 
 void Logger::Save()
 {
     std::lock_guard<std::mutex> lock(mutex_);
-
     auto now = std::chrono::system_clock::now();
 
     std::string filepath = folderPath_ + fileName_;
@@ -62,8 +59,6 @@ void Logger::Save()
     ofs.close();
 
     logPayload_ = filePayload;
-
-    return;
 }
 
 void Logger::DrawUI()
@@ -94,7 +89,7 @@ void Logger::DrawUI()
 
         ImGui::BeginChild("LogChild", ImVec2(-1, -1), ImGuiChildFlags_Border, flag);
 
-        // 🚀 ImGuiListClipperを使用して高速化
+        // ImGuiListClipperを使用して高速化
         ImGuiListClipper clipper;
         clipper.Begin(static_cast<int>(logData_.size()));
 
@@ -110,7 +105,7 @@ void Logger::DrawUI()
                 if (showFilename_) line += "[" + log.filename + "] ";
                 if (showAction_)   line += "[" + log.action + "] ";
 
-                // ステータスに応じて色を設定
+                /// ステータスに応じて色を設定
                 ImVec4 color = ImVec4(1, 1, 1, 1);
                 if (!log.status.empty())
                 {
@@ -208,6 +203,4 @@ void Logger::LogJson(const std::string& _date, const std::string& _time, const s
     object["Message"] = _message;
 
     jsonValue_["Logs"].push_back(object);
-
-    return;
 }

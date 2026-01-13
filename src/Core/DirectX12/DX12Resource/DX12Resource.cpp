@@ -2,14 +2,11 @@
 
 #include <utility>
 #include <config/EngineSetting.h>
-#include "../SRVManager.h"
 
 DX12Resource::~DX12Resource()
 {
-    if (rtvIndex_ != 0u)
-    {
-        pRTVHeapCounter_->Deallocate(rtvIndex_);
-    }
+    if (srvIndex_ != 0u) pSRVManager_->Deallocate(srvIndex_);
+    if (rtvIndex_ != 0u) pRTVHeapCounter_->Deallocate(rtvIndex_);
 }
 
 void DX12Resource::Initialize(const Params& param)
@@ -22,15 +19,14 @@ void DX12Resource::Initialize(const Params& param)
     }
 
     pRTVHeapCounter_ = param.pRTVCounter;
+    pSRVManager_ = SRVManager::GetInstance();
 }
 
 void DX12Resource::CreateSRV()
 {
-    auto pSRVManager = SRVManager::GetInstance();
-
     /// 割り当て
-    srvIndex_ = pSRVManager->Allocate();
-    pSRVManager->CreateForTexture2D(
+    srvIndex_ = pSRVManager_->Allocate();
+    pSRVManager_->CreateForTexture2D(
         srvIndex_,
         resource_.Get(),
         NimaEngine::Config::kRenderTargetFormat,
@@ -38,13 +34,14 @@ void DX12Resource::CreateSRV()
     );
 
     /// ラッパークラスにSRV情報をセット
-    srvHandleCPU_ = pSRVManager->GetCPUDescriptorHandle(srvIndex_);
-    srvHandleGPU_ = pSRVManager->GetGPUDescriptorHandle(srvIndex_);
+    srvHandleCPU_ = pSRVManager_->GetCPUDescriptorHandle(srvIndex_);
+    srvHandleGPU_ = pSRVManager_->GetGPUDescriptorHandle(srvIndex_);
 }
 
 void DX12Resource::Reset()
 {
-    if (srvIndex_ != 0u) SRVManager::GetInstance()->Deallocate(srvIndex_);
+    if (srvIndex_ != 0u) pSRVManager_->Deallocate(srvIndex_);
+    if (rtvIndex_ != 0u) pRTVHeapCounter_->Deallocate(rtvIndex_);
     
     resource_.Reset();
     stateTracker_.Reset();

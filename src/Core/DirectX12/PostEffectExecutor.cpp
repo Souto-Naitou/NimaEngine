@@ -47,6 +47,10 @@ void PostEffectExecutor::Initialize(DirectX12* pDx12, DX12Resource* pResource, b
 void PostEffectExecutor::Finalize()
 {
     pDx12_->RemoveCommandList(DirectX12::CommandListType::PostEffectExecutor, commandListForDraw_.Get());
+    for (auto& effect : postEffects_)
+    {
+        effect->Finalize();
+    }
 }
 
 void PostEffectExecutor::RegisterCommandListToDirectX12(uint32_t order) const

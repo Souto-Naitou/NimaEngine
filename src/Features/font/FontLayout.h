@@ -23,6 +23,7 @@ public:
     struct Properties
     {
         Vector2 leftTop = { 0.0f, 0.0f };
+        Vector2 anchorPoint = 0.0f;
         float lineSpacing = 0.0f;
         float letterSpacing = 0.0f;
     };
@@ -32,4 +33,5 @@ public:
 
 private:
     Properties properties_;
+    float widthOverall = 0.0f;
 };

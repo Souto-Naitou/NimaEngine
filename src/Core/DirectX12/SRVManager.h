@@ -2,10 +2,11 @@
 
 #include <d3d12.h>
 #include <cstdint>
-#include <Core/DirectX12/DirectX12.h>
 #include <wrl.h>
 #include <string>
 #include <array>
+
+class DirectX12;
 
 /// <summary>
 /// SRV生成クラス 

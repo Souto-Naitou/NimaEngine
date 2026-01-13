@@ -1,10 +1,12 @@
 #include "SRVManager.h"
+#include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/Helper/DX12HeapHelper.h>
 
 #ifdef _DEBUG
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #endif // _DEBUG
+
 
 void SRVManager::Initialize(DirectX12* pDx12)
 {

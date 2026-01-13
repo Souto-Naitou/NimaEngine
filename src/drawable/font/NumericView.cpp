@@ -54,6 +54,7 @@ void NumericView::Update()
     auto layoutResults = fontLayout_.Compute(glyphInfos_);
     for (uint32_t i = 0; i < digitCount; ++i)
     {
+        numberSprites_[i]->SetColor(color_);
         numberSprites_[i]->SetPosition(layoutResults[i].leftTop);
         numberSprites_[i]->SetSize(glyphInfos_[i].size);
         numberSprites_[i]->Update();
@@ -76,6 +77,7 @@ void NumericView::ImGui()
 
     ImGui::DragFloat2("FontLayout LeftTop", &fontLayout_.GetProperties().leftTop.x, 1.0f);
     ImGui::DragFloat("FontLayout LetterSpacing", &fontLayout_.GetProperties().letterSpacing, 0.1f);
+    ImGui::DragFloat2("FontLayout AnchorPoint", &fontLayout_.GetProperties().anchorPoint.x, 0.01f);
     ImGui::DragFloat("FontSize", &fontSizeY_, 0.01f, 1.0f, 1000.0f);
     ImGui::DragInt("Current Number", reinterpret_cast<int*>(&currentNumber_), 1.0f, 0, 1000000);
 
@@ -85,6 +87,11 @@ void NumericView::ImGui()
 void NumericView::SetFontSize(float sizeY)
 {
     fontSizeY_ = sizeY;
+}
+
+void NumericView::SetColor(const Vector4& color)
+{
+    color_ = color;
 }
 
 void NumericView::AddSprite()

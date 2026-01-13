@@ -344,7 +344,7 @@
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
     <ClInclude Include="Core\DirectX12\PostEffectExecutor.h" />
-    <ClInclude Include="Core\DirectX12\IPostEffect.h" />
+    <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
     <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h" />

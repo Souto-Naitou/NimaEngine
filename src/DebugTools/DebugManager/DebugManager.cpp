@@ -240,9 +240,12 @@ void DebugManager::Window_Inspector()
             ImGui::PushID(id_str.c_str());
             {
                 // ウィンドウモード
-                if (component.isWindow && ImGui::Begin(id.c_str(), &component.isEnabled))
+                if (component.isWindow)
                 {
-                    component.function();
+                    if (ImGui::Begin(id.c_str(), &component.isEnabled))
+                    {
+                        component.function();
+                    }
                     ImGui::End();
                 }
                 // デフォルトモード

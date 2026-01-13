@@ -18,7 +18,9 @@ public:
 
     void SetFontSize(float sizeY);
     void SetNumber(uint32_t number) { currentNumber_ = number; }
+    void SetColor(const Vector4& color);
     FontLayout::Properties& GetFontLayoutProperties() { return fontLayout_.GetProperties(); }
+    Vector4 GetColor() const { return color_; }
 
 private:
     void AddSprite();
@@ -33,6 +35,8 @@ private:
     std::vector<GlyphInfo> glyphInfos_;
 
     float fontSizeY_ = 32.0f;
+
+    Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
     uint32_t currentNumber_ = 0;
 };

@@ -939,7 +939,7 @@
     <ClInclude Include="drawable\particle\Emitter\EmitterData.h">
       <Filter>Drawable\Particle\Emitter</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\IPostEffect.h">
+    <ClInclude Include="Effects\PostEffects\IPostEffect.h">
       <Filter>Core\DirectX12\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\Grayscale\Grayscale.h">

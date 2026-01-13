@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/DirectX12/IPostEffect.h>
+#include <Effects/PostEffects/IPostEffect.h>
 #include <wrl/client.h>
 #include <d3d12.h>
 #include <dxcapi.h>

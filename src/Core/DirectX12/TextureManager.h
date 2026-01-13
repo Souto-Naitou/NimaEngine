@@ -11,6 +11,7 @@
 #include <list>
 #include <wrl/client.h>
 #include <filesystem>
+#include <Core/DirectX12/DirectX12.h>
 
 /// <summary>
 /// テクスチャ管理クラス

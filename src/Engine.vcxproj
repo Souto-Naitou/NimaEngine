@@ -236,6 +236,7 @@
     <ClCompile Include="DebugTools\ImGuiTemplates\ImGuiTemplates.cpp" />
     <ClCompile Include="DebugTools\Logger\Logger.cpp" />
     <ClCompile Include="drawable\base\DrawableBase.cpp" />
+    <ClCompile Include="drawable\font\NumericView.cpp" />
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
@@ -266,6 +267,7 @@
     <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp" />
     <ClCompile Include="Features\Event\EventListener.cpp" />
     <ClCompile Include="Features\Event\EventSubscription.cpp" />
+    <ClCompile Include="Features\font\FontLayout.cpp" />
     <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp" />
@@ -342,7 +344,7 @@
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
     <ClInclude Include="Core\DirectX12\PostEffectExecutor.h" />
-    <ClInclude Include="Core\DirectX12\IPostEffect.h" />
+    <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
     <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h" />
@@ -360,6 +362,7 @@
     <ClInclude Include="DebugTools\Logger\Logger.h" />
     <ClInclude Include="DebugTools\ReakChecker.h" />
     <ClInclude Include="drawable\base\DrawableBase.h" />
+    <ClInclude Include="drawable\font\NumericView.h" />
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h" />
     <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h" />
     <ClInclude Include="Effects\PostEffects\BoxFilter\BoxFilter.h" />
@@ -392,6 +395,7 @@
     <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h" />
     <ClInclude Include="Features\Event\EventListener.h" />
     <ClInclude Include="Features\Event\EventSubscription.h" />
+    <ClInclude Include="Features\font\FontLayout.h" />
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />

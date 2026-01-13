@@ -7,6 +7,7 @@
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
 #include <dxgiformat.h>
 #include <Core/DirectX12/RTVHeapCounter.h>
+#include <Core/DirectX12/SRVManager.h>
 
 /// <summary>
 /// ID3D12Resourceと各種DescriptorHandleをまとめたラッパークラス
@@ -50,7 +51,8 @@ public:
     [[nodiscard]] ResourceStateTracker& GetStateTracker() { return stateTracker_; }
 
 private:
-    RTVHeapCounter* pRTVHeapCounter_ = nullptr;
+    RTVHeapCounter* pRTVHeapCounter_    = nullptr;
+    SRVManager*     pSRVManager_        = nullptr;
 
     // Resource
     Microsoft::WRL::ComPtr<ID3D12Resource>  resource_ = nullptr;

@@ -44,9 +44,22 @@ void Audio::Play(bool isLoop)
     AudioManager::GetInstance()->AddSourceVoice(pCurrentSourceVoice_);
 }
 
+void Audio::Stop()
+{
+    if (pCurrentSourceVoice_)
+    {
+        hr_ = pCurrentSourceVoice_->Stop();
+        hr_ = pCurrentSourceVoice_->FlushSourceBuffers();
+    }
+}
+
 void Audio::SetVolume(float volume)
 {
     this->volume_ = volume;
+    if (pCurrentSourceVoice_)
+    {
+        hr_ = pCurrentSourceVoice_->SetVolume(this->volume_);
+    }
 }
 
 float Audio::GetVolume() const

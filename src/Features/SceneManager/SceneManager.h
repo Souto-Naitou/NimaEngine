@@ -125,6 +125,11 @@ public: /// シーン動作
     /// <param name="sceneName">事前読み込みするシーンの名前。</param>
     void ScenePreload(const std::string& sceneName, TaskExecutor& taskExec);
 
+    /// <summary>
+    /// デバッグUIを描画します。
+    /// </summary>
+    void ImGui();
+
 
 private:
     SceneManager() = default;
@@ -133,11 +138,6 @@ private:
     /// 予約されたシーンへ切り替えます。
     /// </summary>
     void ChangeScene();
-    
-    /// <summary>
-    /// デバッグUIを描画します。
-    /// </summary>
-    void ImGui();
     
     /// <summary>
     /// ファクトリーに渡すシーン引数に初期引数をパックします。
@@ -149,16 +149,16 @@ private:
 
     bool isReserveScene_ = false;
 
-    std::string nextSceneName_;
-    std::unique_ptr<SceneBase> pCurrentScene_ = nullptr;
-    std::unique_ptr<ISceneArgs> pSceneArgs_ = nullptr;
+    std::unique_ptr<DebugEntry<SceneManager>>   pDebugEntry_        = nullptr;
+    std::string                                 nextSceneName_;
+    std::unique_ptr<SceneBase>                  pCurrentScene_      = nullptr;
+    std::unique_ptr<ISceneArgs>                 pSceneArgs_         = nullptr;
     /// 一時保持用のインスタンス。 ChangeSceneでCurrentScene_に移動する。
-    std::unique_ptr<ILoadableScene> pPreloadedScene_ = nullptr;
-    std::unordered_map<std::string, std::any> initialArgs_;
+    std::unique_ptr<ILoadableScene>             pPreloadedScene_    = nullptr;
+    std::unordered_map<std::string, std::any>   initialArgs_;
 
 private: /// 他クラスのインスタンス
-    ISceneFactory* pSceneFactory_ = nullptr;
-    SceneTransitionExecutor* pTransitionExecutor_ = nullptr;
-
-    ModelManager* pModelManager_ = nullptr;
+    ISceneFactory*              pSceneFactory_          = nullptr;
+    SceneTransitionExecutor*    pTransitionExecutor_    = nullptr;
+    ModelManager*               pModelManager_          = nullptr;
 };

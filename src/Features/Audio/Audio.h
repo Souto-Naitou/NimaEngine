@@ -51,6 +51,7 @@ public:
 
     void Unload(SoundData* soundData);
     void Play(bool isLoop = false);
+    void Stop();
     void SetVolume(float volume);
     float GetVolume() const;
 

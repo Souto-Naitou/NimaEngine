@@ -2,7 +2,7 @@
 
 #include "DirectX12.h"
 #include "SRVManager.h"
-#include "./IPostEffect.h"
+#include <Effects/PostEffects/IPostEffect.h>
 #include "DX12Resource/DX12Resource.h"
 #include <Effects/PostEffects/.Factory/PostEffectFactory.h>
 

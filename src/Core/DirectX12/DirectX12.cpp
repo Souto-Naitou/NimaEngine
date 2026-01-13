@@ -317,8 +317,6 @@ DirectX12::~DirectX12()
         fence->SetEventOnCompletion(fenceSignalValue, fenceEvent_);
         WaitForSingleObject(fenceEvent_, INFINITE);
     }
-
-    pSRVManager_->Deallocate(gameScreenResource_.GetSRVIndex());
 }
 
 void EngineFeature::SetDirectX12(DirectX12* _pDx12)

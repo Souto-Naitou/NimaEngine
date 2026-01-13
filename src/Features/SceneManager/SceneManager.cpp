@@ -58,7 +58,7 @@ void SceneManager::ReserveStartupScene()
 
 void SceneManager::Initialize()
 {
-    DebugManager::GetInstance()->SetComponent("Core", name_, std::bind(&SceneManager::ImGui, this), true);
+    pDebugEntry_ = std::make_unique<DebugEntry<SceneManager>>("Core", name_, this, true);
     pSceneArgs_ = std::make_unique<SceneArgs>();
     this->ReserveStartupScene();
 }
@@ -97,8 +97,6 @@ void SceneManager::Finalize()
     }
 
     pTransitionExecutor_->Finalize();
-
-    DebugManager::GetInstance()->DeleteComponent("Core", name_);
 }
 
 void SceneManager::ScenePreload(const std::string& sceneName, TaskExecutor& taskExec)
@@ -137,9 +135,12 @@ void SceneManager::ImGui()
 {
 #ifdef _DEBUG
 
-    ImGui::InputText("Next Scene Name", buffer, 128, ImGuiInputTextFlags_EnterReturnsTrue);
+    bool isConfirmed = false;
+    isConfirmed = ImGui::InputText("Next Scene Name", buffer, 128, ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::SameLine();
-    if (ImGui::Button("Change"))
+    isConfirmed = ImGui::Button("Change");
+
+    if (isConfirmed)
     {
         this->ReserveScene(buffer);
     }

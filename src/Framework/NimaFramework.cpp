@@ -130,6 +130,7 @@ void NimaFramework::Initialize()
 
     /// レイヤーの初期化
     pLayer_ = std::make_unique<OrderedCanvasLayer>();
+    pLayer_->Initialize();
 
     /// シーン遷移エグゼキューターの初期化
     Canvas::Params canvasParam =

@@ -9,7 +9,7 @@ void SceneTransitionExecutor::Initialize(const Canvas::Params& canvasParams, Ord
     pCanvas_ = std::make_unique<Canvas>();
     pCanvas_->Initialize(canvasParams);
     pLayer_ = pLayer;
-    pLayer_->AddCanvas(pCanvas_.get(), 100);
+    pLayer_->AddCanvasTop(pCanvas_.get());
 
     updateWOLoading_ = std::make_unique<STEUpdateWithoutLoading>();
     updateWLoading_ = std::make_unique<STEUpdateWithLoading>();

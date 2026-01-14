@@ -9,11 +9,6 @@
 #include <imgui.h>
 #endif // _DEBUG
 
-void Log(const std::string& _message)
-{
-	OutputDebugStringA(_message.c_str());
-	return;
-}
 
 void Logger::Initialize()
 {
@@ -143,27 +138,32 @@ void Logger::DrawUI()
     #endif // _DEBUG
 }
 
-void Logger::LogError(const std::string& _filename, const std::string& _action, const std::string& _message)
+void Logger::LogError(const std::string& filename, const std::string& action, const std::string& message)
 {
-    Log("Error", _filename, _action, _message);
+    Log("Error", filename, action, message);
 }
 
-void Logger::LogWarning(const std::string& _filename, const std::string& _action, const std::string& _message)
+void Logger::LogWarning(const std::string& filename, const std::string& action, const std::string& message)
 {
-    Log("Warning", _filename, _action, _message);
+    Log("Warning", filename, action, message);
 }
 
-void Logger::LogInfo(const std::string& _filename, const std::string& _action, const std::string& _message)
+void Logger::LogInfo(const std::string& filename, const std::string& action, const std::string& message)
 {
-    Log("Info", _filename, _action, _message);
+    Log("Info", filename, action, message);
 }
 
-void Logger::LogForOutput(const std::string& _message)
+void Logger::LogFatal(const std::string& filename, const std::string& action, const std::string& message)
 {
-    OutputDebugStringA(_message.c_str());
+    Log("Fatal", filename, action, message);
 }
 
-void Logger::Log(const std::string& _status, const std::string& _filename, const std::string& _action, const std::string& _message)
+void Logger::LogForOutput(const std::string& message)
+{
+    OutputDebugStringA(message.c_str());
+}
+
+void Logger::Log(const std::string& status, const std::string& filename, const std::string& action, const std::string& message)
 {
     auto now = std::chrono::system_clock::now();
     auto now_sec = std::chrono::floor<std::chrono::seconds>(now);
@@ -175,32 +175,32 @@ void Logger::Log(const std::string& _status, const std::string& _filename, const
     LogData data = {};
     data.date = date;
     data.time = time;
-    data.status = _status;
-    data.filename = _filename;
-    data.action = _action;
-    data.message = _message;
+    data.status = status;
+    data.filename = filename;
+    data.action = action;
+    data.message = message;
 
 
     {
         std::lock_guard<std::mutex> lock(mutex_);
         logData_.emplace_back(data);
-        LogJson(date, time, _status, _filename, _action, _message);
+        LogJson(date, time, status, filename, action, message);
     }
 
-    OutputDebugStringA(std::format("[{}] {} {}, {}, {}, {}\n", _status, date, time, _filename, _action, _message).c_str());
+    OutputDebugStringA(std::format("[{}] {} {}, {}, {}, {}\n", status, date, time, filename, action, message).c_str());
 
     this->Save();
 }
 
-void Logger::LogJson(const std::string& _date, const std::string& _time, const std::string& _status, const std::string& _filename, const std::string& _action, const std::string& _message)
+void Logger::LogJson(const std::string& date, const std::string& time, const std::string& status, const std::string& filename, const std::string& action, const std::string& message)
 {
     auto object = json::object();
-    object["Date"] = _date;
-    object["Time"] = _time;
-    object["Status"] = _status;
-    object["ClassName"] = _filename;
-    object["Action"] = _action;
-    object["Message"] = _message;
+    object["Date"] = date;
+    object["Time"] = time;
+    object["Status"] = status;
+    object["ClassName"] = filename;
+    object["Action"] = action;
+    object["Message"] = message;
 
     jsonValue_["Logs"].push_back(object);
 }

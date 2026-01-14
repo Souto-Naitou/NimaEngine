@@ -67,6 +67,8 @@ public:
     [[nodiscard]]
     inline bool IsEnableManualDraw() const { return isEnableManualDraw_; }
     [[nodiscard]]
+    inline std::string GetName() const { return params_.name; }
+    [[nodiscard]]
     inline const DX12Resource& GetResource() const { return resource_; }
     [[nodiscard]]
     inline PostEffectExecutor& GetPostEffectExecutor() const { return *pPostEffectExecutor_.get(); }

@@ -65,6 +65,12 @@ public:
         const std::string& _message
     );
 
+    void LogFatal(
+        const std::string& _filename,
+        const std::string& _action,
+        const std::string& _message
+    );
+
     void LogForOutput(const std::string& _message);
 
 
@@ -110,3 +116,8 @@ private:
     Logger() = default;
     ~Logger() = default;
 };
+
+#define LOG_ERROR(message)   Logger::GetInstance()->LogError(__FILE__, __FUNCTION__, message)
+#define LOG_WARNING(message) Logger::GetInstance()->LogWarning(__FILE__, __FUNCTION__, message)
+#define LOG_INFO(message)    Logger::GetInstance()->LogInfo(__FILE__, __FUNCTION__, message)
+#define LOG_FATAL(message)   Logger::GetInstance()->LogFatal(__FILE__, __FUNCTION__, message)

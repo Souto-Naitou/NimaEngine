@@ -149,8 +149,8 @@ void PostEffectExecutor::ImGui()
     #ifdef _DEBUG
 
     // staticな変数で状態を保持
-    static const ImVec4 kColorRed(1.0f, 0.0f, 0.0f, 1.0f);
-    static const ImVec4 kColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
+    static constexpr ImVec4 kColorRed(1.0f, 0.0f, 0.0f, 1.0f);
+    static constexpr ImVec4 kColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
 
     if (currentSelectedEffect_ == PostEffectClassName::None) ImGui::BeginDisabled();
     if (ImGui::Button("Add"))

@@ -360,7 +360,7 @@
     <ClInclude Include="DebugTools\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h" />
     <ClInclude Include="DebugTools\Logger\Logger.h" />
-    <ClInclude Include="DebugTools\ReakChecker.h" />
+    <ClInclude Include="DebugTools\LeakChecker.h" />
     <ClInclude Include="drawable\base\DrawableBase.h" />
     <ClInclude Include="drawable\font\NumericView.h" />
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h" />

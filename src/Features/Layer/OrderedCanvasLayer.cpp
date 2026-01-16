@@ -177,11 +177,14 @@ uint32_t OrderedCanvasLayer::AddCanvas(Canvas* canvas)
 {
     uint32_t assignedZOrder = kAutoZBegin_;
 
+    /// kAutoZEnd_より大きい最初の要素を取得 (想定する範囲の境目より大きい値)
     auto it = canvases_.upper_bound(kAutoZEnd_);
 
     if (it != canvases_.begin())
     {
+        /// ここで想定する範囲内にイテレータを移動する
         --it;
+
         if (it->first >= kAutoZEnd_)
         {
             LOG_FATAL("Cannot assign Z-order automatically. The auto-assignment range is full.");
@@ -203,6 +206,7 @@ uint32_t OrderedCanvasLayer::AddCanvas(Canvas* canvas)
             #endif // _DEBUG
         }
 
+        /// 一つ前の要素のZオーダーに+1して割り当てる
         assignedZOrder = it->first + 1;
     }
 

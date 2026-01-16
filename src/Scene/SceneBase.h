@@ -30,6 +30,9 @@ protected:
     OrderedCanvasLayer* pLayer_ = nullptr;      // !< レイヤー
 };
 
+/// <summary>
+/// ロード可能なシーン基底クラス
+/// </summary>
 class ILoadableScene : public SceneBase
 {
 public:
@@ -37,6 +40,6 @@ public:
     ILoadableScene(ISceneArgs* pArgs) : SceneBase(pArgs) {}
     virtual ~ILoadableScene() {}
 
-    /// ロードシーンで実行する処理
+    /// ロードで実行する処理
     virtual void PreLoad(TaskExecutor& executor) = 0;
 };

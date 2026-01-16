@@ -794,7 +794,7 @@
     <ClInclude Include="DebugTools\Logger\Logger.h">
       <Filter>DebugTools\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="DebugTools\ReakChecker.h">
+    <ClInclude Include="DebugTools\LeakChecker.h">
       <Filter>DebugTools</Filter>
     </ClInclude>
     <ClInclude Include="Utility\ConvertString\ConvertString.h">

@@ -95,7 +95,7 @@ protected:
     ConfigManager*                  pConfigManager_             = nullptr;
     Logger*                         pLogger_                    = nullptr;
     DebugManager*                   pDebugManager_              = nullptr;
-    Window*                      pWinSystem_                 = nullptr;
+    Window*                         pWinSystem_                 = nullptr;
     SRVManager*                     pSRVManager_                = nullptr;
     TextureManager*                 pTextureManager_            = nullptr;
     SceneManager*                   pSceneManager_              = nullptr;

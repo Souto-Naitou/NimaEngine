@@ -83,7 +83,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_AMD64;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -127,7 +127,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IMGUI_DISABLE;%(PreprocessorDefinitions);_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IMGUI_DISABLE;%(PreprocessorDefinitions);_AMD64;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -173,7 +173,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IMGUI_DISABLE;%(PreprocessorDefinitions);_AMD64_</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IMGUI_DISABLE;%(PreprocessorDefinitions);_AMD64;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -220,9 +220,11 @@
     <ClCompile Include="Core\DirectX12\Framerate.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp" />
-    <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp" />
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOBuilder.cpp" />
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp" />
     <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp" />
     <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp" />
+    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp" />
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp" />
     <ClCompile Include="Core\DirectX12\SRVManager.cpp" />
     <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp" />
@@ -342,11 +344,15 @@
     <ClInclude Include="Core\DirectX12\Framerate.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOBuilder.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSODesc.h" />
     <ClInclude Include="Core\DirectX12\PostEffectExecutor.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h" />
     <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
-    <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h" />
     <ClInclude Include="Core\DirectX12\SRVManager.h" />
     <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h" />
@@ -378,6 +384,7 @@
     <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h" />
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
@@ -489,7 +496,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
     </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="Core\DirectX12\RootParameters\RootParameters.inl" />
+    <None Include="Core\DirectX12\RootSignature\RootParameters.cpp" />
     <None Include="EngineResources\Shaders\Line.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -661,6 +668,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

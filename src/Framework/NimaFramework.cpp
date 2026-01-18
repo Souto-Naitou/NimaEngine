@@ -51,6 +51,8 @@ void NimaFramework::Initialize()
     pTextSystem_ = TextSystem::GetInstance();
     pAudioManager_ = AudioManager::GetInstance();
     pEventTimer_ = EventTimer::GetInstance();
+    pPSOCache_ = PSOCache::GetInstance();
+    pRootSignatureCache_ = RootSignatureCache::GetInstance();
 
     #ifdef _DEBUG
     pImGuiManager_ = std::make_unique<ImGuiManager>();
@@ -80,12 +82,18 @@ void NimaFramework::Initialize()
     pImGuiManager_->Initialize();
     #endif // _DEBUG
 
-    // デバッグマネージャの初期化
+    /// デバッグマネージャの初期化
     pDebugManager_->SetDirectX12(pDirectX_.get());
 
     /// テクスチャマネージャの初期化
     pTextureManager_->SetDirectX12(pDirectX_.get());
     pTextureManager_->Initialize(pSRVManager_);
+
+    /// ルートシグネチャキャッシュの初期化
+    pRootSignatureCache_->Initialize(pDirectX_->GetDevice());
+
+    /// PSOキャッシュの初期化
+    pPSOCache_->Initialize(pDirectX_.get());
 
     /// スプライト基盤の初期化
     pSpriteSystem_->SetDirectX12(pDirectX_.get());

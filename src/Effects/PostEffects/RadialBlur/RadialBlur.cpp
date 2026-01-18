@@ -7,8 +7,8 @@
 #include <imgui.h>
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
-#include <Core/DirectX12/RootParameters/RootParameters.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/RootSignature/RootParameters.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 #include <config/EngineSetting.h>
 
 void RadialBlur::Initialize(const PostEffectInitParams& desc)
@@ -140,7 +140,7 @@ void RadialBlur::CreateRootSignature()
     D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
     descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-    RootParameters<2> rootParameters = {};
+    RootParameters rootParameters = {};
     rootParameters
         .SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
         .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
@@ -196,14 +196,14 @@ void RadialBlur::CreatePipelineStateObject()
 
     try
     {
-        PipelineStateObject psoBuilder;
+        PSOBuilder psoBuilder;
         psoBuilder.SetRootSignature(rootSignature_.Get())
             .SetInputLayout(inputLayoutDesc)
             .SetVertexShader(vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize())
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
             .SetBlendState(blendDesc.Get())
             .SetRasterizerState(rasterizerDesc)
-            .SetRenderTargetFormats(1, &renderTexture_.GetStateTracker().GetFormat(), DXGI_FORMAT_D24_UNORM_S8_UINT)
+            .SetRenderTargetFormats(1, &NimaEngine::Config::kRenderTargetFormat, DXGI_FORMAT_D24_UNORM_S8_UINT)
             .SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE)
             .SetSampleDesc({ 1, 0 })
             .SetSampleMask(D3D12_DEFAULT_SAMPLE_MASK)

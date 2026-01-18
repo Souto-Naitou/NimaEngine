@@ -22,9 +22,20 @@ public:
         COUNT,      // !< カウント用
     };
 
-    void Initialize(BlendModes _mode);
-    void ChangeMode(BlendModes _mode);
-    const D3D12_BLEND_DESC& Get() const { return desc_; }
+    void Initialize(BlendModes mode);
+    void ChangeMode(BlendModes mode);
+
+    /// <summary>
+    /// 現在のブレンドモードを取得します。
+    /// </summary>
+    /// <returns>現在のブレンドモード。</returns>
+    [[nodiscard]] inline BlendModes GetBlendMode() const { return currentMode_; }
+
+    /// <summary>
+    /// ブレンド記述子を取得します。
+    /// </summary>
+    /// <returns>ブレンド記述子への定数参照。</returns>
+    [[nodiscard]] inline const D3D12_BLEND_DESC& Get() const { return desc_; }
 
 private:
     BlendModes currentMode_ = {};

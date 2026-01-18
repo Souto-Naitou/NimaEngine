@@ -232,9 +232,6 @@
     <Filter Include="Core\DirectX12\PipelineStateObject">
       <UniqueIdentifier>{5e8625a2-f1ce-4256-9e8d-35b424832bf4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\DirectX12\RootParameters">
-      <UniqueIdentifier>{4681c9cf-3bf7-4cb6-b1d4-0e3766e651b9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Effect\PostEffect\RandomFilter">
       <UniqueIdentifier>{3d98c8fa-48b9-4be5-a62e-40363c273462}</UniqueIdentifier>
     </Filter>
@@ -381,6 +378,9 @@
     </Filter>
     <Filter Include="IO">
       <UniqueIdentifier>{1c516a18-2530-44f5-af79-d75c33710602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\RootSignature">
+      <UniqueIdentifier>{952e4045-13d4-434b-962b-5d9b1e2b49ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -600,7 +600,7 @@
     <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp">
       <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp">
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOBuilder.cpp">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClCompile>
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp">
@@ -735,6 +735,8 @@
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
       <Filter>Effect\SceneTransition</Filter>
     </ClCompile>
+    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp" />
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -995,11 +997,8 @@
     <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h">
       <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h">
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOBuilder.h">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h">
-      <Filter>Core\DirectX12\RootParameters</Filter>
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h">
       <Filter>Effect\PostEffect\RandomFilter</Filter>
@@ -1190,6 +1189,22 @@
     <ClInclude Include="Math\ViewportUnits.hpp">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSODesc.h">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1210,11 +1225,11 @@
       <Filter>HLSL\PostEffect</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="Core\DirectX12\RootParameters\RootParameters.inl">
-      <Filter>Core\DirectX12\RootParameters</Filter>
-    </None>
     <None Include="EngineResources\Shaders\Skybox.hlsli">
       <Filter>HLSL</Filter>
+    </None>
+    <None Include="Core\DirectX12\RootSignature\RootParameters.cpp">
+      <Filter>Core\DirectX12\RootSignature</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1337,6 +1352,9 @@
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Skybox.VS.hlsl">
       <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
+      <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

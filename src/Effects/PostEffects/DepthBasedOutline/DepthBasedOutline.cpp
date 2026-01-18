@@ -9,7 +9,7 @@
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 #include <config/EngineSetting.h>
 
 void DepthBasedOutline::Initialize(const PostEffectInitParams& desc)

@@ -6,7 +6,7 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 #include <Vector4.h>
 #include <Vector3.h>
 
@@ -80,7 +80,7 @@ private:
     DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    PipelineStateObject                                 pso_                    = {};
+    PSOBuilder                                 pso_                    = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
     const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/RandomFilter.VS.hlsl";

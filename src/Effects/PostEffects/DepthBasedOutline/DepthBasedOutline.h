@@ -6,7 +6,7 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Matrix4x4.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 
 struct alignas(16) DepthBasedOutlineOption
 {
@@ -58,7 +58,7 @@ private:
     DX12Resource                                        renderTexture_          = {};
     Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    PipelineStateObject                                 pso_                    = {};
+    PSOBuilder                                 pso_                    = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         depthGpuHandle_         = {};

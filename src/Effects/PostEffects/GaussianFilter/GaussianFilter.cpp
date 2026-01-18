@@ -7,7 +7,7 @@
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/RootParameters/RootParameters.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 #include <imgui.h>
 
 void GaussianFilter::Initialize(const PostEffectInitParams& desc)
@@ -194,7 +194,7 @@ void GaussianFilter::CreatePipelineStateObject()
     try
     {
         pso_ = nullptr;
-        PipelineStateObject psoBuilder;
+        PSOBuilder psoBuilder;
         psoBuilder.SetRootSignature(rootSignature_.Get())
             .SetInputLayout(inputLayoutDesc)
             .SetVertexShader(vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize())

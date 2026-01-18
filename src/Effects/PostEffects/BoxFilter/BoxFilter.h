@@ -5,7 +5,9 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct BoxFilterOption
 {
@@ -61,27 +63,28 @@ public:
     const BoxFilterOption&          GetOption() const;
 
 private:
+    const PSOID                                         kPSOId_                 = "BoxFilter";
+    const RootSignatureID                               kRootSignatureId_       = "BoxFilter";
+    const std::string                                   name_                   = "BoxFilter";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/BoxFilter.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/BoxFilter.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 
     bool                                                isEnabled_              = false;
-    const std::string                                   name_                   = "BoxFilter";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    PipelineStateObject                                 pso_                    = {};
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/BoxFilter.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/BoxFilter.PS.hlsl";
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
     BoxFilterOption*                                    pOption_                = nullptr;
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
 };

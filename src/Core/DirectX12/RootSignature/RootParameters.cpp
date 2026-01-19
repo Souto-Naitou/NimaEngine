@@ -18,8 +18,8 @@ RootParameters& RootParameters::SetParameter(int index, const std::string& slot,
     int slotNum = std::stoi(slot.substr(1));
     char typeChar = slot[0];
 
-    D3D12_ROOT_PARAMETER& param = params_[index];
-    param.ShaderVisibility = visibility;
+    auto& param = params_[index];
+    param.visibility = visibility;
 
     switch (typeChar)
     {
@@ -27,6 +27,7 @@ RootParameters& RootParameters::SetParameter(int index, const std::string& slot,
     case 'u':
     case 's':
     {
+        auto offset = static_cast<uint32_t>(ranges_.size());
         auto& range = ranges_.emplace_back();
         range.BaseShaderRegister = slotNum;
         range.NumDescriptors = 1;
@@ -40,23 +41,52 @@ RootParameters& RootParameters::SetParameter(int index, const std::string& slot,
         case 's': range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER; break;
         }
 
-        param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-        param.DescriptorTable.NumDescriptorRanges = 1;
-        param.DescriptorTable.pDescriptorRanges = &range;
+        param.type = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+        param.table.rangeCount = static_cast<uint32_t>(ranges_.size()) - offset;
+        param.table.rangeOffset = offset;
         break;
     }
 
     case 'b':
-        param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-        param.Descriptor.ShaderRegister = slotNum;
-        param.Descriptor.RegisterSpace = 0;
+        param.type = D3D12_ROOT_PARAMETER_TYPE_CBV;
+        param.descriptor.ShaderRegister = slotNum;
+        param.descriptor.RegisterSpace = 0;
         break;
 
     default:
         throw std::invalid_argument("Invalid slot type. Must start with 't', 'u', 's', or 'b'.");
     }
 
-    slotMap_[slot] = index;
+    slotMap_[slot].push_back(index);
 
     return *this;
+}
+
+const D3D12_ROOT_PARAMETER* RootParameters::BuildParams()
+{
+    d3dParams_.clear();
+    d3dParams_.reserve(params_.size());
+
+    for (const auto& param : params_)
+    {
+        auto& d3dParam = d3dParams_.emplace_back();
+        d3dParam.ParameterType = param.type;
+        d3dParam.ShaderVisibility = param.visibility;
+
+        switch (param.type)
+        {
+        case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+            d3dParam.DescriptorTable.NumDescriptorRanges = param.table.rangeCount;
+            d3dParam.DescriptorTable.pDescriptorRanges = &ranges_[param.table.rangeOffset];
+            break;
+        case D3D12_ROOT_PARAMETER_TYPE_CBV:
+            d3dParam.Descriptor.ShaderRegister = param.descriptor.ShaderRegister;
+            d3dParam.Descriptor.RegisterSpace = param.descriptor.RegisterSpace;
+            break;
+        default:
+            throw std::runtime_error("Unsupported root parameter type.");
+        }
+    }
+
+    return d3dParams_.data();
 }

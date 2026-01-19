@@ -37,7 +37,7 @@ private:
     static constexpr wchar_t kVertexShaderPath[] = L"EngineResources/Shaders/Skybox.VS.hlsl";
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Skybox.PS.hlsl";
 
-    PSOBuilder pso_;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> pso_ = nullptr;
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;

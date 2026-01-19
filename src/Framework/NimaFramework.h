@@ -30,6 +30,7 @@
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
 #include <Interfaces/ISceneFactory.h>
+#include <Effects/PostEffects/GlobalInput/PostEffectInputCommon.h>
 
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecutor.h>
@@ -114,8 +115,9 @@ protected:
     EventListener*                  pEventListener_             = nullptr;
     PSOCache*                       pPSOCache_                  = nullptr;
     RootSignatureCache*             pRootSignatureCache_        = nullptr;
+    PostEffectInputCommon*          pPostEffectInputCommon_     = nullptr;
 
-    bool                                isExitProgram_          = false;
+    bool                            isExitProgram_              = false;
 
 private:
     void InitializeObject3dSystem();

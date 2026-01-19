@@ -6,6 +6,9 @@
 #include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12HeapHelper.h>
 #include <config/EngineSetting.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/RootSignature/RootSignatureDesc.h>
+#include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 
 Object3dSystem::Object3dSystem()
 {
@@ -25,7 +28,7 @@ void Object3dSystem::DepthDrawSetting()
     ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandList();
 
     /// ルートシグネチャをセットする
-    commandList->SetGraphicsRootSignature(rootSignature_.Get());
+    commandList->SetGraphicsRootSignature(rootSignature_);
 
     /// グラフィックスパイプラインステートをセットする
     commandList->SetPipelineState(psoEarlyZ_.Get());
@@ -39,7 +42,7 @@ void Object3dSystem::MainDrawSetting()
     ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandList();
 
     /// ルートシグネチャをセットする
-    commandList->SetGraphicsRootSignature(rootSignature_.Get());
+    commandList->SetGraphicsRootSignature(rootSignature_);
 
     /// グラフィックスパイプラインステートをセットする
     commandList->SetPipelineState(psoMain_.Get());
@@ -59,7 +62,7 @@ void Object3dSystem::DrawCall()
         // [DepthDraw Begin]
 
         // ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_);
         // グラフィックスパイプラインステートをセットする
         commandList->SetPipelineState(psoEarlyZ_.Get());
         // プリミティブトポロジーをセットする
@@ -96,7 +99,7 @@ void Object3dSystem::DrawCall()
         // [MainDraw Begin]
 
         /// ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_.Get());
+        commandList->SetGraphicsRootSignature(rootSignature_);
 
         /// グラフィックスパイプラインステートをセットする
         commandList->SetPipelineState(psoMain_.Get());
@@ -151,12 +154,6 @@ void Object3dSystem::SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle)
 
 void Object3dSystem::CreateRootSignature()
 {
-    ID3D12Device* device = pDx12_->GetDevice();
-
-    /// RootSignature作成
-    D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-    descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
     // RootParameter作成。複数設定できるので配列
     rootParameters_
         .SetParameter(0, "b0", D3D12_SHADER_VISIBILITY_PIXEL)
@@ -169,46 +166,23 @@ void Object3dSystem::CreateRootSignature()
         .SetParameter(7, "b5", D3D12_SHADER_VISIBILITY_PIXEL)   // PointLight
         .SetParameter(8, "t1", D3D12_SHADER_VISIBILITY_PIXEL);  // EnvironmentTexture
 
-    descriptionRootSignature.pParameters = rootParameters_.GetParams();      // ルートパラメータ配列へのポインタ
-    descriptionRootSignature.NumParameters = rootParameters_.GetSize();      // 配列の長さ
+    // StaticSamplerの設定
+    StaticSamplerDesc sampler;
+    sampler.SetFilter(D3D12_FILTER_MAXIMUM_ANISOTROPIC)
+           .SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE_WRAP)
+           .SetMaxAnisotropy(16);
 
-    D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-    staticSamplers[0].Filter = D3D12_FILTER_MAXIMUM_ANISOTROPIC;            // 異方性フィルタリング
-    staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-    staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-    staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-    staticSamplers[0].MipLODBias = 0.0f;                                    // ミップマップのオフセット
-    staticSamplers[0].MaxAnisotropy = 16;                                   // 最大異方性
-    staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;         // 比較なし
-    staticSamplers[0].BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE; // ボーダーカラー
-    staticSamplers[0].MinLOD = 0.0f;                                        // 最小ミップレベル
-    staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;                           // 最大ミップレベル
-    staticSamplers[0].ShaderRegister = 0;                                   // サンプラーのレジスタ番号
-    staticSamplers[0].RegisterSpace = 0;                                    // レジスタスペース
-    staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;     // ピクセルシェーダーで使用
+    // RootSignatureDescを作成
+    RootSignatureDesc desc;
+    desc.params = rootParameters_;
+    desc.staticSamplers = sampler;
+    desc.flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-    descriptionRootSignature.pStaticSamplers = staticSamplers;
-    descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+    // RootSignatureCacheに登録
+    RootSignatureCache::GetInstance()->Register(kRootSignatureId_, desc);
 
-    // シリアライズしてバイナリにする
-    Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-    Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-    HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
-        D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-    if (FAILED(hr))
-    {
-        Logger::GetInstance()->LogError(
-            "Object3dSystem",
-            "CreateRootSignature",
-            reinterpret_cast<char*>(errorBlob->GetBufferPointer())
-        );
-
-        assert(false);
-    }
-    // バイナリをもとに生成
-    hr = device->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-        signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-    assert(SUCCEEDED(hr));
+    // RootSignatureを取得または作成
+    rootSignature_ = RootSignatureCache::GetInstance()->GetOrCreate(kRootSignatureId_);
 }
 
 void Object3dSystem::CreateMainPipelineState()
@@ -285,7 +259,7 @@ void Object3dSystem::CreateMainPipelineState()
 
     /// PSOを生成する
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-    graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();    // RootSignature
+    graphicsPipelineStateDesc.pRootSignature = rootSignature_;    // RootSignature
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;    // InputLayout
     graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
     graphicsPipelineStateDesc.PS = { pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize() };
@@ -303,7 +277,7 @@ void Object3dSystem::CreateMainPipelineState()
     // DepthStencilの設定
     graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
     graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    // 実際に生成
+
     HRESULT hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&psoMain_));
     if (FAILED(hr)) [[unlikely]]
     {
@@ -314,7 +288,6 @@ void Object3dSystem::CreateMainPipelineState()
         );
         assert(false);
     }
-    return;
 }
 
 void Object3dSystem::CreateDepthPipelineState()
@@ -329,7 +302,7 @@ void Object3dSystem::CreateDepthPipelineState()
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0;
 
 
-    // DespStencilResource
+    // DepthStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);
     // DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないため、ShaderVisibleはfalse
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = DX12HeapHelper::CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
@@ -346,9 +319,9 @@ void Object3dSystem::CreateDepthPipelineState()
     depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
     depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
-    /// PSOを生成する
+    /// PSOを直接生成
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-    graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();
+    graphicsPipelineStateDesc.pRootSignature = rootSignature_;
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;
     graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
     graphicsPipelineStateDesc.PS = { nullptr, 0 };
@@ -369,8 +342,6 @@ void Object3dSystem::CreateDepthPipelineState()
     graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
     graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
     
-
-    /// 生成
     HRESULT hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&psoEarlyZ_));
     if (FAILED(hr)) [[unlikely]]
     {
@@ -381,8 +352,6 @@ void Object3dSystem::CreateDepthPipelineState()
         );
         assert(false);
     }
-
-    return;
 }
 
 void Object3dSystem::DrawSingle(ID3D12GraphicsCommandList* cl, Object3dSystem::CommandListData& data)
@@ -394,7 +363,7 @@ void Object3dSystem::DrawSingle(ID3D12GraphicsCommandList* cl, Object3dSystem::C
     // [DepthDraw Begin]
 
     // ルートシグネチャをセットする
-    cl->SetGraphicsRootSignature(rootSignature_.Get());
+    cl->SetGraphicsRootSignature(rootSignature_);
     // グラフィックスパイプラインステートをセットする
     cl->SetPipelineState(psoEarlyZ_.Get());
     // プリミティブトポロジーをセットする

@@ -737,6 +737,10 @@
     </ClCompile>
     <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp" />
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp" />
+    <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp" />
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp" />
+    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp" />
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1205,6 +1209,9 @@
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h" />
+    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1227,9 +1234,6 @@
     <None Include="ClassDiagram.cd" />
     <None Include="EngineResources\Shaders\Skybox.hlsli">
       <Filter>HLSL</Filter>
-    </None>
-    <None Include="Core\DirectX12\RootSignature\RootParameters.cpp">
-      <Filter>Core\DirectX12\RootSignature</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1353,7 +1357,7 @@
     <FxCompile Include="EngineResources\Shaders\Skybox.VS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
+    <FxCompile Include="EngineResources\Shaders\Scanline.PS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
   </ItemGroup>

@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) PrewittOutlineOption
 {
@@ -66,6 +68,11 @@ public:
     // =============================================
 
 private:
+    const PSOID                                         kPSOId_                 = "PrewittOutline";
+    const RootSignatureID                               kRootSignatureId_       = "PrewittOutline";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/PrewittOutline.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/PrewittOutline.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
@@ -73,20 +80,16 @@ private:
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "PrewittOutline";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/PrewittOutline.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/PrewittOutline.PS.hlsl";
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
     PrewittOutlineOption*                               pOption_                = nullptr;
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
 };

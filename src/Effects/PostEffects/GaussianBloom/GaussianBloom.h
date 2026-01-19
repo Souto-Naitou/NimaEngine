@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 #include <Effects/PostEffects/SeparatedGaussianFilter/SeparatedGaussianFilter.h>
 #include <Effects/PostEffects/LuminanceOutput/LuminanceOutput.h>
 
@@ -159,15 +161,16 @@ private:
     // [ConstantBuffers End]
     // =============================================
 
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_           = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_            = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_              = nullptr;
+    const PSOID                                         kPSOId_                     = "GaussianBloom";
+    const RootSignatureID                               kRootSignatureId_           = "GaussianBloom";
     const std::wstring                                  kVertexShaderPath           = L"EngineResources/Shaders/GaussianBloom.VS.hlsl";
     const std::wstring                                  kPixelShaderPath            = L"EngineResources/Shaders/GaussianBloom.PS.hlsl";
 
+    ID3D12PipelineState*                                pso_                        = nullptr;
+    ID3D12RootSignature*                                rootSignature_              = nullptr;
+
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle);
     void    InitializeLuminanceOutputFilter();

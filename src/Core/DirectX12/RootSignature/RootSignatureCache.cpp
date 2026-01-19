@@ -15,7 +15,7 @@ ID3D12RootSignature* RootSignatureCache::GetOrCreate(RootSignatureID id)
         return nullptr;
     }
 
-    const RootSignatureDesc& desc = it->second;
+    RootSignatureDesc& desc = it->second;
 
     if (rootSignatureMap_.find(id) != rootSignatureMap_.end())
     {

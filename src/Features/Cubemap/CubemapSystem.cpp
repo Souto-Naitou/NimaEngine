@@ -1,5 +1,5 @@
 #include "CubemapSystem.h"
-#include <Core/DirectX12/RootParameters/RootParameters.h>
+#include <Core/DirectX12/RootSignature/RootParameters.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
 #include <Core/DirectX12/BlendDesc.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
@@ -24,13 +24,13 @@ void CubemapSystem::_CreateRootSignature()
     descriptionRootSignature.Flags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-    RootParameters<3> rootParam = {};
+    RootParameters rootParam = {};
     rootParam.SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL);
     rootParam.SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_VERTEX);
     rootParam.SetParameter(2, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
 
-    descriptionRootSignature.pParameters = rootParam.GetParams();   // ルートパラメータ配列へのポインタ
-    descriptionRootSignature.NumParameters = rootParam.GetSize();   // 配列の長さ
+    descriptionRootSignature.pParameters = rootParam.BuildParams();   // ルートパラメータ配列へのポインタ
+    descriptionRootSignature.NumParameters = static_cast<UINT>(rootParam.GetSize());   // 配列の長さ
 
     StaticSamplerDesc staticSampler = {};
     staticSampler
@@ -98,7 +98,8 @@ void CubemapSystem::_CreatePSO()
     /// PipelineStateObjectの設定
     try
     {
-        pso_.SetRootSignature(rootSignature_.Get())
+        PSOBuilder psoBuilder;
+        pso_ = psoBuilder.SetRootSignature(rootSignature_.Get())
             .SetInputLayout(inputLayoutDesc)
             .SetVertexShader(vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize())
             .SetPixelShader(pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize())
@@ -124,7 +125,7 @@ void CubemapSystem::DrawSetting(ID3D12GraphicsCommandList* cl)
     cl->SetGraphicsRootSignature(rootSignature_.Get());
 
     /// グラフィックスパイプラインステートをセットする
-    cl->SetPipelineState(pso_.GetPSO());
+    cl->SetPipelineState(pso_.Get());
 
     /// プリミティブトポロジーをセットする
     cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/DX12Resource/DX12Resource.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) GrayscaleOption
 {
@@ -43,6 +45,11 @@ public:
     const GrayscaleOption& GetOption() const { return *pOption_; }
 
 private:
+    const PSOID                                         kPSOId_                 = "Grayscale";
+    const RootSignatureID                               kRootSignatureId_       = "Grayscale";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Grayscale.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Grayscale.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
@@ -51,19 +58,15 @@ private:
     const std::string                                   name_                   = "Grayscale";
     GrayscaleOption                                     option_                 = {};
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Grayscale.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Grayscale.PS.hlsl";
     GrayscaleOption*                                    pOption_                = {};
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
 
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResorceCBuffer();
 };

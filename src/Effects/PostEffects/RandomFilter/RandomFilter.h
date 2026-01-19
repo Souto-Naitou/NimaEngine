@@ -6,7 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
-#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 #include <Vector4.h>
 #include <Vector3.h>
 
@@ -71,6 +72,11 @@ public:
     const RandomFilterOption&       GetOption() const;
 
 private:
+    const PSOID                                         kPSOId_                 = "RandomFilter";
+    const RootSignatureID                               kRootSignatureId_       = "RandomFilter";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/RandomFilter.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/RandomFilter.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
@@ -78,13 +84,9 @@ private:
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "RandomFilter";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    PSOBuilder                                 pso_                    = {};
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/RandomFilter.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/RandomFilter.PS.hlsl";
 
     // Constant buffer view
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_     = nullptr;
@@ -92,7 +94,7 @@ private:
 
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
 };

@@ -1,5 +1,5 @@
 #pragma once
-
+#undef max
 #include <d3d12.h>
 #include <string>
 #include <list>
@@ -25,18 +25,31 @@ public:
         D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL);
 
     [[nodiscard]]
-    inline const    D3D12_ROOT_PARAMETER*   GetParams() const { return params_.data(); }
+    const           D3D12_ROOT_PARAMETER*   BuildParams();
     [[nodiscard]]
     inline          size_t                  GetSize() const { return params_.size(); }
-    [[nodiscard]]
-    inline          uint32_t                GetIndex(const std::string& slot) const
-    {
-        auto it = slotMap_.find(slot);
-        return it != slotMap_.end() ? it->second : std::numeric_limits<uint32_t>::max();
-    }
 
 private:
-    std::unordered_map<std::string, uint32_t> slotMap_;
-    std::vector<D3D12_ROOT_PARAMETER> params_;
+    struct DescriptorTableInfo
+    {
+        uint32_t rangeOffset;
+        uint32_t rangeCount;
+    };
+
+    struct RootParameterInfo
+    {
+        D3D12_ROOT_PARAMETER_TYPE type;
+        union
+        {
+            DescriptorTableInfo table;
+            D3D12_ROOT_DESCRIPTOR descriptor;
+            D3D12_ROOT_CONSTANTS constants;
+        };
+        D3D12_SHADER_VISIBILITY visibility;
+    };
+
+    std::unordered_map<std::string, std::vector<uint32_t>> slotMap_;
+    std::vector<RootParameterInfo> params_;
     std::vector<D3D12_DESCRIPTOR_RANGE> ranges_;
+    std::vector<D3D12_ROOT_PARAMETER> d3dParams_;
 };

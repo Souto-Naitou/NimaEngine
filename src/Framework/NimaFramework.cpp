@@ -53,6 +53,7 @@ void NimaFramework::Initialize()
     pEventTimer_ = EventTimer::GetInstance();
     pPSOCache_ = PSOCache::GetInstance();
     pRootSignatureCache_ = RootSignatureCache::GetInstance();
+    pPostEffectInputCommon_ = PostEffectInputCommon::GetInstance();
 
     #ifdef _DEBUG
     pImGuiManager_ = std::make_unique<ImGuiManager>();
@@ -94,6 +95,9 @@ void NimaFramework::Initialize()
 
     /// PSOキャッシュの初期化
     pPSOCache_->Initialize(pDirectX_.get());
+
+    /// ポストエフェクト共通入力の初期化
+    pPostEffectInputCommon_->Initialize(pDirectX_->GetDevice());
 
     /// スプライト基盤の初期化
     pSpriteSystem_->SetDirectX12(pDirectX_.get());
@@ -217,6 +221,10 @@ void NimaFramework::Initialize()
     pDirectX_->AddOnResizeAfter("Viewport", std::bind(&Viewport::OnResizedBuffers, pViewport_.get()));
     pDirectX_->AddOnResizeAfter("TextSystem", std::bind(&TextSystem::OnResizedBuffers, pTextSystem_));
 
+    auto dtManager = DeltaTimeManager::GetInstance();
+    dtManager->SetDeltaTime(DeltaTimeChannelReserved::Default, 1.0f / 60.0f);
+    dtManager->SetDeltaTime(DeltaTimeChannelReserved::Game, 1.0f / 60.0f);
+
     #ifdef _DEBUG
     pDirectX_->AddOnResizeAfter("ImGuiManager", std::bind(&ImGuiManager::OnResizedBuffers, pImGuiManager_.get()));
     #endif // _DEBUG
@@ -273,6 +281,9 @@ void NimaFramework::Update()
     /// マネージャ更新
     pInput_->Update();
     pAudioManager_->Update();
+
+    /// ポストエフェクト共通入力の更新
+    pPostEffectInputCommon_->Update();
 
     #ifdef _DEBUG
     pImGuiManager_->BeginFrame();

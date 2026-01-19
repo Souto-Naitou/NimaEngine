@@ -32,7 +32,6 @@ ID3D12PipelineState* PSOCache::GetOrCreate(const PSOID& id)
 
     /// 以下、PSOを新規作成する処理
     /// シェーダーのコンパイル
-    HRESULT hr = S_OK;
     IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
     IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
     IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();

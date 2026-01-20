@@ -6,7 +6,9 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Matrix4x4.h>
-#include <Core/DirectX12/PipelineStateObject/PipelineStateObject.h>
+#include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) DepthBasedOutlineOption
 {
@@ -49,22 +51,23 @@ public:
     const DepthBasedOutlineMaterial&    GetMaterial() const;
 
 private:
+    const PSOID                                         kPSOId_                 = "DepthBasedOutline";
+    const RootSignatureID                               kRootSignatureId_       = "DepthBasedOutline";
+    const std::string                                   name_                   = "DepthBasedOutline";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/DepthBasedOutline.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/DepthBasedOutline.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 
     bool                                                isEnabled_              = false;
-    const std::string                                   name_                   = "DepthBasedOutline";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    PipelineStateObject                                 pso_                    = {};
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
     D3D12_GPU_DESCRIPTOR_HANDLE                         depthGpuHandle_         = {};
     uint32_t                                            srvIndexDepth_          = 0;
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/DepthBasedOutline.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/DepthBasedOutline.PS.hlsl";
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
@@ -73,7 +76,7 @@ private:
     DepthBasedOutlineMaterial*                          pMaterial_              = nullptr;
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
     void    CreateSRV();

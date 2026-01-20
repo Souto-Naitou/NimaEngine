@@ -1,5 +1,5 @@
 #include "GltfModelSystem.h"
-#include <Core/DirectX12/RootParameters/RootParameters.h>
+#include <Core/DirectX12/RootSignature/RootParameters.h>
 #include <Core/DirectX12/Helper/DX12Helper.h>
 
 void GltfModelSystem::Initialize()
@@ -49,7 +49,7 @@ void GltfModelSystem::_CreatePipelineStateCS()
 
 void GltfModelSystem::_CreateRootSignatureCS()
 {
-    RootParameters<5> rootParametersCS;
+    RootParameters rootParametersCS;
     rootParametersCS
         .SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_ALL)
         .SetParameter(1, "t1", D3D12_SHADER_VISIBILITY_ALL)
@@ -58,8 +58,8 @@ void GltfModelSystem::_CreateRootSignatureCS()
         .SetParameter(4, "b0", D3D12_SHADER_VISIBILITY_ALL);
 
     D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-    rootSignatureDesc.pParameters = rootParametersCS.GetParams();
-    rootSignatureDesc.NumParameters = rootParametersCS.GetSize();
+    rootSignatureDesc.pParameters = rootParametersCS.BuildParams();
+    rootSignatureDesc.NumParameters = static_cast<UINT>(rootParametersCS.GetSize());
     rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
     rootSignatureDesc.pStaticSamplers = nullptr; // CSではStaticSamplerは使用しない
     rootSignatureDesc.NumStaticSamplers = 0;

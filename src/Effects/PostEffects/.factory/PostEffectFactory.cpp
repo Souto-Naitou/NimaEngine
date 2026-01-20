@@ -9,10 +9,12 @@
 #include <Effects/PostEffects/RandomFilter/RandomFilter.h>
 #include <Effects/PostEffects/GaussianBloom/GaussianBloom.h>
 #include <Effects/PostEffects/DepthBasedOutline/DepthBasedOutline.h>
+#include <Effects/PostEffects/ScanLine/Scanline.h>
+#include <Effects/PostEffects/Mosaic/Mosaic.h>
 
 const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
 {
-    { PostEffectClassName::None,                    "None"  },
+    { PostEffectClassName::None,                    "None" },
     { PostEffectClassName::Grayscale,               "Grayscale" },
     { PostEffectClassName::BoxFilter,               "BoxFilter" },
     { PostEffectClassName::RadialBlur,              "RadialBlur" },
@@ -22,7 +24,9 @@ const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
     { PostEffectClassName::GaussianFilter,          "GaussianFilter" },
     { PostEffectClassName::SeparatedGaussianFilter, "SeparatedGaussianFilter" },
     { PostEffectClassName::RandomFilter,            "RandomFilter" },
-    { PostEffectClassName::GaussianBloom,           "GaussianBloom"  }
+    { PostEffectClassName::GaussianBloom,           "GaussianBloom" },
+    { PostEffectClassName::Scanline,                "Scanline" },
+    { PostEffectClassName::Mosaic,                  "Mosaic" },
 };
 
 
@@ -50,4 +54,6 @@ void PostEffectFactory::RegisterCreators()
     creators_[PostEffectClassName::SeparatedGaussianFilter] = [this]() { return std::make_unique<SeparatedGaussianFilter>(); };
     creators_[PostEffectClassName::RandomFilter]            = [this]() { return std::make_unique<RandomFilter>(); };
     creators_[PostEffectClassName::GaussianBloom]           = [this]() { return std::make_unique<GaussianBloom>(); };
+    creators_[PostEffectClassName::Scanline]                = [this]() { return std::make_unique<Scanline>(); };
+    creators_[PostEffectClassName::Mosaic]                  = [this]() { return std::make_unique<Mosaic>(); };
 }

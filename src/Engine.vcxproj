@@ -220,9 +220,11 @@
     <ClCompile Include="Core\DirectX12\Framerate.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp" />
     <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp" />
-    <ClCompile Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.cpp" />
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOBuilder.cpp" />
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp" />
     <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp" />
     <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp" />
+    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp" />
     <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp" />
     <ClCompile Include="Core\DirectX12\SRVManager.cpp" />
     <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp" />
@@ -244,11 +246,14 @@
     <ClCompile Include="Effects\PostEffects\Dissolve\Dissolve.cpp" />
     <ClCompile Include="Effects\PostEffects\GaussianBloom\GaussianBloom.cpp" />
     <ClCompile Include="Effects\PostEffects\GaussianFilter\GaussianFilter.cpp" />
+    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp" />
     <ClCompile Include="Effects\PostEffects\Grayscale\Grayscale.cpp" />
     <ClCompile Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.cpp" />
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
     <ClCompile Include="Effects\PostEffects\PrewittOutline\PrewittOutline.cpp" />
     <ClCompile Include="Effects\PostEffects\RadialBlur\RadialBlur.cpp" />
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp" />
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp" />
     <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp" />
     <ClCompile Include="Effects\PostEffects\Vignette\Vignette.cpp" />
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp" />
@@ -342,11 +347,16 @@
     <ClInclude Include="Core\DirectX12\Framerate.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h" />
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h" />
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PipelineStateObject.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOBuilder.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSODesc.h" />
     <ClInclude Include="Core\DirectX12\PostEffectExecutor.h" />
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h" />
+    <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h" />
+    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
-    <ClInclude Include="Core\DirectX12\RootParameters\RootParameters.h" />
     <ClInclude Include="Core\DirectX12\RTVHeapCounter.h" />
     <ClInclude Include="Core\DirectX12\SRVManager.h" />
     <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h" />
@@ -360,7 +370,7 @@
     <ClInclude Include="DebugTools\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h" />
     <ClInclude Include="DebugTools\Logger\Logger.h" />
-    <ClInclude Include="DebugTools\ReakChecker.h" />
+    <ClInclude Include="DebugTools\LeakChecker.h" />
     <ClInclude Include="drawable\base\DrawableBase.h" />
     <ClInclude Include="drawable\font\NumericView.h" />
     <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h" />
@@ -372,12 +382,15 @@
     <ClInclude Include="Effects\PostEffects\GaussianFilter\GaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Grayscale\Grayscale.h" />
     <ClInclude Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.h" />
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
     <ClInclude Include="Effects\PostEffects\PrewittOutline\PrewittOutline.h" />
     <ClInclude Include="Effects\PostEffects\RadialBlur\RadialBlur.h" />
     <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h" />
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h" />
     <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h" />
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
@@ -489,7 +502,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
     </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="Core\DirectX12\RootParameters\RootParameters.inl" />
+    <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp" />
     <None Include="EngineResources\Shaders\Line.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -661,6 +674,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Scanline.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

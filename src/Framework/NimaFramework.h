@@ -1,22 +1,16 @@
 #pragma once
 
 #include <Core/ConfigManager/ConfigManager.h>
-#include <DebugTools/Logger/Logger.h>
-#include <Features/Audio/AudioManager.h>
-#include <Features/Input/Input.h>
 #include <Core/Window/Window.h>
 #include <Core/DirectX12/TextureManager.h>
-#include <DebugTools/DebugManager/DebugManager.h>
-#include <DebugTools/ImGuiManager/ImGuiManager.h>
-#include <drawable/sprite/SpriteSystem.h>
-#include <drawable/object3d/Object3dSystem.h>
-#include <drawable/particle/ParticleSystem.h>
-#include <Features/Model/ModelManager.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/SRVManager.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Features/Audio/AudioManager.h>
+#include <Features/Input/Input.h>
+#include <Features/Model/ModelManager.h>
 #include <Features/SceneManager/SceneManager.h>
-#include <Interfaces/ISceneFactory.h>
-#include <drawable/particle/ParticleStorage.h>
 #include <Features/Line/LineSystem.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <Features/Text/TextSystem.h>
@@ -24,13 +18,22 @@
 #include <Features/NiGui/NiGuiDrawer.h>
 #include <Features/NiGui/NiGuiDebug.h>
 #include <Features/Cubemap/CubemapSystem.h>
-#include <DebugTools/EventTimer/EventTimer.h>
+#include <Features/Layer/OrderedCanvasLayer.h>
+#include <Features/Model/GltfModelSystem.h>
 #include <Features/Event/EventListener.h>
+#include <drawable/sprite/SpriteSystem.h>
+#include <drawable/object3d/Object3dSystem.h>
+#include <drawable/particle/ParticleStorage.h>
+#include <drawable/particle/ParticleSystem.h>
+#include <DebugTools/EventTimer/EventTimer.h>
+#include <DebugTools/Logger/Logger.h>
+#include <DebugTools/DebugManager/DebugManager.h>
+#include <DebugTools/ImGuiManager/ImGuiManager.h>
+#include <Interfaces/ISceneFactory.h>
+#include <Effects/PostEffects/GlobalInput/PostEffectInputCommon.h>
 
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecutor.h>
-#include <Features/Model/GltfModelSystem.h>
-#include <Features/Layer/OrderedCanvasLayer.h>
 
 
 /// ゲーム共通のフレームワーククラス
@@ -95,7 +98,7 @@ protected:
     ConfigManager*                  pConfigManager_             = nullptr;
     Logger*                         pLogger_                    = nullptr;
     DebugManager*                   pDebugManager_              = nullptr;
-    Window*                      pWinSystem_                 = nullptr;
+    Window*                         pWinSystem_                 = nullptr;
     SRVManager*                     pSRVManager_                = nullptr;
     TextureManager*                 pTextureManager_            = nullptr;
     SceneManager*                   pSceneManager_              = nullptr;
@@ -110,8 +113,11 @@ protected:
     AudioManager*                   pAudioManager_              = nullptr;
     EventTimer*                     pEventTimer_                = nullptr;
     EventListener*                  pEventListener_             = nullptr;
+    PSOCache*                       pPSOCache_                  = nullptr;
+    RootSignatureCache*             pRootSignatureCache_        = nullptr;
+    PostEffectInputCommon*          pPostEffectInputCommon_     = nullptr;
 
-    bool                                isExitProgram_          = false;
+    bool                            isExitProgram_              = false;
 
 private:
     void InitializeObject3dSystem();

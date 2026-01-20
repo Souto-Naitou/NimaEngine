@@ -5,6 +5,10 @@
 #include <cstdint>
 #include <memory>
 
+/// <summary>
+/// Z順序付きでキャンバスの呼び出しを行うクラス
+/// - ここでいうレイヤーはモノではなく仕組みを指します。
+/// </summary>
 class OrderedCanvasLayer
 {
 public:

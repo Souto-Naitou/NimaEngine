@@ -139,6 +139,7 @@ void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
     data.model = pModel_;
 
     pSystem_->DrawSingle(cl, data);
+    // 現在は即時描画なのでコマンドリストデータの蓄積は行わない (Canvas作成時に不具合が発生したため)
     //pSystem_->AddCommandListData(data);
 }
 

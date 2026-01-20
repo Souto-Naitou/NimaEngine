@@ -4,7 +4,7 @@
 #include <DebugTools/Logger/Logger.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/Window/Window.h>
-#include <Core/DirectX12/RootParameters/RootParameters.h>
+#include <Core/DirectX12/RootSignature/RootParameters.h>
 #include <config/EngineSetting.h>
 #include <Core/DirectX12/BlendDesc.h>
 
@@ -124,15 +124,15 @@ void SpriteSystem::CreateRootSignature()
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
     // RootParameter作成。複数設定できるので配列
-    RootParameters<4> rootParameters = {};
+    RootParameters rootParameters = {};
     rootParameters
         .SetParameter(0, "b0", D3D12_SHADER_VISIBILITY_PIXEL)
         .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_VERTEX)
         .SetParameter(2, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
         .SetParameter(3, "b1", D3D12_SHADER_VISIBILITY_PIXEL);
 
-    descriptionRootSignature.pParameters = rootParameters.GetParams();  // ルートパラメータ配列へのポインタ
-    descriptionRootSignature.NumParameters = rootParameters.GetSize();  // 配列の長さ
+    descriptionRootSignature.pParameters = rootParameters.BuildParams();  // ルートパラメータ配列へのポインタ
+    descriptionRootSignature.NumParameters = static_cast<UINT>(rootParameters.GetSize());  // 配列の長さ
 
     D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
     staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // BilinearFilter

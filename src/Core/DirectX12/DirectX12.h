@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./Framerate.h"
-#include <DebugTools/ReakChecker.h>
+#include <DebugTools/LeakChecker.h>
 #include <DebugTools/Logger/Logger.h>
 #include "./RTVHeapCounter.h"
 #include "./DX12Resource/DX12Resource.h"
@@ -126,7 +126,7 @@ public: /// Getter
     void DeleteOnResizeAfter(const std::string& key) { mapFuncOnResizeAfter_.erase(key); }
 
 private:
-    static D3DResourceLeakChecker                           leakchecker;
+    static D3DResourceLeakChecker                           reakChecker;
     HRESULT                                                 hr_                             = 0;
     HWND                                                    hwnd_                           = {};
     std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>                srvHandlesGPUList_              = {};           // SRVハンドルリスト(GPU)

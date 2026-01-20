@@ -25,6 +25,8 @@ enum class PostEffectClassName
     SeparatedGaussianFilter,
     RandomFilter,
     GaussianBloom,
+    Scanline,
+    Mosaic,
 };
 
 /// <summary>

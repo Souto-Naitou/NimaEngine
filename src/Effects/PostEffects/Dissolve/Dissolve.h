@@ -9,6 +9,8 @@
 #include <string>
 #include <Core/DirectX12/DX12Resource/DX12Resource.h>
 #include <Vector4.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) DissolveOption
 {
@@ -73,20 +75,21 @@ public:
     const DissolveOption&           GetOption() const;
 
 private:
+    const PSOID                                         kPSOId_                 = "Dissolve";
+    const RootSignatureID                               kRootSignatureId_       = "Dissolve";
+    const std::string                                   name_                   = "Dissolve";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Dissolve.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Dissolve.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
 
     bool                                                isEnabled_              = false;
-    const std::string                                   name_                   = "Dissolve";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/Dissolve.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/Dissolve.PS.hlsl";
     DX12Resource                                        maskTexture_            = {};
 
     // Constant buffers
@@ -94,7 +97,7 @@ private:
     DissolveOption*                                     pOption_                = nullptr;
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
     void    CheckValidation() const;

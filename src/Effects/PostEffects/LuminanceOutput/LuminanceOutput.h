@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 #include <Effects/PostEffects/SeparatedGaussianFilter/SeparatedGaussianFilter.h>
 
 struct alignas(16) LuminanceOutputOption
@@ -64,6 +66,11 @@ public:
 
 
 private:
+    const PSOID                                         kPSOId_                 = "LuminanceOutput";
+    const RootSignatureID                               kRootSignatureId_       = "LuminanceOutput";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/LuminanceOutput.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/LuminanceOutput.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
@@ -77,12 +84,8 @@ private:
     // 出力テクスチャハンドル
     DX12Resource                                        outputTexture_          = {};
 
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/LuminanceOutput.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/LuminanceOutput.PS.hlsl";
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
@@ -90,7 +93,7 @@ private:
 
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
 };

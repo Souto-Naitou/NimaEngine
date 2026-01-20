@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) GaussianFilterOption
 {
@@ -62,6 +64,11 @@ public:
     const GaussianFilterOption&     GetOption() const;
 
 private:
+    const PSOID                                         kPSOId_                 = "GaussianFilter";
+    const RootSignatureID                               kRootSignatureId_       = "GaussianFilter";
+    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/GaussianFilter.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/GaussianFilter.PS.hlsl";
+
     DirectX12*                                          pDx12_                  = nullptr;
     ID3D12Device*                                       device_                 = nullptr;
     ID3D12GraphicsCommandList*                          commandList_            = nullptr;
@@ -69,20 +76,16 @@ private:
     bool                                                isEnabled_              = false;
     const std::string                                   name_                   = "GaussianFilter";
     DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
+    ID3D12PipelineState*                                pso_                    = nullptr;
+    ID3D12RootSignature*                                rootSignature_          = nullptr;
     D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/GaussianFilter.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/GaussianFilter.PS.hlsl";
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_         = nullptr;
     GaussianFilterOption*                               pOption_                = nullptr;
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    ToRenderTargetState();
     void    CreateResourceCBuffer();

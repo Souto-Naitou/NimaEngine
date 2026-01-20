@@ -6,6 +6,8 @@
 #include <dxcapi.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/ResourceStateTracker/ResourceStateTracker.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
 
 struct alignas(16) SeparatedGaussianFilterOption
 {
@@ -73,23 +75,24 @@ public:
     const SeparatedGaussianFilterOption&    GetOption() const;
 
 private:
-    DirectX12*                                          pDx12_                  = nullptr;
-    ID3D12Device*                                       device_                 = nullptr;
-    ID3D12GraphicsCommandList*                          commandList_            = nullptr;
+    const PSOID                                         kPSOId_                     = "SeparatedGaussianFilter";
+    const RootSignatureID                               kRootSignatureId_           = "SeparatedGaussianFilter";
+    const std::string                                   name_                       = "SeparatedGaussianFilter";
+    const std::wstring                                  kVertexShaderPath           = L"EngineResources/Shaders/SeparatedGaussianFilter.VS.hlsl";
+    const std::wstring                                  kPixelShaderPath            = L"EngineResources/Shaders/SeparatedGaussianFilter.PS.hlsl";
+    constexpr static const char*                        kNameHorizontal             = "RT_SeparatedGaussianFilter(Horizontal)";
+    constexpr static const char*                        kNameVertical               = "RT_SeparatedGaussianFilter(Vertical)";
 
-    bool                                                isEnabled_              = false;
-    const std::string                                   name_                   = "SeparatedGaussianFilter";
-    DX12Resource                                        horizontalGaussTexture_ = {};
-    DX12Resource                                        renderTexture_          = {};
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_         = {};
-    const std::wstring                                  kVertexShaderPath       = L"EngineResources/Shaders/SeparatedGaussianFilter.VS.hlsl";
-    const std::wstring                                  kPixelShaderPath        = L"EngineResources/Shaders/SeparatedGaussianFilter.PS.hlsl";
-    constexpr static const char*                        kNameHorizontal         = "RT_SeparatedGaussianFilter(Horizontal)";
-    constexpr static const char*                        kNameVertical           = "RT_SeparatedGaussianFilter(Vertical)";
+    DirectX12*                                          pDx12_                      = nullptr;
+    ID3D12Device*                                       device_                     = nullptr;
+    ID3D12GraphicsCommandList*                          commandList_                = nullptr;
+
+    bool                                                isEnabled_                  = false;
+    DX12Resource                                        horizontalGaussTexture_     = {};
+    DX12Resource                                        renderTexture_              = {};
+    ID3D12PipelineState*                                pso_                        = nullptr;
+    ID3D12RootSignature*                                rootSignature_              = nullptr;
+    D3D12_GPU_DESCRIPTOR_HANDLE                         inputGpuHandle_             = {};
 
     // Constant buffers
     Microsoft::WRL::ComPtr<ID3D12Resource>              optionResource_             = nullptr;
@@ -103,7 +106,7 @@ private:
     float sigma_ = 1.0f; // シグマの初期値
 
     // Internal functions
-    void    CreateRootSignature();
+    void    RegisterRootSignature();
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
     void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle, ID3D12Resource* execInfoResource);

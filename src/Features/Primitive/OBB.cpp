@@ -71,9 +71,9 @@ void OBB::Update()
     lines_.Update();
 }
 
-void OBB::Draw()
+void OBB::Draw1F()
 {
-    lines_.Draw();
+    lines_.Draw1F();
 }
 
 void OBB::ModifyGameEye(GameEye** eye)

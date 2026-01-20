@@ -21,7 +21,7 @@ void Joint::Update()
 
 void Joint::DrawLine()
 {
-    pAabb_.Draw();
+    pAabb_.Draw1F();
 }
 
 const JointData& Joint::GetJointData() const
@@ -89,5 +89,5 @@ void Skeleton::DrawLine()
         joint.DrawLine();
     }
 
-    lines_.Draw();
+    lines_.Draw1F();
 }

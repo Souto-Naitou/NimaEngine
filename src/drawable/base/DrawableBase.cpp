@@ -21,5 +21,5 @@ void DrawableBase::Draw1F()
         pCanvasCurrent_->RegisterDrawable(this);
     }
 
-    isDrawCalled_ = true;
+    isDraw1FCalled_ = true;
 }

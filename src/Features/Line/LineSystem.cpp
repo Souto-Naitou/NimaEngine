@@ -24,17 +24,49 @@ void LineSystem::Initialize()
     CreatePipelineState();
 }
 
-void LineSystem::PresentDraw()
+void LineSystem::DrawSetting(ID3D12GraphicsCommandList* cl)
 {
     /// コマンドリストの設定
     DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get());
 
     /// ルートシグネチャをセットする
-    commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+    cl->SetGraphicsRootSignature(rootSignature_.Get());
     /// グラフィックスパイプラインステートをセットする
-    commandList_->SetPipelineState(pipelineState_.Get());
+    cl->SetPipelineState(pipelineState_.Get());
     /// プリミティブトポロジーをセットする
-    commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+}
+
+void LineSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data)
+{
+    this->DrawSetting(commandList);
+
+    // DSVハンドル取得
+    auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+
+    // RTVセット
+    commandList->OMSetRenderTargets(
+        1,
+        &data.rtvHandle,
+        FALSE,
+        &dsvHandle
+    );
+
+    // CBVセット
+    for (auto& cbuffer : data.cbuffers)
+    {
+        auto& [index, resource] = cbuffer;
+        commandList->SetGraphicsRootConstantBufferView(
+            index,
+            resource->GetGPUVirtualAddress()
+        );
+    }
+
+    // VBVセット
+    commandList->IASetVertexBuffers(0, 1, &data.vbView);
+
+    // 描画コール
+    commandList->DrawInstanced(data.vertexCount, data.vertexCount / 2, 0, 0);
 }
 
 void LineSystem::CreateRootSignature()

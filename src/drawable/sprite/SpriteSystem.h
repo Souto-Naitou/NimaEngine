@@ -33,25 +33,16 @@ public:
     /// スプライト描画システムを初期化します。
     /// </summary>
     void Initialize() override;
+
     /// <summary>
     /// バックバッファへの描画を実施します。
     /// </summary>
     void PresentDraw();
-    /// <summary>
-    /// 累積した描画コマンドを発行します。
-    /// </summary>
-    void DrawCall();
+
     /// <summary>
     /// GPU 完了を待機して同期します。
     /// </summary>
     void Sync();
-
-    // Setter
-    /// <summary>
-    /// 描画に必要なコマンドリストデータを追加します。
-    /// </summary>
-    /// <param name="data">マテリアル、行列、VBV/IBV、SRV など。</param>
-    void AddCommandListData(const CommandListData& data);
 
     void DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data);
 
@@ -64,5 +55,4 @@ private:
     static constexpr wchar_t                    kPixelShaderPath[]      = L"EngineResources/Shaders/Sprite.PS.hlsl";
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_          = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_  = nullptr;
-    std::list<CommandListData>                  commandListDatas_       = {};
 };

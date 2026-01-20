@@ -26,12 +26,13 @@ void Collider::DrawArea()
     switch (shape_)
     {
     case Shape::AABB:
-        std::get<AABB*>(shapeData_)->Draw();
+        std::get<AABB*>(shapeData_)->Draw1F();
         break;
     case Shape::OBB:
-        std::get<OBB*>(shapeData_)->Draw();
+        std::get<OBB*>(shapeData_)->Draw1F();
         break;
     case Shape::Sphere:
+        std::get<Sphere*>(shapeData_)->Draw1F();
         break;
     default:
         break;

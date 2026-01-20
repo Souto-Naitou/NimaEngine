@@ -4,13 +4,16 @@
 
 class Canvas;
 
+/// <summary>
+/// 描画可能オブジェクトの基底クラス
+/// </summary>
 class DrawableBase
 {
 public:
     virtual ~DrawableBase();
 
     /// <summary>
-    /// 1フレーム分の描画処理を行います。
+    /// 呼び出されたフレームのみ描画します。
     /// </summary>
     virtual void Draw1F();
 
@@ -25,12 +28,21 @@ public:
     /// </summary>
     virtual void DrawCall(ID3D12GraphicsCommandList* cl) = 0;
 
+    /// <summary>
+    /// キャンバスを切り離します。
+    /// </summary>
     void DetachCurrentCanvas() { pCanvasCurrent_ = nullptr; }
 
-protected:
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_ = {};
-    bool isDrawCalled_ = false;
+    /// <summary>
+    /// Draw1Fが呼ばれていない状態にリセットします。
+    /// </summary>
+    void ResetDraw1FCalled() { isDraw1FCalled_ = false; }
+
+    bool IsDraw1FCalled() const { return isDraw1FCalled_; }
+    D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandleCPU() const { return rtvHandle_; }
 
 private:
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_ = {};
+    bool isDraw1FCalled_ = false;
     Canvas* pCanvasCurrent_ = nullptr;
 };

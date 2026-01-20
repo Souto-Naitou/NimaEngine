@@ -8,11 +8,13 @@
 #include <Core/DirectX12/DirectX12.h>
 #include <vector>
 #include <Features/GameEye/GameEye.h>
+#include <drawable/base/DrawableBase.h>
+#include <Math/Transform.h>
 
 /// <summary>
 /// ライン描画クラス
 /// </summary>
-class Line
+class Line : public DrawableBase
 {
 public:
     Line(size_t lineCount) { vertices_.resize(lineCount * 2); }
@@ -35,7 +37,7 @@ public:
     /// <summary>
     /// ラインを描画します。
     /// </summary>
-    void Draw();
+    void DrawCall(ID3D12GraphicsCommandList* cl) override;
 
 public:
     Vector3& operator [](size_t idx) { return vertices_[idx]; }
@@ -54,6 +56,7 @@ public:
     void ResizeLine(size_t numLines);
     void SetColor(const Vector4& color) { color_ = color; }
     void SetGameEye(GameEye** eye) { pGameEye_ = eye; }
+    void SetTransform(const EulerTransform& transform) { transform_ = transform; }
 
 
 public: /// Getter
@@ -61,7 +64,7 @@ public: /// Getter
     std::vector<Vector3>& GetVertices() { return vertices_; }
     Vector4& GetColorData() { return color_; }
     size_t GetLineCount() const { return vertices_.size() / 2; }
-
+    const EulerTransform& GetTransform() const { return transform_; }
 
 private:
     Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
@@ -77,6 +80,7 @@ private:
 
     std::vector<Vector3> vertices_ = {};
     Vector4 color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+    EulerTransform transform_ = {};
 
 private:
     /// <summary>

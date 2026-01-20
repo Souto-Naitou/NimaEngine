@@ -155,8 +155,7 @@ void Sprite::Update()
 
 void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
 {
-    if (!isDrawEnabled_ || !isDrawCalled_) return;
-    isDrawCalled_ = false;
+    if (!isDrawEnabled_) return;
 
     SpriteSystem::CommandListData data{};
     data.materialResource = materialResource_.Get();
@@ -164,7 +163,7 @@ void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
     data.srvHandleGPU = textureSrvHandleGPU_;
     data.pVBV = &vertexBufferView_;
     data.pIBV = &indexBufferView_;
-    data.rtvHandleCPU = rtvHandle_;
+    data.rtvHandleCPU = DrawableBase::GetRTVHandleCPU();;
 
     SpriteSystem::GetInstance()->DrawSingle(cl, data);
 }

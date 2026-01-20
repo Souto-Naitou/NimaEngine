@@ -42,7 +42,7 @@ public:
     /// <summary>
     /// 描画命令を発行します。
     /// </summary>
-    void DrawCall(ID3D12GraphicsCommandList* cl) override;
+    void                DrawCall(ID3D12GraphicsCommandList* cl) override;
     
     /// <summary>
     /// リソースの解放を行います。

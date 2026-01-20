@@ -94,12 +94,12 @@ void ParticleEmitter::Update()
     aabb_->SetMinMax(emitterData_.ranges.position.start, emitterData_.ranges.position.end);
 }
 
-void ParticleEmitter::Draw()
+void ParticleEmitter::Draw1F()
 {
 #ifdef _DEBUG
-    if (emitterData_.flags.enableRandomEmit)
+    if (isDrawLine_ && emitterData_.flags.enableRandomEmit)
     {
-        aabb_->Draw();
+        aabb_->Draw1F();
     }
 #endif // _DEBUG
 }
@@ -350,6 +350,7 @@ void ParticleEmitter::ImGuiSectionColor()
 void ParticleEmitter::ImGuiSectionTransform()
 {
 #ifdef _DEBUG
+
     if (ImGui::CollapsingHeader("変形"))
     {
         ImGui::DragFloat("衝突半径", &fromJsonData_.common.radius, 0.01f, FLT_MIN, FLT_MAX);
@@ -398,12 +399,14 @@ void ParticleEmitter::ImGuiSectionTransform()
 
         ImGui::Spacing();
     }
+
 #endif // _DEBUG
 }
 
 void ParticleEmitter::ImGuiSectionSpawnPoint()
 {
 #ifdef _DEBUG
+
     if (ImGui::CollapsingHeader("生成場所"))
     {
         ImGui::Checkbox("ランダム範囲生成", &fromJsonData_.flags.enableRandomEmit);
@@ -419,6 +422,7 @@ void ParticleEmitter::ImGuiSectionSpawnPoint()
 
         ImGui::Spacing();
     }
+
 #endif // _DEBUG
 }
 
@@ -470,6 +474,52 @@ void ParticleEmitter::ImGuiSectionVelocity()
 #endif // _DEBUG
 }
 
+void ParticleEmitter::ImGuiSectionPhysics()
+{
+#ifdef _DEBUG
+
+    if (ImGui::CollapsingHeader("物理"))
+    {
+        ImGui::DragFloat3("重力", &fromJsonData_.physics.gravity.x, 0.01f);
+        ImGui::DragFloat3("抵抗", &fromJsonData_.physics.resistance.x, 0.01f);
+        ImGui::DragFloat("動摩擦係数", &fromJsonData_.physics.frictionCoef, 0.01f);
+
+        ImGui::Checkbox("スムースノイズ", &fromJsonData_.flags.enableSmoothNoise);
+        if (fromJsonData_.flags.enableSmoothNoise)
+        {
+            ImGui::DragFloat("スムースノイズ強度", &fromJsonData_.physics.smoothNoisePower, 0.01f, 0.0f, FLT_MAX);
+        }
+    }
+
+#endif // _DEBUG
+}
+
+void ParticleEmitter::ImGuiSectionCollisionFloor()
+{
+    if (ImGui::CollapsingHeader("衝突床"))
+    {
+        ImGui::Checkbox("衝突床との判定", &fromJsonData_.flags.enableCollisionFloor);
+        if (fromJsonData_.flags.enableCollisionFloor)
+        {
+            ImGui::DragFloat("高さ", &fromJsonData_.collisionFloor.elevation, 0.01f);
+            ImGui::DragFloat("反発係数", &fromJsonData_.collisionFloor.bounce_power, 0.01f);
+        }
+
+        ImGui::Spacing();
+    }
+}
+
+void ParticleEmitter::ImGuiSectionDebug()
+{
+    #ifdef _DEBUG
+    if (ImGui::CollapsingHeader("速度"))
+    {
+        ImGui::Checkbox("エミッタ範囲の描画", &isDrawLine_);
+        ImGui::Spacing();
+    }
+    #endif // _DEBUG
+}
+
 Vector3 ParticleEmitter::RandomUnitSphere()
 {
     float u = pRandGen_->Generate(0.0f, 1.0f);
@@ -499,30 +549,15 @@ void ParticleEmitter::ImGui()
 
     this->ImGuiSectionVelocity();
 
-    if (ImGui::CollapsingHeader("衝突床"))
-    {
-        ImGui::Checkbox("衝突床との判定", &fromJsonData_.flags.enableCollisionFloor);
-        if (fromJsonData_.flags.enableCollisionFloor)
-        {
-            ImGui::DragFloat("高さ", &fromJsonData_.collisionFloor.elevation, 0.01f);
-            ImGui::DragFloat("反発係数", &fromJsonData_.collisionFloor.bounce_power, 0.01f);
-        }
+    this->ImGuiSectionCollisionFloor();
 
-        ImGui::Spacing();
-    }
+    this->ImGuiSectionPhysics();
 
-    if (ImGui::CollapsingHeader("物理"))
-    {
-        ImGui::DragFloat3("重力", &fromJsonData_.physics.gravity.x, 0.01f);
-        ImGui::DragFloat3("抵抗", &fromJsonData_.physics.resistance.x, 0.01f);
-        ImGui::DragFloat("動摩擦係数", &fromJsonData_.physics.frictionCoef, 0.01f);
+    this->ImGuiSectionDebug();
 
-        ImGui::Checkbox("スムースノイズ", &fromJsonData_.flags.enableSmoothNoise);
-        if (fromJsonData_.flags.enableSmoothNoise)
-        {
-            ImGui::DragFloat("スムースノイズ強度", &fromJsonData_.physics.smoothNoisePower, 0.01f, 0.0f, FLT_MAX);
-        }
-    }
+
+
+
 #endif // _DEBUG
 }
 

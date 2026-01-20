@@ -18,7 +18,7 @@ public:
 
     void Initialize();
     void Update();
-    void Draw();
+    void Draw1F();
 
 
 public: /// Setter

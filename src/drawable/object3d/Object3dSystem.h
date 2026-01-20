@@ -74,11 +74,11 @@ public:
     /// <summary>
     /// デプスプリパス用の描画設定を行います。
     /// </summary>
-    void    DepthDrawSetting();
+    void    DepthDrawSetting(ID3D12GraphicsCommandList* cl);
     /// <summary>
     /// メイン描画用の設定を行います。
     /// </summary>
-    void    MainDrawSetting();
+    void    MainDrawSetting(ID3D12GraphicsCommandList* cl);
 
     /// <summary>
     /// 描画に必要なコマンドリスト情報を追加します。

@@ -123,9 +123,7 @@ void Object3d::Update()
 
 void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
 {
-    if (!isDraw_ || !isDrawCalled_) return;
-
-    isDrawCalled_ = false;
+    if (!isDraw_) return;
 
     Object3dSystem::CommandListData data;
     data.cbuffers[0] = materialResource_.Get();
@@ -135,12 +133,12 @@ void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
     data.cbuffers[5] = cameraForGPUResource_.Get();
     data.cbuffers[6] = lightingResource_.Get();
     data.cbuffers[7] = pointLightResource_.Get();
-    data.rtvHandle = rtvHandle_;
+    data.rtvHandle = DrawableBase::GetRTVHandleCPU();;
     data.model = pModel_;
 
+    // マルチスレッド描画は廃止したため
+    // コマンドリストデータの蓄積は行わない (Canvas作成時に不具合が発生したため)
     pSystem_->DrawSingle(cl, data);
-    // 現在は即時描画なのでコマンドリストデータの蓄積は行わない (Canvas作成時に不具合が発生したため)
-    //pSystem_->AddCommandListData(data);
 }
 
 void Object3d::Finalize() const

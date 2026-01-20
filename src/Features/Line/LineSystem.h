@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <BaseClasses/ObjectSystemBaseMT.h>
+#include <map>
 
 /// <summary>
 /// ライン共通
@@ -12,6 +13,14 @@
 class LineSystem : public ObjectSystemBaseMT
 {
 public:
+    struct CommandListData
+    {
+        uint32_t vertexCount = 0;
+        std::map<uint32_t, ID3D12Resource*> cbuffers;
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {};
+        D3D12_VERTEX_BUFFER_VIEW vbView = {};
+    };
+
     LineSystem(const LineSystem&) = delete;
     LineSystem& operator=(const LineSystem&) = delete;
     LineSystem(LineSystem&&) = delete;
@@ -30,8 +39,9 @@ public:
     /// <summary>
     /// バックバッファへの最終描画処理を行います。
     /// </summary>
-    void PresentDraw();
+    void DrawSetting(ID3D12GraphicsCommandList* cl);
 
+    void    DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data);
 
 private:
     LineSystem() = default;

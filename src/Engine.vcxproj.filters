@@ -741,6 +741,7 @@
     <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp" />
     <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp" />
     <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
+    <ClCompile Include="Features\Primitive\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1212,6 +1213,7 @@
     <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h" />
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
+    <ClInclude Include="Features\Primitive\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

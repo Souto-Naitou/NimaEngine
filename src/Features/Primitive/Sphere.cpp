@@ -48,7 +48,6 @@ void Sphere::GenerateLineVertices()
 {
     constexpr float kTwoPi = std::numbers::pi_v<float> *2.0f;
     constexpr uint32_t kSegments = kSegments_;
-    constexpr float radius = 1.0f;
 
     auto addCircle = [&](uint32_t baseLine, Vector3 axis1, Vector3 axis2)
     {

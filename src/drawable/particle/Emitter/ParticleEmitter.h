@@ -4,16 +4,16 @@
 
 #include <Features/TimeMeasurer/TimeMeasurer.h>
 #include <drawable/particle/Particle.h>
-#include <Features/Primitive/AABB.h>
 #include <WinTools/WinTools.h>
 #include <Features/GameEye/GameEye.h>
+#include <drawable/particle/Emitter/EmitterData.h>
+#include <Features/RandomGenerator/RandomGenerator.h>
+#include <Features/Primitive/AABB.h>
+#include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Vector3.h>
 #include <string>
-#include <memory>
 #include <cstdint>
-#include <drawable/particle/Emitter/EmitterData.h>
-#include <DebugTools/DebugEntry/DebugEntry.h>
-#include <Features/RandomGenerator/RandomGenerator.h>
+#include <memory>
 
 struct ParticleEmitterInitParams
 {
@@ -52,9 +52,9 @@ public:
     void Update();
 
     /// <summary>
-    /// パーティクルの描画を行います。
+    /// エミッタの描画を行います。
     /// </summary>
-    void Draw();
+    void Draw1F();
 
     /// <summary>
     /// リソースの解放を行います。
@@ -97,6 +97,7 @@ private:
     bool                        isManualMode_           = false;
     bool                        isEmitRequest_          = false;
     Vector3                     position_               = {};
+    bool                        isDrawLine_             = false;
 
     /// [ Pointers ]
     WinTools*                   winTools_               = nullptr;
@@ -120,6 +121,9 @@ private:
     void ImGuiSectionTransform();
     void ImGuiSectionSpawnPoint();
     void ImGuiSectionVelocity();
+    void ImGuiSectionPhysics();
+    void ImGuiSectionCollisionFloor();
+    void ImGuiSectionDebug();
 
     /// <summary>
     /// 単位球上のランダムベクトルを生成します。

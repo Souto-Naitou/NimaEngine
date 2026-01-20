@@ -211,7 +211,7 @@ void CellBasedFiltering::Draw2dPotentials()
     {
         auto aabb = collider->GetAABB();
         aabb->SetColor(0xff00ffff);
-        aabb->Draw();
+        aabb->Draw1F();
     }
 }
 
@@ -232,7 +232,7 @@ void CellBasedFiltering::Draw2dCurrentCells()
 
             cellAABB.SetColor(0x0000ffff);
             cellAABB.Update();
-            cellAABB.Draw();
+            cellAABB.Draw1F();
         }
     }
 }
@@ -259,5 +259,5 @@ void CellBasedFiltering::Draw2dAllCells()
     }
     cellGridLines_->SetColor(RGBA(0xffff00ff).to_Vector4());
     cellGridLines_->Update();
-    cellGridLines_->Draw();
+    cellGridLines_->Draw1F();
 }

@@ -30,59 +30,9 @@ void SpriteSystem::PresentDraw()
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void SpriteSystem::DrawCall()
-{
-    auto record = [&](ID3D12GraphicsCommandList* commandList)
-    {
-        /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
-
-        /// ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_.Get());
-
-        /// グラフィックスパイプラインステートをセットする
-        commandList->SetPipelineState(graphicsPipelineState_.Get());
-
-        /// プリミティブトポロジーをセットする
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        
-        // DSVハンドル取得
-        auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-
-        // 現在のRTVHandle
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
-
-        for(auto& data : commandListDatas_)
-        {
-            // RTVハンドルが変わったらセットし直す
-            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
-            if (rtvHandleCurrent.ptr != data.rtvHandleCPU.ptr && data.rtvHandleCPU.ptr)
-            {
-                rtvHandleCurrent = data.rtvHandleCPU;
-                commandList->OMSetRenderTargets(1, &data.rtvHandleCPU, FALSE, &dsvHandle);
-            }
-
-            commandList->SetGraphicsRootConstantBufferView(0, data.materialResource->GetGPUVirtualAddress());
-            commandList->SetGraphicsRootConstantBufferView(1, data.transformationMatrixResource->GetGPUVirtualAddress());
-            commandList->SetGraphicsRootDescriptorTable(2, data.srvHandleGPU);
-            commandList->IASetVertexBuffers(0, 1, data.pVBV);
-            commandList->IASetIndexBuffer(data.pIBV);
-            commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
-        }
-    };
-
-    worker_ = std::async(std::launch::async, record, commandList_.Get());
-}
-
 void SpriteSystem::Sync()
 {
     worker_.get();
-    commandListDatas_.clear();
-}
-
-void SpriteSystem::AddCommandListData(const CommandListData& data)
-{
-    commandListDatas_.emplace_back(data);
 }
 
 void SpriteSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data)

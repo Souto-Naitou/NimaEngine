@@ -99,8 +99,11 @@ void Canvas::DrawObjects()
     // 描画オブジェクトの描画
     for (auto& drawable : drawables_)
     {
+        if (!drawable->IsDraw1FCalled()) continue;
+
         drawable->SetRTVHandle(rtvHandle);
         drawable->DrawCall(cl);
+        drawable->ResetDraw1FCalled();
     }
 }
 
@@ -113,11 +116,11 @@ void Canvas::DrawCall([[maybe_unused]] ID3D12GraphicsCommandList* cl)
 {
     if (!isEnabled_) return;
 
-    if (rtvHandle_.ptr)
+    if (GetRTVHandleCPU().ptr)
     {
         this->DrawObjects();
         pPostEffectExecutor_->ApplyPostEffects();
-        pPostEffectExecutor_->Draw(rtvHandle_);
+        pPostEffectExecutor_->Draw(GetRTVHandleCPU());
     }
     else 
     {

@@ -23,32 +23,28 @@ void Object3dSystem::Initialize()
     CreateDepthPipelineState();
 }
 
-void Object3dSystem::DepthDrawSetting()
+void Object3dSystem::DepthDrawSetting(ID3D12GraphicsCommandList* cl)
 {
-    ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandList();
-
     /// ルートシグネチャをセットする
-    commandList->SetGraphicsRootSignature(rootSignature_);
+    cl->SetGraphicsRootSignature(rootSignature_);
 
     /// グラフィックスパイプラインステートをセットする
-    commandList->SetPipelineState(psoEarlyZ_.Get());
+    cl->SetPipelineState(psoEarlyZ_.Get());
 
     /// プリミティブトポロジーをセットする
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Object3dSystem::MainDrawSetting()
+void Object3dSystem::MainDrawSetting(ID3D12GraphicsCommandList* cl)
 {
-    ID3D12GraphicsCommandList* commandList = pDx12_->GetCommandList();
-
     /// ルートシグネチャをセットする
-    commandList->SetGraphicsRootSignature(rootSignature_);
+    cl->SetGraphicsRootSignature(rootSignature_);
 
     /// グラフィックスパイプラインステートをセットする
-    commandList->SetPipelineState(psoMain_.Get());
+    cl->SetPipelineState(psoMain_.Get());
 
     /// プリミティブトポロジーをセットする
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Object3dSystem::DrawCall()
@@ -61,12 +57,8 @@ void Object3dSystem::DrawCall()
         // =============================================
         // [DepthDraw Begin]
 
-        // ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_);
-        // グラフィックスパイプラインステートをセットする
-        commandList->SetPipelineState(psoEarlyZ_.Get());
-        // プリミティブトポロジーをセットする
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        this->DepthDrawSetting(commandList);
+
         // DSVハンドル取得
         auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
         // RTVHandleが変化したかをチェックするための変数
@@ -98,14 +90,7 @@ void Object3dSystem::DrawCall()
         // =============================================
         // [MainDraw Begin]
 
-        /// ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_);
-
-        /// グラフィックスパイプラインステートをセットする
-        commandList->SetPipelineState(psoMain_.Get());
-
-        /// プリミティブトポロジーをセットする
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        this->MainDrawSetting(commandList);
 
         for (auto& data : commandListDatas_)
         {

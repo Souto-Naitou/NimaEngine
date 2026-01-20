@@ -19,7 +19,7 @@ public:
 
     void Initialize();
     void Update();
-    void Draw();
+    void Draw1F();
 
 
 public: /// Setter
@@ -42,12 +42,8 @@ private:
     Vector3 max_; // 最大点
     Line lines = {12}; // 線
 
-
-private:
     void ModifyGameEye(GameEye** eye);
 
-
-private:
     LineSystem* pLineSystem = nullptr;
     GameEye** pGameEye = nullptr;
 };

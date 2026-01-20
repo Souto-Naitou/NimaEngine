@@ -9,9 +9,3 @@ enum class Shape
     OBB,
     AABB,
 };
-
-struct Sphere
-{
-    Vector3 center; // 中心点
-    float radius; // 半径
-};

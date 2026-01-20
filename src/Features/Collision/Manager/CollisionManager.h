@@ -7,6 +7,7 @@
 #include <Features/Collision/Shape.h>
 #include <Features/Primitive/AABB.h>
 #include <Features/Primitive/OBB.h>
+#include <Features/Primitive/Sphere.h>
 
 /// <summary>
 /// 衝突判定実行クラス   

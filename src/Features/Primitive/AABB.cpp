@@ -64,11 +64,9 @@ void AABB::Update()
     lines.Update();
 }
 
-void AABB::Draw()
+void AABB::Draw1F()
 {
-    lines.Draw();
-
-    return;
+    lines.Draw1F();
 }
 
 void AABB::ModifyGameEye(GameEye** eye)

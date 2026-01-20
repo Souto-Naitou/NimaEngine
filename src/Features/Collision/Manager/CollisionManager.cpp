@@ -244,14 +244,14 @@ bool CollisionManager::IsCollision(const AABB& _aabb, const Sphere& _sphere)
     const Vector3& max = _aabb.GetMax();
 
     Vector3 _closestPoint{
-        std::clamp(_sphere.center.x, min.x, max.x),
-        std::clamp(_sphere.center.y, min.y, max.y),
-        std::clamp(_sphere.center.z, min.z, max.z)
+        std::clamp(_sphere.GetCenter().x, min.x, max.x),
+        std::clamp(_sphere.GetCenter().y, min.y, max.y),
+        std::clamp(_sphere.GetCenter().z, min.z, max.z)
     };
 
-    float distance = (_closestPoint - _sphere.center).LengthWithoutRoot();
+    float distance = (_closestPoint - _sphere.GetCenter()).LengthWithoutRoot();
 
-    if (distance <= _sphere.radius * _sphere.radius)
+    if (distance <= _sphere.GetRadius() * _sphere.GetRadius())
     {
         return true;
     }
@@ -291,8 +291,8 @@ bool CollisionManager::IsCollision(const OBB* _obb1, const OBB* _obb2)
 
 bool CollisionManager::IsCollision(const Sphere* _sphere1, const Sphere* _sphere2)
 {
-    Vector3 distanceAB = _sphere1->center - _sphere2->center;
-    float radiusAB = _sphere1->radius + _sphere2->radius;
+    Vector3 distanceAB = _sphere1->GetCenter() - _sphere2->GetCenter();
+    float radiusAB = _sphere1->GetRadius() + _sphere2->GetRadius();
     if (distanceAB.LengthWithoutRoot() < static_cast<float>(radiusAB * radiusAB)) return true;
     return false;
 }
@@ -311,11 +311,11 @@ bool CollisionManager::IsCollision(const OBB& _obb, const Sphere& _sphere)
     obbWorldMatrix.m[3][3] = 1.0f;
 
     Matrix4x4 obbWorldMatrixInverse = obbWorldMatrix.Inverse();
-    Vector3 centerInOBBLocalSpace = FMath::Transform(_sphere.center, obbWorldMatrixInverse);
+    Vector3 centerInOBBLocalSpace = FMath::Transform(_sphere.GetCenter(), obbWorldMatrixInverse);
 
     AABB aabbOBBLocal = {};
     aabbOBBLocal.SetMinMax(-_obb.GetSize(), _obb.GetSize());
-    Sphere sphereOBBLocal{ centerInOBBLocalSpace, _sphere.radius };
+    Sphere sphereOBBLocal{ centerInOBBLocalSpace, _sphere.GetRadius() };
 
     return IsCollision(aabbOBBLocal, sphereOBBLocal);
 }

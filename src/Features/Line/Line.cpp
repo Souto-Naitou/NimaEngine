@@ -20,6 +20,12 @@ void Line::Initialize()
         vertices_.resize(2);
     }
 
+    transform_ = {
+        .scale      = Vector3(1.0f, 1.0f, 1.0f),
+        .rotate     = Vector3(0.0f, 0.0f, 0.0f),
+        .translate  = Vector3(0.0f, 0.0f, 0.0f),
+    };
+
     CreateVertexResource();
     CreateWVPMatrixResource();
     CreateColorResource();
@@ -32,7 +38,12 @@ void Line::Finalize()
 
 void Line::Update()
 {
-    Matrix4x4 wMatrix = Matrix4x4::Identity();
+    Matrix4x4 wMatrix = Matrix4x4::AffineMatrix(
+        transform_.scale,
+        transform_.rotate,
+        transform_.translate
+    );
+
     Matrix4x4 vpMatrix = (*pGameEye_)->GetViewProjectionMatrix();
 
     pWVPMatrixData_[0] = wMatrix * vpMatrix;
@@ -45,18 +56,15 @@ void Line::Update()
     pColorData_[0] = color_;
 }
 
-void Line::Draw()
+void Line::DrawCall(ID3D12GraphicsCommandList* cl)
 {
-    ID3D12GraphicsCommandList* commandList = pLineSystem_->GetCommandList();
-
-    commandList->SetGraphicsRootConstantBufferView(0, colorResource_->GetGPUVirtualAddress());
-    commandList->SetGraphicsRootConstantBufferView(1, wvpMatrixResource_->GetGPUVirtualAddress());
-
-    /// 頂点バッファをセットする
-    commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-    /// 描画
-    commandList->DrawInstanced(static_cast<UINT>(vertices_.size()), static_cast<UINT>(vertices_.size() / 2), 0, 0);
+    LineSystem::CommandListData clData;
+    clData.vertexCount = static_cast<uint32_t>(vertices_.size());
+    clData.rtvHandle = DrawableBase::GetRTVHandleCPU();
+    clData.cbuffers[0] = colorResource_.Get();
+    clData.cbuffers[1] = wvpMatrixResource_.Get();
+    clData.vbView = vertexBufferView_;
+    pLineSystem_->DrawSingle(cl, clData);
 }
 
 void Line::Resize(size_t size)

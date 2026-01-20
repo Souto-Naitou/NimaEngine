@@ -496,6 +496,7 @@ void ParticleEmitter::ImGuiSectionPhysics()
 
 void ParticleEmitter::ImGuiSectionCollisionFloor()
 {
+#ifdef _DEBUG
     if (ImGui::CollapsingHeader("衝突床"))
     {
         ImGui::Checkbox("衝突床との判定", &fromJsonData_.flags.enableCollisionFloor);
@@ -507,6 +508,7 @@ void ParticleEmitter::ImGuiSectionCollisionFloor()
 
         ImGui::Spacing();
     }
+#endif // _DEBUG
 }
 
 void ParticleEmitter::ImGuiSectionDebug()
@@ -554,9 +556,6 @@ void ParticleEmitter::ImGui()
     this->ImGuiSectionPhysics();
 
     this->ImGuiSectionDebug();
-
-
-
 
 #endif // _DEBUG
 }

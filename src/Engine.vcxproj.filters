@@ -468,10 +468,10 @@
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp">
       <Filter>Feature\RandomGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Line\Line.cpp">
+    <ClCompile Include="drawable\line\Line.cpp">
       <Filter>Feature\Line</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Line\LineSystem.cpp">
+    <ClCompile Include="drawable\line\LineSystem.cpp">
       <Filter>Feature\Line\System</Filter>
     </ClCompile>
     <ClCompile Include="Features\Primitive\AABB.cpp">
@@ -741,7 +741,9 @@
     <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp" />
     <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp" />
     <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
-    <ClCompile Include="Features\Primitive\Sphere.cpp" />
+    <ClCompile Include="Features\Primitive\SphereLine.cpp" />
+    <ClCompile Include="drawable\line\LineBatch.cpp" />
+    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -846,13 +848,13 @@
     <ClInclude Include="Features\RandomGenerator\RandomGenerator.h">
       <Filter>Feature\RandomGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Line\Line.h">
+    <ClInclude Include="drawable\line\Line.h">
       <Filter>Feature\Line</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Line\LineSystem.h">
+    <ClInclude Include="drawable\line\LineSystem.h">
       <Filter>Feature\Line\System</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Line\Manager\LineManager.h">
+    <ClInclude Include="drawable\line\LineBatch.h">
       <Filter>Feature\Line\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Features\Primitive\AABB.h">
@@ -1214,6 +1216,8 @@
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
     <ClInclude Include="Features\Primitive\Sphere.h" />
+    <ClInclude Include="Features\Primitive\SphereLine.h" />
+    <ClInclude Include="drawable\line\AllocatedLineVertices.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

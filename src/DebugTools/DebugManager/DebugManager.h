@@ -61,8 +61,12 @@ public:
     void    SetComponent(const std::string& _category, const std::string&& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
     void    SetComponent(const std::string& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
     void    SetComponent(const std::string&& _name, const std::function<void(void)>& _component, bool isWindowMode = false);
+
+    /// ビューポートのインスタンスを登録
     void    SetViewportWindow(Viewport* pViewport);
+    /// Logger のインスタンスを登録
     void    SetLoggerWindow(Logger* pLogger);
+    /// イベントタイマーのインスタンスを登録
     void    SetEventTimerWindow(EventTimer* pEventTimer);
 
     void    DeleteComponent(const std::string& _name);
@@ -72,12 +76,14 @@ public:
     void    Update();
     void    DrawUI();
     void    ChangeFont();
-    void    SetDisplay(bool _isEnable) { isDisplay_ = _isEnable; }
-    bool    IsDisplay() const { return isDisplay_; }
-
-    double  GetFPS() const { return fps_; }
+    void    SetDisplay(bool _isEnable)  { isDisplay_ = _isEnable; }
+    bool    IsDisplay() const           { return isDisplay_; }
+    double  GetFPS() const              { return fps_; }
 
 private:
+    /// <summary>
+    /// ImGuiウィンドウ名列挙型
+    /// </summary>
     enum class WindowType
     {
         ObjectList,
@@ -103,28 +109,29 @@ private:
 
     // Component data structure
     std::list<ComponentData>    componentList_;
-    Viewport*                   pViewport_ = nullptr;
-    Logger*                     pLogger_ = nullptr;
-    EventTimer*                 pEventTimer_ = nullptr;
+    Viewport*                   pViewport_      = nullptr;
+    Logger*                     pLogger_        = nullptr;
+    EventTimer*                 pEventTimer_    = nullptr;
 
     // Timing utilities for frame measurement
-    TimeMeasurer            timer_ = {};
-    TimeMeasurer            frameTimer_ = {};
+    TimeMeasurer                timer_          = {};
+    TimeMeasurer                frameTimer_     = {};
 
     // FPS calculation data
-    double                  elapsedFrameCount_ = 0.0;
-    double                  fps_ = 0.0;
-    std::array<float, 120>  fpsList_ = {};
-    unsigned int            frameCount_ = 0u;
-    double                  frameTime_ = 0.0;
+    double                      elapsedFrameCount_ = 0.0;
+    double                      fps_            = 0.0;
+    std::array<float, 120>      fpsList_        = {};
+    unsigned int                frameCount_     = 0u;
+    double                      frameTime_      = 0.0;
 
     // Log storage
-    std::string             textLog_ = {};
+    std::string                 textLog_        = {};
 
-    // flags
     using WindowFunc = std::function<void(DebugManager&)>;
     using WindowFuncPair = std::pair<bool, WindowFunc>;
     std::unordered_map<WindowType, WindowFuncPair> windowFuncs_;
+
+    // flags
     bool                    isDisplay_ = true;
     bool                    enableAutoScroll_ = true;
     bool                    isExistSettingFile_ = false;

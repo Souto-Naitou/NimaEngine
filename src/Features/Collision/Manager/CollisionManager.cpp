@@ -1,27 +1,22 @@
 #include "CollisionManager.h"
-#include <DebugTools/DebugManager/DebugManager.h>
 
+#include <DebugTools/DebugManager/DebugManager.h>
 #include <Vector3.h>
 #include <Matrix4x4.h>
 
-#include <cmath>
 #include <algorithm>
 
 #ifdef _DEBUG
-
-#include "imgui.h"
-#include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
-
+#include <imgui.h>
 #endif // _DEBUG
 
 void CollisionManager::Initialize()
 {
-    DebugManager::GetInstance()->SetComponent("Common", name_, std::bind(&CollisionManager::ImGui, this), true);
+    pDebugEntry_ = std::make_unique<DebugEntry<CollisionManager>>("Common", "CollisionManager", this, true);
 }
 
 void CollisionManager::Finalize()
 {
-    DebugManager::GetInstance()->DeleteComponent("Common", name_);
     ClearCollider();
 }
 
@@ -29,8 +24,8 @@ void CollisionManager::CheckAllCollision()
 {
     collisionNames_.clear();
     countCheckCollision_ = 0ui32;
-    countWithoutFilter_ = 0ui32;
-    countWithoutLighter = 0ui32;
+    countCheckCollisionCalled_ = 0ui32;
+    countBroadPhaseCalled_ = 0ui32;
 
     auto itrA = colliders_.begin();
     for (; itrA != colliders_.end(); ++itrA)
@@ -95,8 +90,8 @@ void CollisionManager::ImGui()
 #ifdef _DEBUG
 
     ImGui::Text("判定回数 : %u回", countCheckCollision_);
-    ImGui::Text("フィルターされた回数 : %u回", countWithoutFilter_ - countWithoutLighter);
-    ImGui::Text("軽量化された回数 : %u回", countWithoutLighter - countCheckCollision_);
+    ImGui::Text("フィルターされた回数 : %u回", countCheckCollisionCalled_ - countBroadPhaseCalled_);
+    ImGui::Text("軽量化された回数 : %u回", countBroadPhaseCalled_ - countCheckCollision_);
 
     if (ImGui::BeginTable("Collided list", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable))
     {
@@ -121,90 +116,101 @@ void CollisionManager::ImGui()
 
 }
 
-void CollisionManager::CheckCollisionPair(Collider* _colA, Collider* _colB)
+void CollisionManager::CheckCollisionPair(Collider* colA, Collider* colB)
 {
     // 衝突しているかどうか
     bool isCollide = true;
 
-    if (!_colA->GetEnable() || !_colB->GetEnable())
+    if (!colA->GetEnable() || !colB->GetEnable())
     {
-        _colA->EraseCollidingPtr(_colB);
-        _colB->EraseCollidingPtr(_colA);
+        colA->EraseCollidingPtr(colB);
+        colB->EraseCollidingPtr(colA);
         return;
     }
-    countWithoutFilter_++;
+    // 呼び出し回数カウントを増やす
+    ++countCheckCollisionCalled_;
 
     // 衝突フィルタリング
     bool fillterFlag =
-        !(_colA->GetCollisionAttribute() & _colB->GetCollisionMask()) ||
-        !(_colB->GetCollisionAttribute() & _colA->GetCollisionMask());
+        !(colA->GetCollisionAttribute() & colB->GetCollisionMask()) ||
+        !(colB->GetCollisionAttribute() & colA->GetCollisionMask());
     if (fillterFlag) return;
 
     // 形状条件
-    if (_colA->GetShape() == Shape::AABB && _colB->GetShape() == Shape::AABB)
+    if (colA->GetShape() == Shape::AABB && colB->GetShape() == Shape::AABB)
     {
-        isCollide = IsCollision(_colA->GetAABB(), _colB->GetAABB());
+        isCollide = IsCollision(colA->GetShapeData<AABB>(), colB->GetShapeData<AABB>());
     }
-    else if (_colA->GetShape() == Shape::Sphere && _colB->GetShape() == Shape::Sphere)
+    else if (colA->GetShape() == Shape::Sphere && colB->GetShape() == Shape::Sphere)
     {
-        isCollide = IsCollision(_colA->GetSphere(), _colB->GetSphere());
+        isCollide = IsCollision(colA->GetShapeData<Sphere>(), colB->GetShapeData<Sphere>());
     }
-    else if (_colA->GetShape() == Shape::AABB && _colB->GetShape() == Shape::Sphere)
+    else if (colA->GetShape() == Shape::AABB && colB->GetShape() == Shape::Sphere)
     {
-        isCollide = IsCollision(*_colA->GetAABB(), *_colB->GetSphere());
+        isCollide = IsCollision(*colA->GetShapeData<AABB>(), *colB->GetShapeData<Sphere>());
     }
-    else if (_colA->GetShape() == Shape::Sphere && _colB->GetShape() == Shape::AABB)
+    else if (colA->GetShape() == Shape::Sphere && colB->GetShape() == Shape::AABB)
     {
-        isCollide = IsCollision(*_colB->GetAABB(), *_colA->GetSphere());
+        isCollide = IsCollision(*colB->GetShapeData<AABB>(), *colA->GetShapeData<Sphere>());
     }
-    else if (_colA->GetShape() == Shape::OBB && _colB->GetShape() == Shape::Sphere)
+    else if (colA->GetShape() == Shape::OBB && colB->GetShape() == Shape::Sphere)
     {
-        isCollide = IsCollision(*_colA->GetOBB(), *_colB->GetSphere());
+        isCollide = IsCollision(*colA->GetShapeData<OBB>(), *colB->GetShapeData<Sphere>());
     }
-    else if (_colA->GetShape() == Shape::Sphere && _colB->GetShape() == Shape::OBB)
+    else if (colA->GetShape() == Shape::Sphere && colB->GetShape() == Shape::OBB)
     {
-        isCollide = IsCollision(*_colB->GetOBB(), *_colA->GetSphere());
+        isCollide = IsCollision(*colB->GetShapeData<OBB>(), *colA->GetShapeData<Sphere>());
     }
-    else if (_colA->GetShape() == Shape::OBB && _colB->GetShape() == Shape::OBB)
+    else if (colA->GetShape() == Shape::OBB && colB->GetShape() == Shape::OBB)
     {
-        ++countWithoutLighter;
-        /// ラグ軽減のため、半径で判定とって早期リターン (ただし設定されていたら)
-        if (_colA->GetRadius() && _colB->GetRadius() && _colA->GetIsEnableLighter() && _colB->GetIsEnableLighter())
+        /// ラグ軽減のため、ブロードフェーズとナローフェーズに分けて判定を行う
+        const auto& broadA = colA->GetSphereForBroadPhase();
+        const auto& broadB = colB->GetSphereForBroadPhase();
+        bool isEnableBroad = 
+            colA->GetIsEnableLighter() && 
+            colB->GetIsEnableLighter() && 
+            broadA.radius_ >= 0.0f && 
+            broadB.radius_ >= 0.0f;
+
+        /// ブロードフェーズ判定
+        bool isCollideBroad = true;
+        if (isEnableBroad)
         {
-            Sphere sphereA = { _colA->GetPosition(), static_cast<float>(_colA->GetRadius()) };
-            Sphere sphereB = { _colB->GetPosition(), static_cast<float>(_colB->GetRadius()) };
-            isCollide = IsCollision(&sphereA, &sphereB);
+            ++countBroadPhaseCalled_;
+            isCollideBroad = IsCollision(&broadA, &broadB);
         }
 
-        if (isCollide)
+        /// ナロー判定
+        if (isCollideBroad)
         {
             ++countCheckCollision_;
-            isCollide = IsCollision(_colA->GetOBB(), _colB->GetOBB());
+            isCollide = IsCollision(colA->GetShapeData<OBB>(), colB->GetShapeData<OBB>());
         }
     }
 
+    /// 衝突している場合
     if (isCollide)
     {
-        _colA->OnCollision(_colB);
-        _colB->OnCollision(_colA);
+        /// コールバックする
+        colA->OnCollision(colB);
+        colB->OnCollision(colA);
 
-        if (!_colA->IsRegisteredCollidingPtr(_colB) && !_colB->IsRegisteredCollidingPtr(_colA))
+        if (!colA->IsRegisteredCollidingPtr(colB) && !colB->IsRegisteredCollidingPtr(colA))
         {
-            _colA->RegisterCollidingPtr(_colB);
-            _colB->RegisterCollidingPtr(_colA);
-            _colA->OnCollisionTrigger(_colB);
-            _colB->OnCollisionTrigger(_colA);
+            colA->RegisterCollidingPtr(colB);
+            colB->RegisterCollidingPtr(colA);
+            colA->OnCollisionTrigger(colB);
+            colB->OnCollisionTrigger(colA);
         }
 
-        collisionNames_.push_back({ _colA->GetColliderID(), _colB->GetColliderID() });
+        collisionNames_.push_back({ colA->GetColliderID(), colB->GetColliderID() });
     }
     else
     {
         // あたっていない場合、CollidingPtrをチェックし該当する場合ポップ
-        _colA->EraseCollidingPtr(_colB);
-        _colB->EraseCollidingPtr(_colA);
+        colA->EraseCollidingPtr(colB);
+        colB->EraseCollidingPtr(colA);
     }
-    return;
 }
 
 void CollisionManager::ProjectShapeOnAxis(const std::vector<Vector3>* _v, const Vector3& _axis, float& _min, float& _max)
@@ -238,20 +244,20 @@ bool CollisionManager::IsCollision(const AABB* _aabb1, const AABB* _aabb2)
     return false;
 }
 
-bool CollisionManager::IsCollision(const AABB& _aabb, const Sphere& _sphere)
+bool CollisionManager::IsCollision(const AABB& aabb, const Sphere& sphere)
 {
-    const Vector3& min = _aabb.GetMin();
-    const Vector3& max = _aabb.GetMax();
+    const Vector3& min = aabb.GetMin();
+    const Vector3& max = aabb.GetMax();
 
     Vector3 _closestPoint{
-        std::clamp(_sphere.GetCenter().x, min.x, max.x),
-        std::clamp(_sphere.GetCenter().y, min.y, max.y),
-        std::clamp(_sphere.GetCenter().z, min.z, max.z)
+        std::clamp(sphere.center_.x, min.x, max.x),
+        std::clamp(sphere.center_.y, min.y, max.y),
+        std::clamp(sphere.center_.z, min.z, max.z)
     };
 
-    float distance = (_closestPoint - _sphere.GetCenter()).LengthWithoutRoot();
+    float distance = (_closestPoint - sphere.center_).LengthWithoutRoot();
 
-    if (distance <= _sphere.GetRadius() * _sphere.GetRadius())
+    if (distance <= sphere.radius_ * sphere.radius_)
     {
         return true;
     }
@@ -291,8 +297,8 @@ bool CollisionManager::IsCollision(const OBB* _obb1, const OBB* _obb2)
 
 bool CollisionManager::IsCollision(const Sphere* _sphere1, const Sphere* _sphere2)
 {
-    Vector3 distanceAB = _sphere1->GetCenter() - _sphere2->GetCenter();
-    float radiusAB = _sphere1->GetRadius() + _sphere2->GetRadius();
+    Vector3 distanceAB = _sphere1->center_ - _sphere2->center_;
+    float radiusAB = _sphere1->radius_ + _sphere2->radius_;
     if (distanceAB.LengthWithoutRoot() < static_cast<float>(radiusAB * radiusAB)) return true;
     return false;
 }
@@ -311,11 +317,11 @@ bool CollisionManager::IsCollision(const OBB& _obb, const Sphere& _sphere)
     obbWorldMatrix.m[3][3] = 1.0f;
 
     Matrix4x4 obbWorldMatrixInverse = obbWorldMatrix.Inverse();
-    Vector3 centerInOBBLocalSpace = FMath::Transform(_sphere.GetCenter(), obbWorldMatrixInverse);
+    Vector3 centerInOBBLocalSpace = FMath::Transform(_sphere.center_, obbWorldMatrixInverse);
 
     AABB aabbOBBLocal = {};
     aabbOBBLocal.SetMinMax(-_obb.GetSize(), _obb.GetSize());
-    Sphere sphereOBBLocal{ centerInOBBLocalSpace, _sphere.GetRadius() };
+    Sphere sphereOBBLocal{ centerInOBBLocalSpace, _sphere.radius_ };
 
     return IsCollision(aabbOBBLocal, sphereOBBLocal);
 }

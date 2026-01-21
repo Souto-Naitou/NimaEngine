@@ -4,12 +4,11 @@
 #include <Features/Primitive/AABB.h>
 #include <Features/Primitive/OBB.h>
 #include <Features/Primitive/Sphere.h>
-#include "Vector2.h"
-#include <vector>
+#include <DebugTools/DebugEntry/DebugEntry.h>
+
 #include <string>
 #include <functional>
 #include <list>
-#include <DebugTools/DebugManager/DebugManager.h>
 #include <variant>
 
 
@@ -23,27 +22,24 @@ class Collider
 public:
 
     Collider(bool _enableDebugWindow = true);
-    ~Collider();
+    ~Collider() = default;
 
-    void DrawArea();
+    void ImGui();
 
-public: /// Getter
     template <typename T>
     inline  const T*                    GetOwner()                  const       { return static_cast<T*>(owner_); }
 
-    inline  const AABB*                 GetAABB()                   const       { return std::get<AABB*>(shapeData_); }
-    inline  AABB*                       GetAABB()                               { return std::get<AABB*>(shapeData_); }
-    inline  const OBB*                  GetOBB()                    const       { return std::get<OBB*>(shapeData_); }
-    inline  OBB*                        GetOBB()                                { return std::get<OBB*>(shapeData_); }
-    inline  const Sphere*               GetSphere()                 const       { return std::get<Sphere*>(shapeData_); }
+    template <typename SHAPE>
+    inline  const SHAPE*                GetShapeData()              const       { return std::get<SHAPE*>(shapeData_); }
+    template <typename SHAPE>
+    inline  SHAPE*                      GetShapeData()                          { return std::get<SHAPE*>(shapeData_); }
 
     inline  uint32_t                    GetCollisionAttribute()     const       { return collisionAttribute_; }
     inline  uint32_t                    GetCollisionMask()          const       { return pCollisionMask_ ? *pCollisionMask_ : 0xffffffff; }
     inline  Shape                       GetShape()                  const       { return shape_; }
-    inline  unsigned int                GetRadius()                 const       { return radiusCollider_; }
     inline  const std::string&          GetColliderID()             const       { return colliderID_; }
     inline  bool                        GetIsEnableLighter()        const       { return enableLighter_; }
-    inline  Vector3                     GetPosition()               const       { return position_; }
+    inline  const Sphere&               GetSphereForBroadPhase()    const       { return sphereForBroadPhase_; }
     inline  const bool                  GetEnable()                 const       { return isEnableCollision_; }
 
             const bool                  IsRegisteredCollidingPtr(const Collider* _ptr) const;
@@ -55,18 +51,17 @@ public: /// Setter
     void                                SetColliderID(const std::string& id);
 
     template<typename T>
-    void                                SetShapeData(T* _shapeData) { shapeData_ = _shapeData; }
+    void                                SetShapeData(T* shapeData) { shapeData_ = shapeData; }
     void                                SetShape(Shape shape) { shape_ = shape; }
 
     void                                SetAttribute(uint32_t attribute);
     void                                SetMask(uint32_t* mask);
-    void                                SetOnCollision(const std::function<void(const Collider*)>& _func) { onCollisionFunction_ = _func; }
-    void                                SetOnCollisionTrigger(const std::function<void(const Collider*)>& _func) { onCollisionTriggerFunction_ = _func; }
-    void                                SetRadius(unsigned int _rad) { radiusCollider_ = _rad; }
-    void                                SetPosition(const Vector3& _v) { position_ = _v; }
-    void                                SetEnableLighter(bool _flag) { enableLighter_ = _flag; }
-    void                                SetEnable(bool _flag) { isEnableCollision_ = _flag; }
-    void                                RegisterCollidingPtr(const Collider* _ptr) { collidingPtrList_.push_back(_ptr); }
+    void                                SetOnCollision(const std::function<void(const Collider*)>& func) { onCollisionFunction_ = func; }
+    void                                SetOnCollisionTrigger(const std::function<void(const Collider*)>& func) { onCollisionTriggerFunction_ = func; }
+    void                                SetSphereForBroadPhase(const Sphere& sphere) { sphereForBroadPhase_ = sphere; }
+    void                                SetEnableLighter(bool flag) { enableLighter_ = flag; }
+    void                                SetEnable(bool flag) { isEnableCollision_ = flag; }
+    void                                RegisterCollidingPtr(const Collider* ptr) { collidingPtrList_.push_back(ptr); }
 
 
     inline  void                        OnCollision(const Collider* other)
@@ -79,9 +74,9 @@ public: /// Setter
     void OnCollisionTrigger(const Collider* other);
 
 private:
-
     std::function<void(const Collider*)>    onCollisionFunction_;
     std::function<void(const Collider*)>    onCollisionTriggerFunction_;
+    std::unique_ptr<DebugEntry<Collider>>   pDebugEntry_        = nullptr;
     std::variant<OBB*, AABB*, Sphere*>      shapeData_          = {};
 
     bool                            isEnableDebugWindow_        = true;                         // デバッグウィンドウを表示するかどうか
@@ -91,20 +86,15 @@ private:
     std::string                     colliderID_                 = {};                           // ID
     std::string                     hexID_                      = {};                           // HexID
 
-
     std::list<const Collider*>      collidingPtrList_           = {};                           // 現在あたっているコライダーのリスト
 
     /// 軽量化用
-    unsigned int                    radiusCollider_             = 0u;
-    Vector3                         position_                   = {};
+    Sphere                          sphereForBroadPhase_        = {};                           // ブロードフェーズ用の球体
     bool                            enableLighter_              = false;
 
     // 衝突属性(自分)
     uint32_t                        collisionAttribute_         = 0xffffffff;
     // 衝突マスク(相手)
     uint32_t*                       pCollisionMask_             = nullptr;
-
-private:
-    void ImGui();
 
 };

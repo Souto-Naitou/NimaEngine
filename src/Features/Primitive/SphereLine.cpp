@@ -1,50 +1,32 @@
-#include "Sphere.h"
+#include "SphereLine.h"
 #include <numbers>
 
 
 
-void Sphere::Initialize()
+void SphereLine::Initialize()
 {
     pLines_ = std::make_unique<Line>(3 * kSegments_);
     pLines_->Initialize();
     pLines_->SetColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-    GenerateLineVertices();
+    this->GenerateLineVertices();
 }
 
-void Sphere::SetRadius(float radius)
+void SphereLine::Update()
 {
-    radius_ = radius;
-}
-
-void Sphere::SetCenter(Vector3 val)
-{
-    center_ = val;
-}
-
-void Sphere::Update()
-{
-    pLines_->SetTransform(
-        {
-            .scale      = Vector3(radius_, radius_, radius_),
-            .rotate     = Vector3(0.0f, 0.0f, 0.0f),
-            .translate  = center_,
-        }
-    );
-
     pLines_->Update();
 }
 
-void Sphere::Draw1F()
+void SphereLine::Draw1F()
 {
     pLines_->Draw1F();
 }
 
-void Sphere::ModifyGameEye(GameEye** eye)
+void SphereLine::ModifyGameEye(GameEye** eye)
 {
     pLines_->SetGameEye(eye);
 }
 
-void Sphere::GenerateLineVertices()
+void SphereLine::GenerateLineVertices()
 {
     constexpr float kTwoPi = std::numbers::pi_v<float> *2.0f;
     constexpr uint32_t kSegments = kSegments_;

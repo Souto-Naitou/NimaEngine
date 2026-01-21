@@ -1,57 +1,31 @@
 #include "Collider.h"
-#include <Features/Collision/Manager/CollisionManager.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #include <sstream>
 #include <Utility/Debug/dbgutl.h>
+#include <DebugTools/DebugManager/DebugManager.h>
 
 Collider::Collider(bool enableDebugWindow) : isEnableDebugWindow_(enableDebugWindow)
 {
     hexID_ = utl::debug::generate_name_default(this);
     if (isEnableDebugWindow_)
     {
-        DebugManager::GetInstance()->SetComponent("Colliders", hexID_, std::bind(&Collider::ImGui, this));
+        pDebugEntry_ = std::make_unique<DebugEntry<Collider>>("Colliders", hexID_, this, false);
     }
 }
 
-Collider::~Collider()
-{
-    if (isEnableDebugWindow_)
-    {
-        DebugManager::GetInstance()->DeleteComponent("Colliders", hexID_);
-    }
-}
-
-void Collider::DrawArea()
-{
-    switch (shape_)
-    {
-    case Shape::AABB:
-        std::get<AABB*>(shapeData_)->Draw1F();
-        break;
-    case Shape::OBB:
-        std::get<OBB*>(shapeData_)->Draw1F();
-        break;
-    case Shape::Sphere:
-        std::get<Sphere*>(shapeData_)->Draw1F();
-        break;
-    default:
-        break;
-    }
-}
-
-const bool Collider::IsRegisteredCollidingPtr(const Collider* _ptr) const
+const bool Collider::IsRegisteredCollidingPtr(const Collider* ptr) const
 {
     for (auto itr = collidingPtrList_.begin(); itr != collidingPtrList_.end(); ++itr)
     {
-        if (_ptr == *itr) return true;
+        if (ptr == *itr) return true;
     }
     return false;
 }
 
-void Collider::EraseCollidingPtr(const Collider* _ptr)
+void Collider::EraseCollidingPtr(const Collider* ptr)
 {
-    collidingPtrList_.remove_if([_ptr](const Collider* _pCollider) {
-        return _pCollider == _ptr;
+    collidingPtrList_.remove_if([ptr](const Collider* pCollider) {
+        return pCollider == ptr;
     });
     return;
 }

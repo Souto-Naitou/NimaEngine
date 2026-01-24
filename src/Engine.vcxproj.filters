@@ -82,15 +82,6 @@
     <Filter Include="Feature\RandomGenerator">
       <UniqueIdentifier>{261dc65f-18f6-4c56-b64d-5c907c9c5259}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Line">
-      <UniqueIdentifier>{3574a4ba-6b04-4d65-b739-29ec50ddd79d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Line\Manager">
-      <UniqueIdentifier>{02fadf2c-6621-48b5-854c-a71dc4e4a9fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Line\System">
-      <UniqueIdentifier>{46dc6625-2a9f-43d7-a23d-6a80c95fefe0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\WinSystem">
       <UniqueIdentifier>{5c7e8f14-1bd4-48f2-80b9-2ad2124c12e5}</UniqueIdentifier>
     </Filter>
@@ -102,15 +93,6 @@
     </Filter>
     <Filter Include="Feature\Lighting\PointLight">
       <UniqueIdentifier>{2888c7ee-df07-4405-84e7-fb8a68bde7cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Shape">
-      <UniqueIdentifier>{37027ad3-d90a-4c1b-87a8-3a49b496e973}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Shape\AABB">
-      <UniqueIdentifier>{f7dbd80f-e81d-4548-9ce0-f4c751fd5c3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Shape\OBB">
-      <UniqueIdentifier>{4490bcaf-3130-4655-9eca-14949ee03dde}</UniqueIdentifier>
     </Filter>
     <Filter Include="Feature\Collision">
       <UniqueIdentifier>{8b3b583a-7857-484a-b311-3a30cccc93f5}</UniqueIdentifier>
@@ -358,9 +340,6 @@
     <Filter Include="Drawable\Sprite">
       <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Shape\Ring">
-      <UniqueIdentifier>{a7ceecdd-c428-42af-a8dc-4c495cb4f039}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Feature\Gauge">
       <UniqueIdentifier>{352baa52-3f6a-440f-ad34-b776f126c4c6}</UniqueIdentifier>
     </Filter>
@@ -381,6 +360,33 @@
     </Filter>
     <Filter Include="Core\DirectX12\RootSignature">
       <UniqueIdentifier>{952e4045-13d4-434b-962b-5d9b1e2b49ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawable\Line">
+      <UniqueIdentifier>{38ab7a10-0059-445f-9cfc-905bcfd9e6ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Premitive">
+      <UniqueIdentifier>{37027ad3-d90a-4c1b-87a8-3a49b496e973}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Premitive\AABB">
+      <UniqueIdentifier>{f7dbd80f-e81d-4548-9ce0-f4c751fd5c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Premitive\OBB">
+      <UniqueIdentifier>{4490bcaf-3130-4655-9eca-14949ee03dde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Premitive\Ring">
+      <UniqueIdentifier>{a7ceecdd-c428-42af-a8dc-4c495cb4f039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Feature\Premitive\Sphere">
+      <UniqueIdentifier>{7778ffde-c386-462d-b0b4-5157df45424b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\PostEffect\Scanline">
+      <UniqueIdentifier>{ec2d8b2f-4c61-483d-937d-785c281df65b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\PostEffect\Mosaic">
+      <UniqueIdentifier>{5a727436-e39e-48ac-8b70-8d6bf9eaf77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\PostEffect\.GlobalInput">
+      <UniqueIdentifier>{577eec87-5393-487e-9e10-8b7baa71670e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -468,14 +474,8 @@
     <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp">
       <Filter>Feature\RandomGenerator</Filter>
     </ClCompile>
-    <ClCompile Include="drawable\line\Line.cpp">
-      <Filter>Feature\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\LineSystem.cpp">
-      <Filter>Feature\Line\System</Filter>
-    </ClCompile>
     <ClCompile Include="Features\Primitive\AABB.cpp">
-      <Filter>Feature\Shape\AABB</Filter>
+      <Filter>Feature\Premitive\AABB</Filter>
     </ClCompile>
     <ClCompile Include="drawable\particle\Manager\EmitterManager.cpp">
       <Filter>Drawable\Particle\Manager</Filter>
@@ -487,7 +487,7 @@
       <Filter>Feature\Lighting\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Features\Primitive\OBB.cpp">
-      <Filter>Feature\Shape\OBB</Filter>
+      <Filter>Feature\Premitive\OBB</Filter>
     </ClCompile>
     <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
@@ -712,7 +712,7 @@
       <Filter>Feature\Gauge</Filter>
     </ClCompile>
     <ClCompile Include="Features\Primitive\RingModel.cpp">
-      <Filter>Feature\Shape\Ring</Filter>
+      <Filter>Feature\Premitive\Ring</Filter>
     </ClCompile>
     <ClCompile Include="Features\Event\EventListener.cpp">
       <Filter>Feature\Event</Filter>
@@ -735,15 +735,39 @@
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
       <Filter>Effect\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp" />
-    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp" />
-    <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp" />
-    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp" />
-    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp" />
-    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
-    <ClCompile Include="Features\Primitive\SphereLine.cpp" />
-    <ClCompile Include="drawable\line\LineBatch.cpp" />
-    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp" />
+    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\SphereLine.cpp">
+      <Filter>Feature\Premitive\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
+      <Filter>Effect\PostEffect\Scanline</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
+      <Filter>Effect\PostEffect\Mosaic</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\Line.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\LineSystem.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\LineBatch.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp">
+      <Filter>Effect\PostEffect\.GlobalInput</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -848,17 +872,8 @@
     <ClInclude Include="Features\RandomGenerator\RandomGenerator.h">
       <Filter>Feature\RandomGenerator</Filter>
     </ClInclude>
-    <ClInclude Include="drawable\line\Line.h">
-      <Filter>Feature\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\LineSystem.h">
-      <Filter>Feature\Line\System</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\LineBatch.h">
-      <Filter>Feature\Line\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Features\Primitive\AABB.h">
-      <Filter>Feature\Shape\AABB</Filter>
+      <Filter>Feature\Premitive\AABB</Filter>
     </ClInclude>
     <ClInclude Include="drawable\particle\Manager\EmitterManager.h">
       <Filter>Drawable\Particle\Manager</Filter>
@@ -873,7 +888,7 @@
       <Filter>Feature\Lighting\PointLight</Filter>
     </ClInclude>
     <ClInclude Include="Features\Primitive\OBB.h">
-      <Filter>Feature\Shape\OBB</Filter>
+      <Filter>Feature\Premitive\OBB</Filter>
     </ClInclude>
     <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
       <Filter>Effect\SceneTransition\FadeInOut</Filter>
@@ -1167,7 +1182,7 @@
       <Filter>Feature\Gauge</Filter>
     </ClInclude>
     <ClInclude Include="Features\Primitive\RingModel.h">
-      <Filter>Feature\Shape\Ring</Filter>
+      <Filter>Feature\Premitive\Ring</Filter>
     </ClInclude>
     <ClInclude Include="Features\Event\EventListener.h">
       <Filter>Feature\Event</Filter>
@@ -1196,7 +1211,6 @@
     <ClInclude Include="Math\ViewportUnits.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h">
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClInclude>
@@ -1212,12 +1226,36 @@
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h" />
-    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
-    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
-    <ClInclude Include="Features\Primitive\Sphere.h" />
-    <ClInclude Include="Features\Primitive\SphereLine.h" />
-    <ClInclude Include="drawable\line\AllocatedLineVertices.h" />
+    <ClInclude Include="drawable\line\AllocatedLineVertices.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\SphereLine.h">
+      <Filter>Feature\Premitive\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\Sphere.h">
+      <Filter>Feature\Premitive\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
+      <Filter>Effect\PostEffect\Scanline</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
+      <Filter>HLSL\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
+      <Filter>Effect\PostEffect\Mosaic</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\Line.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\LineSystem.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\LineBatch.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
+      <Filter>Effect\PostEffect\.GlobalInput</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

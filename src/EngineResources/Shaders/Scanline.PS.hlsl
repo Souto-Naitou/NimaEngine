@@ -31,8 +31,11 @@ PixelShaderOutput main(VertexShaderOutput input)
     float4 lineColor = iColor0 * (1.0f - dodge) + iColor1 * dodge;
     
     float4 texColor = gTexture.Sample(gSampler, input.texcoord);
+    
     output.color = lerp(texColor, lineColor, iOpacity);
     output.color.a = lerp(texColor.a, output.color.a, iIsOverall);
+    
+    output.color = lerp(output.color, texColor, iIsOverall);
     
     return output;
 }

@@ -246,6 +246,7 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
     else
     {
         uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+        uploadHeapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
     }
 
     D3D12_RESOURCE_DESC desc{};

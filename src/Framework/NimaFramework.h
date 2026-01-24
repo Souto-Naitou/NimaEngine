@@ -11,7 +11,7 @@
 #include <Features/Input/Input.h>
 #include <Features/Model/ModelManager.h>
 #include <Features/SceneManager/SceneManager.h>
-#include <Features/Line/LineSystem.h>
+#include <drawable/line/LineSystem.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <Features/Text/TextSystem.h>
 #include <Features/Viewport/Viewport.h>

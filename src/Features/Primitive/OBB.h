@@ -3,8 +3,8 @@
 #include <Vector3.h>
 #include <Matrix4x4.h>
 
-#include <Features/Line/Line.h>
-#include <Features/Line/LineSystem.h>
+#include <drawable/line/Line.h>
+#include <drawable/line/LineSystem.h>
 #include <Features/GameEye/GameEye.h>
 
 #include <array>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LineSystem.h"
+#include <drawable/line/LineSystem.h>
 #include <d3d12.h>
 #include <Matrix4x4.h>
 #include <Vector4.h>

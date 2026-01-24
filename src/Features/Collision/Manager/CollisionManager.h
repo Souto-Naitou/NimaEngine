@@ -1,13 +1,15 @@
 #pragma once
 
 #include <Features/Collision/Collider/Collider.h>
-#include <vector>
-#include <string>
-#include <utility>
 #include <Features/Collision/Shape.h>
 #include <Features/Primitive/AABB.h>
 #include <Features/Primitive/OBB.h>
 #include <Features/Primitive/Sphere.h>
+#include <DebugTools/DebugEntry/DebugEntry.h>
+#include <vector>
+#include <string>
+#include <utility>
+#include <memory>
 
 /// <summary>
 /// 衝突判定実行クラス   
@@ -30,6 +32,11 @@ public:
     /// 終了処理を行います。
     /// </summary>
     void Finalize();
+
+    /// <summary>
+    /// デバッグ表示
+    /// </summary>
+    void ImGui();
     
     /// <summary>
     /// 登録された全てのコライダーについて衝突判定を行います。
@@ -111,12 +118,12 @@ public:
 private:
     CollisionManager() = default;
 
+    std::unique_ptr<DebugEntry<CollisionManager>> pDebugEntry_ = nullptr;
     std::vector<Collider*> colliders_;
     std::vector<std::pair<std::string, std::string>> collisionNames_;
     std::vector<std::pair<std::string, uint32_t>> attributeList_;
     std::list<std::pair<std::string, uint32_t>> maskList_;
 
-    void ImGui();
     void CheckCollisionPair(Collider* _colA, Collider* _colB);
     void ProjectShapeOnAxis(const std::vector<Vector3>* _v, const Vector3& _axis, float& _min, float& _max);
 
@@ -132,8 +139,8 @@ private:
     bool OverlapOnAxis(const OBB* _obb1, const OBB* _obb2, const Vector3& axis);
 
     uint32_t countCheckCollision_ = 0ui32;
-    uint32_t countWithoutFilter_ = 0ui32;
-    uint32_t countWithoutLighter = 0ui32;
+    uint32_t countCheckCollisionCalled_ = 0ui32;
+    uint32_t countBroadPhaseCalled_ = 0ui32;
 
     std::string name_ = "CollisionManager";
 };

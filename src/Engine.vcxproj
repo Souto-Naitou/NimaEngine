@@ -239,6 +239,8 @@
     <ClCompile Include="DebugTools\Logger\Logger.cpp" />
     <ClCompile Include="drawable\base\DrawableBase.cpp" />
     <ClCompile Include="drawable\font\NumericView.cpp" />
+    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp" />
+    <ClCompile Include="drawable\line\LineBatch.cpp" />
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
@@ -277,7 +279,7 @@
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp" />
     <ClCompile Include="Features\Primitive\RingModel.cpp" />
-    <ClCompile Include="Features\Primitive\Sphere.cpp" />
+    <ClCompile Include="Features\Primitive\SphereLine.cpp" />
     <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
@@ -289,8 +291,8 @@
     <ClCompile Include="Features\LevelLoader\SceneObjects.cpp" />
     <ClCompile Include="Features\Lighting\Manager\LightingManager.cpp" />
     <ClCompile Include="Features\Lighting\PointLight\PointLight.cpp" />
-    <ClCompile Include="Features\Line\Line.cpp" />
-    <ClCompile Include="Features\Line\LineSystem.cpp" />
+    <ClCompile Include="drawable\line\Line.cpp" />
+    <ClCompile Include="drawable\line\LineSystem.cpp" />
     <ClCompile Include="Features\Model\GltfModelSystem.cpp" />
     <ClCompile Include="Features\Model\Helper\AnimationHelper.cpp" />
     <ClCompile Include="Features\Model\Helper\ModelHelper.cpp" />
@@ -355,6 +357,7 @@
     <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h" />
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h" />
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h" />
+    <ClInclude Include="drawable\line\AllocatedLineVertices.h" />
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
@@ -415,6 +418,7 @@
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />
     <ClInclude Include="Features\Primitive\Sphere.h" />
+    <ClInclude Include="Features\Primitive\SphereLine.h" />
     <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
     <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
     <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
@@ -432,9 +436,9 @@
     <ClInclude Include="Features\LevelLoader\SceneObjects.h" />
     <ClInclude Include="Features\Lighting\Manager\LightingManager.h" />
     <ClInclude Include="Features\Lighting\PointLight\PointLight.h" />
-    <ClInclude Include="Features\Line\Line.h" />
-    <ClInclude Include="Features\Line\LineSystem.h" />
-    <ClInclude Include="Features\Line\Manager\LineManager.h" />
+    <ClInclude Include="drawable\line\Line.h" />
+    <ClInclude Include="drawable\line\LineSystem.h" />
+    <ClInclude Include="drawable\line\LineBatch.h" />
     <ClInclude Include="Features\Model\Animation.h" />
     <ClInclude Include="Features\Model\GltfModelSystem.h" />
     <ClInclude Include="Features\Model\Helper\AnimationHelper.h" />

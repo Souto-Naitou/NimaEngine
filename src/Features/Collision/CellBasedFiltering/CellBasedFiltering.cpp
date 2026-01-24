@@ -1,7 +1,7 @@
 #include "CellBasedFiltering.h"
 #include <array>
 #include <set>
-#include <Features/Line/Line.h>
+#include <drawable/line/Line.h>
 #include <Color.h>
 #include <imgui.h>
 
@@ -129,7 +129,7 @@ void CellBasedFiltering::DrawImGui()
 
 void CellBasedFiltering::AssignToGrid(Collider* collider)
 {
-    auto aabb = collider->GetAABB();
+    auto aabb = collider->GetShapeData<AABB>();
     Vector3 min = aabb->GetMin();
     Vector3 max = aabb->GetMax();
     Vector3 corners[4] = {
@@ -157,7 +157,7 @@ void CellBasedFiltering::AssignToGrid(Collider* collider)
 
 void CellBasedFiltering::RegisterPotentials(Collider* pCollider)
 {
-    const AABB* aabb = pCollider->GetAABB();
+    const AABB* aabb = pCollider->GetShapeData<AABB>();
 
     Vector3 min = aabb->GetMin();
     Vector3 max = aabb->GetMax();
@@ -209,7 +209,7 @@ void CellBasedFiltering::Draw2dPotentials()
 {
     for (auto& collider : potentialColliders_)
     {
-        auto aabb = collider->GetAABB();
+        auto aabb = collider->GetShapeData<AABB>();
         aabb->SetColor(0xff00ffff);
         aabb->Draw1F();
     }

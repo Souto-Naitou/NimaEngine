@@ -3,8 +3,8 @@
 #include <array>
 
 #include <Vector3.h>
-#include <Features/Line/Line.h>
-#include <Features/Line/LineSystem.h>
+#include <drawable/line/Line.h>
+#include <drawable/line/LineSystem.h>
 #include <Features/GameEye/GameEye.h>
 
 #include <memory>

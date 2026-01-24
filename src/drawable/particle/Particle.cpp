@@ -185,7 +185,7 @@ void Particle::InitializeTransform()
     }
 }
 
-void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator& itr)
+void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator itr)
 {
     bool isGround = false;
     float deltaTime = DeltaTimeManager::GetInstance()->GetDeltaTime(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));

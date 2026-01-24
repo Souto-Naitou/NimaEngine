@@ -132,7 +132,7 @@ private:
     /// <summary>
     /// 1パーティクル分のデータを更新します。
     /// </summary>
-    void ParticleDataUpdate(std::list<ParticleData>::iterator& itr);
+    void ParticleDataUpdate(std::list<ParticleData>::iterator itr);
 
     void ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, float deltaTime);
     void ParticleColorUpdate(std::list<ParticleData>::iterator& itr);

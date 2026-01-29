@@ -154,6 +154,11 @@ const DX12Resource& TextureManager::GetTextureResource(const std::string& _fileP
     return textureData.textureResource;
 }
 
+Vector2 TextureManager::GetTextureSize(const DirectX::TexMetadata& metadata)
+{
+    return Vector2(static_cast<float>(metadata.width), static_cast<float>(metadata.height));
+}
+
 TextureManager::TextureType TextureManager::GetTextureType(const std::wstring& _filePath) const
 {
     if (_filePath.ends_with(L".dds"))

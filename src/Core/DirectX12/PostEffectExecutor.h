@@ -10,6 +10,8 @@
 #include <list>
 #include <functional>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+#include <span>
+#include <memory>
 
 /// <ポストエフェクトを実行するクラス>
 /// - 複数のポストエフェクトを順に適用するためにレンダーテクスチャのチェインを生成する
@@ -82,6 +84,10 @@ public:
 public:
     IPostEffect*    AddEffect(PostEffectClassName name);
     bool            RemoveEffect(IPostEffect* pEffect);
+    std::list<std::unique_ptr<IPostEffect>>& GetPostEffects()
+    {
+        return postEffects_;
+    }
 
     ID3D12GraphicsCommandList* GetCommandList()
     {

@@ -9,6 +9,6 @@
 /// </summary>
 namespace Helper::Level
 {
-    SceneObjects LoadScene(const std::string& path, ModelManager* pModelManager);
+    std::unique_ptr<SceneObjects> LoadScene(const std::string& path, ModelManager* pModelManager);
     void Unload(const std::string& path);
 }

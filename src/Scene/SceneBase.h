@@ -25,6 +25,9 @@ public:
     /// 描画
     virtual void Draw() = 0;
 
+    /// シーン変更予約時のコールバックされる関数
+    virtual void OnSceneChangeReserved() {}
+
 protected:
     ISceneArgs*         pArgs_  = nullptr;
     OrderedCanvasLayer* pLayer_ = nullptr;      // !< レイヤー

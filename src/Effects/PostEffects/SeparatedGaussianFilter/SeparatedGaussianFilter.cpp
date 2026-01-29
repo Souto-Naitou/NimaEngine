@@ -79,6 +79,11 @@ const SeparatedGaussianFilterOption& SeparatedGaussianFilter::GetOption() const
     return *pOption_;
 }
 
+float SeparatedGaussianFilter::GetSigma() const
+{
+    return sigma_;
+}
+
 void SeparatedGaussianFilter::Apply()
 {
     commandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画

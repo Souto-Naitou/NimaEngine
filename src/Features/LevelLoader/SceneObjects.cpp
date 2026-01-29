@@ -8,12 +8,11 @@
 
 SceneObjects::SceneObjects()
 {
-    RegisterDebugWindowC("SceneObjects", name_, SceneObjects::ImGui, false);
+    pDebugEntry_ = std::make_unique<DebugEntry<SceneObjects>>("SceneObjects", name_, this);
 }
 
 SceneObjects::~SceneObjects()
 {
-    UnregisterDebugWindowC("SceneObjects", name_);
 }
 
 void SceneObjects::Initialize()
@@ -47,7 +46,7 @@ void SceneObjects::Update()
         }
     }
 
-    gameeye_->Update();
+    pGameEye_->Update();
 }
 
 void SceneObjects::Draw()
@@ -160,12 +159,12 @@ void SceneObjects::Build(ModelManager* modelManager)
         }
         else if (object.type == "CAMERA")
         {
-            gameeye_ = std::make_shared<FreeLookEye>();
-            gameeye_->SetTransform(object.transform);
-            gameeye_->SetName(object.name);
+            pGameEye_ = std::make_shared<FreeLookEye>();
+            pGameEye_->SetTransform(object.transform);
+            pGameEye_->SetName(object.name);
         }
     }
 
     // GameEyeを渡す
-    Object3dSystem::GetInstance()->SetGlobalEye(gameeye_.get());
+    Object3dSystem::GetInstance()->SetGlobalEye(pGameEye_.get());
 }

@@ -73,6 +73,7 @@ public:
     SeparatedGaussianFilterOption&      GetOption();
     /// <summary>オプション（読み取り専用）を取得します。</summary>
     const SeparatedGaussianFilterOption&    GetOption() const;
+    float GetSigma() const;
 
 private:
     const PSOID                                         kPSOId_                     = "SeparatedGaussianFilter";

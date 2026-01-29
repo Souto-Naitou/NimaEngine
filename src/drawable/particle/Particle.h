@@ -66,6 +66,10 @@ public: /// Getter
 
 public: /// container operator
     void reserve(size_t size, bool isInit = false);
+    /// <summary>
+    /// パーティクルデータをコンテナの末尾に追加します。
+    /// </summary>
+    /// <param name="data">追加するパーティクルデータ。</param>
     void emplace_back(const ParticleData& data);
 
 

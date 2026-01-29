@@ -144,16 +144,21 @@ void NimaFramework::Initialize()
     pLayer_ = std::make_unique<OrderedCanvasLayer>();
     pLayer_->Initialize();
 
-    /// シーン遷移エグゼキューターの初期化
+    /// Drawerの設定
     Canvas::Params canvasParam =
     {
-        .name = "SceneTransitionCanvas",
+        .name = "NiGui",
         .pDx12 = pDirectX_.get(),
         .pCubemapSystem = nullptr,
         #ifdef _DEBUG
         .pImGuiManager = pImGuiManager_.get()
         #endif // _DEBUG
     };
+    pDrawer_ = std::make_unique<NiGuiDrawer>();
+    pDrawer_->CreateAndRegisterCanvas(pLayer_.get(), canvasParam);
+
+    /// シーン遷移エグゼキューターの初期化
+    canvasParam.name = "SceneTransitionCanvas";
     pTransitionExecutor_ = std::make_unique<SceneTransitionExecutor>();
     pTransitionExecutor_->Initialize(canvasParam, pLayer_.get());
 
@@ -170,9 +175,6 @@ void NimaFramework::Initialize()
     
     NiGui::SetConfirmSound(pAudioManager_->GetNewAudio("UI", "ui_common_confirm.wav"));
     NiGui::SetHoverSound(pAudioManager_->GetNewAudio("UI", "ui_common_hover.wav"));
-
-    /// Drawerの設定
-    pDrawer_ = std::make_unique<NiGuiDrawer>();
     NiGui::SetDrawer(pDrawer_.get());
 
     /// デバッグUIの設定

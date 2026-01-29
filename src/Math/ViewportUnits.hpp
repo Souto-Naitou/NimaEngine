@@ -49,3 +49,13 @@ inline Math::Viewport::Unit::vh operator"" _vh(long double value)
 {
     return Math::Viewport::Unit::vh(value);
 }
+
+inline Math::Viewport::Unit::vw operator"" _vw(unsigned long long value)
+{
+    return Math::Viewport::Unit::vw(static_cast<long double>(value));
+}
+
+inline Math::Viewport::Unit::vh operator"" _vh(unsigned long long value)
+{
+    return Math::Viewport::Unit::vh(static_cast<long double>(value));
+}

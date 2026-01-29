@@ -37,15 +37,18 @@ void SceneManager::ReserveScene(const std::string& name)
 {
     isReserveScene_ = true;
     nextSceneName_ = name;
+    if (pCurrentScene_) pCurrentScene_->OnSceneChangeReserved();
 }
 
 void SceneManager::ReserveScene(const std::string& sceneName, std::unique_ptr<TransBase>&& transition)
 {
+    if (pCurrentScene_) pCurrentScene_->OnSceneChangeReserved();
     pTransitionExecutor_->Run(sceneName, std::move(transition));
 }
 
 void SceneManager::ReserveScene(const std::string& sceneName, const std::string& loadingName, std::unique_ptr<TransBase>&& transition)
 {
+    if (pCurrentScene_) pCurrentScene_->OnSceneChangeReserved();
     this->PackSceneArgs();
     pTransitionExecutor_->Run(sceneName, loadingName, std::move(transition), pSceneArgs_.get());
 }

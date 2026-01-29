@@ -2,8 +2,9 @@
 
 #include <Utility/JSONIO/jsonio.h>
 #include <numbers>
+#include <utility>
 
-SceneObjects Helper::Level::LoadScene(const std::string& path, ModelManager* pModelManager)
+std::unique_ptr<SceneObjects> Helper::Level::LoadScene(const std::string& path, ModelManager* pModelManager)
 {
     JSONIO* jsonio = JSONIO::GetInstance();
     const auto& json = jsonio->Load(path);
@@ -33,11 +34,11 @@ SceneObjects Helper::Level::LoadScene(const std::string& path, ModelManager* pMo
         }
     }
 
-    SceneObjects sceneObjects;
-    sceneObjects.Initialize();
-    sceneObjects.SetLevelData(levelData);
-    sceneObjects.Build(pModelManager);
-    return std::move(sceneObjects);
+    auto sceneObjects = std::make_unique<SceneObjects>();
+    sceneObjects->Initialize();
+    sceneObjects->SetLevelData(levelData);
+    sceneObjects->Build(pModelManager);
+    return sceneObjects;
 }
 
 void Helper::Level::Unload(const std::string& path)

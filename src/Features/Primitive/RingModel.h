@@ -16,8 +16,8 @@ public:
         float radiusOuter = 1.0f;
         float radiusInner = 0.2f;
         float radAngleStart = 0.0f;
-        float radAngleEnd = 2.0f * std::numbers::pi_v<float>;
-        float radAngleOffset = 0.0f;
+        float angelEndRad = 2.0f * std::numbers::pi_v<float>;
+        float angleOffsetRad = 0.0f;
         std::string textureFilePath;
     };
 
@@ -48,7 +48,7 @@ public:
     void SetRadii(const Range<float>& range);
 
     /// [ 取得関数 ]
-    Range<float> GetAngleRange() const { return Range<float>(params_.radAngleStart, params_.radAngleEnd); }
+    Range<float> GetAngleRange() const { return Range<float>(params_.radAngleStart, params_.angelEndRad); }
     Range<float> GetRadii() const { return Range<float>(params_.radiusInner, params_.radiusOuter); }
 
     /// 内部関数群

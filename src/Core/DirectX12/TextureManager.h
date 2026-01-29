@@ -12,6 +12,7 @@
 #include <wrl/client.h>
 #include <filesystem>
 #include <Core/DirectX12/DirectX12.h>
+#include <Vector2.h>
 
 /// <summary>
 /// テクスチャ管理クラス
@@ -67,7 +68,7 @@ public: /// Getter
     [[nodiscard]] uint32_t                      GetSrvIndex(const std::string& filePath);
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& filePath);
     [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath);
-
+    [[nodiscard]] static Vector2                GetTextureSize(const DirectX::TexMetadata& metadata);
 private:
     struct TextureData
     {
@@ -122,5 +123,4 @@ private:
 private:
     TextureManager() = default;
     ~TextureManager() = default;
-
 };

@@ -64,8 +64,8 @@ void RingModel::ImGui()
     ImGui::DragFloat("Outer Radius", &params_.radiusOuter, 0.01f, 0.0f, 100.0f);
     ImGui::DragFloat("Inner Radius", &params_.radiusInner, 0.01f, 0.0f, 100.0f);
     ImGui::DragFloat("Angle Start (rad)", &params_.radAngleStart, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
-    ImGui::DragFloat("Angle End (rad)", &params_.radAngleEnd, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
-    ImGui::DragFloat("Angle Offset (rad)", &params_.radAngleOffset, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
+    ImGui::DragFloat("Angle End (rad)", &params_.angelEndRad, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
+    ImGui::DragFloat("Angle Offset (rad)", &params_.angleOffsetRad, 0.01f, -std::numbers::pi_v<float> *10.0f, std::numbers::pi_v<float> *10.0f);
 
     #endif // _DEBUG
 }
@@ -80,12 +80,12 @@ void RingModel::SetAngleRange(const Range<float>& range)
     if (range.start <= range.end)
     {
         params_.radAngleStart = range.start;
-        params_.radAngleEnd = range.end;
+        params_.angelEndRad = range.end;
     }
     else
     {
         params_.radAngleStart = range.end;
-        params_.radAngleEnd = range.start;
+        params_.angelEndRad = range.start;
     }
 }
 
@@ -232,7 +232,7 @@ void RingModel::CopyFrom(RingModel* pCopySrc)
 
 void RingModel::UpdateVertexData()
 {
-    const float radianPerDivide = (params_.radAngleEnd - params_.radAngleStart) / static_cast<float>(kSegmentCount);
+    const float radianPerDivide = (params_.angelEndRad - params_.radAngleStart) / static_cast<float>(kSegmentCount);
 
     modelData_.vertices.clear();
 
@@ -242,8 +242,8 @@ void RingModel::UpdateVertexData()
         float angleNext = static_cast<float>(index + 1) * radianPerDivide + params_.radAngleStart;
 
         // オフセット
-        angle += params_.radAngleOffset;
-        angleNext += params_.radAngleOffset;
+        angle += params_.angleOffsetRad;
+        angleNext += params_.angleOffsetRad;
 
         float sin0 = std::sin(angle);
         float cos0 = std::cos(angle);

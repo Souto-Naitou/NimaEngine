@@ -19,13 +19,12 @@ GameEye::GameEye()
 {
     std::string* ptr = &name_; ptr;
 
-    RegisterDebugWindowC("GameEye", name_, GameEye::ImGui, false);
+    pDebugEntry_ = std::make_unique<DebugEntry<GameEye>>("GameEye", name_, this);
     pRandomGenerator_ = RandomGenerator::GetInstance();
 }
 
 GameEye::~GameEye()
 {
-    DebugManager::GetInstance()->DeleteComponent("GameEye", name_);
 }
 
 void GameEye::Update()

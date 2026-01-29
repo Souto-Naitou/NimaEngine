@@ -1,9 +1,25 @@
 #include "NiGuiDrawer.h"
 
 #include <Features/Audio/Audio.h>
+#include <Features/Layer/CanvasScope.h>
+
+void NiGuiDrawer::CreateAndRegisterCanvas(OrderedCanvasLayer* pLayer, const Canvas::Params& canvasParams)
+{
+    pCanvas_ = std::make_unique<Canvas>();
+    pCanvas_->Initialize(canvasParams);
+    pLayer_ = pLayer;
+    pLayer_->AddCanvasTop(pCanvas_.get());
+}
+
+void NiGuiDrawer::UnregisterCanvas()
+{
+    pCanvas_->Finalize();
+    pLayer_->RemoveCanvas(pCanvas_.get());
+}
 
 void NiGuiDrawer::Draw()
 {
+    CanvasScope canvasScope(pCanvas_.get());
     textureCount_.clear();
 
     for (auto& data : drawDataZOrdered_)
@@ -34,8 +50,6 @@ void NiGuiDrawer::Draw()
 
         currentIndex++;
     }
-
-    return;
 }
 
 void NiGuiDrawer::PlayAudio(void* audioHandler)

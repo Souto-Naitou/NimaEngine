@@ -1,8 +1,10 @@
 #pragma once
+#include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Math/Transform.h>
 #include <Matrix4x4.h>
-#include <string>
 #include <Features/RandomGenerator/RandomGenerator.h>
+#include <string>
+#include <memory>
 
 /// <summary>
 /// カメラクラス
@@ -12,11 +14,16 @@ class GameEye
 public:
     GameEye();
     virtual ~GameEye();
+
     /// <summary>
     /// カメラの行列や揺れ効果などの更新を行います。
     /// </summary>
     virtual void        Update();
 
+    /// <summary>
+    /// カメラのデバッグUIを描画します。
+    /// </summary>
+    virtual void ImGui();
 
 public:
     /// <summary>
@@ -52,8 +59,9 @@ public: /// Setter
     void SetFocalLength(float focalLength);
 
 private: /// メンバ変数
-    std::string         name_           = "unnamed";
+    std::unique_ptr<DebugEntry<GameEye>> pDebugEntry_ = nullptr;
 
+    std::string         name_           = "unnamed";
     EulerTransform      transform_      = {};       // 位置、回転、拡大縮小
     Matrix4x4           wMatrix_        = {};       // ワールド行列
     Matrix4x4           vMatrix_        = {};       // ビュー行列
@@ -73,10 +81,7 @@ private: /// メンバ変数
     void _UpdateFovFromFocalLength();
 
 protected:
-    /// <summary>
-    /// カメラのデバッグUIを描画します。
-    /// </summary>
-    virtual void ImGui();
+
 
 
 private:

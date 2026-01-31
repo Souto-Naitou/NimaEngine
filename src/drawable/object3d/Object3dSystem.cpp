@@ -188,9 +188,6 @@ void Object3dSystem::CreateRootSignature()
 void Object3dSystem::CreateMainPipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS)
 {
     ID3D12Device* device = pDx12_->GetDevice();
-    IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
-    IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
-    IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
     uint32_t clientWidth = Window::clientWidth;
     uint32_t clientHeight = Window::clientWidth;
 
@@ -291,11 +288,9 @@ void Object3dSystem::CreateDepthPipelineState(IDxcBlob* pBlobVS)
     uint32_t clientWidth = Window::clientWidth;
     uint32_t clientHeight = Window::clientHeight;
 
-
     /// BlendDesc
     D3D12_BLEND_DESC blendDesc = {};
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0;
-
 
     // DepthStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);

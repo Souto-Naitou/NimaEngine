@@ -4,6 +4,8 @@
 #include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
 #include <Features/GameEye/GameEye.h>
 
+struct IDxcBlob;
+
 /// <summary>
 /// キューブマップ共通
 /// </summary>

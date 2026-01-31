@@ -10,18 +10,7 @@
 #include <d3d11.h>
 #include <dxgi1_6.h>
 
-#ifdef WINDOWS_LEAN_AND_MEAN
-
-#undef WINDOWS_LEAN_AND_MEAN
-
-#endif // WINDOWS_LEAN_AND_MEAN
-
-
-#include <Windows.h>
-#include <dxcapi.h>
-
 #include <d3d11on12.h>
-
 
 /// DirectWrite
 #include <d2d1_3.h>
@@ -35,6 +24,10 @@
 #include <list>
 
 class SRVManager;
+
+struct IDxcUtils;
+struct IDxcCompiler3;
+struct IDxcIncludeHandler;
 
 /// <summary>
 /// DirectX12管理クラス

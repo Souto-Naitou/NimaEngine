@@ -4,6 +4,7 @@
 #include <NiGui/NiGui.h>
 #include <Core/ConfigManager/ConfigManager.h>
 #include <Utility/ConvertString/ConvertString.h>
+#include <objbase.h>
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -75,7 +76,7 @@ UINT Window::GetMsg()
     return msg_.message;
 }
 
-void Window::ToggleFullScreen()
+void Window::ToggleFullScreen() const
 {
     isFullScreen_ = !isFullScreen_;
     if(isFullScreen_)

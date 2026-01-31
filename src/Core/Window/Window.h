@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Windows.h>
 #include <cstdint>
 #include <string>
+#include <windef.h>
+#include <winuser.h>
 
 /// <summary>
 /// Windowsアプリ統合
@@ -29,7 +30,7 @@ public:
     void Finalize() const;
     void ShowWnd();
     UINT GetMsg();
-    void ToggleFullScreen();
+    void ToggleFullScreen() const;
 
     bool IsResized();
 

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Common/structs.h>
-#include <Windows.h>
-#include <dxcapi.h>
 #include <Vector4.h>
 #include <Vector3.h>
 #include <Matrix4x4.h>
@@ -33,6 +31,8 @@ struct CameraForGPU
 {
     Vector3 worldPosition;
 };
+
+struct IDxcBlob;
 
 // 3D object common 
 class Object3dSystem : public ObjectSystemBaseMT
@@ -109,11 +109,11 @@ private:
     /// <summary>
     /// メイン描画用の PSO を作成します。
     /// </summary>
-    void    CreateMainPipelineState();
+    void    CreateMainPipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS);
     /// <summary>
     /// デプスプリパス用の PSO を作成します。
     /// </summary>
-    void    CreateDepthPipelineState();
+    void    CreateDepthPipelineState(IDxcBlob* pBlobVS);
 
     // DirectX objects and paths
     static constexpr wchar_t        kVertexShaderPath[]     = L"EngineResources/Shaders/Object3d.VS.hlsl";
@@ -122,8 +122,6 @@ private:
     ID3D12RootSignature*            rootSignature_          = nullptr;  // Root signature
     ComPtr<ID3D12PipelineState>     psoMain_                = nullptr;  // Pipeline state object for main drawing
     ComPtr<ID3D12PipelineState>     psoEarlyZ_              = nullptr;  // Pipeline state object for Early-Z
-    ComPtr<IDxcBlob>                vertexShaderBlob_       = nullptr;  // Blob of vertex shader
-    ComPtr<IDxcBlob>                pixelShaderBlob_        = nullptr;  // Blob of pixel shader
     std::list<CommandListData>      commandListDatas_       = {};       // Container for draw settings
     RootParameters                  rootParameters_         = {};       // Root parameters for root signature
     D3D12_INPUT_ELEMENT_DESC        inputElementDescs_[3]   = {};

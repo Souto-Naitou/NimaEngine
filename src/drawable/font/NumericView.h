@@ -28,7 +28,7 @@ private:
     static constexpr uint32_t kRadix_ = 10u;
 
     std::unique_ptr<DebugEntry<NumericView>> pDebugEntry_ = nullptr;
-    std::array<D3D12_GPU_DESCRIPTOR_HANDLE, kRadix_> numberTextureHandles_;
+    std::array<D3D12_GPU_DESCRIPTOR_HANDLE, kRadix_> numberTextureHandles_ = {};
 
     FontLayout fontLayout_;
     std::vector<std::unique_ptr<Sprite>> numberSprites_;

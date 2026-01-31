@@ -10,8 +10,9 @@
 #include <list>
 #include <functional>
 #include <DebugTools/DebugEntry/DebugEntry.h>
-#include <span>
 #include <memory>
+
+struct IDxcBlob;
 
 /// <ポストエフェクトを実行するクラス>
 /// - 複数のポストエフェクトを順に適用するためにレンダーテクスチャのチェインを生成する
@@ -110,8 +111,6 @@ private:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC                  pipelineStateDesc_      = {};
     D3D12_RASTERIZER_DESC                               rasterizerDesc_         = {};
     Microsoft::WRL::ComPtr<ID3D12RootSignature>         rootSignature_          = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    vertexShaderBlob_       = nullptr;
-    Microsoft::WRL::ComPtr<IDxcBlob>                    pixelShaderBlob_        = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState>         pso_                    = nullptr;
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   commandListForDraw_     = nullptr;
     Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      commandAllocator_       = nullptr;
@@ -141,7 +140,7 @@ private:
     /// <summary>
     /// パイプラインステートを作成します。
     /// </summary>
-    void CreatePipelineState();
+    void CreatePipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS);
     
     /// <summary>
     /// 描画用コマンドリストを作成します。

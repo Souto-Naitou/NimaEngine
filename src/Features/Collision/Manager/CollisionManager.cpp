@@ -167,17 +167,17 @@ void CollisionManager::CheckCollisionPair(Collider* colA, Collider* colB)
         const auto& broadA = colA->GetSphereForBroadPhase();
         const auto& broadB = colB->GetSphereForBroadPhase();
         bool isEnableBroad = 
-            colA->GetIsEnableLighter() && 
-            colB->GetIsEnableLighter() && 
-            broadA.radius_ >= 0.0f && 
-            broadB.radius_ >= 0.0f;
+            colA->IsEnableTwoStepJudge() && 
+            colB->IsEnableTwoStepJudge() && 
+            broadA->radius_ >= 0.0f &&
+            broadB->radius_ >= 0.0f;
 
         /// ブロードフェーズ判定
         bool isCollideBroad = true;
         if (isEnableBroad)
         {
             ++countBroadPhaseCalled_;
-            isCollideBroad = IsCollision(&broadA, &broadB);
+            isCollideBroad = IsCollision(broadA, broadB);
         }
 
         /// ナロー判定

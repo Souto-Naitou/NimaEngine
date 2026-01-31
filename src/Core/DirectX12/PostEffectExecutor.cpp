@@ -11,6 +11,14 @@
 #endif //_DEBUG
 #include <config/EngineSetting.h>
 #include "BlendDesc.h"
+
+#ifdef WIN32_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN
+#endif // WIN32_LEAN_AND_MEAN
+
+#include <Windows.h>
+#include <dxcapi.h>
+
 #include <iterator>
 
 void PostEffectExecutor::Initialize(DirectX12* pDx12, DX12Resource* pResource, bool isRegisterDebugWindow)
@@ -28,8 +36,15 @@ void PostEffectExecutor::Initialize(DirectX12* pDx12, DX12Resource* pResource, b
     // ルートシグネチャの生成
     CreateRootSignature();
 
+    IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
+    IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
+    IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
+    auto pBlobVS = DX12Helper::CompileShader(kVertexShaderPath, L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+    auto pBlobPS = DX12Helper::CompileShader(kPixelShaderPath, L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+
+
     // パイプラインステートの生成
-    CreatePipelineState();
+    CreatePipelineState(pBlobVS.Get(), pBlobPS.Get());
 
     // デバッグウィンドウの登録
     #ifdef _DEBUG
@@ -430,12 +445,9 @@ void PostEffectExecutor::CreateRootSignature()
 
 }
 
-void PostEffectExecutor::CreatePipelineState()
+void PostEffectExecutor::CreatePipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS)
 {
     ID3D12Device* device = pDx12_->GetDevice();
-    IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
-    IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
-    IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
 
     inputLayoutDesc_.pInputElementDescs = nullptr;
     inputLayoutDesc_.NumElements = 0;
@@ -451,19 +463,12 @@ void PostEffectExecutor::CreatePipelineState()
     rasterizerDesc_.MultisampleEnable = TRUE;  // アンチエイリアス有効化
     rasterizerDesc_.AntialiasedLineEnable = TRUE;  // ラインのアンチエイリアス有効化
 
-    /// ShaderをCompileする
-    vertexShaderBlob_ = DX12Helper::CompileShader(kVertexShaderPath, L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
-    assert(vertexShaderBlob_ != nullptr);
-
-    pixelShaderBlob_ = DX12Helper::CompileShader(kPixelShaderPath, L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
-    assert(pixelShaderBlob_ != nullptr);
-
     /// PSOを生成する
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
     graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get();    // RootSignature
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;    // InputLayout
-    graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
-    graphicsPipelineStateDesc.PS = { pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize() };
+    graphicsPipelineStateDesc.VS = { pBlobVS->GetBufferPointer(), pBlobVS->GetBufferSize() };
+    graphicsPipelineStateDesc.PS = { pBlobPS->GetBufferPointer(), pBlobPS->GetBufferSize() };
     graphicsPipelineStateDesc.BlendState = blendDesc.Get();            // BlendState
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;    // RasterizerState
     // 書き込むRTVの情報

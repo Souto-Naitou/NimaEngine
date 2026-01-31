@@ -13,6 +13,13 @@
 #include <cassert>
 #include <config/EngineSetting.h>
 
+#ifdef WIN32_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN
+#endif // WIN32_LEAN_AND_MEAN
+
+#include <Windows.h>
+#include <dxcapi.h>
+
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")

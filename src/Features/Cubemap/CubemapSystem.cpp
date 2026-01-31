@@ -5,6 +5,12 @@
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <config/EngineSetting.h>
 
+#ifdef WIN32_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN
+#endif // WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <dxcapi.h>
+
 void CubemapSystem::Initialize()
 {
     device_ = pDx12_->GetDevice();

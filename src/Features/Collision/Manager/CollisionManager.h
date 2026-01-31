@@ -114,9 +114,10 @@ public:
         return resultPtr;
     }
 
-
 private:
     CollisionManager() = default;
+
+    static constexpr std::string_view name_ = "CollisionManager";
 
     std::unique_ptr<DebugEntry<CollisionManager>> pDebugEntry_ = nullptr;
     std::vector<Collider*> colliders_;
@@ -142,5 +143,4 @@ private:
     uint32_t countCheckCollisionCalled_ = 0ui32;
     uint32_t countBroadPhaseCalled_ = 0ui32;
 
-    std::string name_ = "CollisionManager";
 };

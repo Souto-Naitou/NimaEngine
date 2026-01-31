@@ -1,14 +1,19 @@
 #include "Object3dSystem.h"
 #include <DebugTools/Logger/Logger.h>
-#include <cassert>
 #include <Core/DirectX12/Helper/DX12Helper.h>
 #include <Core/Window/Window.h>
-#include <Core/DirectX12/SRVManager.h>
 #include <Core/DirectX12/Helper/DX12HeapHelper.h>
 #include <config/EngineSetting.h>
 #include <Core/DirectX12/RootSignature/RootSignatureCache.h>
 #include <Core/DirectX12/RootSignature/RootSignatureDesc.h>
 #include <Core/DirectX12/StaticSamplerDesc/StaticSamplerDesc.h>
+#include <cassert>
+
+#ifdef WIN32_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN
+#endif // WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <dxcapi.h>
 
 Object3dSystem::Object3dSystem()
 {
@@ -18,9 +23,19 @@ void Object3dSystem::Initialize()
 {
     ObjectSystemBaseMT::Initialize();
 
+    /// ルートシグネチャの作成
     CreateRootSignature();
-    CreateMainPipelineState();
-    CreateDepthPipelineState();
+
+    /// シェーダーのコンパイル
+    auto dxcUtils = pDx12_->GetDxcUtils();
+    auto dxcCompiler = pDx12_->GetDxcCompiler();
+    auto includeHandler = pDx12_->GetIncludeHandler();
+    ComPtr<IDxcBlob> pBlobVS = DX12Helper::CompileShader(kVertexShaderPath, L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+    ComPtr<IDxcBlob> pBlobPS = DX12Helper::CompileShader(kPixelShaderPath, L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+
+    /// パイプラインステートの作成
+    CreateMainPipelineState(pBlobVS.Get(), pBlobPS.Get());
+    CreateDepthPipelineState(pBlobVS.Get());
 }
 
 void Object3dSystem::DepthDrawSetting(ID3D12GraphicsCommandList* cl)
@@ -170,12 +185,9 @@ void Object3dSystem::CreateRootSignature()
     rootSignature_ = RootSignatureCache::GetInstance()->GetOrCreate(kRootSignatureId_);
 }
 
-void Object3dSystem::CreateMainPipelineState()
+void Object3dSystem::CreateMainPipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS)
 {
     ID3D12Device* device = pDx12_->GetDevice();
-    IDxcUtils* dxcUtils = pDx12_->GetDxcUtils();
-    IDxcCompiler3* dxcCompiler = pDx12_->GetDxcCompiler();
-    IDxcIncludeHandler* includeHandler = pDx12_->GetIncludeHandler();
     uint32_t clientWidth = Window::clientWidth;
     uint32_t clientHeight = Window::clientWidth;
 
@@ -216,12 +228,7 @@ void Object3dSystem::CreateMainPipelineState()
     rasterizerDesc_.MultisampleEnable = TRUE;  // アンチエイリアス有効化
     rasterizerDesc_.AntialiasedLineEnable = TRUE;  // ラインのアンチエイリアス有効化
 
-    /// ShaderをCompileする
-    vertexShaderBlob_ = DX12Helper::CompileShader(kVertexShaderPath, L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
-    assert(vertexShaderBlob_ != nullptr);
 
-    pixelShaderBlob_ = DX12Helper::CompileShader(kPixelShaderPath, L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
-    assert(pixelShaderBlob_ != nullptr);
 
     // DepthStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);
@@ -246,8 +253,8 @@ void Object3dSystem::CreateMainPipelineState()
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
     graphicsPipelineStateDesc.pRootSignature = rootSignature_;    // RootSignature
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;    // InputLayout
-    graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
-    graphicsPipelineStateDesc.PS = { pixelShaderBlob_.Get()->GetBufferPointer(), pixelShaderBlob_.Get()->GetBufferSize() };
+    graphicsPipelineStateDesc.VS = { pBlobVS->GetBufferPointer(), pBlobVS->GetBufferSize() };
+    graphicsPipelineStateDesc.PS = { pBlobPS->GetBufferPointer(), pBlobPS->GetBufferSize() };
     graphicsPipelineStateDesc.BlendState = blendDesc;            // BlendState
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;    // RasterizerState
     // 書き込むRTVの情報
@@ -275,17 +282,15 @@ void Object3dSystem::CreateMainPipelineState()
     }
 }
 
-void Object3dSystem::CreateDepthPipelineState()
+void Object3dSystem::CreateDepthPipelineState(IDxcBlob* pBlobVS)
 {
     ID3D12Device* device = pDx12_->GetDevice();
     uint32_t clientWidth = Window::clientWidth;
     uint32_t clientHeight = Window::clientHeight;
 
-
     /// BlendDesc
     D3D12_BLEND_DESC blendDesc = {};
     blendDesc.RenderTarget[0].RenderTargetWriteMask = 0;
-
 
     // DepthStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);
@@ -308,7 +313,7 @@ void Object3dSystem::CreateDepthPipelineState()
     D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
     graphicsPipelineStateDesc.pRootSignature = rootSignature_;
     graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;
-    graphicsPipelineStateDesc.VS = { vertexShaderBlob_.Get()->GetBufferPointer(), vertexShaderBlob_.Get()->GetBufferSize() };
+    graphicsPipelineStateDesc.VS = { pBlobVS->GetBufferPointer(), pBlobVS->GetBufferSize() };
     graphicsPipelineStateDesc.PS = { nullptr, 0 };
     graphicsPipelineStateDesc.BlendState = blendDesc;
     graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;

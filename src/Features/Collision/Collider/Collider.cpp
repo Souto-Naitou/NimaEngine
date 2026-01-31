@@ -30,6 +30,11 @@ void Collider::EraseCollidingPtr(const Collider* ptr)
     return;
 }
 
+void Collider::SetOwnerTransform(EulerTransform* pTransform)
+{
+    pOwnerTransform_ = pTransform;
+}
+
 void Collider::SetColliderID(const std::string& id)
 {
     colliderID_ = id;
@@ -38,26 +43,49 @@ void Collider::SetColliderID(const std::string& id)
 
 void Collider::SetAttribute(uint32_t attribute)
 {
-    collisionAttribute_ = attribute;
+    attribute_ = attribute;
 }
 
 void Collider::SetMask(uint32_t* mask)
 {
-    pCollisionMask_ = mask;
+    pMask_ = mask;
+}
+
+void Collider::SetOnCollision(const std::function<void(const Collider*)>& func)
+{
+    funcOnCollision_ = func;
+}
+
+void Collider::SetOnCollisionTrigger(const std::function<void(const Collider*)>& func)
+{
+    funcOnCollisionTrigger_ = func;
+}
+
+void Collider::SetSphereForBroadPhase(const Sphere& sphere)
+{
+    sphereForBroadPhase_ = sphere;
+}
+
+void Collider::RegisterCollidingPtr(const Collider* ptr)
+{
+    collidingPtrList_.push_back(ptr);
+}
+
+void Collider::OnCollision(const Collider* other)
+{
+    if (funcOnCollision_) funcOnCollision_(other);
 }
 
 void Collider::OnCollisionTrigger(const Collider* other)
 {
-    if (onCollisionTriggerFunction_)
-        onCollisionTriggerFunction_(other);
-    return;
+    if (funcOnCollisionTrigger_) funcOnCollisionTrigger_(other);
 }
 
 void Collider::ImGui()
 {
 #ifdef _DEBUG
 
-    ImGui::Text("Attribute: %x", collisionAttribute_);
+    ImGui::Text("Attribute: %x", attribute_);
     auto pFunc = [&]()
     {
         for (auto ptr : collidingPtrList_)

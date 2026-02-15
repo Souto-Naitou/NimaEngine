@@ -53,7 +53,7 @@ public:
     /// コライダーを登録解除します。
     /// </summary>
     /// <param name="collider">削除するコライダー。</param>
-    void DeleteCollider(Collider* collider);
+    void UnregisterCollider(Collider* collider);
     
     /// <summary>
     /// すべてのコライダー登録をクリアします。
@@ -124,6 +124,12 @@ private:
     std::vector<std::pair<std::string, std::string>> collisionNames_;
     std::vector<std::pair<std::string, uint32_t>> attributeList_;
     std::list<std::pair<std::string, uint32_t>> maskList_;
+
+    struct DebugData
+    {
+        bool isShowCollidedList = false;
+        std::vector<std::string> collidedNames;
+    } debugData_;
 
     void CheckCollisionPair(Collider* _colA, Collider* _colB);
     void ProjectShapeOnAxis(const std::vector<Vector3>* _v, const Vector3& _axis, float& _min, float& _max);

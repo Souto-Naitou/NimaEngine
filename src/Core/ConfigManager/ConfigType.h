@@ -20,6 +20,7 @@ namespace cfg
         std::list<std::string> model_paths;
         std::list<std::string> texture_paths;
         std::list<std::string> audio_paths;
+        std::list<std::string> particle_emitter_paths;
     };
 
     void to_json(nlohmann::json& _j, const cfg::ConfigData& _c);

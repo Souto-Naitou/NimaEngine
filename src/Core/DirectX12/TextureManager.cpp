@@ -42,41 +42,17 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     DirectX::ScratchImage image{};
     std::wstring filePathW = ConvertString(strPathResolved);
     TextureType textureType = this->GetTextureType(filePathW);
-    HRESULT hr = this->LoadImageFromFile(textureType, filePathW, image);
+    this->LoadImageFromFile(textureType, filePathW, image);
 
-    assert(SUCCEEDED(hr));
-
-    DirectX::TexMetadata metadata = image.GetMetadata();
-
-    if (DirectX::IsCompressed(metadata.format)) {
-        DirectX::ScratchImage decompressed;
-        DirectX::Decompress(image.GetImages(), image.GetImageCount(), metadata, DXGI_FORMAT_R8G8B8A8_UNORM, decompressed);
-        image = std::move(decompressed);
-    }
-
-    if (metadata.width > 32 && metadata.height > 32)
-    {
-        DirectX::ScratchImage mipChain = {};
-        hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipChain);
-        image = std::move(mipChain);
-        metadata = image.GetMetadata();
-        assert(SUCCEEDED(hr));
-    }
+    textureData.metadata = image.GetMetadata();
 
     auto pDevice = pDx12_->GetDevice();
     auto cl = pDx12_->GetCommandList();
 
-    if (textureType == TextureType::kDDS)
-    {
-        // キューブマップの場合はフラグを設定
-        metadata.miscFlags |= DirectX::TEX_MISC_TEXTURECUBE;
-    }
-    textureData.metadata = metadata;
-
     auto tempResource = DX12Helper::CreateTextureResource(pDx12_->GetDevice(), textureData.metadata);
 
     DX12Resource::Params params{};
-    params.format = metadata.format;
+    params.format = textureData.metadata.format;
     params.name = strPathResolved;
     params.resource = tempResource;
     params.state = D3D12_RESOURCE_STATE_COPY_DEST;
@@ -106,7 +82,7 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     );
 
     // Typeに応じてSRVを作成
-    this->CreateSRV(textureType, textureData);
+    this->CreateSRV(textureData);
 
     return strPathResolved;
 }
@@ -187,29 +163,25 @@ HRESULT TextureManager::LoadImageFromFile(TextureType _type, const std::wstring&
     return E_FAIL; // Unknown type
 }
 
-void TextureManager::CreateSRV(TextureType _type, const TextureData& _textureData)
+void TextureManager::CreateSRV(const TextureData& _textureData)
 {
-    switch (_type)
+    if (_textureData.metadata.IsCubemap())
     {
-        case TextureType::kDDS:
-            srvManager_->CreateForCubemap(
-                _textureData.textureResource.GetSRVIndex(),
-                _textureData.textureResource.GetResource().Get(),
-                _textureData.metadata.format,
-                UINT32_MAX
-            );
-            break;
-        case TextureType::kWIC:
-            srvManager_->CreateForTexture2D(
-                _textureData.textureResource.GetSRVIndex(),
-                _textureData.textureResource.GetResource().Get(),
-                _textureData.metadata.format,
-                static_cast<UINT>(_textureData.metadata.mipLevels)
-            );
-            break;
-        default:
-            assert(false && "Unsupported texture type");
-            break;
+        srvManager_->CreateForCubemap(
+            _textureData.textureResource.GetSRVIndex(),
+            _textureData.textureResource.GetResource().Get(),
+            _textureData.metadata.format,
+            UINT32_MAX
+        );
+    }
+    else
+    {
+        srvManager_->CreateForTexture2D(
+            _textureData.textureResource.GetSRVIndex(),
+            _textureData.textureResource.GetResource().Get(),
+            _textureData.metadata.format,
+            static_cast<UINT>(_textureData.metadata.mipLevels)
+        );
     }
 }
 

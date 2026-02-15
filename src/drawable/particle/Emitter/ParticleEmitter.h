@@ -85,7 +85,7 @@ private:
     std::unique_ptr<DebugEntry<ParticleEmitter>> debugEntry_ = nullptr;
     static constexpr uint32_t   kDefaultReserveCount_   = 6000u;
     std::string                 particleName_           = {};               // 名前
-    std::string                 jsonPath_               = {};               // JSONファイルパス
+    std::filesystem::path       jsonPath_               = {};               // JSONファイルパス
     TimeMeasurer                timer_                  = {};               // 計測用タイマー
     TimeMeasurer                reloadTimer_            = {};               // リロード用タイマー
     double                      reloadInterval_         = 1.0;              // リロード間隔

@@ -20,7 +20,7 @@ void CellBasedFiltering::UnregisterAll(CollisionManager* pManager)
 {
     for (const auto& collider : potentialColliders_)
     {
-        pManager->DeleteCollider(collider);
+        pManager->UnregisterCollider(collider);
     }
     potentialColliders_.clear();
 }

@@ -3,12 +3,13 @@
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <Vector3.h>
 #include <Matrix4x4.h>
-
+#include <Utility/String/strutl.h>
 #include <algorithm>
 
 #ifdef _DEBUG
 #include <imgui.h>
 #endif // _DEBUG
+#include <vectormatrix/math/Color.h>
 
 void CollisionManager::Initialize()
 {
@@ -41,15 +42,31 @@ void CollisionManager::CheckAllCollision()
 void CollisionManager::RegisterCollider(Collider* collider)
 {
     colliders_.push_back(collider);
+    #ifdef _DEBUG
+    debugData_.collidedNames.emplace_back(collider->GetColliderID());
+    #endif // _DEBUG
 }
 
-void CollisionManager::DeleteCollider(Collider* collider)
+void CollisionManager::UnregisterCollider(Collider* collider)
 {
     for (int i = 0; i < colliders_.size(); i++)
     {
         colliders_[i]->EraseCollidingPtr(collider);
         if (colliders_[i] == collider)
         {
+            #ifdef _DEBUG
+            /// 表示用リストから一つだけ削除
+            auto itr = std::find(
+                debugData_.collidedNames.begin(),
+                debugData_.collidedNames.end(),
+                collider->GetColliderID()
+            );
+            if (itr != debugData_.collidedNames.end())
+            {
+                debugData_.collidedNames.erase(itr);
+            }
+            #endif // _DEBUG
+
             colliders_.erase(colliders_.begin() + i);
         }
     }
@@ -89,9 +106,47 @@ void CollisionManager::ImGui()
 {
 #ifdef _DEBUG
 
+    static constexpr std::string_view kTitleColliderList = "登録されているコライダー";
+    ImVec2 textSize = ImGui::CalcTextSize(kTitleColliderList.data());
+    float padding =
+        ImGui::GetStyle().FramePadding.x * 2.0f +
+        ImGui::GetFontSize() * 2.0f; // ボタン類の分
+
     ImGui::Text("判定回数 : %u回", countCheckCollision_);
     ImGui::Text("フィルターされた回数 : %u回", countCheckCollisionCalled_ - countBroadPhaseCalled_);
     ImGui::Text("軽量化された回数 : %u回", countBroadPhaseCalled_ - countCheckCollision_);
+
+    if (ImGui::Button("登録されているコライダーを確認する"))
+        debugData_.isShowCollidedList = !debugData_.isShowCollidedList;
+
+    ImGui::SetNextWindowSizeConstraints(
+        ImVec2(textSize.x + padding, 0.0f),
+        ImVec2(FLT_MAX, FLT_MAX)
+    );
+
+    if (ImGui::Begin("登録されているコライダー", &debugData_.isShowCollidedList))
+    {
+        for (auto& name : debugData_.collidedNames)
+        {
+            bool isSameline = false;
+            auto textSize = ImGui::CalcTextSize(name.c_str());
+            isSameline = ImGui::GetWindowContentRegionMax().x - ImGui::GetCursorPosX() < textSize.x + padding;
+            uint32_t hash = utl::string::to_hash(name);
+            HSV hsvColor;
+            hsvColor.h() = (hash % 360) / 360.0f;     // Hue: 0～1
+            hsvColor.s() = 0.65f;                     // 彩度は固定
+            hsvColor.v() = 0.85f;                     // 明度も固定
+            ImVec4 rgba;
+            ImGui::ColorConvertHSVtoRGB(
+                hsvColor.h(), hsvColor.s(), hsvColor.v(),
+                rgba.x, rgba.y, rgba.z
+            );
+            rgba.w = 1.0f;
+            ImGui::TextColored(rgba, name.c_str());
+            if (!isSameline) ImGui::SameLine();
+        }
+    }
+    ImGui::End();
 
     if (ImGui::BeginTable("Collided list", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable))
     {

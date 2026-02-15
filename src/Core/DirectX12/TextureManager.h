@@ -104,7 +104,7 @@ private:
     /// </summary>
     /// <param name="_type">テクスチャ種別。</param>
     /// <param name="_textureData">テクスチャデータ。</param>
-    void CreateSRV(TextureType _type, const TextureData& _textureData);
+    void CreateSRV(const TextureData& _textureData);
     
     /// <summary>
     /// 検索パスに基づきファイルパスを解決します。

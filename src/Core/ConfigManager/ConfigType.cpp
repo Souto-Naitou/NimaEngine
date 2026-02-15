@@ -13,6 +13,7 @@ void cfg::to_json(nlohmann::json& _j, const cfg::ConfigData& _c)
     path["model"] = _c.model_paths;
     path["texture"] = _c.texture_paths;
     path["audio"] = _c.audio_paths;
+    path["particle_emitter"] = _c.particle_emitter_paths;
 }
 
 void cfg::from_json(const nlohmann::json& _j, cfg::ConfigData& _c)
@@ -29,4 +30,5 @@ void cfg::from_json(const nlohmann::json& _j, cfg::ConfigData& _c)
     try_assign(path, "model", _c.model_paths);
     try_assign(path, "texture", _c.texture_paths);
     try_assign(path, "audio", _c.audio_paths);
+    try_assign(path, "particle_emitter", _c.particle_emitter_paths);
 }

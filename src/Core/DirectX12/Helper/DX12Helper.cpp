@@ -273,7 +273,7 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
 
 ComPtr<ID3D12Resource> DX12Helper::CreateTextureResource(const ComPtr<ID3D12Device>& _device, const DirectX::TexMetadata& _metadata)
 {
-    bool isCubeMap = (_metadata.miscFlags & DirectX::TEX_MISC_TEXTURECUBE) != 0;
+    bool isCubeMap = _metadata.IsCubemap();
 
     if (isCubeMap)
     {

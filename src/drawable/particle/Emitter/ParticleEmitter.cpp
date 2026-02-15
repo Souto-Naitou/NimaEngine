@@ -9,6 +9,7 @@
 #include <drawable/particle/ParticleStorage.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <drawable/particle/Manager/EmitterManager.h>
+#include <Core/ConfigManager/ConfigManager.h>
 #include "EmitterData.h"
 #include <WinTools/WinTools.h>
 #include <Range.h>
@@ -22,7 +23,16 @@ void ParticleEmitter::Initialize(const ParticleEmitterInitParams& params)
 
     winTools_ = WinTools::GetInstance();
 
-    jsonPath_ = params.jsonPath;
+    if (params.jsonPath.empty())
+    {
+        jsonPath_.clear();
+    }
+    else
+    {
+        const std::filesystem::path pathParam = params.jsonPath;
+        const std::filesystem::path cfgPath = ConfigManager::GetInstance()->GetConfigData().particle_emitter_paths.back();
+        jsonPath_ = cfgPath / pathParam;
+    }
 
     // タイマースタート
     timer_.Start();
@@ -40,7 +50,7 @@ void ParticleEmitter::Initialize(const ParticleEmitterInitParams& params)
     }
     else
     {
-        fromJsonData_ = EmitterManager::GetInstance()->LoadFile(jsonPath_);
+        fromJsonData_ = EmitterManager::GetInstance()->LoadFile(jsonPath_.string());
         emitterData_ = fromJsonData_;
     }
 
@@ -242,7 +252,7 @@ void ParticleEmitter::ImGuiSectionCommon()
     #ifdef _DEBUG
     char path[512] = "";
     char name[128] = "";
-    memcpy_s(path, sizeof(name), jsonPath_.c_str(), jsonPath_.size());
+    memcpy_s(path, sizeof(name), jsonPath_.c_str(), jsonPath_.string().size());
     memcpy_s(name, sizeof(name), fromJsonData_.name.c_str(), fromJsonData_.name.size());
 
     if (ImGui::CollapsingHeader("一般"))

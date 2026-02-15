@@ -752,6 +752,9 @@
     <ProjectReference Include="..\externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\externals\imguizmo_1_83\imguizmo_1_83.vcxproj">
+      <Project>{05ab97a5-44cd-444d-a6ff-bb04401c0536}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\externals\ImGui\ImGui.vcxproj">
       <Project>{f83f6c46-aee0-480c-95fc-2319e6feb02b}</Project>
     </ProjectReference>

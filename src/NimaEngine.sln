@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.10.34928.147
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NimaEngine", "Engine.vcxproj", "{9FD2D32D-DAB0-40A1-B430-CBC12517B87C}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NiGui", "..\modules\nigui\NiGui.vcxproj", "{E3E0F431-57AB-47BD-9CAD-DB622644B99C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VecMat", "..\modules\vectormatrix\Project\VecMat.vcxproj", "{A87AD77F-CC08-4788-8630-68470354FCD3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imguizmo_1_83", "..\externals\imguizmo_1_83\imguizmo_1_83.vcxproj", "{05AB97A5-44CD-444D-A6FF-BB04401C0536}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{A87AD77F-CC08-4788-8630-68470354FCD3}.Debug|x64.Build.0 = Debug|x64
 		{A87AD77F-CC08-4788-8630-68470354FCD3}.Release|x64.ActiveCfg = Release|x64
 		{A87AD77F-CC08-4788-8630-68470354FCD3}.Release|x64.Build.0 = Release|x64
+		{05AB97A5-44CD-444D-A6FF-BB04401C0536}.Debug|x64.ActiveCfg = Debug|x64
+		{05AB97A5-44CD-444D-A6FF-BB04401C0536}.Debug|x64.Build.0 = Debug|x64
+		{05AB97A5-44CD-444D-A6FF-BB04401C0536}.Release|x64.ActiveCfg = Release|x64
+		{05AB97A5-44CD-444D-A6FF-BB04401C0536}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

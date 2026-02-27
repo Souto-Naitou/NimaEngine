@@ -58,6 +58,8 @@ public:
     void    ToShaderResourceState() override;
     /// <summary>デバッグオーバーレイを描画します。</summary>
     void    DebugOverlay() override;
+    /// <summary>カーネルを生成します。</summary>
+    void    CreateKernel();
 
     // Setters
     /// <summary>入力テクスチャのハンドルを設定します。</summary>
@@ -111,5 +113,4 @@ private:
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
     void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle, ID3D12Resource* execInfoResource);
-    void    CreateKernel();
 };

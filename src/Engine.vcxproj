@@ -240,6 +240,7 @@
     <ClCompile Include="drawable\font\NumericView.cpp" />
     <ClCompile Include="drawable\line\AllocatedLineVertices.cpp" />
     <ClCompile Include="drawable\line\LineBatch.cpp" />
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp" />
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
@@ -357,6 +358,7 @@
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h" />
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h" />
     <ClInclude Include="drawable\line\AllocatedLineVertices.h" />
+    <ClInclude Include="drawable\particle\emitter\ParticleEmitterGroup.h" />
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />

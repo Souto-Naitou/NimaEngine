@@ -302,11 +302,11 @@ void NimaFramework::Update()
     pEventTimer_->EndEvent("Update");
     #endif // _DEBUG
 
-    /// パーティクル更新
-    pParticleStorage_->Update();
-
     /// イベントリスナーのディスパッチ
     pEventListener_->Dispatch();
+
+    /// パーティクル更新
+    pParticleStorage_->Update();
 }
 
 void NimaFramework::Draw()

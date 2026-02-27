@@ -244,6 +244,7 @@ void SeparatedGaussianFilter::PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGp
 void SeparatedGaussianFilter::CreateKernel()
 {
     // カーネルサイズに応じて重みを計算
+    pOption_->kernelSize = (pOption_->kernelSize / 2) * 2 + 1;
     int kernelSize = pOption_->kernelSize;
     int halfKernelSize = kernelSize / 2;
     float sum = 0.0f;

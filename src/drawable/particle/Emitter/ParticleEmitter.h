@@ -15,26 +15,23 @@
 #include <cstdint>
 #include <memory>
 
-struct ParticleEmitterInitParams
-{
-    Particle* particle = nullptr;
-    std::string jsonPath = {};
-};
-
 /// <summary>
 /// パーティクルエミッタ
 /// </summary>
 class ParticleEmitter
 {
 public:
-    ParticleEmitter() = default;
-    ~ParticleEmitter() = default;
+    struct Params
+    {
+        Particle* particle = nullptr;
+        std::string jsonPath = {};
+    };
 
     /// <summary>
     /// パーティクルエミッタを初期化します。
     /// </summary>
     /// <param name="params">初期化パラメータ。</param>
-    void Initialize(const ParticleEmitterInitParams& params);
+    void Initialize(const Params& params);
 
     /// <summary>
     /// 手動発生モードを有効にします。

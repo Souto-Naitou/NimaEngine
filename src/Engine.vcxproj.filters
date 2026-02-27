@@ -388,6 +388,9 @@
     <Filter Include="Effect\PostEffect\.GlobalInput">
       <UniqueIdentifier>{577eec87-5393-487e-9e10-8b7baa71670e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Drawable\Particle\EmitterGroup">
+      <UniqueIdentifier>{c4297014-909a-4c02-85aa-ec78344c7779}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -767,6 +770,9 @@
     </ClCompile>
     <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp">
       <Filter>Effect\PostEffect\.GlobalInput</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp">
+      <Filter>Drawable\Particle\EmitterGroup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1255,6 +1261,9 @@
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
       <Filter>Effect\PostEffect\.GlobalInput</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\emitter\ParticleEmitterGroup.h">
+      <Filter>Drawable\Particle\EmitterGroup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

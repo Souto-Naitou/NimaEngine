@@ -201,7 +201,7 @@ std::string TextureManager::ResolveFilePath(const std::string& filePath)
 const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& filePath)
 {
     std::string resolvedPath = this->ResolveFilePath(filePath);
-    const TextureData& textureData = textureDataMap_[resolvedPath];
+    const TextureData& textureData = textureDataMap_.at(resolvedPath);
     return textureData.metadata;
 }
 

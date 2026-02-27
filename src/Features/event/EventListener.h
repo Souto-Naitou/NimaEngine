@@ -8,7 +8,7 @@
 #include "./EventSubscription.h"
 
 /// <summary>
-/// イベント受信クラス (WIP)
+/// イベント送受信クラス
 /// </summary>
 class EventListener
 {
@@ -34,6 +34,7 @@ public:
     template <typename T>
     EventSubscription Subscribe(std::function<void(const T&)> callback);
 
+    /// EventSubscriptionのデストラクタから呼び出される、コールバックの解除関数
     inline void Unsubscribe(EventID id, size_t index)
     {
         auto it = subscribers_.find(id);
@@ -47,6 +48,7 @@ public:
 
     /// <summary>
     /// 処理をディスパッチします。
+    /// (イベントキューに溜まったイベントを、登録されたコールバックに対して順番に処理します)
     /// </summary>
     void Dispatch();
 

@@ -17,7 +17,7 @@
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
 
-void ParticleEmitter::Initialize(const ParticleEmitterInitParams& params)
+void ParticleEmitter::Initialize(const ParticleEmitter::Params& params)
 {
     debugEntry_ = std::make_unique<DebugEntry<ParticleEmitter>>("ParticleEmitter", "ParticleEmitter", this, false);
 

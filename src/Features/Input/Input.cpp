@@ -124,6 +124,16 @@ bool Input::TriggerKeyC(char key) const
     return false;
 }
 
+bool Input::ReleaseKey(BYTE keyNumber) const
+{
+    // キーが離された瞬間ならtrueを返す
+    if(!key_[keyNumber] && keyPre_[keyNumber])
+    {
+        return true;
+    }
+    return false;
+}
+
 Vector2 Input::GetLeftStickPosition() const
 {
     return leftStickPosition_;

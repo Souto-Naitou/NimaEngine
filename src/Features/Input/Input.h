@@ -58,6 +58,7 @@ public:
     bool        PushKeyC(char key) const;
     bool        TriggerKey(BYTE keyNumber) const;
     bool        TriggerKeyC(char key) const;
+    bool        ReleaseKey(BYTE keyNumber) const;
     Vector2     GetLeftStickPosition() const;
     Vector2     GetRightStickPosition() const;
     POINT       GetCursorPosition() const;

@@ -397,6 +397,9 @@
     <Filter Include="HLSL\Drawable">
       <UniqueIdentifier>{d29eeb10-62be-4f9a-99ac-b390fc61b4d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect\PostEffect\Posterize">
+      <UniqueIdentifier>{edbd9914-4903-4d52-86c6-4fcd8c094ffc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -702,7 +705,7 @@
     <ClCompile Include="Features\Layer\Canvas.cpp">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp">
+    <ClCompile Include="Effects\PostEffects\.Factory\PostEffectFactory.cpp">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClCompile>
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp">
@@ -768,12 +771,6 @@
     <ClCompile Include="Effects\PostEffects\PostEffectBase.cpp">
       <Filter>Effect\PostEffect</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
-      <Filter>Effect\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
-      <Filter>Effect\PostEffect</Filter>
-    </ClCompile>
     <ClCompile Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.cpp">
       <Filter>Effect\PostEffect\ChromaticAberration</Filter>
     </ClCompile>
@@ -786,6 +783,13 @@
     <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp">
       <Filter>Drawable\Particle\EmitterGroup</Filter>
     </ClCompile>
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
+      <Filter>Effect\PostEffect\Scanline</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
+      <Filter>Effect\PostEffect\Mosaic</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1181,7 +1185,7 @@
     <ClInclude Include="Effects\SceneTransition\TransShutter.h">
       <Filter>Effect\SceneTransition\Shutter</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\.factory\PostEffectFactory.h">
+    <ClInclude Include="Effects\PostEffects\.Factory\PostEffectFactory.h">
       <Filter>Effect\PostEffect\.Factory</Filter>
     </ClInclude>
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h">
@@ -1259,13 +1263,7 @@
     <ClInclude Include="drawable\line\AllocatedLineVertices.h">
       <Filter>Drawable\Line</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
-      <Filter>Effect\PostEffect</Filter>
-    </ClInclude>
     <ClInclude Include="Effects\PostEffects\PostEffectBase.h">
-      <Filter>Effect\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
       <Filter>Effect\PostEffect</Filter>
     </ClInclude>
     <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h">
@@ -1283,6 +1281,13 @@
     <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h">
       <Filter>Drawable\Particle\EmitterGroup</Filter>
     </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
+      <Filter>Effect\PostEffect\Scanline</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
+      <Filter>Effect\PostEffect\Mosaic</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1436,6 +1441,9 @@
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\WithoutAlpha.CS.hlsl">
       <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Posterize.PS.hlsl">
+      <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

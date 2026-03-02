@@ -12,6 +12,7 @@
 #include <Effects/PostEffects/ScanLine/Scanline.h>
 #include <Effects/PostEffects/Mosaic/Mosaic.h>
 #include <Effects/PostEffects/ChromaticAberration/ChromaticAberration.h>
+#include <Effects/PostEffects/Posterize/Posterize.h>
 
 const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
 {
@@ -29,6 +30,7 @@ const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
     { PostEffectClassName::Scanline,                "Scanline" },
     { PostEffectClassName::Mosaic,                  "Mosaic" },
     { PostEffectClassName::ChromaticAberration,     "ChromaticAberration" },
+    { PostEffectClassName::Posterize,               "Posterize" },
 };
 
 
@@ -59,4 +61,5 @@ void PostEffectFactory::RegisterCreators()
     creators_[PostEffectClassName::Scanline]                = [this]() { return std::make_unique<Scanline>(); };
     creators_[PostEffectClassName::Mosaic]                  = [this]() { return std::make_unique<Mosaic>(); };
     creators_[PostEffectClassName::ChromaticAberration]     = [this]() { return std::make_unique<ChromaticAberration>(); };
+    creators_[PostEffectClassName::Posterize]               = [this]() { return std::make_unique<Posterize>(); };
 }

@@ -291,11 +291,11 @@ void NimaFramework::Update()
     pImGuiManager_->BeginFrame();
     #endif // _DEBUG
 
-    pDebugManager_->DrawUI();
 
     /// シーン更新
     pSceneManager_->Update();
     pDebugManager_->Update();
+    pDebugManager_->DrawUI();
 
     /// イベント計測終了
     #ifdef _DEBUG

@@ -28,6 +28,7 @@ enum class PostEffectClassName
     Scanline,
     Mosaic,
     ChromaticAberration,
+    Posterize,
 };
 
 /// <summary>

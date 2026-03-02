@@ -64,16 +64,6 @@ public:
     void    Setting()                   override;
     
     /// <summary>
-    /// リサイズ前の処理を行います。
-    /// </summary>
-    void    OnResizeBefore()            override;
-    
-    /// <summary>
-    /// バッファリサイズ変更後の処理を行います。
-    /// </summary>
-    void    OnResizeAfter()          override;
-    
-    /// <summary>
     /// レンダーターゲットをシェーダーリソース状態へ遷移させます。
     /// </summary>
     void    ToShaderResourceState()     override;

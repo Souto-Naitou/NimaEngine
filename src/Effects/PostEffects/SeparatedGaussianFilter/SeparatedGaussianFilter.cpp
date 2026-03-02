@@ -106,23 +106,6 @@ void SeparatedGaussianFilter::Setting()
     this->PreDrawSetting(inputGpuHandle_, horizontalGaussTexture_.GetRTVHandle(), execInfoResourceHorizontal_.Get());
 }
 
-void SeparatedGaussianFilter::OnResizeBefore()
-{
-    horizontalGaussTexture_.Reset();
-    renderTexture_.Reset();
-}
-
-void SeparatedGaussianFilter::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, horizontalGaussTexture_, kNameHorizontal);
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, kNameVertical);
-
-    // レンダーテクスチャのSRVを生成
-    horizontalGaussTexture_.CreateSRV();
-    renderTexture_.CreateSRV();
-}
-
 void SeparatedGaussianFilter::ToShaderResourceState()
 {
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

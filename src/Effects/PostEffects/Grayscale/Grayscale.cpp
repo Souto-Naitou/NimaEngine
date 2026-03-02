@@ -92,19 +92,6 @@ void Grayscale::Setting()
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Grayscale::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}
-
-void Grayscale::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Grayscale");
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void Grayscale::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

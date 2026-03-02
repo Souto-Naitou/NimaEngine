@@ -239,11 +239,14 @@
     <ClCompile Include="drawable\base\DrawableBase.cpp" />
     <ClCompile Include="drawable\font\NumericView.cpp" />
     <ClCompile Include="drawable\line\AllocatedLineVertices.cpp" />
+    <ClCompile Include="drawable\line\Line.cpp" />
     <ClCompile Include="drawable\line\LineBatch.cpp" />
+    <ClCompile Include="drawable\line\LineSystem.cpp" />
     <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp" />
     <ClCompile Include="Effects\PostEffects\.factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
     <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp" />
+    <ClCompile Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.cpp" />
     <ClCompile Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.cpp" />
     <ClCompile Include="Effects\PostEffects\Dissolve\Dissolve.cpp" />
     <ClCompile Include="Effects\PostEffects\GaussianBloom\GaussianBloom.cpp" />
@@ -252,6 +255,7 @@
     <ClCompile Include="Effects\PostEffects\Grayscale\Grayscale.cpp" />
     <ClCompile Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.cpp" />
     <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp" />
+    <ClCompile Include="Effects\PostEffects\PostEffectBase.cpp" />
     <ClCompile Include="Effects\PostEffects\PrewittOutline\PrewittOutline.cpp" />
     <ClCompile Include="Effects\PostEffects\RadialBlur\RadialBlur.cpp" />
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp" />
@@ -291,8 +295,6 @@
     <ClCompile Include="Features\LevelLoader\SceneObjects.cpp" />
     <ClCompile Include="Features\Lighting\Manager\LightingManager.cpp" />
     <ClCompile Include="Features\Lighting\PointLight\PointLight.cpp" />
-    <ClCompile Include="drawable\line\Line.cpp" />
-    <ClCompile Include="drawable\line\LineSystem.cpp" />
     <ClCompile Include="Features\Model\GltfModelSystem.cpp" />
     <ClCompile Include="Features\Model\Helper\AnimationHelper.cpp" />
     <ClCompile Include="Features\Model\Helper\ModelHelper.cpp" />
@@ -358,7 +360,11 @@
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureCache.h" />
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h" />
     <ClInclude Include="drawable\line\AllocatedLineVertices.h" />
-    <ClInclude Include="drawable\particle\emitter\ParticleEmitterGroup.h" />
+    <ClInclude Include="drawable\line\Line.h" />
+    <ClInclude Include="drawable\line\LineBatch.h" />
+    <ClInclude Include="drawable\line\LineSystem.h" />
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h" />
+    <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h" />
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
     <ClInclude Include="Effects\PostEffects\IPostEffect.h" />
     <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h" />
@@ -388,6 +394,7 @@
     <ClInclude Include="Effects\PostEffects\Grayscale\Grayscale.h" />
     <ClInclude Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.h" />
     <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h" />
+    <ClInclude Include="Effects\PostEffects\PostEffectBase.h" />
     <ClInclude Include="Effects\PostEffects\PrewittOutline\PrewittOutline.h" />
     <ClInclude Include="Effects\PostEffects\RadialBlur\RadialBlur.h" />
     <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h" />
@@ -395,9 +402,7 @@
     <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h" />
     <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h" />
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
-    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
@@ -439,9 +444,6 @@
     <ClInclude Include="Features\LevelLoader\SceneObjects.h" />
     <ClInclude Include="Features\Lighting\Manager\LightingManager.h" />
     <ClInclude Include="Features\Lighting\PointLight\PointLight.h" />
-    <ClInclude Include="drawable\line\Line.h" />
-    <ClInclude Include="drawable\line\LineSystem.h" />
-    <ClInclude Include="drawable\line\LineBatch.h" />
     <ClInclude Include="Features\Model\Animation.h" />
     <ClInclude Include="Features\Model\GltfModelSystem.h" />
     <ClInclude Include="Features\Model\Helper\AnimationHelper.h" />
@@ -554,6 +556,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\ChromaticAberration.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\DepthBasedOutline.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -624,6 +631,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Mosaic.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -684,7 +696,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Scanline.PS.hlsl">
+    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

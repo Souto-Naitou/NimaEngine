@@ -97,19 +97,6 @@ void BoxFilter::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void BoxFilter::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}
-
-void BoxFilter::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "BoxFilterRenderTexture");
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void BoxFilter::ToShaderResourceState()
 {
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

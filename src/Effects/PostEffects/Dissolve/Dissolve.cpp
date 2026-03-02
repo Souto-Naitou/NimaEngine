@@ -109,20 +109,6 @@ void Dissolve::Setting()
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Dissolve::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}
-
-void Dissolve::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "DissolveRenderTexture");
-
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void Dissolve::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

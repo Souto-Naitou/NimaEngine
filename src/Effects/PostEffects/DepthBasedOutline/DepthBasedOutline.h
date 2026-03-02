@@ -33,8 +33,6 @@ public:
 
     void    Apply() override;
     void    Setting() override;
-    void    OnResizeBefore() override;
-    void    OnResizeAfter() override;
     void    ToShaderResourceState() override;
     void    DebugOverlay() override;
 

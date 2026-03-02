@@ -134,28 +134,6 @@ void GaussianBloom::Setting()
 {
 }
 
-void GaussianBloom::OnResizeBefore()
-{
-    outputTexture_.Reset();
-
-    // 内部エフェクトのリサイズ
-    pLuminanceOutput_->OnResizeBefore();
-    pSeparatedGaussianFilter_->OnResizeBefore();
-}
-
-void GaussianBloom::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "GaussianBloomRenderTexture");
-
-    // レンダーテクスチャのSRVを生成
-    outputTexture_.CreateSRV();
-
-    // 内部エフェクトのリサイズ
-    pLuminanceOutput_->OnResizeAfter();
-    pSeparatedGaussianFilter_->OnResizeAfter();
-}
-
 void GaussianBloom::ToShaderResourceState()
 {
     outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

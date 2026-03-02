@@ -27,8 +27,6 @@ public:
     void Setting() override;
     void Apply() override;
     void ToShaderResourceState() override;
-    void OnResizeBefore() override;
-    void OnResizeAfter() override;
     void DebugOverlay() override;
 
     MosaicOption& GetOption() { return *pOption_; }

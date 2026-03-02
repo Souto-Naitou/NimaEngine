@@ -71,16 +71,6 @@ void Scanline::ToShaderResourceState()
     pRenderTexture_->GetStateTracker().ChangeState(pCommandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
-void Scanline::OnResizeBefore()
-{
-    throw std::logic_error("The method or operation is not implemented.");
-}
-
-void Scanline::OnResizeAfter()
-{
-    throw std::logic_error("The method or operation is not implemented.");
-}
-
 void Scanline::DebugOverlay()
 {
     #ifdef _DEBUG

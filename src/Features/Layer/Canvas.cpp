@@ -54,17 +54,10 @@ void Canvas::Initialize(const Canvas::Params& params)
     // ポストエフェクト実行クラスの生成
     pPostEffectExecutor_ = std::make_unique<PostEffectExecutor>();
     pPostEffectExecutor_->Initialize(params.pDx12, &resource_, false);
-
-    // リサイズ時のコールバック登録
-    params.pDx12->AddOnResizeBefore("PostEffect"+params.name, std::bind(&PostEffectExecutor::OnResizeBefore, pPostEffectExecutor_.get()));
-    params.pDx12->AddOnResizeAfter("PostEffect"+params.name, std::bind(&PostEffectExecutor::OnResizeAfter, pPostEffectExecutor_.get()));
 }
 
 void Canvas::Finalize()
 {
-    params_.pDx12->DeleteOnResizeBefore("PostEffect" + params_.name);
-    params_.pDx12->DeleteOnResizeAfter("PostEffect" + params_.name);
-
     #ifdef _DEBUG
     params_.pImGuiManager->RemoveImageResource(pPostEffectExecutor_->GetIntermediateResource());
     #endif // _DEBUG

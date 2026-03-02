@@ -50,10 +50,6 @@ public:
     void    Apply() override;
     /// <summary>描画設定を行います。</summary>
     void    Setting() override;
-    /// <summary>リサイズ前の処理を行います。</summary>
-    void    OnResizeBefore() override;
-    /// <summary>リサイズ後の処理を行います。</summary>
-    void    OnResizeAfter() override;
     /// <summary>レンダーターゲットをシェーダーリソース状態へ遷移させます。</summary>
     void    ToShaderResourceState() override;
     /// <summary>デバッグオーバーレイを描画します。</summary>
@@ -113,4 +109,5 @@ private:
     void    CreatePipelineStateObject();
     void    CreateResourceCBuffer();
     void    PreDrawSetting(D3D12_GPU_DESCRIPTOR_HANDLE inputGpuHandle, D3D12_CPU_DESCRIPTOR_HANDLE outputCpuHandle, ID3D12Resource* execInfoResource);
+
 };

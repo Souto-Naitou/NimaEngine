@@ -35,11 +35,11 @@ protected:
     /// ピクセルシェーダーのパスを設定します (必須)
     inline  void                            SetPixelShaderPath(const std::wstring& path) { pixelShaderPath_ = path; }
     /// <summary>定数バッファを生成し、初期化します。</summary>
-    virtual void                            CreateCBuffer(ID3D12Device* pDevice) {};
+    virtual void                            CreateCBuffer(ID3D12Device*) {};
     /// <summary>定数バッファをシェーダーにセットします。(Indexは2からスタートしてください)</summary>
-    virtual void                            SetCBuffer(ID3D12GraphicsCommandList* pCommandList) {};
+    virtual void                            SetCBuffer(ID3D12GraphicsCommandList*) {};
     /// <summary>追加のルートパラメータを登録します。(Indexは2からスタートしてください)</summary>
-    virtual void                            RegisterAdditionalRootParameter(RootParameters& rootParams) {};
+    virtual void                            RegisterAdditionalRootParameter(RootParameters&) {};
 
 private:
     void    RegisterRootSignature();

@@ -789,7 +789,9 @@
     <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
       <Filter>Effect\PostEffect\Mosaic</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp" />
+    <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp">
+      <Filter>Effect\PostEffect\Posterize</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1287,7 +1289,9 @@
     <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
       <Filter>Effect\PostEffect\Mosaic</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h" />
+    <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h">
+      <Filter>Effect\PostEffect\Posterize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

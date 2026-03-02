@@ -391,6 +391,12 @@
     <Filter Include="Drawable\Particle\EmitterGroup">
       <UniqueIdentifier>{c4297014-909a-4c02-85aa-ec78344c7779}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect\PostEffect\ChromaticAberration">
+      <UniqueIdentifier>{69b31a42-820f-4246-ae21-4290f5a5569b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Drawable">
+      <UniqueIdentifier>{d29eeb10-62be-4f9a-99ac-b390fc61b4d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
@@ -738,24 +744,6 @@
     <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
       <Filter>Effect\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Primitive\SphereLine.cpp">
-      <Filter>Feature\Premitive\Sphere</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
-      <Filter>Effect\PostEffect\Scanline</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
-      <Filter>Effect\PostEffect\Mosaic</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\Line.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\LineSystem.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClCompile>
@@ -765,11 +753,35 @@
     <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp">
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClCompile>
+    <ClCompile Include="drawable\line\Line.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
     <ClCompile Include="drawable\line\LineBatch.cpp">
       <Filter>Drawable\Line</Filter>
     </ClCompile>
+    <ClCompile Include="drawable\line\LineSystem.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp">
+      <Filter>Drawable\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\PostEffectBase.cpp">
+      <Filter>Effect\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
+      <Filter>Effect\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
+      <Filter>Effect\PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.cpp">
+      <Filter>Effect\PostEffect\ChromaticAberration</Filter>
+    </ClCompile>
     <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp">
       <Filter>Effect\PostEffect\.GlobalInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\SphereLine.cpp">
+      <Filter>Feature\Premitive\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp">
       <Filter>Drawable\Particle\EmitterGroup</Filter>
@@ -1232,8 +1244,35 @@
     <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
+      <Filter>HLSL\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\LineSystem.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\Line.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\line\LineBatch.h">
+      <Filter>Drawable\Line</Filter>
+    </ClInclude>
     <ClInclude Include="drawable\line\AllocatedLineVertices.h">
       <Filter>Drawable\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
+      <Filter>Effect\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\PostEffectBase.h">
+      <Filter>Effect\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
+      <Filter>Effect\PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h">
+      <Filter>Effect\PostEffect\ChromaticAberration</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
+      <Filter>Effect\PostEffect\.GlobalInput</Filter>
     </ClInclude>
     <ClInclude Include="Features\Primitive\SphereLine.h">
       <Filter>Feature\Premitive\Sphere</Filter>
@@ -1241,82 +1280,34 @@
     <ClInclude Include="Features\Primitive\Sphere.h">
       <Filter>Feature\Premitive\Sphere</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
-      <Filter>Effect\PostEffect\Scanline</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
-      <Filter>HLSL\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
-      <Filter>Effect\PostEffect\Mosaic</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\Line.h">
-      <Filter>Drawable\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\LineSystem.h">
-      <Filter>Drawable\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\LineBatch.h">
-      <Filter>Drawable\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
-      <Filter>Effect\PostEffect\.GlobalInput</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\emitter\ParticleEmitterGroup.h">
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h">
       <Filter>Drawable\Particle\EmitterGroup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="..\ClassDiagram.md" />
-    <None Include="EngineResources\Shaders\Object3d.hlsli">
-      <Filter>HLSL</Filter>
-    </None>
-    <None Include="EngineResources\Shaders\Particle.hlsli">
-      <Filter>HLSL</Filter>
-    </None>
-    <None Include="EngineResources\Shaders\Sprite.hlsli">
-      <Filter>HLSL</Filter>
-    </None>
-    <None Include="EngineResources\Shaders\Line.hlsli">
-      <Filter>HLSL</Filter>
-    </None>
     <None Include="EngineResources\Shaders\Fullscreen.hlsli">
       <Filter>HLSL\PostEffect</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="EngineResources\Shaders\Line.hlsli">
+      <Filter>HLSL\Drawable</Filter>
+    </None>
+    <None Include="EngineResources\Shaders\Object3d.hlsli">
+      <Filter>HLSL\Drawable</Filter>
+    </None>
+    <None Include="EngineResources\Shaders\Particle.hlsli">
+      <Filter>HLSL\Drawable</Filter>
+    </None>
     <None Include="EngineResources\Shaders\Skybox.hlsli">
-      <Filter>HLSL</Filter>
+      <Filter>HLSL\Drawable</Filter>
+    </None>
+    <None Include="EngineResources\Shaders\Sprite.hlsli">
+      <Filter>HLSL\Drawable</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="EngineResources\Shaders\Line.VS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Object3d.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Object3d.VS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Sprite.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Sprite.VS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\WithoutAlpha.CS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Particle.VS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Particle.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Grayscale.VS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
@@ -1377,15 +1368,6 @@
     <FxCompile Include="EngineResources\Shaders\RandomFilter.PS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.VS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.PS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Skinning.CS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.PS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
@@ -1404,14 +1386,56 @@
     <FxCompile Include="EngineResources\Shaders\LuminanceOutput.VS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
     </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\ChromaticAberration.PS.hlsl">
+      <Filter>HLSL\PostEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Mosaic.PS.hlsl">
+      <Filter>HLSL\PostEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Line.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Object3d.PS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Object3d.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Particle.PS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Particle.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Skinning.CS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.PS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Skybox.PS.hlsl">
-      <Filter>HLSL</Filter>
+      <Filter>HLSL\Drawable</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Skybox.VS.hlsl">
-      <Filter>HLSL</Filter>
+      <Filter>HLSL\Drawable</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Scanline.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+    <FxCompile Include="EngineResources\Shaders\Sprite.PS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Sprite.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\WithoutAlpha.CS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

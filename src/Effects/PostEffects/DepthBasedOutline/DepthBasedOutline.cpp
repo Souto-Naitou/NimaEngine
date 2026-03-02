@@ -119,21 +119,6 @@ void DepthBasedOutline::Setting()
     commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void DepthBasedOutline::OnResizeBefore()
-{
-    SRVManager::GetInstance()->Deallocate(srvIndexDepth_);
-    renderTexture_.Reset();
-}
-
-void DepthBasedOutline::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_DepthBasedOutline");
-
-    // レンダーテクスチャのSRVを生成
-    this->CreateSRV();
-}
-
 void DepthBasedOutline::ToShaderResourceState()
 {
     // 完成したレンダーテクスチャをシェーダーリソース状態に変更

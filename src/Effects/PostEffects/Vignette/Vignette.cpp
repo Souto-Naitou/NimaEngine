@@ -99,19 +99,6 @@ void Vignette::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void Vignette::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}
-
-void Vignette::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_Vignette");
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void Vignette::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

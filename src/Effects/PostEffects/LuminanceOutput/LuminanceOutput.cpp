@@ -102,21 +102,6 @@ void LuminanceOutput::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void LuminanceOutput::OnResizeBefore()
-{
-    pDx12_->GetRTVHeapCounter()->Deallocate(outputTexture_.GetRTVIndex());
-    outputTexture_.Reset();
-}
-
-void LuminanceOutput::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, outputTexture_, "LuminanceOutputRenderTexture");
-
-    // レンダーテクスチャのSRVを生成
-    outputTexture_.CreateSRV();
-}
-
 void LuminanceOutput::ToShaderResourceState()
 {
     outputTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

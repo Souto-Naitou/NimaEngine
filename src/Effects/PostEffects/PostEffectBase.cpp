@@ -1,24 +1,23 @@
-#include "Mosaic.h"
-#include "Core/DirectX12/RootSignature/RootSignatureCache.h"
+#include "PostEffectBase.h"
 #include <Effects/PostEffects/.Helper/PostEffectHelper.h>
-#include <Core/DirectX12/Helper/DX12Helper.h>
-#include <Effects/PostEffects/GlobalInput/PostEffectInputCommon.h>
-#include <imgui.h>
-#include <config/EngineSetting.h>
+#include "Effects/PostEffects/GlobalInput/PostEffectInputCommon.h"
+#include "config/EngineSetting.h"
 
 
-
-void Mosaic::Initialize(const PostEffectInitParams& desc)
+void PostEffectBase::Initialize(const PostEffectInitParams& desc)
 {
     pDx12_ = desc.pDx12;
     pCommandList_ = desc.pCommandList;
+
+    this->CheckInvariants();
+
     pDevice_ = pDx12_->GetDevice();
 
     // レンダーテクスチャ用リソースの生成
     pRenderTexture_ = std::make_unique<DX12Resource>();
 
     // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, pDevice_, *pRenderTexture_, kName_ + "RenderTexture");
+    Helper::CreateRenderTexture(pDx12_, pDevice_, *pRenderTexture_, name_ + "RenderTexture");
 
     // レンダーテクスチャのSRVを生成
     pRenderTexture_->CreateSRV();
@@ -29,15 +28,15 @@ void Mosaic::Initialize(const PostEffectInitParams& desc)
     // パイプラインステートの生成
     this->CreatePipelineStateObject();
 
-    // 設定用リソースの生成と初期化
-    this->CreateResourceCBuffer();
+    // 定数バッファの生成
+    this->CreateCBuffer(pDevice_);
 }
 
-void Mosaic::Finalize()
+void PostEffectBase::Finalize()
 {
 }
 
-void Mosaic::Setting()
+void PostEffectBase::Setting()
 {
     // レンダーテクスチャをレンダーターゲット状態に変更
     pRenderTexture_->GetStateTracker().ChangeState(pCommandList_, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -58,64 +57,58 @@ void Mosaic::Setting()
     pCommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     auto commonInput = PostEffectInputCommon::GetInstance()->GetBufferResource();
     pCommandList_->SetGraphicsRootConstantBufferView(1, commonInput->GetGPUVirtualAddress());
-    pCommandList_->SetGraphicsRootConstantBufferView(2, pOptionResource_->GetGPUVirtualAddress());
+
+    /// 追加で定数バッファを使用する場合は、CreateCBufferとSetCBufferをオーバーライドして対応してください。
+    this->SetCBuffer(pCommandList_);
 }
 
-void Mosaic::Apply()
+void PostEffectBase::Apply()
 {
     pCommandList_->DrawInstanced(3, 1, 0, 0); // 三角形を1つ描画
 }
 
-void Mosaic::ToShaderResourceState()
+void PostEffectBase::ToShaderResourceState()
 {
     pRenderTexture_->GetStateTracker().ChangeState(pCommandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
-void Mosaic::DebugOverlay()
-{
-    #ifdef _DEBUG
-
-    ImGui::DragFloat("Power", &pOption_->power, 0.01f);
-
-    #endif // _DEBUG
-}
-
-void Mosaic::RegisterRootSignature()
+void PostEffectBase::RegisterRootSignature()
 {
     auto rsCache = RootSignatureCache::GetInstance();
-    if (!rsCache->IsExist(kRootSignatureId_))
+    if (!rsCache->IsExist(rootSignatureId_))
     {
         /// RootSignature作成
         RootSignatureDesc rootSignatureDesc = {};
-        auto& rootParam = rootSignatureDesc.params;
-        rootParam.SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL);
-        rootParam.SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
-        rootParam.SetParameter(2, "b1", D3D12_SHADER_VISIBILITY_PIXEL);
-        auto& staticSampler = rootSignatureDesc.staticSamplers;
-        staticSampler
+        rootSignatureDesc.params
+            .SetParameter(0, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
+            .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_PIXEL);
+        this->RegisterAdditionalRootParameter(rootSignatureDesc.params);
+
+        /// サンプラーの設定
+        rootSignatureDesc.staticSamplers
             .PresetPointWrap()
             .SetMaxAnisotropy(16) // 最大異方性を16に設定
             .SetShaderRegister(0) // シェーダーレジスタ番号を0に設定
             .SetRegisterSpace(0); // レジスタスペースを0に設定
 
         /// ルートシグネチャ記述子を登録
-        rsCache->Register(kRootSignatureId_, rootSignatureDesc);
+        rsCache->Register(rootSignatureId_, rootSignatureDesc);
     }
 
-    pRootSignature_ = rsCache->GetOrCreate(kRootSignatureId_);
+    pRootSignature_ = rsCache->GetOrCreate(rootSignatureId_);
 }
 
-void Mosaic::CreatePipelineStateObject()
+void PostEffectBase::CreatePipelineStateObject()
 {
     auto psoCache = PSOCache::GetInstance();
 
     /// PSOが登録されていないなら、生成するための情報を登録する
-    if (!psoCache->IsExist(kPSOId_))
+    if (!psoCache->IsExist(psoId_))
     {
         PSODesc desc{};
-        desc.vs = kVertexShaderPath_;
-        desc.ps = kPixelShaderPath_;
-        desc.rootSignatureID = kRootSignatureId_;
+        desc.vs = vertexShaderPath_;
+        desc.ps = pixelShaderPath_;
+        desc.rootSignatureID = rootSignatureId_;
         desc.blendState.Initialize(BlendDesc::BlendModes::Test);
         desc.primitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
         auto& rasterizerDesc = desc.rasterizerDesc;
@@ -125,18 +118,18 @@ void Mosaic::CreatePipelineStateObject()
         rasterizerDesc.AntialiasedLineEnable = TRUE;  // ラインのアンチエイリアス有効化
         desc.inputLayoutDesc.pInputElementDescs = nullptr;
         desc.inputLayoutDesc.NumElements = 0;
-        psoCache->Register(kPSOId_, desc);
+        psoCache->Register(psoId_, desc);
     }
 
     /// 生成もしくは生成済みを取得する
-    pPSO_ = psoCache->GetOrCreate(kPSOId_);
+    pPSO_ = psoCache->GetOrCreate(psoId_);
 }
 
-void Mosaic::CreateResourceCBuffer()
+void PostEffectBase::CheckInvariants()
 {
-    pOptionResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(MosaicOption));
-    pOptionResource_->Map(0, nullptr, reinterpret_cast<void**>(&pOption_));
-
-    // 初期化
-    pOption_->power = 10.0f;
+    assert(!psoId_.empty() && "PSO ID must be set.");
+    assert(!rootSignatureId_.empty() && "Root Signature ID must be set.");
+    assert(!pixelShaderPath_.empty() && "Pixel Shader Path must be set.");
+    assert(pDx12_ != nullptr && "DirectX12 pointer must be set.");
+    assert(pCommandList_ != nullptr && "D3D12 Graphics Command List pointer must be set.");
 }

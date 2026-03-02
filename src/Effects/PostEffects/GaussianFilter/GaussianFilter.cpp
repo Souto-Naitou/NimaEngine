@@ -98,18 +98,6 @@ void GaussianFilter::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void GaussianFilter::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}void GaussianFilter::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_GaussianFilter");
-
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void GaussianFilter::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

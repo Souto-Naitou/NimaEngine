@@ -102,20 +102,6 @@ void RadialBlur::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void RadialBlur::OnResizeBefore()
-{
-    renderTexture_.GetResource().Reset();
-}
-
-void RadialBlur::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RadialBlur");
-
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void RadialBlur::ToShaderResourceState()
 {
     renderTexture_.GetStateTracker().ChangeState(commandList_, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

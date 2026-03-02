@@ -27,6 +27,7 @@ enum class PostEffectClassName
     GaussianBloom,
     Scanline,
     Mosaic,
+    ChromaticAberration,
 };
 
 /// <summary>

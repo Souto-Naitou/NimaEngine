@@ -11,6 +11,7 @@
 #include <Effects/PostEffects/DepthBasedOutline/DepthBasedOutline.h>
 #include <Effects/PostEffects/ScanLine/Scanline.h>
 #include <Effects/PostEffects/Mosaic/Mosaic.h>
+#include <Effects/PostEffects/ChromaticAberration/ChromaticAberration.h>
 
 const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
 {
@@ -27,6 +28,7 @@ const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
     { PostEffectClassName::GaussianBloom,           "GaussianBloom" },
     { PostEffectClassName::Scanline,                "Scanline" },
     { PostEffectClassName::Mosaic,                  "Mosaic" },
+    { PostEffectClassName::ChromaticAberration,     "ChromaticAberration" },
 };
 
 
@@ -56,4 +58,5 @@ void PostEffectFactory::RegisterCreators()
     creators_[PostEffectClassName::GaussianBloom]           = [this]() { return std::make_unique<GaussianBloom>(); };
     creators_[PostEffectClassName::Scanline]                = [this]() { return std::make_unique<Scanline>(); };
     creators_[PostEffectClassName::Mosaic]                  = [this]() { return std::make_unique<Mosaic>(); };
+    creators_[PostEffectClassName::ChromaticAberration]     = [this]() { return std::make_unique<ChromaticAberration>(); };
 }

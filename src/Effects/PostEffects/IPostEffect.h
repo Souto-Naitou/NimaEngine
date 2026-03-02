@@ -80,14 +80,6 @@ public:
     /// </summary>
     virtual void    ToShaderResourceState() = 0;
     /// <summary>
-    /// リサイズイベントの事前処理を行います。
-    /// </summary>
-    virtual void    OnResizeBefore() = 0;
-    /// <summary>
-    /// バッファリサイズ後の処理を行います。
-    /// </summary>
-    virtual void    OnResizeAfter() = 0;
-    /// <summary>
     /// デバッグオーバーレイを描画します。
     /// </summary>
     virtual void    DebugOverlay() = 0;

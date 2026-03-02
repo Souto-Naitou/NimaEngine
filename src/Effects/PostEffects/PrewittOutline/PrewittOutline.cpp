@@ -98,18 +98,6 @@ void PrewittOutline::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void PrewittOutline::OnResizeBefore()
-{
-    renderTexture_.Reset();
-}void PrewittOutline::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_PrewittOutline");
-
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void PrewittOutline::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

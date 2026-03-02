@@ -149,16 +149,6 @@ void PostEffectExecutor::PostDraw()
     commandListForDraw_->Reset(commandAllocator_.Get(), nullptr);
 }
 
-void PostEffectExecutor::OnResizeBefore()
-{
-    for (auto& posteffect : postEffects_) posteffect->OnResizeBefore();
-}
-
-void PostEffectExecutor::OnResizeAfter()
-{
-    for (auto& posteffect : postEffects_) posteffect->OnResizeAfter();
-}
-
 void PostEffectExecutor::ImGui()
 {
     #ifdef _DEBUG

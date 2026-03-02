@@ -118,22 +118,6 @@ void RandomFilter::Setting()
     commandList_->SetGraphicsRootConstantBufferView(1, optionResource_->GetGPUVirtualAddress());
 }
 
-void RandomFilter::OnResizeBefore()
-{
-    SRVManager::GetInstance()->Deallocate(renderTexture_.GetSRVIndex());
-    renderTexture_.GetResource().Reset();
-    renderTexture_.GetStateTracker().Reset();
-}
-
-void RandomFilter::OnResizeAfter()
-{
-    // レンダーテクスチャの生成
-    Helper::CreateRenderTexture(pDx12_, device_, renderTexture_, "RT_RandomFilter");
-
-    // レンダーテクスチャのSRVを生成
-    renderTexture_.CreateSRV();
-}
-
 void RandomFilter::ToShaderResourceState()
 {
     // レンダーテクスチャをシェーダーリソース状態に変更

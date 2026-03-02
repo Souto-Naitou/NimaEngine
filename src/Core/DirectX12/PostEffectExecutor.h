@@ -66,16 +66,6 @@ public:
     void Draw(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {});
 
     /// <summary>
-    /// クライアントサイズ変更時に呼び出し、リソース再作成を要求します。
-    /// </summary>
-    void OnResizeBefore();
-
-    /// <summary>
-    /// バッファ再作成後に呼び出し、ハンドル等を更新します。
-    /// </summary>
-    void OnResizeAfter();
-
-    /// <summary>
     /// デバッグUIを描画します。
     /// </summary>
     void ImGui();

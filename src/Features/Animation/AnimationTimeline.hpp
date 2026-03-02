@@ -31,6 +31,11 @@ public:
         tweens_.emplace_back(startSec, durationSec, startValue, targetValue);
     }
 
+    inline void ClearTween()
+    {
+        tweens_.clear();
+    }
+
     void Start(ValueType initValue = {})
     {
         if (!currentTime_) return;
@@ -70,6 +75,7 @@ private:
     std::unique_ptr<TimeMeasurer> currentTime_ = {};
     std::vector<AnimationTween<ValueType>> tweens_ = {};
     ValueType currentValue_ = {};
+    bool isPlaying_ = false;
 };
 
 template<typename ValueType>
@@ -86,6 +92,8 @@ inline const ValueType& AnimationTimeline<ValueType>::Update()
             break;
         }
     }
+
+    isPlaying_ = !tweens_.back().IsFinished(time);
 
     return currentValue_;
 }

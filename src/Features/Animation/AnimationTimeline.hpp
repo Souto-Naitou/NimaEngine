@@ -42,6 +42,7 @@ public:
         currentTime_->Reset();
         currentTime_->Start();
         currentValue_ = initValue;
+        isPlaying_ = true;
     }
 
     const ValueType& Update();
@@ -70,6 +71,7 @@ public:
         #endif // _DEBUG
     }
 
+    bool IsPlaying() const { return isPlaying_; }
 
 private:
     std::unique_ptr<TimeMeasurer> currentTime_ = {};

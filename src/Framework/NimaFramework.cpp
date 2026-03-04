@@ -261,13 +261,6 @@ void NimaFramework::Update()
         return;
     }
 
-    if(pWinSystem_->IsResized())
-    {
-        // ウィンドウのリサイズ後、バッファーのリサイズ前
-        pTextSystem_->OnResizedWindow();
-        pDirectX_->OnResizedWindow();
-    }
-
     #ifdef _DEBUG
 
     /// UIの更新

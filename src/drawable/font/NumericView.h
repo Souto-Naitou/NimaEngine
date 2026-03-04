@@ -16,6 +16,7 @@ public:
     void Draw1F();
     void ImGui();
 
+    float GetFontSize() const { return fontSizeY_; }
     void SetFontSize(float sizeY);
     void SetNumber(uint32_t number) { currentNumber_ = number; }
     void SetColor(const Vector4& color);

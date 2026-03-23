@@ -23,6 +23,7 @@
 #include <Features/Event/EventListener.h>
 #include <drawable/sprite/SpriteSystem.h>
 #include <drawable/object3d/Object3dSystem.h>
+#include <drawable/object3d/Object3dInstancedSystem.h>
 #include <drawable/particle/ParticleStorage.h>
 #include <drawable/particle/ParticleSystem.h>
 #include <DebugTools/EventTimer/EventTimer.h>
@@ -104,6 +105,7 @@ protected:
     SceneManager*                   pSceneManager_              = nullptr;
     SpriteSystem*                   pSpriteSystem_              = nullptr;
     Object3dSystem*                 pObject3dSystem_            = nullptr;
+    Object3dInstancedSystem*        pObject3dInstancedSystem_   = nullptr;
     ParticleSystem*                 pParticleSystem_            = nullptr;
     ParticleStorage*                pParticleStorage_           = nullptr;
     LineSystem*                     pLineSystem_                = nullptr;
@@ -120,7 +122,7 @@ protected:
     bool                            isExitProgram_              = false;
 
 private:
-    void InitializeObject3dSystem();
+    void InitializeObject3dSystems();
 };
 
 #define CREATE_APPLICATION(class) \

@@ -12,13 +12,27 @@
 
 void Object3d::Initialize(bool enableDebugWindow)
 {
-    /// 必要なインスタンスを取得
+    /// [ 必要なインスタンスを取得 ]
     pSystem_ = Object3dSystem::GetInstance();
     pDx12_ = pSystem_->GetDirectX12();
-    device_ = pDx12_->GetDevice();
+    pDevice_ = pDx12_->GetDevice();
     ppSystemGameEye_ = pSystem_->GetGlobalEye();
 
     isEnableDebugWindow_ = enableDebugWindow;
+
+    /// [ システムからデフォルトのライトを取得 ]
+    pDirectionalLight_ = pSystem_->GetDirectionalLight();
+    if (!pDirectionalLight_)
+    {
+        LOG_FATAL("DirectionalLight is not set in Object3dSystem. Please set it before initializing Object3d.");
+        assert(pDirectionalLight_ && "DirectionalLight is not set in Object3dSystem. Please set it before initializing Object3d.");
+    }
+    pPointLight_ = pSystem_->GetPointLight();
+    if (!pPointLight_)
+    {
+        LOG_FATAL("PointLight is not set in Object3dSystem. Please set it before initializing Object3d.");
+        assert(pPointLight_ && "PointLight is not set in Object3dSystem. Please set it before initializing Object3d.");
+    }
 
 #if defined _DEBUG
     if (isEnableDebugWindow_)
@@ -34,26 +48,20 @@ void Object3d::Initialize(bool enableDebugWindow)
         .translate  = Vector3(0.0f, 0.0f, 0.0f),
     };
 
-    /// 座標変換行列リソースを作成
+    /// [ 座標変換行列リソースを作成 ]
     CreateTransformationMatrixResource();
 
-    /// 平行光源リソースを作成
-    CreateDirectionalLightResource();
-
-    /// テクスチャのタイリングリソースを作成
-    CreateTilingResource();
-
-    /// カメラのワールド座標リソースを作成
+    /// [ カメラのワールド座標リソースを作成 ]
     CreateCameraForGPUResource();
 
-    /// ライティングリソースを作成
-    CreateLightingResource();
+    /// [ ライト設定リソースを作成 ]
+    CreateLightSettingResource();
 
-    /// ポイントライトリソースを作成
-    CreatePointLightResource();
-
-    /// マテリアルリソースを作成
+    /// [ マテリアルリソースを作成 ]
     CreateMaterialResource();
+
+    /// [ 色データリソースを作成 ]
+    CreateColorResource();
 }
 
 void Object3d::Update()
@@ -81,32 +89,11 @@ void Object3d::Update()
     {
         vpMatrix = (*ppSystemGameEye_)->GetViewProjectionMatrix();
     }
-
     wvpMatrix = wMatrix * vpMatrix;
 
     /// 座標変換行列データを更新
     transformationMatrixData_->wvp = wvpMatrix;
     transformationMatrixData_->world = wMatrix;
-
-
-    /// 平行光源の方向を正規化
-    if (directionalLight_)
-        directionalLight_->direction = directionalLight_->direction.Normalized();
-
-
-    /// 平行光源データを更新
-    if (directionalLight_)
-    {
-        *directionalLightData_ = *directionalLight_;
-    }
-
-
-    /// ポイントライトデータを更新
-    if (pointLight_)
-    {
-        *pointLightData_ = pointLight_->GetDataForGPU();
-    }
-
 
     /// カメラのワールド座標を更新
     if (pGameEye_)
@@ -128,16 +115,18 @@ void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
     Object3dSystem::CommandListData data;
     data.cbuffers[0] = materialResource_.Get();
     data.cbuffers[1] = transformationMatrixResource_.Get();
-    data.cbuffers[3] = directionalLightResource_.Get();
-    data.cbuffers[4] = tilingResource_.Get();
+    // 2: テクスチャ
+    data.cbuffers[3] = pDirectionalLight_->GetResource();
+    data.cbuffers[4] = colorResource_.Get();
     data.cbuffers[5] = cameraForGPUResource_.Get();
-    data.cbuffers[6] = lightingResource_.Get();
-    data.cbuffers[7] = pointLightResource_.Get();
-    data.rtvHandle = DrawableBase::GetRTVHandleCPU();;
+    data.cbuffers[6] = lightSettingResource_.Get();
+    data.cbuffers[7] = pPointLight_->GetResource();
+    // 8: 環境マップ
+    data.rtvHandle = DrawableBase::GetRTVHandleCPU();
     data.model = pModel_;
 
     // マルチスレッド描画は廃止したため
-    // コマンドリストデータの蓄積は行わない (Canvas作成時に不具合が発生したため)
+    // コマンドリストデータの蓄積は行わない
     pSystem_->DrawSingle(cl, data);
 }
 
@@ -145,69 +134,46 @@ void Object3d::Finalize() const
 {
 }
 
-
 void Object3d::CreateTransformationMatrixResource()
 {
     /// 座標変換行列リソースを作成
-    transformationMatrixResource_ = DX12Helper::CreateBufferResource(device_, sizeof(TransformationMatrix));
+    transformationMatrixResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(TransformationMatrix));
     transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
     /// 座標変換行列データを初期化
     transformationMatrixData_->wvp = Matrix4x4::Identity();
     transformationMatrixData_->world = Matrix4x4::Identity();
 }
 
-void Object3d::CreateDirectionalLightResource()
+void Object3d::CreateColorResource()
 {
-    /// 平行光源リソースを作成
-    directionalLightResource_ = DX12Helper::CreateBufferResource(device_, sizeof(DirectionalLight));
-    directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
-    /// 平行光源データを初期化
-    directionalLightData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    directionalLightData_->direction = Vector3(0.0f, -1.0f, 0.0f);
-    directionalLightData_->intensity = 1.0f;
-}
+    colorResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(Vector4));
+    colorResource_->Map(0, nullptr, reinterpret_cast<void**>(&option_.colorData));
 
-void Object3d::CreateTilingResource()
-{
-    /// テクスチャのタイリングリソースを作成
-    tilingResource_ = DX12Helper::CreateBufferResource(device_, sizeof(TilingData));
-    tilingResource_->Map(0, nullptr, reinterpret_cast<void**>(&option_.tilingData));
-    /// タイリングデータを初期化
-    option_.tilingData->tilingMultiply = Vector2(1.0f, 1.0f);
+    *option_.colorData = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Object3d::CreateCameraForGPUResource()
 {
-    cameraForGPUResource_ = DX12Helper::CreateBufferResource(device_, sizeof(CameraForGPU));
+    cameraForGPUResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(CameraForGPU));
     cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
     cameraForGPU_->worldPosition = Vector3();
 }
 
-void Object3d::CreateLightingResource()
+void Object3d::CreateLightSettingResource()
 {
-    lightingResource_ = DX12Helper::CreateBufferResource(device_, sizeof(Lighting));
-    lightingResource_->Map(0, nullptr, reinterpret_cast<void**>(&option_.lightingData));
-    option_.lightingData->enableLighting = 1;
-    option_.lightingData->lightingType = LightingType::HarfLambert;
-}
-
-void Object3d::CreatePointLightResource()
-{
-    pointLightResource_ = DX12Helper::CreateBufferResource(device_, sizeof(PointLightForGPU));
-    pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
-    pointLightData_->enablePointLight = 0;
-    pointLightData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-    pointLightData_->position = Vector3(0.0f, 0.0f, 0.0f);
-    pointLightData_->intensity = 1.0f;
+    lightSettingResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(LightSetting));
+    lightSettingResource_->Map(0, nullptr, reinterpret_cast<void**>(&option_.lightSettingData));
+    option_.lightSettingData->enableDirectionalLight = 1;
+    option_.lightSettingData->enablePointLight = 0;
+    option_.lightSettingData->lightingType = LightingType::HarfLambert;
 }
 
 void Object3d::CreateMaterialResource()
 {
     /// マテリアルリソースを作成
-    materialResource_ = DX12Helper::CreateBufferResource(device_, sizeof(Material));
+    materialResource_ = DX12Helper::CreateBufferResource(pDevice_, sizeof(MaterialForGPU));
     materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&option_.materialData));
     /// マテリアルデータを初期化
-    option_.materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     option_.materialData->uvTransform = Matrix4x4::Identity();
     option_.materialData->shininess = 1.0f;
     option_.materialData->environmentCoefficient = 1.0f; // 環境係数を初期化
@@ -238,7 +204,7 @@ void Object3d::ImGui()
     {
         ImGui::PushID("MATERIAL");
         auto& material = option_.materialData;
-        ImGui::ColorEdit4("Color", &material->color.x);
+        ImGui::ColorEdit4("Color", &option_.colorData->x);
         ImGui::DragFloat2("UV Offset", &material->uvTransform.m[3][0], 0.01f);
         ImGui::DragFloat2("UV Tiling", &material->uvTransform.m[0][0], 0.01f);
         ImGui::DragFloat("Shininess", &material->shininess, 0.01f);
@@ -250,24 +216,25 @@ void Object3d::ImGui()
     /// 平行光源
     ImGui::SeparatorText("Directional Light");
     {
-        auto& lightingData = option_.lightingData;
+        auto& lightSetting = option_.lightSettingData;
         ImGui::PushID("DIRECTIONAL_LIGHT");
         if (ImGui::Checkbox("Enable Lighting", &isEnableLighting_))
         {
-            lightingData->enableLighting = isEnableLighting_;
+            lightSetting->enableDirectionalLight = isEnableLighting_;
         }
 
         ImGui::SameLine();
 
-        const char* items[] = { "Lambertian Reflectance", "Harf Lambert" };
-        ImGui::Combo("##Lighting Type", reinterpret_cast<int*>(&lightingData->lightingType), items, 2);
+        const char* items[] = { "Lambertian Reflectance", "Half Lambert" };
+        ImGui::Combo("##Lighting Type", reinterpret_cast<int*>(&option_.lightSettingData->lightingType), items, 2);
 
-        if (directionalLight_)
+        if (pDirectionalLight_)
         {
+            auto& data = pDirectionalLight_->GetData();
             ImGui::DragFloat("Shininess", &option_.materialData->shininess, 0.01f);
-            ImGui::ColorEdit4("Color", &directionalLight_->color.x);
-            ImGui::DragFloat3("Direction", &directionalLight_->direction.x, 0.01f);
-            ImGui::DragFloat("Intensity", &directionalLight_->intensity, 0.01f);
+            ImGui::ColorEdit4("Color", &data.color.x);
+            ImGui::DragFloat3("Direction", &data.direction.x, 0.01f);
+            ImGui::DragFloat("Intensity", &data.intensity, 0.01f);
         }
         ImGui::PopID();
     }
@@ -277,16 +244,15 @@ void Object3d::ImGui()
     ImGui::SeparatorText("Point Light");
     {
         ImGui::PushID("POINT_LIGHT");
-        if (pointLight_)
+        if (pPointLight_)
         {
-            bool enablePointLight = pointLight_->IsEnable();
-            if (ImGui::Checkbox("Enable PointLight", &enablePointLight))
-            {
-                pointLight_->IsEnable() = true;
-            }
-            ImGui::ColorEdit4("Color", &pointLight_->GetColor().x);
-            ImGui::DragFloat3("Position", &pointLight_->GetPosition().x, 0.01f);
-            ImGui::DragFloat("Intensity", &pointLight_->GetIntensity(), 0.01f);
+            bool enablePointLight = option_.lightSettingData->enablePointLight;
+            ImGui::Checkbox("Enable PointLight", &enablePointLight);
+            option_.lightSettingData->enablePointLight = enablePointLight ? 1 : 0;
+            auto& data = pPointLight_->GetData();
+            ImGui::ColorEdit4("Color", &data.color.x);
+            ImGui::DragFloat3("Position", &data.position.x, 0.01f);
+            ImGui::DragFloat("Intensity", &data.intensity, 0.01f);
         }
         ImGui::PopID();
     }
@@ -296,7 +262,7 @@ void Object3d::ImGui()
     ImGui::SeparatorText("Tiling");
     {
         ImGui::PushID("TILING");
-        ImGui::DragFloat2("Tiling Multiply", &option_.tilingData->tilingMultiply.x, 0.01f);
+        ImGui::DragFloat2("Tiling Multiply", &option_.materialData->tilingMultiply.x, 0.01f);
         ImGui::PopID();
     }
 

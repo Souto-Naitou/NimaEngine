@@ -112,7 +112,7 @@ void Particle::DrawCall(ID3D12GraphicsCommandList* cl)
     data.textureSrvHandle = textureSRVHandleGPU_;
     data.vertexCount = static_cast<UINT>(vertexCount_);
     data.instanceCount = static_cast<UINT>(particleData_.size());
-    data.rtvHandle = DrawableBase::GetRTVHandleCPU();
+    data.rtvHandle = this->DrawableBase::GetRTVHandleCPU();
 
     pSystem_->DrawSingle(cl, data);
 }

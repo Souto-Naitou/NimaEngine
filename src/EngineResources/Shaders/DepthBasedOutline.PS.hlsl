@@ -11,13 +11,13 @@ struct DepthOutlineOption
     float weightMultiply;
 };
 
-struct Material
+struct MaterialForGPU
 {
     float4x4 projectionInverse;
 };
 
 ConstantBuffer<DepthOutlineOption> gOptions : register(b0); // カーネルのサイズを指定する定数バッファ
-ConstantBuffer<Material> gMaterial : register(b1); // マテリアルの定数バッファ
+ConstantBuffer<MaterialForGPU> gMaterial : register(b1); // マテリアルの定数バッファ
 
 struct PixelShaderOutput
 {

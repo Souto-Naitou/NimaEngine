@@ -10,8 +10,6 @@
 
 void SpriteSystem::Initialize()
 {
-    ObjectSystemBaseMT::Initialize();
-
     CreateRootSignature();
     CreatePipelineState();
 }
@@ -28,11 +26,6 @@ void SpriteSystem::PresentDraw()
 
     /// プリミティブトポロジーをセットする
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void SpriteSystem::Sync()
-{
-    worker_.get();
 }
 
 void SpriteSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data)

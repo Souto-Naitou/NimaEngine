@@ -4,13 +4,13 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <BaseClasses/ObjectSystemBaseMT.h>
+#include <BaseClasses/ObjectSystemBase.h>
 #include <map>
 
 /// <summary>
 /// ライン共通
 /// </summary>
-class LineSystem : public ObjectSystemBaseMT
+class LineSystem : public ObjectSystemBase
 {
 public:
     struct CommandListData

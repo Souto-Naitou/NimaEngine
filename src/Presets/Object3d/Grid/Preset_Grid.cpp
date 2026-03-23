@@ -16,9 +16,10 @@ std::unique_ptr<Object3d> presets::grid::Create(IModel* pModel)
 
     auto& option = pGrid->GetOption();
     option.transform.scale = { 1.0f, 1.0f, 1.0f };
-    option.tilingData->tilingMultiply = { 100.0f, 100.0f };
-    option.lightingData->enableLighting = false;
-    option.materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    option.materialData->tilingMultiply = { 100.0f, 100.0f };
+    option.lightSettingData->enableDirectionalLight = false;
+    option.lightSettingData->enablePointLight = false;
+    *option.colorData = { 1.0f, 1.0f, 1.0f, 1.0f };
     option.materialData->environmentCoefficient = 0.0f;
 
     return pGrid;

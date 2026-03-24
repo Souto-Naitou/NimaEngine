@@ -13,6 +13,7 @@
 #include <memory>
 #include <common/structs.h>
 #include <Features/Lighting/LightingType.h>
+#include <Vector4.h>
 
 /// 前方宣言
 class   DirectX12;

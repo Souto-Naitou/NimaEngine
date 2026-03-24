@@ -113,18 +113,18 @@ void Object3d::DrawCall(ID3D12GraphicsCommandList* cl)
     if (!isDraw_) return;
 
     Object3dSystem::CommandListData data;
-    data.cbuffers[0] = materialResource_.Get();
-    data.cbuffers[1] = transformationMatrixResource_.Get();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::Material)] = materialResource_.Get();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::TransformationMatrix)] = transformationMatrixResource_.Get();
     // 2: テクスチャ
-    data.cbuffers[3] = pDirectionalLight_->GetResource();
-    data.cbuffers[4] = colorResource_.Get();
-    data.cbuffers[5] = cameraForGPUResource_.Get();
-    data.cbuffers[6] = lightSettingResource_.Get();
-    data.cbuffers[7] = pPointLight_->GetResource();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::DirectionalLight)] = pDirectionalLight_->GetResource();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::Color)] = colorResource_.Get();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::Camera)] = cameraForGPUResource_.Get();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::LightSetting)] = lightSettingResource_.Get();
+    data.cbuffers[static_cast<uint32_t>(CBufferRegister::PointLight)] = pPointLight_->GetResource();
     // 8: 環境マップ
     data.rtvHandle = DrawableBase::GetRTVHandleCPU();
     data.model = pModel_;
-
+    
     // マルチスレッド描画は廃止したため
     // コマンドリストデータの蓄積は行わない
     pSystem_->DrawSingle(cl, data);

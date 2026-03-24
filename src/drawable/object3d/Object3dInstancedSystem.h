@@ -34,8 +34,8 @@ public:
 
     /// [ Setters ]
     void SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle) { envTexSrvHandleGpu_ = handle; }
-    void SetDefaultLight(DirectionalLight* pDirectionalLight) { pDirectionalLight_ = pDirectionalLight; }
-    void SetDefaultLight(PointLight* pPointLight) { pPointLight_ = pPointLight; }
+    void SetDirectionalLight(DirectionalLight* pDirectionalLight) { pDirectionalLight_ = pDirectionalLight; }
+    void SetPointLight(PointLight* pPointLight) { pPointLight_ = pPointLight; }
 
     /// [ Getters ]
     DirectionalLight* GetDirectionalLight() const { return pDirectionalLight_; }

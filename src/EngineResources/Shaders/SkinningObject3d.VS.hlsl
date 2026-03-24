@@ -6,6 +6,10 @@ struct TransformationMatrix
     float4x4 World;
 };
 
+struct Color {
+    float4 value;
+};
+
 struct Vertex
 {
     float4 position;
@@ -14,7 +18,7 @@ struct Vertex
 };
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
-
+ConstantBuffer<Color> gColor : register(b1);
 
 struct VertexShaderInput
 {
@@ -32,5 +36,6 @@ VertexShaderOutput main(VertexShaderInput input)
     output.worldPosition = mul(skinned.position, gTransformationMatrix.World).xyz;
     output.texcoord = input.texcoord;
     output.normal = normalize(mul(input.normal, (float3x3)gTransformationMatrix.World));
+    output.color = gColor.value;
     return output;
 }

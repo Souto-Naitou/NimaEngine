@@ -14,6 +14,7 @@
 #include <WinTools/WinTools.h>
 #include <Range.h>
 #include <numbers>
+#include <algorithm>
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
 
@@ -252,8 +253,10 @@ void ParticleEmitter::ImGuiSectionCommon()
     #ifdef _DEBUG
     char path[512] = "";
     char name[128] = "";
-    memcpy_s(path, sizeof(name), jsonPath_.c_str(), jsonPath_.string().size());
-    memcpy_s(name, sizeof(name), fromJsonData_.name.c_str(), fromJsonData_.name.size());
+    std::string pathString = jsonPath_.string();
+    strncpy_s(path, sizeof(path), pathString.c_str(), _TRUNCATE);
+    std::string nameString = particleName_;
+    strncpy_s(name, sizeof(name), particleName_.c_str(), _TRUNCATE);
 
     if (ImGui::CollapsingHeader("一般"))
     {
@@ -270,7 +273,7 @@ void ParticleEmitter::ImGuiSectionCommon()
         }
         if (ImGui::InputText("ファイルパス", path, sizeof(path)))
         {
-            jsonFileExist_ = std::filesystem::directory_entry(path).exists();
+            jsonFileExist_ = std::filesystem::exists(path);
         }
 
         if (ImGui::Button("保存"))
@@ -303,7 +306,7 @@ void ParticleEmitter::ImGuiSectionCommon()
             std::string temp = winTools_->OpenFileDialog();
             if (!temp.empty() && std::filesystem::path(temp).extension() == ".json")
             {
-                std::memcpy(path, temp.c_str(), temp.size());
+                strncpy_s(path, sizeof(path), temp.c_str(), _TRUNCATE);
                 jsonFileExist_ = true;
             }
             else jsonFileExist_ = false;
@@ -524,7 +527,7 @@ void ParticleEmitter::ImGuiSectionCollisionFloor()
 void ParticleEmitter::ImGuiSectionDebug()
 {
     #ifdef _DEBUG
-    if (ImGui::CollapsingHeader("速度"))
+    if (ImGui::CollapsingHeader("デバッグ"))
     {
         ImGui::Checkbox("エミッタ範囲の描画", &isDrawLine_);
         ImGui::Spacing();

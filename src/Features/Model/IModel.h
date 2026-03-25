@@ -13,7 +13,7 @@ public:
     virtual void Initialize() = 0;
     virtual void Finalize() = 0;
     virtual void Update() = 0;
-    virtual void Draw(ID3D12GraphicsCommandList* cl) = 0;
+    virtual void Draw(ID3D12GraphicsCommandList* cl, uint32_t instanceCount = 1) = 0;
     virtual void ChangeTexture(D3D12_GPU_DESCRIPTOR_HANDLE texSrvHnd) = 0;
     virtual void CreateGPUResource() = 0;
     virtual bool IsEndLoading() const = 0;

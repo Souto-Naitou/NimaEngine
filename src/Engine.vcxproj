@@ -209,7 +209,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseClasses\ObjectSystemBaseMT.cpp" />
+    <ClCompile Include="BaseClasses\ObjectSystemBase.cpp" />
     <ClCompile Include="Common\HRESULT_ASSERT.cpp" />
     <ClCompile Include="Core\ConfigManager\ConfigManager.cpp" />
     <ClCompile Include="Core\ConfigManager\ConfigType.cpp" />
@@ -242,6 +242,8 @@
     <ClCompile Include="drawable\line\Line.cpp" />
     <ClCompile Include="drawable\line\LineBatch.cpp" />
     <ClCompile Include="drawable\line\LineSystem.cpp" />
+    <ClCompile Include="drawable\object3d\Object3dInstanced.cpp" />
+    <ClCompile Include="drawable\object3d\Object3dInstancedSystem.cpp" />
     <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp" />
     <ClCompile Include="Effects\PostEffects\.Factory\PostEffectFactory.cpp" />
     <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp" />
@@ -283,6 +285,7 @@
     <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp" />
+    <ClCompile Include="Features\Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Features\Primitive\RingModel.cpp" />
     <ClCompile Include="Features\Primitive\SphereLine.cpp" />
     <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
@@ -294,8 +297,7 @@
     <ClCompile Include="Features\LevelLoader\LevelData.cpp" />
     <ClCompile Include="Features\LevelLoader\LevelHelper.cpp" />
     <ClCompile Include="Features\LevelLoader\SceneObjects.cpp" />
-    <ClCompile Include="Features\Lighting\Manager\LightingManager.cpp" />
-    <ClCompile Include="Features\Lighting\PointLight\PointLight.cpp" />
+    <ClCompile Include="Features\Lighting\PointLight.cpp" />
     <ClCompile Include="Features\Model\GltfModelSystem.cpp" />
     <ClCompile Include="Features\Model\Helper\AnimationHelper.cpp" />
     <ClCompile Include="Features\Model\Helper\ModelHelper.cpp" />
@@ -340,7 +342,7 @@
     <ClCompile Include="Utility\String\strutl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseClasses\ObjectSystemBaseMT.h" />
+    <ClInclude Include="BaseClasses\ObjectSystemBase.h" />
     <ClInclude Include="Common\define.h" />
     <ClInclude Include="Common\HRESULT_ASSERT.h" />
     <ClInclude Include="Common\SingletonPattern.h" />
@@ -364,6 +366,9 @@
     <ClInclude Include="drawable\line\Line.h" />
     <ClInclude Include="drawable\line\LineBatch.h" />
     <ClInclude Include="drawable\line\LineSystem.h" />
+    <ClInclude Include="drawable\object3d\Material.h" />
+    <ClInclude Include="drawable\object3d\Object3dInstanced.h" />
+    <ClInclude Include="drawable\object3d\Object3dInstancedSystem.h" />
     <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h" />
     <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h" />
     <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h" />
@@ -426,6 +431,8 @@
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />
+    <ClInclude Include="Features\Lighting\DirectionalLight.h" />
+    <ClInclude Include="Features\Lighting\LightingType.h" />
     <ClInclude Include="Features\Primitive\RingModel.h" />
     <ClInclude Include="Features\Primitive\Sphere.h" />
     <ClInclude Include="Features\Primitive\SphereLine.h" />
@@ -444,8 +451,8 @@
     <ClInclude Include="Features\LevelLoader\LevelData.h" />
     <ClInclude Include="Features\LevelLoader\LevelHelper.h" />
     <ClInclude Include="Features\LevelLoader\SceneObjects.h" />
-    <ClInclude Include="Features\Lighting\Manager\LightingManager.h" />
-    <ClInclude Include="Features\Lighting\PointLight\PointLight.h" />
+    <ClInclude Include="Features\Lighting\LightRepository.h" />
+    <ClInclude Include="Features\Lighting\PointLight.h" />
     <ClInclude Include="Features\Model\Animation.h" />
     <ClInclude Include="Features\Model\GltfModelSystem.h" />
     <ClInclude Include="Features\Model\Helper\AnimationHelper.h" />
@@ -612,6 +619,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\InstancedObject3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='AddressSanitizer|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

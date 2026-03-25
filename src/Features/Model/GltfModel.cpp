@@ -56,7 +56,7 @@ void GltfModel::Update()
     this->_UpdateSkinCluster();
 }
 
-void GltfModel::Draw(ID3D12GraphicsCommandList* cl)
+void GltfModel::Draw(ID3D12GraphicsCommandList* cl, uint32_t instanceCount /*= 1*/)
 {
     if (isReadyDraw_ == false) return;
 
@@ -69,7 +69,7 @@ void GltfModel::Draw(ID3D12GraphicsCommandList* cl)
     // 描画！（DrawCall/ドローコール）
     cl->DrawIndexedInstanced(
         static_cast<UINT>(modelData_.indices.size()), // インデックス数
-        1, // インスタンス数
+        instanceCount, // インスタンス数
         0, // インデックスバッファの開始オフセット
         0, // 頂点バッファの開始オフセット
         0  // グループID（インスタンス化描画用）

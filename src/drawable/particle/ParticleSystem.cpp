@@ -11,10 +11,7 @@
 
 void ParticleSystem::Initialize()
 {
-    ObjectSystemBaseMT::Initialize();
-
     CreateRootSignature();
-
     CreatePipelineState();
 }
 
@@ -31,60 +28,6 @@ void ParticleSystem::PresentDraw()
     /// プリミティブトポロジーをセットする
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-}
-
-void ParticleSystem::DrawCall()
-{
-    if(commandListDatas_.empty()) return;
-
-    auto record = [&](ID3D12GraphicsCommandList* commandList)
-    {
-        /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
-
-        /// ルートシグネチャをセットする
-        commandList->SetGraphicsRootSignature(rootSignature_.Get());
-
-        /// グラフィックスパイプラインステートをセットする
-        commandList->SetPipelineState(graphicsPipelineState_.Get());
-
-        /// プリミティブトポロジーをセットする
-        commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        // DSVハンドル取得
-        auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-
-        // 現在のRTVHandle
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
-
-        for(auto& data : commandListDatas_)
-        {
-            // RTVハンドルが変わったらセットし直す
-            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
-            if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
-            {
-                rtvHandleCurrent = data.rtvHandle;
-                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
-            }
-
-            commandList->IASetVertexBuffers(0, 1, data.pVBV);
-            commandList->SetGraphicsRootDescriptorTable(0, data.srvHandle);
-            commandList->SetGraphicsRootDescriptorTable(1, data.textureSrvHandle);
-            commandList->DrawInstanced(data.vertexCount, data.instanceCount, 0, 0);
-        }
-    };
-
-    worker_ = std::async(std::launch::async, record, commandList_.Get());
-
-    return;
-}
-
-void ParticleSystem::Sync()
-{
-    if(!worker_.valid()) return;
-
-    worker_.get();
-    commandListDatas_.clear();
 }
 
 void ParticleSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data)

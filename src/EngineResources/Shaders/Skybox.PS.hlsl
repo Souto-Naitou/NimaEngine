@@ -1,11 +1,11 @@
 #include "skybox.hlsli"
 
-struct Material
+struct MaterialForGPU
 {
     float4 color;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<MaterialForGPU> gMaterial : register(b0);
 
 struct PixelShaderOutput
 {

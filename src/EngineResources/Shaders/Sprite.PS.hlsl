@@ -1,13 +1,13 @@
 #include "Sprite.hlsli"
 
 
-struct Material
+struct MaterialForGPU
 {
     float4 color;
     float4x4 uvTransform;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<MaterialForGPU> gMaterial : register(b0);
 
 struct PixelShaderOutput
 {

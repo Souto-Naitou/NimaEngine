@@ -8,8 +8,6 @@
 
 void LineSystem::Initialize()
 {
-    ObjectSystemBaseMT::Initialize();
-
     device_ = pDx12_->GetDevice();
     dxcUtils_ = pDx12_->GetDxcUtils();
     dxcCompiler_ = pDx12_->GetDxcCompiler();
@@ -27,7 +25,7 @@ void LineSystem::Initialize()
 void LineSystem::DrawSetting(ID3D12GraphicsCommandList* cl)
 {
     /// コマンドリストの設定
-    DX12Helper::CommandListCommonSetting(pDx12_, commandList_.Get());
+    DX12Helper::CommandListCommonSetting(pDx12_, cl);
 
     /// ルートシグネチャをセットする
     cl->SetGraphicsRootSignature(rootSignature_.Get());
@@ -37,15 +35,15 @@ void LineSystem::DrawSetting(ID3D12GraphicsCommandList* cl)
     cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
-void LineSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data)
+void LineSystem::DrawSingle(ID3D12GraphicsCommandList* cl, CommandListData& data)
 {
-    this->DrawSetting(commandList);
+    this->DrawSetting(cl);
 
     // DSVハンドル取得
     auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
 
     // RTVセット
-    commandList->OMSetRenderTargets(
+    cl->OMSetRenderTargets(
         1,
         &data.rtvHandle,
         FALSE,
@@ -56,17 +54,17 @@ void LineSystem::DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListD
     for (auto& cbuffer : data.cbuffers)
     {
         auto& [index, resource] = cbuffer;
-        commandList->SetGraphicsRootConstantBufferView(
+        cl->SetGraphicsRootConstantBufferView(
             index,
             resource->GetGPUVirtualAddress()
         );
     }
 
     // VBVセット
-    commandList->IASetVertexBuffers(0, 1, &data.vbView);
+    cl->IASetVertexBuffers(0, 1, &data.vbView);
 
     // 描画コール
-    commandList->DrawInstanced(data.vertexCount, data.vertexCount / 2, 0, 0);
+    cl->DrawInstanced(data.vertexCount, data.vertexCount / 2, 0, 0);
 }
 
 void LineSystem::CreateRootSignature()

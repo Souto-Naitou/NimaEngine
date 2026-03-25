@@ -4,7 +4,7 @@
 #include <d3d12.h>
 #include <list>
 
-#include <BaseClasses/ObjectSystemBaseMT.h>
+#include <BaseClasses/ObjectSystemBase.h>
 #include <Common/SingletonPattern.h>
 #include <drawable/object3d/Object3dSystem.h>
 
@@ -13,7 +13,7 @@
 /// </summary>
 class SpriteSystem : 
     public SingletonPattern<SpriteSystem>,
-    public ObjectSystemBaseMT
+    public ObjectSystemBase
 {
     friend class SingletonPattern<SpriteSystem>;
 
@@ -32,17 +32,12 @@ public:
     /// <summary>
     /// スプライト描画システムを初期化します。
     /// </summary>
-    void Initialize() override;
+    void Initialize();
 
     /// <summary>
     /// バックバッファへの描画を実施します。
     /// </summary>
     void PresentDraw();
-
-    /// <summary>
-    /// GPU 完了を待機して同期します。
-    /// </summary>
-    void Sync();
 
     void DrawSingle(ID3D12GraphicsCommandList* commandList, SpriteSystem::CommandListData& data);
 

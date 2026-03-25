@@ -21,8 +21,6 @@ Object3dSystem::Object3dSystem()
 
 void Object3dSystem::Initialize()
 {
-    ObjectSystemBaseMT::Initialize();
-
     /// ルートシグネチャの作成
     CreateRootSignature();
 
@@ -62,91 +60,6 @@ void Object3dSystem::MainDrawSetting(ID3D12GraphicsCommandList* cl)
     cl->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Object3dSystem::DrawCall()
-{
-    auto record = [&](ID3D12GraphicsCommandList* commandList)
-    {
-        /// コマンドリストの設定
-        DX12Helper::CommandListCommonSetting(pDx12_, commandList);
-
-        // =============================================
-        // [DepthDraw Begin]
-
-        this->DepthDrawSetting(commandList);
-
-        // DSVハンドル取得
-        auto dsvHandle = pDx12_->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-        // RTVHandleが変化したかをチェックするための変数
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCurrent = {};
-        for (auto& data : commandListDatas_)
-        {
-            // RTVハンドルが変わったらセットし直す
-            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
-            if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
-            {
-                rtvHandleCurrent = data.rtvHandle;
-                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
-            }
-            // モデルがnullptrでない場合のみ描画
-            if (data.model == nullptr) continue;
-            for (auto& cbuffer : data.cbuffers)
-            {
-                auto& [key, value] = cbuffer;
-                commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
-            }
-            commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
-
-            data.model->Draw(commandList);
-        }
-
-        // [DepthDraw End]
-        // =============================================
-
-        // =============================================
-        // [MainDraw Begin]
-
-        this->MainDrawSetting(commandList);
-
-        for (auto& data : commandListDatas_)
-        {
-            // RTVハンドルが変わったらセットし直す
-            // Note: おなじRTVハンドルが続くようにソートされている前提 (Canvasを使用してソートされるハズ)
-            if (rtvHandleCurrent.ptr != data.rtvHandle.ptr && data.rtvHandle.ptr)
-            {
-                rtvHandleCurrent = data.rtvHandle;
-                commandList->OMSetRenderTargets(1, &data.rtvHandle, FALSE, &dsvHandle);
-            }
-
-            if (data.model == nullptr) continue;
-            for (auto& cbuffer : data.cbuffers)
-            {
-                auto& [key, value] = cbuffer;
-                commandList->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
-            }
-
-            commandList->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
-
-            data.model->Draw(commandList);
-        }
-
-        // [MainDraw End]
-        // =============================================
-    };
-
-    worker_ = std::async(std::launch::async, record, commandList_.Get());
-}
-
-void Object3dSystem::Sync()
-{
-    if (worker_.valid()) worker_.get();
-    commandListDatas_.clear();
-}
-
-void Object3dSystem::AddCommandListData(CommandListData& data)
-{
-    commandListDatas_.emplace_back(data);
-}
-
 void Object3dSystem::SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle)
 {
     environmentTextureSrvHandleGpu_ = handle;
@@ -160,7 +73,7 @@ void Object3dSystem::CreateRootSignature()
         .SetParameter(1, "b0", D3D12_SHADER_VISIBILITY_VERTEX)
         .SetParameter(2, "t0", D3D12_SHADER_VISIBILITY_PIXEL)
         .SetParameter(3, "b1", D3D12_SHADER_VISIBILITY_PIXEL)
-        .SetParameter(4, "b2", D3D12_SHADER_VISIBILITY_PIXEL)
+        .SetParameter(4, "b1", D3D12_SHADER_VISIBILITY_VERTEX)
         .SetParameter(5, "b3", D3D12_SHADER_VISIBILITY_PIXEL)
         .SetParameter(6, "b4", D3D12_SHADER_VISIBILITY_PIXEL)   // Lighting
         .SetParameter(7, "b5", D3D12_SHADER_VISIBILITY_PIXEL)   // PointLight
@@ -205,8 +118,6 @@ void Object3dSystem::CreateMainPipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobP
     inputElementDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
     inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-
-
     inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
     inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
 
@@ -221,14 +132,11 @@ void Object3dSystem::CreateMainPipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobP
     blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-
     /// RasterizerStateの設定
     rasterizerDesc_.CullMode = D3D12_CULL_MODE_NONE;
     rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;
     rasterizerDesc_.MultisampleEnable = TRUE;  // アンチエイリアス有効化
     rasterizerDesc_.AntialiasedLineEnable = TRUE;  // ラインのアンチエイリアス有効化
-
-
 
     // DepthStencilResource
     Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = DX12Helper::CreateDepthStencilTextureResource(device, clientWidth, clientHeight);
@@ -366,8 +274,9 @@ void Object3dSystem::DrawSingle(ID3D12GraphicsCommandList* cl, Object3dSystem::C
         auto& [key, value] = cbuffer;
         cl->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
     }
-    cl->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
 
+    // 共通のCBのリソースを設定する
+    cl->SetGraphicsRootDescriptorTable(kRootParameterIndexEnvTexture_, environmentTextureSrvHandleGpu_);
     data.model->Draw(cl);
 
     // [DepthDraw End]
@@ -378,15 +287,6 @@ void Object3dSystem::DrawSingle(ID3D12GraphicsCommandList* cl, Object3dSystem::C
 
     /// グラフィックスパイプラインステートをセットする
     cl->SetPipelineState(psoMain_.Get());
-
-    for (auto& cbuffer : data.cbuffers)
-    {
-        auto& [key, value] = cbuffer;
-        cl->SetGraphicsRootConstantBufferView(key, value->GetGPUVirtualAddress());
-    }
-
-    cl->SetGraphicsRootDescriptorTable(8, environmentTextureSrvHandleGpu_);
-
     data.model->Draw(cl);
 
     // [MainDraw End]

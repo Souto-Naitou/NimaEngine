@@ -83,7 +83,7 @@ std::unique_ptr<IModel> ObjModel::Cloned()
     return pCloned;
 }
 
-void ObjModel::Draw(ID3D12GraphicsCommandList* cl)
+void ObjModel::Draw(ID3D12GraphicsCommandList* cl, uint32_t instanceCount /*= 1*/)
 {
     if (isReadyDraw_ == false) return;
 
@@ -92,7 +92,7 @@ void ObjModel::Draw(ID3D12GraphicsCommandList* cl)
     // SRVの設定
     cl->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
     // 描画！（DrawCall/ドローコール）
-    cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), 1, 0, 0);
+    cl->DrawInstanced(static_cast<uint32_t>(modelData_.vertices.size()), instanceCount, 0, 0);
 }
 
 void ObjModel::CreateVertexResource()

@@ -120,7 +120,8 @@ void SceneObjects::SetDirectionalLight(DirectionalLight* light)
         if (obj)
         {
             auto& option = obj->GetOption();
-            option.lightingData->enableLighting = true;
+            option.lightSettingData->enableDirectionalLight = true;
+            option.lightSettingData->enablePointLight = true;
             obj->SetDirectionalLight(light);
         }
     }
@@ -153,8 +154,9 @@ void SceneObjects::Build(ModelManager* modelManager)
             object3d->SetName(object.name);
             auto& option = object3d->GetOption();
             option.transform = object.transform;
-            option.tilingData->tilingMultiply = object.uvScale;
-            option.lightingData->enableLighting = false;
+            option.materialData->tilingMultiply = object.uvScale;
+            option.lightSettingData->enableDirectionalLight = false;
+            option.lightSettingData->enablePointLight = false;
             objects_.emplace_back(std::move(object3d));
         }
         else if (object.type == "CAMERA")

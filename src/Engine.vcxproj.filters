@@ -91,9 +91,6 @@
     <Filter Include="Feature\Lighting\Manager">
       <UniqueIdentifier>{02cc3392-7700-4b10-98af-e1bf1d321ca5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Lighting\PointLight">
-      <UniqueIdentifier>{2888c7ee-df07-4405-84e7-fb8a68bde7cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Feature\Collision">
       <UniqueIdentifier>{8b3b583a-7857-484a-b311-3a30cccc93f5}</UniqueIdentifier>
     </Filter>
@@ -495,9 +492,6 @@
     <ClCompile Include="drawable\particle\Emitter\ParticleEmitter.cpp">
       <Filter>Drawable\Particle\Emitter</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Lighting\Manager\LightingManager.cpp">
-      <Filter>Feature\Lighting\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Features\Primitive\OBB.cpp">
       <Filter>Feature\Premitive\OBB</Filter>
     </ClCompile>
@@ -521,9 +515,6 @@
     </ClCompile>
     <ClCompile Include="Features\Text\TextSystem.cpp">
       <Filter>Feature\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Lighting\PointLight\PointLight.cpp">
-      <Filter>Feature\Lighting\PointLight</Filter>
     </ClCompile>
     <ClCompile Include="Features\Text\Text.cpp">
       <Filter>Feature\Text</Filter>
@@ -654,7 +645,7 @@
     <ClCompile Include="Features\Model\Skeleton.cpp">
       <Filter>Feature\Model</Filter>
     </ClCompile>
-    <ClCompile Include="BaseClasses\ObjectSystemBaseMT.cpp">
+    <ClCompile Include="BaseClasses\ObjectSystemBase.cpp">
       <Filter>BaseClass</Filter>
     </ClCompile>
     <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp">
@@ -792,6 +783,18 @@
     <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp">
       <Filter>Effect\PostEffect\Posterize</Filter>
     </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3dInstanced.cpp">
+      <Filter>Drawable\Object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3dInstancedSystem.cpp">
+      <Filter>Drawable\Object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Lighting\DirectionalLight.cpp">
+      <Filter>Feature\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Lighting\PointLight.cpp">
+      <Filter>Feature\Lighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -905,11 +908,8 @@
     <ClInclude Include="drawable\particle\Emitter\ParticleEmitter.h">
       <Filter>Drawable\Particle\Emitter</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Lighting\Manager\LightingManager.h">
+    <ClInclude Include="Features\Lighting\LightRepository.h">
       <Filter>Feature\Lighting\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Lighting\PointLight\PointLight.h">
-      <Filter>Feature\Lighting\PointLight</Filter>
     </ClInclude>
     <ClInclude Include="Features\Primitive\OBB.h">
       <Filter>Feature\Premitive\OBB</Filter>
@@ -1109,7 +1109,7 @@
     <ClInclude Include="Features\Model\GltfModelSystem.h">
       <Filter>Feature\Model</Filter>
     </ClInclude>
-    <ClInclude Include="BaseClasses\ObjectSystemBaseMT.h">
+    <ClInclude Include="BaseClasses\ObjectSystemBase.h">
       <Filter>BaseClass</Filter>
     </ClInclude>
     <ClInclude Include="Interfaces\IObjectSystem.h">
@@ -1292,6 +1292,24 @@
     <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h">
       <Filter>Effect\PostEffect\Posterize</Filter>
     </ClInclude>
+    <ClInclude Include="drawable\object3d\Object3dInstanced.h">
+      <Filter>Drawable\Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\object3d\Object3dInstancedSystem.h">
+      <Filter>Drawable\Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\object3d\Material.h">
+      <Filter>Drawable\Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Lighting\LightingType.h">
+      <Filter>Drawable\Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Lighting\DirectionalLight.h">
+      <Filter>Feature\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Lighting\PointLight.h">
+      <Filter>Feature\Lighting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1448,6 +1466,9 @@
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\Posterize.PS.hlsl">
       <Filter>HLSL\PostEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\InstancedObject3d.VS.hlsl">
+      <Filter>HLSL\Drawable</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

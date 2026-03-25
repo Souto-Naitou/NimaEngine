@@ -39,6 +39,7 @@ void NimaFramework::Initialize()
     pWinSystem_ = Window::GetInstance();
     pSpriteSystem_ = SpriteSystem::GetInstance();
     pObject3dSystem_ = Object3dSystem::GetInstance();
+    pObject3dInstancedSystem_ = Object3dInstancedSystem::GetInstance();
     pParticleSystem_ = ParticleSystem::GetInstance();
     pTextureManager_ = TextureManager::GetInstance();
     pSRVManager_ = SRVManager::GetInstance();
@@ -104,7 +105,7 @@ void NimaFramework::Initialize()
     pSpriteSystem_->Initialize();
 
     /// 3Dオブジェクト基盤の初期化
-    this->InitializeObject3dSystem();
+    this->InitializeObject3dSystems();
 
     /// パーティクル基盤の初期化
     pParticleSystem_->SetDirectX12(pDirectX_.get());
@@ -197,12 +198,6 @@ void NimaFramework::Initialize()
     pCubemapSystem_ = std::make_unique<CubemapSystem>();
     pCubemapSystem_->SetDirectX12(pDirectX_.get());
     pCubemapSystem_->Initialize();
-
-    /// コマンドリストを追加
-    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pObject3dSystem_->GetCommandList());
-    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pParticleSystem_->GetCommandList());
-    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pSpriteSystem_->GetCommandList());
-    pDirectX_->AddCommandList(DirectX12::CommandListType::DrawableObject, pLineSystem_->GetCommandList());
 
     /// デフォルトシーン引数の設定
     (*pSceneManager_)
@@ -353,10 +348,6 @@ void NimaFramework::PreProcess()
 void NimaFramework::PostProcess()
 {
     pDirectX_->DisplayFrame();
-    pObject3dSystem_->PostDraw();
-    pSpriteSystem_->PostDraw();
-    pParticleSystem_->PostDraw();
-    pLineSystem_->PostDraw();
     pTextureManager_->ReleaseIntermediateResources();
     pLayer_->PostDraw();
     pViewport_->PostDraw();
@@ -365,15 +356,19 @@ void NimaFramework::PostProcess()
     #endif // _DEBUG
 }
 
-void NimaFramework::InitializeObject3dSystem()
+void NimaFramework::InitializeObject3dSystems()
 {
-    pObject3dSystem_->SetDirectX12(pDirectX_.get());
-    pObject3dSystem_->Initialize();
-
     // デフォルトの環境テクスチャを読み込み
     pTextureManager_->LoadTexture(kEnvTexturePathDefault);
     auto envTexture = pTextureManager_->GetSrvHandleGPU(kEnvTexturePathDefault);
 
+    pObject3dSystem_->SetDirectX12(pDirectX_.get());
+    pObject3dSystem_->Initialize();
+
     // 環境テクスチャを設定
     pObject3dSystem_->SetEnvironmentTexture(envTexture);
+
+    pObject3dInstancedSystem_->SetDirectX12(pDirectX_.get());
+    pObject3dInstancedSystem_->Initialize();
+    pObject3dInstancedSystem_->SetEnvironmentTexture(envTexture);
 }

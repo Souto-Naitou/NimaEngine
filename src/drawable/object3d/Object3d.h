@@ -2,18 +2,20 @@
 
 #include "Object3dSystem.h"
 #include <drawable/base/DrawableBase.h>
+#include <drawable/object3d/Material.h>
 
 #include <d3d12.h>
 #include <string>
 #include <Features/Model/IModel.h>
 #include <Features/GameEye/GameEye.h>
-#include <Features/Lighting/PointLight/PointLight.h>
+#include <Features/Lighting/PointLight.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
 #include <common/structs.h>
+#include <Features/Lighting/LightingType.h>
+#include <Vector4.h>
 
 /// 前方宣言
-struct  DirectionalLight;
 class   DirectX12;
 class   DebugManager;
 
@@ -25,10 +27,10 @@ class Object3d : public DrawableBase
 public:
     struct Option
     {
-        EulerTransform  transform      = {};
-        Material*       materialData   = nullptr;
-        TilingData*     tilingData     = nullptr;
-        Lighting*       lightingData   = nullptr;
+        EulerTransform  transform           = {};
+        MaterialForGPU* materialData        = nullptr;
+        Vector4*        colorData           = nullptr;
+        LightSetting*   lightSettingData    = nullptr;
     };
 
 public:
@@ -73,12 +75,25 @@ public: /// Setter
     void SetTranslate(const Vector3& translate)                 { option_.transform.translate = translate; }
     void SetGameEye(GameEye* pGameEye)                          { pGameEye_ = pGameEye; }
     void SetName(const std::string& name)                       { if(pDebugEntry_) pDebugEntry_->SetName(name); }
-    void SetDirectionalLight(DirectionalLight* light)           { directionalLight_ = light; }
-    void SetPointLight(PointLight* light)                       { pointLight_ = light; }
+    void SetDirectionalLight(DirectionalLight* light)           { pDirectionalLight_ = light; }
+    void SetPointLight(PointLight* light)                       { pPointLight_ = light; }
     void SetModel(IModel* pModel)                               { pModel_ = pModel; }
 
 
-private: /// メンバ変数
+private:
+    enum class CBufferRegister
+    {
+        Material                = 0,
+        TransformationMatrix    = 1,
+        Texture                 = 2,
+        DirectionalLight        = 3,
+        Color                   = 4,
+        Camera                  = 5,
+        LightSetting            = 6,
+        PointLight              = 7,
+        EnvironmentTexture      = 8,
+    };
+
     std::unique_ptr<DebugEntry<Object3d>>           pDebugEntry_                    = nullptr;
     Matrix4x4                                       rotateMatrix_                   = {};
 
@@ -87,19 +102,13 @@ private: /// メンバ変数
     bool                                            isEnableDebugWindow_            = true;
 
     Microsoft::WRL::ComPtr<ID3D12Resource>          transformationMatrixResource_   = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource>          directionalLightResource_       = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource>          tilingResource_                 = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12Resource>          colorResource_                  = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>          cameraForGPUResource_           = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource>          lightingResource_               = nullptr;
-    Microsoft::WRL::ComPtr<ID3D12Resource>          pointLightResource_             = nullptr;
+    Microsoft::WRL::ComPtr<ID3D12Resource>          lightSettingResource_           = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>          materialResource_               = nullptr;
 
     Option                                          option_                         = {};
     TransformationMatrix*                           transformationMatrixData_       = nullptr;
-    DirectionalLight*                               directionalLightData_           = nullptr;
-    DirectionalLight*                               directionalLight_               = nullptr;
-    PointLightForGPU*                               pointLightData_                 = nullptr;
-    PointLight*                                     pointLight_                     = nullptr;
     CameraForGPU*                                   cameraForGPU_                   = nullptr;
 
     bool                                            isEnableLighting_               = true;
@@ -112,18 +121,16 @@ private: /// メンバ変数
 
 private: /// 非公開メンバ関数
     void CreateTransformationMatrixResource();
-    void CreateDirectionalLightResource();
-    void CreateTilingResource();
+    void CreateColorResource();
     void CreateCameraForGPUResource();
-    void CreateLightingResource();
-    void CreatePointLightResource();
+    void CreateLightSettingResource();
     void CreateMaterialResource();
 
 
 private: /// 他クラスが所持するインスタンスへのポインタ
-    DirectX12*      pDx12_          = nullptr;
-    ID3D12Device*   device_         = nullptr;
-    Object3dSystem* pSystem_        = nullptr;
-
-    DebugManager*   pDebugManager_  = nullptr;
+    DirectionalLight*   pDirectionalLight_  = nullptr;
+    PointLight*         pPointLight_        = nullptr;
+    DirectX12*          pDx12_              = nullptr;
+    ID3D12Device*       pDevice_            = nullptr;
+    Object3dSystem*     pSystem_            = nullptr;
 };

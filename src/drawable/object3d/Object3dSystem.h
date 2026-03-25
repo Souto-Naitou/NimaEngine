@@ -8,39 +8,22 @@
 #include <map> // std::map
 #include <list> // std::list
 
-#include <BaseClasses/ObjectSystemBaseMT.h>
+#include <BaseClasses/ObjectSystemBase.h>
 #include <Features/Model/IModel.h>
 #include <Core/DirectX12/RootSignature/RootParameters.h>
-
-struct alignas(16) Material // TODO: Rename to MaterialForGPU
-{
-    Vector4 color;
-    Matrix4x4 uvTransform;
-    float shininess;
-    float environmentCoefficient; // Environment coefficient for lighting
-    float padding1[2]; // Padding to align to 16 bytes
-};
-
-struct Lighting
-{
-    int32_t enableLighting;
-    LightingType lightingType;
-};
-
-struct CameraForGPU
-{
-    Vector3 worldPosition;
-};
+#include <Features/Lighting/DirectionalLight.h>
+#include <memory>
+#include <Features/Lighting/PointLight.h>
 
 struct IDxcBlob;
 
 // 3D object common 
-class Object3dSystem : public ObjectSystemBaseMT
+class Object3dSystem : public ObjectSystemBase
 {
 public:
     struct CommandListData
     {
-        std::map<UINT, ID3D12Resource*> cbuffers;
+        std::map<uint32_t, ID3D12Resource*> cbuffers; 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {};
         IModel* model = nullptr;
     };
@@ -61,41 +44,43 @@ public:
     /// <summary>
     /// システムの初期化を行います。
     /// </summary>
-    void    Initialize() override;
-    /// <summary>
-    /// 溜まっている描画コマンドを発行します。
-    /// </summary>
-    void    DrawCall();
-    /// <summary>
-    /// GPU と同期を取ります。
-    /// </summary>
-    void    Sync();
+    void    Initialize();
 
     /// <summary>
     /// デプスプリパス用の描画設定を行います。
     /// </summary>
     void    DepthDrawSetting(ID3D12GraphicsCommandList* cl);
+
     /// <summary>
     /// メイン描画用の設定を行います。
     /// </summary>
     void    MainDrawSetting(ID3D12GraphicsCommandList* cl);
 
     /// <summary>
-    /// 描画に必要なコマンドリスト情報を追加します。
-    /// </summary>
-    /// <param name="data">コマンドリスト関連のリソース。</param>
-    void    AddCommandListData(CommandListData& data);
-    /// <summary>
     /// 環境マップの SRV ハンドルを設定します。
     /// </summary>
     /// <param name="handle">GPU ディスクリプタハンドル。</param>
     void    SetEnvironmentTexture(D3D12_GPU_DESCRIPTOR_HANDLE handle);
 
+    /// <summary>
+    /// デフォルトのポイントライトを設定します。
+    /// </summary>
+    /// <param name="pl">設定するポイントライトへのポインタ。</param>
+    void    SetPointLight(PointLight* pl) { pPointLight_ = pl; }
+
+    /// <summary>
+    /// デフォルトの平行光源を設定します。
+    /// </summary>
+    /// <param name="dl">設定する平行光源へのポインター。</param>
+    void    SetDirectionalLight(DirectionalLight* dl) { pDirectionalLight_ = dl; }
+
     void    DrawSingle(ID3D12GraphicsCommandList* commandList, Object3dSystem::CommandListData& data);
 
-    // Getter
-    const RootParameters& GetRootParameters() const {return rootParameters_;}
+    /// [ Getter ]
+    const RootParameters&       GetRootParameters() const {return rootParameters_;}
     D3D12_GPU_DESCRIPTOR_HANDLE GetEnvironmentTextureSrvHandleGpu() const { return environmentTextureSrvHandleGpu_; }
+    DirectionalLight*           GetDirectionalLight() const { return pDirectionalLight_; }
+    PointLight*                 GetPointLight() const { return pPointLight_; }
 
 private:
     // Ctor
@@ -116,16 +101,18 @@ private:
     void    CreateDepthPipelineState(IDxcBlob* pBlobVS);
 
     // DirectX objects and paths
-    static constexpr wchar_t        kVertexShaderPath[]     = L"EngineResources/Shaders/Object3d.VS.hlsl";
-    static constexpr wchar_t        kPixelShaderPath[]      = L"EngineResources/Shaders/Object3d.PS.hlsl";
-    static constexpr const char*    kRootSignatureId_       = "Object3dSystem";
-    ID3D12RootSignature*            rootSignature_          = nullptr;  // Root signature
-    ComPtr<ID3D12PipelineState>     psoMain_                = nullptr;  // Pipeline state object for main drawing
-    ComPtr<ID3D12PipelineState>     psoEarlyZ_              = nullptr;  // Pipeline state object for Early-Z
-    std::list<CommandListData>      commandListDatas_       = {};       // Container for draw settings
-    RootParameters                  rootParameters_         = {};       // Root parameters for root signature
-    D3D12_INPUT_ELEMENT_DESC        inputElementDescs_[3]   = {};
-    D3D12_INPUT_LAYOUT_DESC         inputLayoutDesc_        = {};
-    D3D12_RASTERIZER_DESC           rasterizerDesc_         = {};
-    D3D12_GPU_DESCRIPTOR_HANDLE     environmentTextureSrvHandleGpu_ = {}; // Environment texture SRV handle
+    static constexpr wchar_t        kVertexShaderPath[]                     = L"EngineResources/Shaders/Object3d.VS.hlsl";
+    static constexpr wchar_t        kPixelShaderPath[]                      = L"EngineResources/Shaders/Object3d.PS.hlsl";
+    static constexpr const char*    kRootSignatureId_                       = "Object3dSystem";
+    static constexpr uint32_t       kRootParameterIndexEnvTexture_          = 8u;
+    DirectionalLight*               pDirectionalLight_                      = nullptr;  // Directional light
+    PointLight*                     pPointLight_                            = nullptr;  // Point light
+    ID3D12RootSignature*            rootSignature_                          = nullptr;  // Root signature
+    ComPtr<ID3D12PipelineState>     psoMain_                                = nullptr;  // Pipeline state object for main drawing
+    ComPtr<ID3D12PipelineState>     psoEarlyZ_                              = nullptr;  // Pipeline state object for Early-Z
+    RootParameters                  rootParameters_                         = {};       // Root parameters for root signature
+    D3D12_INPUT_ELEMENT_DESC        inputElementDescs_[3]                   = {};
+    D3D12_INPUT_LAYOUT_DESC         inputLayoutDesc_                        = {};
+    D3D12_RASTERIZER_DESC           rasterizerDesc_                         = {};
+    D3D12_GPU_DESCRIPTOR_HANDLE     environmentTextureSrvHandleGpu_         = {}; // Environment texture SRV handle
 };

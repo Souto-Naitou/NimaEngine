@@ -3,13 +3,13 @@
 #include <wrl.h>
 #include <Core/DirectX12/DirectX12.h>
 #include <Features/GameEye/GameEye.h>
-#include <BaseClasses/ObjectSystemBaseMT.h>
+#include <BaseClasses/ObjectSystemBase.h>
 #include <list>
 
 /// <summary>
 /// パーティクル描画共通
 /// </summary>
-class ParticleSystem : public ObjectSystemBaseMT
+class ParticleSystem : public ObjectSystemBase
 {
 public:
     struct CommandListData
@@ -37,28 +37,24 @@ public:
     /// <summary>
     /// パーティクル共通描画の初期化を行います。
     /// </summary>
-    void Initialize() override;
+    void Initialize();
+
     /// <summary>
     /// フレーム終端での描画（リングバッファ切替など）を行います。
     /// </summary>
     void PresentDraw();
 
     /// <summary>
-    /// キューされた描画コマンドを発行します。
+    /// 単一のオブジェクトを描画します。
     /// </summary>
-    void DrawCall();
-
-    /// <summary>
-    /// マルチスレッド環境での同期を行います。
-    /// </summary>
-    void Sync();
-
+    /// <param name="commandList">グラフィックスコマンドを記録するための DirectX 12 コマンドリスト。</param>
+    /// <param name="data">描画操作に必要なコマンドリストデータ。</param>
     void DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data);
 
 
 public: /// Setter
     void SetGlobalEye(GameEye* pGameEye) { pGlobalEye_ = pGameEye; }
-    void AddCommandListData(CommandListData& pData) { commandListDatas_.emplace_back(pData); }
+
 
 public: /// Getter
     GameEye** GetGlobalEye() { return &pGlobalEye_; }
@@ -73,8 +69,6 @@ private: /// メンバ変数
     static constexpr wchar_t kPixelShaderPath[] = L"EngineResources/Shaders/Particle.PS.hlsl";
     Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
-
-    std::list<CommandListData> commandListDatas_;
 
 
 private: /// 非公開関数

@@ -430,6 +430,7 @@
     <ClInclude Include="Features\Event\EventSubscription.h" />
     <ClInclude Include="Features\font\FontLayout.h" />
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
+    <ClInclude Include="Features\Input\InputMapper.hpp" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
     <ClInclude Include="Features\Layer\OrderedCanvasLayer.h" />
     <ClInclude Include="Features\Lighting\DirectionalLight.h" />

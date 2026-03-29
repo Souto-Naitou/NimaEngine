@@ -1,4 +1,5 @@
-#include "DebugTools/DebugManager/DebugManager.h"
+#include "DebugManager.h"
+#include <Features/Input/Input.h>
 
 #include <NiGui.h>
 
@@ -11,8 +12,9 @@
 
 DebugManager* DebugManager::GetInstance()
 {
-    static DebugManager instance;
-    return &instance;
+    /// リソースの解放はOSに任せる
+    static auto instance = new DebugManager();
+    return instance;
 }
 
 DebugManager::DebugManager()
@@ -34,7 +36,6 @@ DebugManager::DebugManager()
 
 DebugManager::~DebugManager()
 {
-
 }
 
 void DebugManager::OverlayFPS() const

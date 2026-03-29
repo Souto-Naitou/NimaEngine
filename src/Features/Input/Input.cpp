@@ -1,14 +1,24 @@
 #include "Input.h"
 
-#include <cassert>
-#include <stdexcept>
 #include <Core/Window/Window.h>
+#include <imgui.h>
+#include <Features/event/EventListener.h>
+#include <event/InputCallbackEvent.h>
 
+#include <stdexcept>
+#include <cassert>
+#include <bitset>
+#include <sstream>
+
+#include <Xinput.h>
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "xinput9_1_0.lib")
 
 void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 {
+    pDebugEntry_ = std::make_unique<DebugEntry<Input>>("Input", this, false);
+
     HRESULT hr = DirectInput8Create(
         hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, static_cast<void**>(&directInput_), nullptr
     );
@@ -48,8 +58,6 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
     mouse_->Acquire();
 
     assert(SUCCEEDED(hr));
-
-    this->InitializePad(hwnd);
 }
 
 void Input::Update()
@@ -97,7 +105,16 @@ bool Input::PushKeyC(char key) const
     {
         return true;
     }
+    return false;
+}
 
+bool Input::PushButton(BYTE buttonNum) const
+{
+    if (!isPadConnected_) return false;
+    if (padState_.Gamepad.wButtons & (1 << buttonNum))
+    {
+        return true;
+    }
     return false;
 }
 
@@ -108,7 +125,6 @@ bool Input::TriggerKey(BYTE keyNumber) const
     {
         return true;
     }
-
     return false;
 }
 
@@ -120,7 +136,19 @@ bool Input::TriggerKeyC(char key) const
     {
         return true;
     }
+    return false;
+}
 
+bool Input::TriggerButton(BYTE buttonNum) const
+{
+    if (!isPadConnected_) return false;
+    bool isPressed = (padState_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+    bool wasPressed = (padStatePrev_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+
+    if (isPressed && !wasPressed)
+    {
+        return true;
+    }
     return false;
 }
 
@@ -134,14 +162,85 @@ bool Input::ReleaseKey(BYTE keyNumber) const
     return false;
 }
 
-Vector2 Input::GetLeftStickPosition() const
+bool Input::ReleaseButton(BYTE buttonNum) const
 {
-    return leftStickPosition_;
+    if (!isPadConnected_) return false;
+
+    bool isPressed = (padState_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+    bool wasPressed = (padStatePrev_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+
+    if (!isPressed && wasPressed)
+    {
+        return true;
+    }
+    return false;
 }
 
-Vector2 Input::GetRightStickPosition() const
+bool Input::IsPadConnected() const
 {
-    return rightStickPosition_;
+    return isPadConnected_;
+}
+
+bool Input::IsPadUpdated() const
+{
+    return isPadUpdated_;
+}
+
+void Input::ImGui()
+{
+    #ifdef _DEBUG
+
+    ImGui::SeparatorText("Gamepad Connection");
+    if (isPadConnected_)
+    {
+        ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Connected");
+
+        if (ImGui::TreeNode("Gamepad Information"))
+        {
+            if (ImGui::TreeNode("Row Gamepad State"))
+            {
+                // パケット
+                ImGui::Text("packet : %d", padState_.dwPacketNumber);
+                ImGui::Text("Last updated : %.2fsec ago", timePadNonUpdate_.GetNow<float>());
+
+                auto& gamepad = padState_.Gamepad;
+                // ボタンの生データ (2進数で表示)
+                std::stringstream buttonsBinaryString;
+                buttonsBinaryString << std::bitset<16>(gamepad.wButtons);
+                ImGui::Text("buttons : 0b%s", buttonsBinaryString.str().c_str());
+                // スティックの生データ
+                ImGui::Text("Left Stick : (%.5d,%.5d)", gamepad.sThumbLX, gamepad.sThumbLY);
+                ImGui::Text("Right Stick : (%.5d,%.5d)", gamepad.sThumbRX, gamepad.sThumbRY);
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode("Formatted Gamepad State"))
+            {
+                ImGui::Text("Left Stick : (%f,%f)", gamepadAnalogInput_.thumbL.x, gamepadAnalogInput_.thumbL.y);
+                ImGui::Text("Right Stick : (%f,%f)", gamepadAnalogInput_.thumbR.x, gamepadAnalogInput_.thumbR.y);
+
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
+    }
+    else
+    {
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Disconnected");
+    }
+
+    if (ImGui::TreeNode("Gamepad Setting"))
+    {
+        ImGui::SeparatorText("Deadzone");
+        ImGui::SliderFloat("Trigger Left", &deadzone_.triggerL, 0.0f, 1.0f);
+        ImGui::SliderFloat("Trigger Right", &deadzone_.triggerR, 0.0f, 1.0f);
+        ImGui::SliderFloat("Thumb Left", &deadzone_.thumbL, 0.0f, 1.0f);
+        ImGui::SliderFloat("Thumb Right", &deadzone_.thumbR, 0.0f, 1.0f);
+        ImGui::TreePop();
+    }
+    #endif // _DEBUG
 }
 
 POINT Input::GetCursorPosition() const
@@ -194,6 +293,11 @@ int32_t Input::GetWheelDelta() const
     return wheelDelta_;
 }
 
+bool Input::IsAnyKeyChanged() const
+{
+    return std::memcmp(key_, keyPre_, 256) != 0;
+}
+
 BYTE Input::GetKeyNumber(char key) const
 {
     // キーの文字からキー番号を取得
@@ -236,79 +340,62 @@ void Input::MapInputData()
     wheelDelta_ = mouseState_.lZ;
 }
 
-void Input::InitializePad(HWND hwnd)
-{
-    HRESULT hr = directInput_->EnumDevices(
-        DI8DEVTYPE_GAMEPAD, EnumJoystickCallback, (void*)this, DIEDFL_ATTACHEDONLY
-    );
-    assert(SUCCEEDED(hr));
-
-    if (!pad_) return;
-
-    hr = pad_->SetDataFormat(&c_dfDIJoystick2);
-    assert(SUCCEEDED(hr));
-
-    // 軸を絶対値モードに設定
-    {
-        DIPROPDWORD prop;
-        ZeroMemory(&prop, sizeof(prop));
-        prop.diph.dwSize = sizeof(prop);
-        prop.diph.dwHeaderSize = sizeof(prop.diph);
-        prop.diph.dwHow = DIPH_DEVICE;
-        prop.diph.dwObj = 0;
-        prop.dwData = DIPROPAXISMODE_ABS;
-        hr = pad_->SetProperty(DIPROP_AXISMODE, &prop.diph);
-    }
-    assert(SUCCEEDED(hr));
-
-    // ジョイスティックの範囲を設定
-    {
-        DIPROPRANGE prop;
-        ZeroMemory(&prop, sizeof(prop));
-        prop.diph.dwSize = sizeof(prop);
-        prop.diph.dwHeaderSize = sizeof(prop.diph);
-        prop.diph.dwHow = DIPH_BYOFFSET;
-        prop.diph.dwObj = DIJOFS_X;
-        prop.lMin = -kStickRange;
-        prop.lMax = kStickRange;
-        hr = pad_->SetProperty(DIPROP_RANGE, &prop.diph);
-        // Y軸の範囲も同様に設定
-        prop.diph.dwObj = DIJOFS_Y;
-        hr = pad_->SetProperty(DIPROP_RANGE, &prop.diph);
-    }
-    assert(SUCCEEDED(hr));
-
-    // ジョイスティックの排他制御レベルを設定
-    hr = pad_->SetCooperativeLevel(
-        hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE
-    );
-    assert(SUCCEEDED(hr));
-
-    // ジョイスティックの情報の取得を開始
-    hr = pad_->Acquire();
-    assert(SUCCEEDED(hr));
-}
-
 void Input::UpdatePad()
 {
-    if (!pad_) return;
-    leftStickPosition_.x = padState_.lX / static_cast<float>(kStickRange); // X軸の値を-1.0fから1.0fに変換
-    leftStickPosition_.y = padState_.lY / static_cast<float>(kStickRange); // Y軸の値を-1.0fから1.0fに変換
-    rightStickPosition_.x = padState_.lRx / static_cast<float>(kStickRange); // 右スティックX軸
-    rightStickPosition_.y = padState_.lRy / static_cast<float>(kStickRange); // 右スティックY軸
+    padStatePrev_ = padState_;
 
-    // ボタンの状態を更新
-    for (int i = 0; i < 32; ++i)
+    bool wasPadConnected = isPadConnected_;
+    isPadConnected_ = false;
+    DWORD dwResult;
+    for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
     {
-        if (padState_.rgbButtons[i] & 0x80)
+        ZeroMemory(&padState_, sizeof(XINPUT_STATE));
+        dwResult = XInputGetState(i, &padState_);
+        if (dwResult == ERROR_SUCCESS)
         {
-            buttons_[i] = true; // ボタンが押されている
-        }
-        else
-        {
-            buttons_[i] = false; // ボタンが離されている
+            /// コントローラーが接続されている
+            isPadConnected_ = true;
+            break;
         }
     }
+
+    /// コントローラーの接続状態が変化した場合、イベントを発行
+    bool isConnectedNow = isPadConnected_ && !wasPadConnected;
+    bool isDisconnectedNow = !isPadConnected_ && wasPadConnected;
+
+    if (isConnectedNow)
+    {
+        EventListener::GetInstance()->Publish(Events::GamePadConnected());
+    }
+    else if (isDisconnectedNow)
+    {
+        EventListener::GetInstance()->Publish(Events::GamePadDisconnected());
+    }
+
+    /// コントローラが接続されていない場合はここで終わり
+    if (!isPadConnected_) return;
+
+    isPadUpdated_ = padState_.dwPacketNumber != padStatePrev_.dwPacketNumber;
+    if (isPadUpdated_)
+    {
+        timePadNonUpdate_.Reset();
+        timePadNonUpdate_.Start();
+    }
+
+    auto& gamepad = padState_.Gamepad;
+    auto& analog = gamepadAnalogInput_;
+    analog.thumbL.x    = std::max(-1.0f, static_cast<float>(gamepad.sThumbLX) / 32767.0f); // X軸の値を-1.0fから1.0fに変換
+    analog.thumbL.y    = std::max(-1.0f, static_cast<float>(gamepad.sThumbLY) / 32767.0f); // Y軸の値を-1.0fから1.0fに変換
+    analog.thumbR.x    = std::max(-1.0f, static_cast<float>(gamepad.sThumbRX) / 32767.0f); // 右スティックX軸
+    analog.thumbR.y    = std::max(-1.0f, static_cast<float>(gamepad.sThumbRY) / 32767.0f); // 右スティックY軸
+    analog.triggerL    = static_cast<float>(gamepad.bLeftTrigger) / 255.0f; // 左トリガーの値を0.0fから1.0fに変換
+    analog.triggerR    = static_cast<float>(gamepad.bRightTrigger) / 255.0f; // 右トリガーの値を0.0fから1.0fに変換
+
+    /// デッドゾーンの処理
+    if (gamepadAnalogInput_.thumbL.LengthWithoutRoot() <= deadzone_.thumbL) gamepadAnalogInput_.thumbL = Vector2();
+    if (gamepadAnalogInput_.thumbR.LengthWithoutRoot() <= deadzone_.thumbR) gamepadAnalogInput_.thumbR = Vector2();
+    if (gamepadAnalogInput_.triggerL <= deadzone_.triggerL) gamepadAnalogInput_.triggerL = 0.0f;
+    if (gamepadAnalogInput_.triggerR <= deadzone_.triggerR) gamepadAnalogInput_.triggerR = 0.0f;
 }
 
 void Input::UpdateDeviceState(IDirectInputDevice8* pDevice, LPVOID out_state, size_t sizeState)
@@ -350,16 +437,4 @@ void Input::UpdateCursorPosition()
     float ratio = static_cast<float>(Window::clientHeight) / static_cast<float>(viewportSize_.cy);
     mousePosition_.x = static_cast<LONG>(static_cast<float>(mousePosition_.x) * ratio);
     mousePosition_.y = static_cast<LONG>(static_cast<float>(mousePosition_.y) * ratio);
-}
-
-int Input::EnumJoystickCallback(const DIDEVICEINSTANCE* pdidInstance, void* context)
-{
-    auto pInput = static_cast<Input*>(context);
-    auto directInput = pInput->GetDirectInput();
-    
-    if (FAILED(directInput->CreateDevice(pdidInstance->guidInstance, pInput->GetPad(), nullptr)))
-    {
-        return DIENUM_CONTINUE; // エラーが発生した場合は次のデバイスへ
-    }
-    return DIENUM_STOP; // ジョイスティックが見つかったので列挙を停止
 }

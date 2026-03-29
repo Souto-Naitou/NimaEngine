@@ -9,12 +9,13 @@
 #include <string>
 #include <array>
 #include <optional>
-#include <Features/Input/Input.h>
 #include <unordered_map>
 #include <utility>
 #include <Features/Viewport/Viewport.h>
 #include <DebugTools/Logger/Logger.h>
 #include <DebugTools/EventTimer/EventTimer.h>
+
+class Input;
 
 /// <summary>
 /// デバッグマネージャー
@@ -89,7 +90,7 @@ private:
     ~DebugManager();
 
     // Input
-    Input*                  pInput_ = nullptr;
+    Input*                      pInput_ = nullptr;
 
     // Localization
     Localization::Common        lang_common_ = {};

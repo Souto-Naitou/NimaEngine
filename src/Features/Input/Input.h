@@ -94,16 +94,17 @@ public:
     /// 状態の取得
     bool        PushKey(BYTE keyNumber) const;
     bool        PushKeyC(char key) const;
-    bool        PushButton(BYTE buttonNum) const;
+    bool        PushButton(WORD buttonNum) const;
     bool        PushMouse(MouseNum mouseNum) const;
 
     bool        TriggerKey(BYTE keyNumber) const;
     bool        TriggerKeyC(char key) const;
-    bool        TriggerButton(BYTE buttonNum) const;
+    bool        TriggerButton(WORD buttonNum) const;
     bool        TriggerMouse(MouseNum mouseNum) const;
 
     bool        ReleaseKey(BYTE keyNumber) const;
-    bool        ReleaseButton(BYTE buttonNum) const;
+    bool        ReleaseButton(WORD buttonNum) const;
+    bool        ReleaseMouse(MouseNum mouseNum) const;
 
     POINT       GetCursorPosition() const;
     int32_t     GetWheelDelta() const;

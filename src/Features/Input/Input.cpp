@@ -108,14 +108,10 @@ bool Input::PushKeyC(char key) const
     return false;
 }
 
-bool Input::PushButton(BYTE buttonNum) const
+bool Input::PushButton(WORD buttonNum) const
 {
     if (!isPadConnected_) return false;
-    if (padState_.Gamepad.wButtons & (1 << buttonNum))
-    {
-        return true;
-    }
-    return false;
+    return (padState_.Gamepad.wButtons & buttonNum) != 0;
 }
 
 bool Input::TriggerKey(BYTE keyNumber) const
@@ -139,11 +135,11 @@ bool Input::TriggerKeyC(char key) const
     return false;
 }
 
-bool Input::TriggerButton(BYTE buttonNum) const
+bool Input::TriggerButton(WORD buttonNum) const
 {
     if (!isPadConnected_) return false;
-    bool isPressed = (padState_.Gamepad.wButtons & (1 << buttonNum)) != 0;
-    bool wasPressed = (padStatePrev_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+    bool isPressed = (padState_.Gamepad.wButtons & buttonNum) != 0;
+    bool wasPressed = (padStatePrev_.Gamepad.wButtons & buttonNum) != 0;
 
     if (isPressed && !wasPressed)
     {
@@ -162,17 +158,37 @@ bool Input::ReleaseKey(BYTE keyNumber) const
     return false;
 }
 
-bool Input::ReleaseButton(BYTE buttonNum) const
+bool Input::ReleaseButton(WORD buttonNum) const
 {
     if (!isPadConnected_) return false;
 
-    bool isPressed = (padState_.Gamepad.wButtons & (1 << buttonNum)) != 0;
-    bool wasPressed = (padStatePrev_.Gamepad.wButtons & (1 << buttonNum)) != 0;
+    bool isPressed = (padState_.Gamepad.wButtons & buttonNum) != 0;
+    bool wasPressed = (padStatePrev_.Gamepad.wButtons & buttonNum) != 0;
 
     if (!isPressed && wasPressed)
     {
         return true;
     }
+    return false;
+}
+
+bool Input::ReleaseMouse(MouseNum mouseNum) const
+{
+    if (mouseNum == MouseNum::Left)
+    {
+        if (!leftClick_ && leftClickPre_)
+        {
+            return true;
+        }
+    }
+    else if (mouseNum == MouseNum::Right)
+    {
+        if (!rightClick_ && rightClickPre_)
+        {
+            return true;
+        }
+    }
+
     return false;
 }
 

@@ -177,6 +177,7 @@ void Object3d::CreateMaterialResource()
     option_.materialData->uvTransform = Matrix4x4::Identity();
     option_.materialData->shininess = 1.0f;
     option_.materialData->environmentCoefficient = 1.0f; // 環境係数を初期化
+    option_.materialData->tilingMultiply = Vector2(1.0f, 1.0f);
 }
 
 void Object3d::ImGui()

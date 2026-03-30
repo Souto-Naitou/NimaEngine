@@ -1310,6 +1310,7 @@
     <ClInclude Include="Features\Lighting\PointLight.h">
       <Filter>Feature\Lighting</Filter>
     </ClInclude>
+    <ClInclude Include="event\InputCallbackEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

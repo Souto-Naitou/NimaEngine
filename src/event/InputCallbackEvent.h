@@ -9,4 +9,4 @@ namespace Events
     struct GamePadDisconnected
     {
     };
-};
+}

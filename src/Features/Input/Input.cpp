@@ -70,9 +70,6 @@ void Input::Update()
     // マウスの入力情報を取得
     this->UpdateDeviceState(mouse_.Get(), &mouseState_, sizeof(mouseState_));
 
-    // マウスの状態を更新
-    this->UpdateDeviceState(pad_.Get(), &padState_, sizeof(padState_));
-
     // カーソル位置の更新
     this->UpdateCursorPosition();
 
@@ -213,7 +210,7 @@ void Input::ImGui()
 
         if (ImGui::TreeNode("Gamepad Information"))
         {
-            if (ImGui::TreeNode("Row Gamepad State"))
+            if (ImGui::TreeNode("Raw Gamepad State"))
             {
                 // パケット
                 ImGui::Text("packet : %d", padState_.dwPacketNumber);
@@ -389,8 +386,13 @@ void Input::UpdatePad()
     }
 
     /// コントローラが接続されていない場合はここで終わり
-    if (!isPadConnected_) return;
+    if (!isPadConnected_)
+    {
+        isPadUpdated_ = false;
+        return;
+    }
 
+    /// コントローラーの状態が更新されたかどうかを判定
     isPadUpdated_ = padState_.dwPacketNumber != padStatePrev_.dwPacketNumber;
     if (isPadUpdated_)
     {

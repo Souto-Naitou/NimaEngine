@@ -5,12 +5,11 @@
 #include <Xinput.h>
 #include <dinput.h>
 #include <wrl.h>
-#include <cstdint>
 #include <Vector2.h>
-#include <list>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <cstdint>
 #include <memory>
-#include <limits>
 
 #undef max
 
@@ -114,7 +113,6 @@ public:
     bool        IsPadUpdated() const;
 
     IDirectInput8* GetDirectInput() const { return directInput_.Get(); }
-    IDirectInputDevice8** GetPad() { return pad_.GetAddressOf(); }
 
     void        ImGui();
 
@@ -157,7 +155,6 @@ private:
     Microsoft::WRL::ComPtr<IDirectInput8> directInput_ = nullptr;
     Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_ = nullptr;
     Microsoft::WRL::ComPtr<IDirectInputDevice8> mouse_ = nullptr;
-    Microsoft::WRL::ComPtr<IDirectInputDevice8> pad_ = nullptr;
     DIMOUSESTATE2   mouseState_ = {};
     XINPUT_STATE    padState_ = {};
     XINPUT_STATE    padStatePrev_ = {};

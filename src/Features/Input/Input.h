@@ -74,6 +74,11 @@ public:
     /// 入力状態を更新します。
     /// キーボード/マウス/パッドの状態を取得して内部に反映します。
     /// </summary>
+    void        UpdateInputDeviceState();
+
+    /// <summary>
+    /// 更新処理を行います。
+    /// </summary>
     void        Update();
 
     /// <summary>
@@ -89,6 +94,15 @@ public:
     const Deadzone& GetDeadzone() const { return deadzone_; }
     const GamepadAnalogInput& GetGamepadAnalogInput() const { return gamepadAnalogInput_; }
     const XINPUT_GAMEPAD& GetRawGamepadState() const { return padState_.Gamepad; }
+
+    /// <summary>
+    /// ゲームパッドの振動を設定します。
+    /// </summary>
+    /// <param name="leftMotorSpeed">左モーターの速度。</param>
+    /// <param name="rightMotorSpeed">右モーターの速度。</param>
+    void        Vibrate(float leftMotorSpeed, float rightMotorSpeed);
+    void        SetGamepadVibrationLeft(float leftMotorSpeed);
+    void        SetGamepadVibrationRight(float rightMotorSpeed);
 
     /// 状態の取得
     bool        PushKey(BYTE keyNumber) const;
@@ -111,6 +125,8 @@ public:
     bool        IsAnyKeyChanged() const;
     bool        IsPadConnected() const;
     bool        IsPadUpdated() const;
+
+    bool        IsPadMode() const { return isPadMode_; }
 
     IDirectInput8* GetDirectInput() const { return directInput_.Get(); }
 
@@ -155,12 +171,18 @@ private:
     Microsoft::WRL::ComPtr<IDirectInput8> directInput_ = nullptr;
     Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_ = nullptr;
     Microsoft::WRL::ComPtr<IDirectInputDevice8> mouse_ = nullptr;
-    DIMOUSESTATE2   mouseState_ = {};
-    XINPUT_STATE    padState_ = {};
-    XINPUT_STATE    padStatePrev_ = {};
+    DIMOUSESTATE2       mouseState_ = {};
+
+    // XInput data
+    int32_t             padIndex_ = -1;
+    XINPUT_STATE        padState_ = {};
+    XINPUT_STATE        padStatePrev_ = {};
+    Vector2             padVibrationNormalized_ = {};
+    XINPUT_VIBRATION    padVibration_ = {};
 
     bool    isPadConnected_     = false;
     bool    isPadUpdated_       = false;
+    bool    isPadMode_          = false;    // ゲームパッドモードかどうか。ゲームパッドの入力があったときにtrue、キーボードやマウスの入力があったときにfalseになる
 
     // コントローラの入力が最後に更新されてからの時間を測るためのタイマー
     TimeMeasurer            timePadNonUpdate_       = {};

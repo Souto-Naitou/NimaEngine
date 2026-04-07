@@ -60,7 +60,7 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd)
     assert(SUCCEEDED(hr));
 }
 
-void Input::Update()
+void Input::UpdateInputDeviceState()
 {
     // 配列をコピー
     memcpy(keyPre_, key_, 256);
@@ -78,11 +78,48 @@ void Input::Update()
 
     // デシリアライズ
     this->MapInputData();
+
+    // ゲームパッドが接続されていて更新されている場合はゲームパッドモードに切り替える
+    if (isPadConnected_ && isPadUpdated_)
+    {
+        isPadMode_ = true;
+    }
+    
+    // キーボードやマウスの入力があった場合はゲームパッドモードを解除する
+    if (this->IsAnyKeyChanged())
+    {
+        isPadMode_ = false;
+    }
+}
+
+void Input::Update()
+{
+    if (padIndex_ == -1) return;
+    /// バイブレーションの確定処理
+    padVibration_.wLeftMotorSpeed = static_cast<WORD>(padVibrationNormalized_.x * 65535.0f);
+    padVibration_.wRightMotorSpeed = static_cast<WORD>(padVibrationNormalized_.y * 65535.0f);
+    XInputSetState(padIndex_, &padVibration_);
+    padVibrationNormalized_ = Vector2();
 }
 
 void Input::Enable(bool flag)
 {
     isEnable_ = flag;
+}
+
+void Input::Vibrate(float leftMotorSpeed, float rightMotorSpeed)
+{
+    padVibrationNormalized_ = Vector2(leftMotorSpeed, rightMotorSpeed);
+}
+
+void Input::SetGamepadVibrationLeft(float leftMotorSpeed)
+{
+    padVibrationNormalized_.x = leftMotorSpeed;
+}
+
+void Input::SetGamepadVibrationRight(float rightMotorSpeed)
+{
+    padVibrationNormalized_.y = rightMotorSpeed;
 }
 
 bool Input::PushKey(BYTE keyNumber) const
@@ -251,6 +288,11 @@ void Input::ImGui()
         ImGui::SliderFloat("Trigger Right", &deadzone_.triggerR, 0.0f, 1.0f);
         ImGui::SliderFloat("Thumb Left", &deadzone_.thumbL, 0.0f, 1.0f);
         ImGui::SliderFloat("Thumb Right", &deadzone_.thumbR, 0.0f, 1.0f);
+
+        ImGui::SeparatorText("Vibration");
+        ImGui::SliderFloat("Left Motor", &padVibrationNormalized_.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("Right Motor", &padVibrationNormalized_.y, 0.0f, 1.0f);
+
         ImGui::TreePop();
     }
     #endif // _DEBUG
@@ -359,6 +401,8 @@ void Input::UpdatePad()
 
     bool wasPadConnected = isPadConnected_;
     isPadConnected_ = false;
+
+    /// コントローラーの接続状態を確認
     DWORD dwResult;
     for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
     {
@@ -368,6 +412,13 @@ void Input::UpdatePad()
         {
             /// コントローラーが接続されている
             isPadConnected_ = true;
+
+            /// 初めて接続されたコントローラーなら振動をリセット
+            if (padIndex_ == -1)
+            {
+                XInputSetState(i, &padVibration_);
+            }
+            padIndex_ = static_cast<int32_t>(i); // iは0～3
             break;
         }
     }

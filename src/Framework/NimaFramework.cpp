@@ -269,7 +269,7 @@ void NimaFramework::Update()
     NiGui::BeginFrame();
 
     /// マネージャ更新
-    pInput_->Update();
+    pInput_->UpdateInputDeviceState();
     pAudioManager_->Update();
 
     /// ポストエフェクト共通入力の更新
@@ -285,6 +285,9 @@ void NimaFramework::Update()
     pDebugManager_->Update();
     pDebugManager_->DrawUI();
 
+    /// バイブレーションの確定処理など
+    pInput_->Update();
+    
     /// イベント計測終了
     #ifdef _DEBUG
     pEventTimer_->EndEvent("Update");

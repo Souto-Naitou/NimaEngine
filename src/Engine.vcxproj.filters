@@ -1311,6 +1311,7 @@
       <Filter>Feature\Lighting</Filter>
     </ClInclude>
     <ClInclude Include="event\InputCallbackEvent.h" />
+    <ClInclude Include="Features\Input\InputMapper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

@@ -1,5 +1,5 @@
 #pragma once
-#include <Features/TimeMeasurer/TimeMeasurerByDt.h>
+#include <Features/TimeMeasurer/DeltaTimeStopWatch.h>
 #include <Range.h>
 #include <Vector3.h>
 #include <Vector4.h>
@@ -16,7 +16,7 @@ enum class ParticleDeleteCondition
 
 struct ParticleData
 {
-    TimeMeasurerByDt                timer                       = {};
+    DeltaTimeStopWatch                timer                       = {};
     EulerTransform                  transform                   = {};
     Vector3                         direction                   = {};
     float                           speed_                      = 0.0f;

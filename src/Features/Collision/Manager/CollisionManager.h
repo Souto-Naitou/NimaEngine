@@ -114,6 +114,20 @@ public:
         return resultPtr;
     }
 
+    /// <summary>
+    /// コライダーが登録されているか確認します。
+    /// </summary>
+    /// <param name="collider">コライダーのポインタ</param>
+    /// <returns>存在している : true / 存在していない : false</returns>
+    bool IsRegisteredCollider(const Collider* collider) const
+    {
+        for (auto& col : colliders_)
+        {
+            if (col == collider) return true;
+        }
+        return false;
+    }
+
 private:
     CollisionManager() = default;
 

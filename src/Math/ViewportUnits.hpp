@@ -5,7 +5,6 @@
 /// ビューポート単位（vw, vh）を表す型とリテラル演算子群。
 /// 注意：シングルビューポートのみ対応
 /// </summary>
-
 namespace Math::Viewport::Unit
 {
     class vw

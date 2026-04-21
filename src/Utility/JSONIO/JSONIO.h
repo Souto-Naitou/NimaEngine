@@ -90,11 +90,11 @@ class JSONIO
 private:
     JSONIO() = default;
     ~JSONIO() = default;
-
-    using json = nlohmann::json;
     JSONStorage jsonDataStorage_;
 
 public:
+    using json = nlohmann::json;
+
     JSONIO(const JSONIO&) = delete;
     JSONIO& operator=(const JSONIO&) = delete;
     JSONIO(JSONIO&&) = delete;

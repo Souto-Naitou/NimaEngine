@@ -358,7 +358,7 @@
     <ClCompile Include="Features\Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Features\Primitive\RingModel.cpp" />
     <ClCompile Include="Features\Primitive\SphereLine.cpp" />
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp" />
+    <ClCompile Include="Features\TimeMeasurer\DeltaTimeStopWatch.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp" />
     <ClCompile Include="Features\GameEye\GameEye.cpp" />
@@ -509,7 +509,7 @@
     <ClInclude Include="Features\Primitive\Sphere.h" />
     <ClInclude Include="Features\Primitive\SphereLine.h" />
     <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h" />
+    <ClInclude Include="Features\TimeMeasurer\DeltaTimeStopWatch.h" />
     <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
     <ClInclude Include="io\loader\TaskExecutor.h" />
     <ClInclude Include="Math\Easing.h" />

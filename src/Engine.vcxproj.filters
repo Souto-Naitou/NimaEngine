@@ -708,7 +708,7 @@
     <ClCompile Include="Features\Layer\CanvasScope.h">
       <Filter>Feature\Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurerByDt.cpp">
+    <ClCompile Include="Features\TimeMeasurer\DeltaTimeStopWatch.cpp">
       <Filter>Feature\TimeMeasurer</Filter>
     </ClCompile>
     <ClCompile Include="Features\Gauge\GaugeBase.cpp">
@@ -1199,7 +1199,7 @@
     <ClInclude Include="Features\Layer\CurrentCanvas.h">
       <Filter>Feature\Layer</Filter>
     </ClInclude>
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurerByDt.h">
+    <ClInclude Include="Features\TimeMeasurer\DeltaTimeStopWatch.h">
       <Filter>Feature\TimeMeasurer</Filter>
     </ClInclude>
     <ClInclude Include="Features\Gauge\GaugeBase.h">

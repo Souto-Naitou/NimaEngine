@@ -76,7 +76,7 @@ void Sprite::Initialize(D3D12_GPU_DESCRIPTOR_HANDLE handle)
 
     metadata_ = &this->GetMetadata();
 
-    AdjustSpriteSize(metadata_);
+    InitializeSize();
 }
 
 void Sprite::Update()
@@ -89,7 +89,7 @@ void Sprite::Update()
     uint32_t clientWidth = Window::clientWidth;
     uint32_t clientHeight = Window::clientHeight;
 
-    metadata_ = &this->GetMetadata();
+    this->UpdateMetadata();
 
     // 左下
     vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
@@ -257,11 +257,11 @@ void Sprite::CreateTransformationMatrixResource()
     transformationMatrixData_->world = Matrix4x4::Identity();
 }
 
-void Sprite::AdjustSpriteSize(const DirectX::TexMetadata* metadata)
+void Sprite::InitializeSize()
 {
     // テクスチャのサイズを取得
-    auto textureWidth = static_cast<float>(metadata->width);
-    auto textureHeight = static_cast<float>(metadata->height);
+    auto textureWidth = static_cast<float>(metadata_->width);
+    auto textureHeight = static_cast<float>(metadata_->height);
 
     // サイズを調整
     size_ = Vector2(textureWidth, textureHeight);
@@ -273,14 +273,7 @@ void Sprite::AdjustSpriteSize(const DirectX::TexMetadata* metadata)
 
 const DirectX::TexMetadata& Sprite::GetMetadata() const
 {
-    if (texturePath_.empty())
-    {
-        return TextureManager::GetInstance()->GetMetaData(textureSrvHandleGPU_);
-    }
-    else
-    {
-        return TextureManager::GetInstance()->GetMetaData(texturePath_);
-    }
+    return TextureManager::GetInstance()->GetMetaData(textureSrvHandleGPU_);
 }
 
 void Sprite::ImGui()
@@ -321,4 +314,9 @@ void Sprite::ImGui()
 
     isUpdateCalled_ = false;
 #endif // _DEBUG && DEBUG_ENGINE
+}
+
+void Sprite::UpdateMetadata()
+{
+    metadata_ = &this->GetMetadata();
 }

@@ -54,6 +54,13 @@ public:
     /// </summary>
     void                ImGui();
 
+    void                UpdateMetadata();
+
+    /// <summary>
+    /// テクスチャのアスペクトなどから適切なスプライトサイズに調整します。
+    /// </summary>
+    void InitializeSize();
+
 
 public: /// Getter
     const bool          GetEnableUpdate()   const                   { return isUpdateEnabled_; }
@@ -62,6 +69,7 @@ public: /// Getter
     const Vector2&      GetPosition()       const                   { return translate_; }
     const Vector4&      GetColor()          const                   { return materialData_->color; }
     const Vector2&      GetSize()           const                   { return size_; }
+    float               GetSizeFactor()     const                   { return size_.x / metadata_->width; }
     const Vector2&      GetAnchorPoint()    const                   { return anchorPoint_; }
     const bool          GetFlipX()          const                   { return isFlipX_; }
     const bool          GetFlipY()          const                   { return isFlipY_; }
@@ -76,6 +84,7 @@ public: /// Setter
     void                SetPosition(const Vector2& position)        { translate_ = position; }
     void                SetColor(const Vector4& color)              { materialData_->color = color; }
     void                SetSize(const Vector2& size)                { size_ = size; }
+
     /// <summary>
     /// 元サイズに対する倍率でサイズを設定します。
     /// </summary>
@@ -187,10 +196,5 @@ private: /// メンバ関数
     /// </summary>
     void CreateTransformationMatrixResource();
     
-    /// <summary>
-    /// テクスチャのアスペクトなどから適切なスプライトサイズに調整します。
-    /// </summary>
-    void AdjustSpriteSize(const DirectX::TexMetadata* metadata);
-
     const DirectX::TexMetadata& GetMetadata() const;
 };

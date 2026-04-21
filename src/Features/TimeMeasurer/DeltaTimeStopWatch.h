@@ -5,11 +5,11 @@
 /// <summary>
 /// 時間計測クラス
 /// </summary>
-class TimeMeasurerByDt
+class DeltaTimeStopWatch
 {
 public:
-    TimeMeasurerByDt() = default;
-    ~TimeMeasurerByDt() = default;
+    DeltaTimeStopWatch() = default;
+    ~DeltaTimeStopWatch() = default;
     /// <summary>
     /// 計測を開始します。
     /// </summary>
@@ -48,7 +48,7 @@ private:
 };
 
 template <typename T>
-inline T TimeMeasurerByDt::GetNow()
+inline T DeltaTimeStopWatch::GetNow()
 {
     return static_cast<T>(now_);
 }

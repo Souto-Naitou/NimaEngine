@@ -190,7 +190,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator itr)
     bool isGround = false;
     float deltaTime = DeltaTimeManager::GetInstance()->GetDeltaTime(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));
 
-    TimeMeasurerByDt&   timer = itr->timer;
+    DeltaTimeStopWatch&   timer = itr->timer;
     EulerTransform&     transform = itr->transform;
     Vector3&            velocity = itr->velocity;
 

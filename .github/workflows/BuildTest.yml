@@ -9,7 +9,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
 
-    runs-on: self-hosted
+    runs-on: windows-2025-vs2026
 
     steps:
       - name: Checkout

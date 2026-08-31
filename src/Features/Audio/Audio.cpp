@@ -40,7 +40,7 @@ void Audio::SetVolume(float volume)
     this->volume_ = volume;
     for (auto& sourceVoice : sourceVoiceList_)
     {
-        sourceVoice->SetVolume(volume_);
+        hr_ = sourceVoice->SetVolume(volume_);
     }
 }
 

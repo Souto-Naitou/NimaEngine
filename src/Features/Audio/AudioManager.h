@@ -2,11 +2,13 @@
 
 #include "Audio.h"
 #include <Utility/PathResolver/PathResolver.h>
+#include <wrl/client.h>
 #include <map>
 #include <list>
 #include <string>
 #include <unordered_map>
 #include <memory>
+
 
 /// <summary>
 /// オーディオ読み込みクラス
@@ -48,7 +50,6 @@ public:
     /// <param name="path">パス</param>
     void AddSearchPath(const std::string& path);
 
-    void AddSourceVoice(IXAudio2SourceVoice* sv) { sourceVoices_.push_back(sv); }
     /// <summary>
     /// 新しい Audio インスタンスを作成して返します。
     /// </summary>
@@ -65,7 +66,6 @@ private:
     std::map<std::string, SoundData> soundDataMap_;
     std::unique_ptr<PathResolver> pFilePathSearcher_ = nullptr;
 
-    std::list<IXAudio2SourceVoice*> sourceVoices_;
     // <カテゴリ, Audioリスト>
     std::unordered_map<std::string, std::list<std::unique_ptr<Audio>>> audioMap_; // 音声ファイル名とAudioのリストのマップ
 

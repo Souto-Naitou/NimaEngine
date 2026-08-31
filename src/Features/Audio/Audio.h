@@ -44,6 +44,12 @@ public:
         pXAudio2_(pXAudio2), 
         pSoundData_(soundData) {}
 
+    ~Audio()
+    {
+        Stop();
+        DestroyFinishedSourceVoice();
+    }
+
     void Play(bool isLoop = false);
     void Stop();
     void SetVolume(float volume);

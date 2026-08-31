@@ -4,7 +4,8 @@
 
 #include <cassert>
 #include <utility>
-#include <fstream>
+#include <cstring>
+
 
 void AudioManager::Initialize()
 {
@@ -36,6 +37,7 @@ void AudioManager::Update()
 void AudioManager::Finalize()
 {
     pXAudio2_.Reset();
+    audioMap_.clear();
 }
 
 void AudioManager::AddSearchPath(const std::string& path)
@@ -60,9 +62,10 @@ Audio* AudioManager::GetNewAudio(const std::string& category, const std::string&
 SoundData& AudioManager::LoadWave(const char* filename)
 {
     // すでに読み込まれている場合はキャッシュを返す
-    if (soundDataMap_.find(filename) != soundDataMap_.end())
+    auto it = soundDataMap_.find(filename);
+    if (it != soundDataMap_.end())
     {
-        return soundDataMap_[filename];
+        return it->second;
     }
 
     

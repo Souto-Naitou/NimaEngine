@@ -1,68 +1,78 @@
 #include "Audio.h"
-
-#include "AudioManager.h"
-
-#include <fstream>
-#include <cassert>
 #include <memory>
-
-void Audio::Initialize()
-{
-}
-
-void Audio::Finalize()
-{
-
-}
-
-void Audio::Unload(SoundData* soundData)
-{
-    soundData->pBuffer.reset();
-    soundData->bufferSize = 0;
-    soundData->wfex = {};
-
-    return;
-}
 
 void Audio::Play(bool isLoop)
 {
     /// バッファ設定
     XAUDIO2_BUFFER buffer = {};
-    buffer.pAudioData = soundData_->pBuffer.get();
-    buffer.AudioBytes = soundData_->bufferSize;
+    buffer.pAudioData = pSoundData_->pBuffer.get();
+    buffer.AudioBytes = pSoundData_->bufferSize;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.LoopCount = isLoop ? XAUDIO2_LOOP_INFINITE : 0;
 
-    /// SourceVoice作成
-    hr_ = pXAudio2_->CreateSourceVoice(&pCurrentSourceVoice_, &soundData_->wfex);
+    // SourceVoice作成
+    IXAudio2SourceVoice* pSourceVoice = nullptr;
+    hr_ = pXAudio2_->CreateSourceVoice(&pSourceVoice, &pSoundData_->wfex);
 
-    /// 再生
-    hr_ = pCurrentSourceVoice_->SubmitSourceBuffer(&buffer);
-    hr_ = pCurrentSourceVoice_->SetVolume(volume_);
-    hr_ = pCurrentSourceVoice_->Start(0);
+    // 失敗時はリストに入れない
+    if (!pSourceVoice) return;   
 
-    AudioManager::GetInstance()->AddSourceVoice(pCurrentSourceVoice_);
+    // SourceVoiceをリストに追加
+    sourceVoiceList_.emplace_back(pSourceVoice);
+
+    /// 再生処理
+    hr_ = pSourceVoice->SubmitSourceBuffer(&buffer);
+    hr_ = pSourceVoice->SetVolume(volume_);
+    hr_ = pSourceVoice->Start(0);
 }
 
 void Audio::Stop()
 {
-    if (pCurrentSourceVoice_)
+    for (auto& sourceVoice : sourceVoiceList_)
     {
-        hr_ = pCurrentSourceVoice_->Stop();
-        hr_ = pCurrentSourceVoice_->FlushSourceBuffers();
+        hr_ = sourceVoice->Stop();
+        hr_ = sourceVoice->FlushSourceBuffers();
     }
 }
 
 void Audio::SetVolume(float volume)
 {
     this->volume_ = volume;
-    if (pCurrentSourceVoice_)
+    for (auto& sourceVoice : sourceVoiceList_)
     {
-        hr_ = pCurrentSourceVoice_->SetVolume(this->volume_);
+        sourceVoice->SetVolume(volume_);
     }
 }
 
 float Audio::GetVolume() const
 {
     return this->volume_;
+}
+
+void Audio::Update()
+{
+    this->DestroyFinishedSourceVoice();
+}
+
+void Audio::DestroyFinishedSourceVoice()
+{
+    for (auto it = sourceVoiceList_.begin(); it != sourceVoiceList_.end();)
+    {
+        // 再生状態を取得
+        XAUDIO2_VOICE_STATE state;
+        (*it)->GetState(&state);
+
+        // 再生が終了している場合はSourceVoiceを破棄
+        if (state.BuffersQueued == 0)
+        {
+            hr_ = (*it)->Stop();
+            hr_ = (*it)->FlushSourceBuffers();
+            (*it)->DestroyVoice();
+            it = sourceVoiceList_.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }

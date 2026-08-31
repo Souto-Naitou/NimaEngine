@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <utility>
+#include <fstream>
 
 void AudioManager::Initialize()
 {
@@ -23,25 +24,13 @@ void AudioManager::Initialize()
 
 void AudioManager::Update()
 {
+    for (auto& [category, audioList] : audioMap_)
     {
-        auto itr = sourceVoices_.begin();
-        while (itr != sourceVoices_.end())
+        for (auto& audio : audioList)
         {
-            IXAudio2SourceVoice* sv = *itr;
-            XAUDIO2_VOICE_STATE state;
-            sv->GetState(&state);
-            if (state.BuffersQueued == 0)
-            {
-                sv->DestroyVoice();
-                itr = sourceVoices_.erase(itr);
-            }
-            else
-            {
-                ++itr;
-            }
+            audio->Update();
         }
     }
-
 }
 
 void AudioManager::Finalize()
@@ -60,7 +49,6 @@ Audio* AudioManager::GetNewAudio(const std::string& category, const std::string&
 
     /// Audio生成
     auto audio = std::make_unique<Audio>(pXAudio2_.Get(), &soundData);
-    audio->Initialize();
 
     Audio* pAudio = audio.get();
 
@@ -71,6 +59,13 @@ Audio* AudioManager::GetNewAudio(const std::string& category, const std::string&
 
 SoundData& AudioManager::LoadWave(const char* filename)
 {
+    // すでに読み込まれている場合はキャッシュを返す
+    if (soundDataMap_.find(filename) != soundDataMap_.end())
+    {
+        return soundDataMap_[filename];
+    }
+
+    
     std::ifstream file(filename, std::ios::binary);
 
     assert(file.is_open());
@@ -129,9 +124,6 @@ SoundData& AudioManager::LoadWave(const char* filename)
 
     /// ファイルクローズ
     file.close();
-
-
-    soundDataMap_[filename] = {};
 
     auto& soundData = soundDataMap_[filename];
 

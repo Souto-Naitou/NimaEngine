@@ -1,8 +1,6 @@
 #pragma once
 
 #include <xaudio2.h>
-#include <fstream>
-#include <wrl.h>
 
 #include <list>
 #include <memory>
@@ -44,21 +42,30 @@ class Audio
 public:
     Audio(IXAudio2* pXAudio2, SoundData* soundData): 
         pXAudio2_(pXAudio2), 
-        soundData_(soundData) {}
+        pSoundData_(soundData) {}
 
-    void Initialize();
-    void Finalize();
-
-    void Unload(SoundData* soundData);
     void Play(bool isLoop = false);
     void Stop();
     void SetVolume(float volume);
     float GetVolume() const;
 
 private:
+    // AudioManagerがAudioの内部にアクセスできるようにする
+    friend class AudioManager;
+
+    // 更新処理 (AudioManagerが呼び出す)
+    void Update();
+
+    // 再生が終了したSourceVoiceを破棄する
+    void DestroyFinishedSourceVoice();
+
     HRESULT_ASSERT hr_ = {};
-    SoundData* soundData_ = nullptr;
+    SoundData* pSoundData_ = nullptr;
     IXAudio2* pXAudio2_ = nullptr;
-    IXAudio2SourceVoice* pCurrentSourceVoice_ = nullptr;
-    float volume_ = 1.0f; // 音量（0.0f - 1.0f）
+
+    // 再生中のSourceVoiceのリスト
+    std::list<IXAudio2SourceVoice*> sourceVoiceList_;
+
+    // 音量（0.0f - 1.0f）
+    float volume_ = 1.0f;
 };

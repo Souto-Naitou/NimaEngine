@@ -239,6 +239,8 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
 {
     ComPtr<ID3D12Resource> result = nullptr;
     D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+    // UPLOADヒープのリソースはGENERIC_READで生成する必要がある
+    D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON;
     if (_flag & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
     {
         uploadHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -247,6 +249,7 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
     {
         uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
         uploadHeapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+        initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
     }
 
     D3D12_RESOURCE_DESC desc{};
@@ -259,7 +262,7 @@ ComPtr<ID3D12Resource> DX12Helper::CreateBufferResource(const ComPtr<ID3D12Devic
     desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     desc.Flags = _flag;
     HRESULT hr = _device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-        &desc, D3D12_RESOURCE_STATE_COMMON, nullptr,
+        &desc, initialState, nullptr,
         IID_PPV_ARGS(&result));
 
     if (FAILED(hr))

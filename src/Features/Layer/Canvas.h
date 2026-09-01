@@ -10,6 +10,7 @@
 #include <Features/Cubemap/Skybox.h>
 #include <drawable/base/DrawableBase.h>
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
+#include <Interfaces/IGameEye.h>
 
 
 
@@ -24,6 +25,7 @@ public:
         std::string name = "Canvas";
         DirectX12* pDx12 = nullptr;
         CubemapSystem* pCubemapSystem = nullptr;
+        IGameEye* pGameEye = nullptr;
 
         #ifdef _DEBUG
         ImGuiManager* pImGuiManager = nullptr;
@@ -43,6 +45,7 @@ public:
     // Setters
     inline void SetEnable(bool enable) { isEnabled_ = enable; }
     inline void SetEnableManualDraw(bool enable) { isEnableManualDraw_ = enable; }
+    inline void SetGameEye(IGameEye* pGameEye) { params_.pGameEye = pGameEye; }
 
     /// <summary>
     /// 描画対象のスプライトを登録します
@@ -77,6 +80,8 @@ public:
     {
         return pPostEffectExecutor_->GetCommandList();
     }
+    [[nodiscard]]
+    IGameEye* GetGameEye() const { return params_.pGameEye; }
 
     /// <summary>
     /// キャンバスを初期化し、内部リソースを確保します。

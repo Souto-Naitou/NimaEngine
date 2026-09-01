@@ -2,7 +2,7 @@
 
 #include <Core/DirectX12/DirectX12.h>
 #include <Core/DirectX12/PipelineStateObject/PSOBuilder.h>
-#include <Features/GameEye/GameEye.h>
+#include <Interfaces/IGameEye.h>
 
 struct IDxcBlob;
 
@@ -29,8 +29,8 @@ public:
     /// </summary>
     void DrawSetting(ID3D12GraphicsCommandList* cl);
 
-    GameEye** GetGlobalEye() { return &pGlobalEye_; }
-    void SetGlobalEye(GameEye* pGameEye) { pGlobalEye_ = pGameEye; }
+    IGameEye** GetGlobalEye() { return &pGlobalEye_; }
+    void SetGlobalEye(IGameEye* pGameEye) { pGlobalEye_ = pGameEye; }
 
 private:
     void _CreatePSO();
@@ -44,7 +44,7 @@ private:
     Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
     Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
 
-    GameEye* pGlobalEye_ = nullptr;  //< ゲームカメラ
+    IGameEye* pGlobalEye_ = nullptr;  //< ゲームカメラ
 
     // Pointers
     ID3D12Device* device_ = nullptr;

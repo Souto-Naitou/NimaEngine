@@ -7,7 +7,7 @@
 #include <d3d12.h>
 #include <string>
 #include <Features/Model/IModel.h>
-#include <Features/GameEye/GameEye.h>
+#include <Interfaces/IGameEye.h>
 #include <Features/Lighting/PointLight.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
@@ -73,7 +73,7 @@ public: /// Setter
     void SetScale(const Vector3& scale)                         { option_.transform.scale = scale; }
     void SetRotate(const Vector3& rotate)                       { option_.transform.rotate = rotate; }
     void SetTranslate(const Vector3& translate)                 { option_.transform.translate = translate; }
-    void SetGameEye(GameEye* pGameEye)                          { pGameEye_ = pGameEye; }
+    void SetGameEye(IGameEye* pGameEye)                         { pGameEye_ = pGameEye; }
     void SetName(const std::string& name)                       { if(pDebugEntry_) pDebugEntry_->SetName(name); }
     void SetDirectionalLight(DirectionalLight* light)           { pDirectionalLight_ = light; }
     void SetPointLight(PointLight* light)                       { pPointLight_ = light; }
@@ -114,8 +114,8 @@ private:
     bool                                            isEnableLighting_               = true;
 
     std::string                                     modelPath_                      = {};
-    GameEye*                                        pGameEye_                       = nullptr;
-    GameEye**                                       ppSystemGameEye_                = nullptr;
+    IGameEye*                                       pGameEye_                       = nullptr;
+    IGameEye**                                      ppSystemGameEye_                = nullptr;
     IModel*                                         pModel_                         = nullptr;
 
 

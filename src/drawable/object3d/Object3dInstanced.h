@@ -197,7 +197,7 @@ private:
 
 
 private: /// 他クラスが所持するインスタンスへのポインタ
-    GameEye**                   ppGameEye_          = nullptr;
+    IGameEye**                  ppGameEye_          = nullptr;
     DirectX12*                  pDx12_              = nullptr;
     ID3D12Device*               pDevice_            = nullptr;
     Object3dInstancedSystem*    pSystem_            = nullptr;

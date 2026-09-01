@@ -6,6 +6,7 @@
 #include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <Common/define.h>
+#include <Features/Layer/Canvas.h>
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -139,12 +140,9 @@ void Sprite::Update()
     transform_.rotate = { 0.0f, 0.0f, rotate_ };
     transform_.translate = translate_;
 
-    /// WVPMatrixの更新
-    Matrix4x4 worldMatrix = Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-    Matrix4x4 viewMatrix = Matrix4x4::Identity();
-    Matrix4x4 projectionMatrix = Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(clientWidth), float(clientHeight), 0.0f, 100.0f);
-    Matrix4x4 WVPMatrix = worldMatrix * viewMatrix * projectionMatrix;
-    transformationMatrixData_->wvp = WVPMatrix;
+    /// 行列の更新
+    worldMatrix_ = Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+    transformationMatrixData_->world = worldMatrix_;
 
 
     /// UVTransformMatrixの更新 (まだ使えない)
@@ -156,6 +154,13 @@ void Sprite::Update()
 void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     if (!isDrawEnabled_) return;
+
+    /// VP行列を適用する
+    auto pCurrentCanvas = this->GetCurrentCanvas();
+    auto pGameEye = pCurrentCanvas ? pCurrentCanvas->GetGameEye() : nullptr;
+    Matrix4x4 vp = pGameEye ? pGameEye->GetViewProjectionMatrix()
+        : Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(Window::clientWidth), float(Window::clientHeight), 0.0f, 100.0f);
+    transformationMatrixData_->wvp = worldMatrix_ * vp;
 
     SpriteSystem::CommandListData data{};
     data.materialResource = materialResource_.Get();

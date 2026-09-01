@@ -55,7 +55,7 @@ public:
 public: /// Setter
     void SetName(const std::string& name) { if (pDebugEntry_) pDebugEntry_->SetName(name); }
     void SetEnableBillboard(bool enable) { enableBillboard_ = enable; }
-    void SetGameEye(GameEye** pGameEye) { pGameEye_ = pGameEye; }
+    void SetGameEye(IGameEye** pGameEye) { ppGameEye_ = pGameEye; }
 
 
 public: /// Getter
@@ -78,7 +78,7 @@ private:
     std::unique_ptr<DebugEntry<Particle>>   pDebugEntry_            = nullptr;
 
     /// GameEye
-    GameEye**                               pGameEye_               = nullptr;
+    IGameEye**                              ppGameEye_              = nullptr;
 
     /// Instancing
     Microsoft::WRL::ComPtr<ID3D12Resource>  instancingResource_     = nullptr;

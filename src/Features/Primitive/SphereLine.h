@@ -5,6 +5,7 @@
 #include <memory>
 #include <Vector3.h>
 #include <Color.h>
+#include <Interfaces/IGameEye.h>
 
 class SphereLine
 {
@@ -14,15 +15,15 @@ public:
     void    Draw1F();
 
     void    SetTransform(const EulerTransform& transform)   { pLines_->SetTransform(transform); }
-    void    SetGameEye(GameEye** eye)                       { pGameEye_ = eye; ModifyGameEye(eye); }
+    void    SetGameEye(IGameEye** eye)                      { pGameEye_ = eye; ModifyGameEye(eye); }
     void    SetColor(const RGBA& color)                     { pLines_->SetColor(color.to_Vector4()); }
     EulerTransform GetTransform() const                     { return pLines_->GetTransform(); }
 
 private:
     static constexpr uint32_t   kSegments_      = 32;
     std::unique_ptr<Line>       pLines_         = nullptr;
-    GameEye**                   pGameEye_       = nullptr;
+    IGameEye**                  pGameEye_       = nullptr;
 
     void    GenerateLineVertices();
-    void    ModifyGameEye(GameEye** eye);
+    void    ModifyGameEye(IGameEye** eye);
 };

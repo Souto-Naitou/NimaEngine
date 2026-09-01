@@ -21,7 +21,7 @@ void SphereLine::Draw1F()
     pLines_->Draw1F();
 }
 
-void SphereLine::ModifyGameEye(GameEye** eye)
+void SphereLine::ModifyGameEye(IGameEye** eye)
 {
     pLines_->SetGameEye(eye);
 }

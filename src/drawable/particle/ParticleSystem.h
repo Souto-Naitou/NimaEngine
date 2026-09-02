@@ -5,6 +5,7 @@
 #include <Features/GameEye/GameEye.h>
 #include <BaseClasses/ObjectSystemBase.h>
 #include <list>
+#include <Interfaces/IGameEye.h>
 
 /// <summary>
 /// パーティクル描画共通
@@ -53,11 +54,11 @@ public:
 
 
 public: /// Setter
-    void SetGlobalEye(GameEye* pGameEye) { pGlobalEye_ = pGameEye; }
+    void SetGlobalEye(IGameEye* pGameEye) { pGlobalEye_ = pGameEye; }
 
 
 public: /// Getter
-    GameEye** GetGlobalEye() { return &pGlobalEye_; }
+    IGameEye** GetGlobalEye() { return &pGlobalEye_; }
 
 
 public: /// 公開定数

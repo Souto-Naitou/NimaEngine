@@ -1,4 +1,5 @@
 #pragma once
+#include <Interfaces/IGameEye.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Math/Transform.h>
 #include <Matrix4x4.h>
@@ -9,7 +10,7 @@
 /// <summary>
 /// カメラクラス
 /// </summary>
-class GameEye
+class GameEye : public IGameEye
 {
 public:
     GameEye();
@@ -18,7 +19,7 @@ public:
     /// <summary>
     /// カメラの行列や揺れ効果などの更新を行います。
     /// </summary>
-    virtual void        Update();
+    virtual void Update() override;
 
     /// <summary>
     /// カメラのデバッグUIを描画します。
@@ -40,12 +41,14 @@ public:
     void Shake(float power);
 
 public: /// Getter
-    const EulerTransform&   GetTransform() const            { return transform_; }
-    const Matrix4x4&        GetWorldMatrix() const          { return wMatrix_; }
-    const Matrix4x4&        GetViewMatrix() const           { return vMatrix_; }
-    const Matrix4x4&        GetProjectionMatrix() const     { return pMatrix_; }
-    const Matrix4x4&        GetViewProjectionMatrix() const { return vpMatrix_; }
-    const std::string&      GetName() const                 { return name_; }
+    const EulerTransform&   GetTransform() const                        { return transform_; }
+    Matrix4x4               GetWorldMatrix() const                      { return wMatrix_; }
+    const Matrix4x4&        GetViewMatrix() const                       { return vMatrix_; }
+    const Matrix4x4&        GetProjectionMatrix() const                 { return pMatrix_; }
+    Matrix4x4               GetViewProjectionMatrix() const override    { return vpMatrix_; }
+    const std::string&      GetName() const override                    { return name_; }
+    Vector3                 GetPosition() const override                { return transform_.translate; }
+    bool                    IsOrthographic2d() const override           { return false; }
 
 public: /// Setter
     void SetTransform(const EulerTransform& transform)     { transform_ = transform; }

@@ -55,7 +55,7 @@ public:
     /// <param name="numLines">ライン数。</param>
     void ResizeLine(size_t numLines);
     void SetColor(const Vector4& color) { color_ = color; }
-    void SetGameEye(GameEye** eye) { pGameEye_ = eye; }
+    void SetGameEye(IGameEye** eye) { ppGameEye_ = eye; }
     void SetTransform(const EulerTransform& transform) { transform_ = transform; }
 
 
@@ -102,5 +102,5 @@ private:
     LineSystem* pLineSystem_ = nullptr;
     DirectX12* pDx12_ = nullptr;
     ID3D12Device* device_ = nullptr;
-    GameEye** pGameEye_ = nullptr;
+    IGameEye** ppGameEye_ = nullptr;
 };

@@ -70,7 +70,7 @@ public:
 
 public: /// Setter
     void SetPosition(const Vector3& position) { position_ = position; }
-    void SetGameEye(GameEye** eye) { this->ModifyGameEye(eye); }
+    void SetGameEye(IGameEye** eye) { this->ModifyGameEye(eye); }
     void SetEnableBillboard(bool enable) { particle_->SetEnableBillboard(enable); }
 
 public: /// Getter
@@ -133,5 +133,5 @@ private:
     /// カメラ参照を更新します。
     /// </summary>
     /// <param name="eye">GameEye のダブルポインタ。</param>
-    void ModifyGameEye(GameEye** eye);
+    void ModifyGameEye(IGameEye** eye);
 };

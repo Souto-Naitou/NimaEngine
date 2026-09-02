@@ -14,7 +14,9 @@
 #include <WinTools/WinTools.h>
 #include <Range.h>
 #include <numbers>
-#include <algorithm>
+#include <Core/ConfigManager/ConfigManager.h>
+#include <filesystem>
+
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
 
@@ -24,15 +26,29 @@ void ParticleEmitter::Initialize(const ParticleEmitter::Params& params)
 
     winTools_ = WinTools::GetInstance();
 
+    /// JSONファイルパスの設定
+    const std::filesystem::path pathDirectory = ConfigManager::GetInstance()->GetConfigData().particle_emitter_paths.back();
     if (params.jsonPath.empty())
     {
-        jsonPath_.clear();
+        /// デフォルトの設定ファイルを取得する
+        const auto& cfg = ConfigManager::GetInstance()->GetConfigData();
+        const auto& pathFilename = std::filesystem::path(cfg.particle_emitter_default_config_filename);
+        const auto& pathFull = pathDirectory / pathFilename;
+
+        /// デフォルトの設定ファイルが存在する場合はそれを使用し、存在しない場合は空文字列にする
+        if (std::filesystem::exists(pathFull) && !std::filesystem::is_directory(pathFull))
+        {
+            jsonPath_ = pathFull;
+        }
+        else
+        {
+            jsonPath_.clear();
+        }
     }
     else
     {
-        const std::filesystem::path pathParam = params.jsonPath;
-        const std::filesystem::path cfgPath = ConfigManager::GetInstance()->GetConfigData().particle_emitter_paths.back();
-        jsonPath_ = cfgPath / pathParam;
+        const std::filesystem::path pathFile = params.jsonPath;
+        jsonPath_ = pathDirectory / pathFile;
     }
 
     // タイマースタート
@@ -573,7 +589,7 @@ void ParticleEmitter::ImGui()
 #endif // _DEBUG
 }
 
-void ParticleEmitter::ModifyGameEye(GameEye** eye)
+void ParticleEmitter::ModifyGameEye(IGameEye** eye)
 {
     particle_->SetGameEye(eye);
     aabb_->SetGameEye(eye);

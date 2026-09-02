@@ -69,7 +69,7 @@ void AABB::Draw1F()
     lines.Draw1F();
 }
 
-void AABB::ModifyGameEye(GameEye** eye)
+void AABB::ModifyGameEye(IGameEye** eye)
 {
     lines.SetGameEye(eye);
 }

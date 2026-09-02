@@ -6,7 +6,7 @@
 #include <Core/DirectX12/DirectX12.h>
 
 // Forward declarations
-class GameEye;
+class IGameEye;
 
 /// <summary>
 /// オブジェクトシステムの基底クラス(マルチスレッド)
@@ -22,14 +22,14 @@ public:
     /// システム全体で共有するカメラ（GameEye）へのポインタを取得します。
     /// </summary>
     /// <returns>GameEye**</returns>
-    GameEye**       GetGlobalEye();     // Get the GameEye for global use
+    IGameEye**       GetGlobalEye();     // Get the GameEye for global use
 
     // Setters
     /// <summary>
     /// システム全体で共有するカメラ（GameEye）を設定します。
     /// </summary>
     /// <param name="_pGameEye">GameEye へのポインタ。</param>
-    void            SetGlobalEye(GameEye* _pGameEye);                               // Set the GameEye for global use
+    void            SetGlobalEye(IGameEye* _pGameEye);                               // Set the GameEye for global use
     /// <summary>
     /// レンダーターゲットビューの CPU ハンドルを設定します。
     /// </summary>
@@ -41,6 +41,6 @@ protected:
     using ComPtr = Microsoft::WRL::ComPtr<T>;
 
     // Pointers
-    GameEye*                            pGlobalEye_         = nullptr;
+    IGameEye*                           pGlobalEye_         = nullptr;
     const D3D12_CPU_DESCRIPTOR_HANDLE*  rtvHandle_          = nullptr;
 };

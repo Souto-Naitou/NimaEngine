@@ -352,6 +352,7 @@
     <ClCompile Include="Features\Event\EventListener.cpp" />
     <ClCompile Include="Features\Event\EventSubscription.cpp" />
     <ClCompile Include="Features\font\FontLayout.cpp" />
+    <ClCompile Include="Features\GameEye2d\GameEye2d.cpp" />
     <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp" />
@@ -499,6 +500,7 @@
     <ClInclude Include="Features\Event\EventListener.h" />
     <ClInclude Include="Features\Event\EventSubscription.h" />
     <ClInclude Include="Features\font\FontLayout.h" />
+    <ClInclude Include="Features\GameEye2d\GameEye2d.h" />
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Input\InputMapper.hpp" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />
@@ -510,6 +512,7 @@
     <ClInclude Include="Features\Primitive\SphereLine.h" />
     <ClInclude Include="Features\screen\IntermediateScreenBase.h" />
     <ClInclude Include="Features\TimeMeasurer\DeltaTimeStopWatch.h" />
+    <ClInclude Include="Interfaces\IGameEye.h" />
     <ClInclude Include="Interfaces\IIntermediateScreenFactory.h" />
     <ClInclude Include="io\loader\TaskExecutor.h" />
     <ClInclude Include="Math\Easing.h" />
@@ -572,6 +575,7 @@
     <ClInclude Include="Interfaces\ISceneFactory.h" />
     <ClInclude Include="Math\Functions.hpp" />
     <ClInclude Include="Math\Transform.h" />
+    <ClInclude Include="Math\Transform2d.h" />
     <ClInclude Include="Math\ViewportUnits.hpp" />
     <ClInclude Include="Presets\Object3d\Grid\Preset_Grid.h" />
     <ClInclude Include="Scene\Args\SceneArgs.h" />

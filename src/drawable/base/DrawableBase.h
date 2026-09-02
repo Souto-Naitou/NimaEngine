@@ -41,6 +41,12 @@ public:
     bool IsDraw1FCalled() const { return isDraw1FCalled_; }
     D3D12_CPU_DESCRIPTOR_HANDLE GetRTVHandleCPU() const { return rtvHandle_; }
 
+    /// <summary>
+    /// 現在のキャンバスを取得します。
+    /// </summary>
+    /// <returns></returns>
+    Canvas* GetCurrentCanvas() const { return pCanvasCurrent_; }
+
 private:
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_ = {};
     bool isDraw1FCalled_ = false;

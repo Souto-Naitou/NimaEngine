@@ -171,6 +171,10 @@ void ImGuiManager::ImGui()
         ImGui::EndCombo();
     }
 
+    ImVec4& clearColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+    ImGui::ColorEdit4("BackGround Color", &clearColor.x);
+
+
     if (isChange)
     {
         switch (idx_currentStyle_)

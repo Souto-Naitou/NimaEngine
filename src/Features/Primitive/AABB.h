@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <Color.h>
+#include <Interfaces/IGameEye.h>
 
 class AABB
 {
@@ -28,7 +29,7 @@ public: /// Setter
         min_ = min;
         max_ = max;
     }
-    void SetGameEye(GameEye** eye) { pGameEye = eye; ModifyGameEye(eye); }
+    void SetGameEye(IGameEye** eye) { pGameEye_ = eye; ModifyGameEye(eye); }
     void SetColor(const RGBA& color) { lines.SetColor(color.to_Vector4()); }
 
 
@@ -42,8 +43,8 @@ private:
     Vector3 max_; // 最大点
     Line lines = {12}; // 線
 
-    void ModifyGameEye(GameEye** eye);
+    void ModifyGameEye(IGameEye** eye);
 
     LineSystem* pLineSystem = nullptr;
-    GameEye** pGameEye = nullptr;
+    IGameEye** pGameEye_ = nullptr;
 };

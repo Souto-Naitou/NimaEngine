@@ -52,7 +52,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> resourceMaterial_ = nullptr;
     Vector4* mappedMaterial_ = nullptr;
 
-    GameEye** ppGlobalEye_ = nullptr;  //< ゲームカメラ
+    IGameEye** ppGlobalEye_ = nullptr;  //< ゲームカメラ
 
     // Pointers
     DirectX12* pDx12_ = nullptr;  //< DirectX12へのポインタ

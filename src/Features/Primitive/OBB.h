@@ -38,7 +38,7 @@ public: /// Setter
         rotateMatrix_ = rotateMatrix;
     }
     void SetSize(const Vector3& size) { size_ = size; }
-    void SetGameEye(GameEye** eye) { pGameEye = eye; ModifyGameEye(eye); }
+    void SetGameEye(IGameEye** eye) { pGameEye = eye; ModifyGameEye(eye); }
 
 
 public: /// Getter
@@ -59,10 +59,10 @@ private:
 
 
 private:
-    void ModifyGameEye(GameEye** eye);
+    void ModifyGameEye(IGameEye** eye);
 
 
 private:
     LineSystem* pLineSystem = nullptr;
-    GameEye** pGameEye = nullptr;
+    IGameEye** pGameEye = nullptr;
 };

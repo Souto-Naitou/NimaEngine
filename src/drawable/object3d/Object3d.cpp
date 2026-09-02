@@ -98,11 +98,11 @@ void Object3d::Update()
     /// カメラのワールド座標を更新
     if (pGameEye_)
     {
-        cameraForGPU_->worldPosition = pGameEye_->GetTransform().translate;
+        cameraForGPU_->worldPosition = pGameEye_->GetPosition();
     }
     else if (ppSystemGameEye_ && *ppSystemGameEye_)
     {
-        cameraForGPU_->worldPosition = (*ppSystemGameEye_)->GetTransform().translate;
+        cameraForGPU_->worldPosition = (*ppSystemGameEye_)->GetPosition();
     }
 
     if (pModel_) pModel_->Update();

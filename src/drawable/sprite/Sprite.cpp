@@ -6,6 +6,7 @@
 #include <Core/DirectX12/TextureManager.h>
 #include <DebugTools/DebugManager/DebugManager.h>
 #include <Common/define.h>
+#include <Features/Layer/Canvas.h>
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -86,8 +87,6 @@ void Sprite::Update()
     isUpdateCalled_ = true;
     #endif // _DEBUG
 
-    uint32_t clientWidth = Window::clientWidth;
-    uint32_t clientHeight = Window::clientHeight;
 
     this->UpdateMetadata();
 
@@ -139,13 +138,7 @@ void Sprite::Update()
     transform_.rotate = { 0.0f, 0.0f, rotate_ };
     transform_.translate = translate_;
 
-    /// WVPMatrixの更新
-    Matrix4x4 worldMatrix = Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-    Matrix4x4 viewMatrix = Matrix4x4::Identity();
-    Matrix4x4 projectionMatrix = Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(clientWidth), float(clientHeight), 0.0f, 100.0f);
-    Matrix4x4 WVPMatrix = worldMatrix * viewMatrix * projectionMatrix;
-    transformationMatrixData_->wvp = WVPMatrix;
-
+    worldMatrix_ = Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 
     /// UVTransformMatrixの更新 (まだ使えない)
     //uvTransformMatrix_ = Matrix4x4::ScaleMatrix(uvTransform_.scale);
@@ -156,6 +149,31 @@ void Sprite::Update()
 void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
 {
     if (!isDrawEnabled_) return;
+
+    /// VP行列を適用する
+    auto pCurrentCanvas = this->GetCurrentCanvas();
+    auto pGameEye = pCurrentCanvas ? pCurrentCanvas->GetGameEye() : nullptr;
+
+    Matrix4x4 vp = {};
+    Matrix4x4 world = {};
+    if (!pGameEye)
+    {
+        vp = Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(Window::clientWidth), float(Window::clientHeight), -1.0f, 1.0f);
+        world = worldMatrix_;
+    }
+    else if (pGameEye->IsOrthographic2d())
+    {
+        vp = pGameEye->GetViewProjectionMatrix();
+        world = Matrix4x4::ScaleMatrix({ 1,-1,1 }) * worldMatrix_;
+    }
+    else
+    {
+        vp = pGameEye->GetViewProjectionMatrix();
+        world = worldMatrix_;
+    }
+
+    transformationMatrixData_->world = world;
+    transformationMatrixData_->wvp = world * vp;
 
     SpriteSystem::CommandListData data{};
     data.materialResource = materialResource_.Get();

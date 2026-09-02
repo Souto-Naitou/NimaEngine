@@ -126,6 +126,15 @@ void Canvas::ImGui()
 #ifdef _DEBUG
     ImGui::Checkbox("Enable", &isEnabled_);
     this->ImGuiPreview();
+    if (params_.pGameEye)
+    {
+        ImGui::Text("Camera: %s", params_.pGameEye->GetName().c_str());
+    }
+    else
+    {
+        ImGui::Text("Camera: None");
+    }
+    
 
     pPostEffectExecutor_->ImGui();
 

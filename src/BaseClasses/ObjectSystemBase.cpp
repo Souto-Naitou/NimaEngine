@@ -1,11 +1,11 @@
 #include "./ObjectSystemBase.h"
 
-GameEye** ObjectSystemBase::GetGlobalEye()
+IGameEye** ObjectSystemBase::GetGlobalEye()
 {
     return &pGlobalEye_;
 }
 
-void ObjectSystemBase::SetGlobalEye(GameEye* pGameEye)
+void ObjectSystemBase::SetGlobalEye(IGameEye* pGameEye)
 {
     pGlobalEye_ = pGameEye;
 }

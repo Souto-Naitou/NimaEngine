@@ -36,8 +36,8 @@ void AudioManager::Update()
 
 void AudioManager::Finalize()
 {
-    pXAudio2_.Reset();
     audioMap_.clear();
+    pXAudio2_.Reset();
 }
 
 void AudioManager::AddSearchPath(const std::string& path)

@@ -10,6 +10,7 @@
 #include <Math/Easing.h>
 #include <Math/Functions.hpp>
 #include <mathExtension.h>
+#include <Core/Window/Window.h>
 
 using namespace Type::ParticleEmitter;
 
@@ -25,7 +26,7 @@ void Particle::Initialize(IModel* pModel)
     pRandomGenerator_ = RandomGenerator::GetInstance();
 
     /// デフォルトのGameEyeを取得
-    pGameEye_ = pSystem_->GetGlobalEye();
+    ppGameEye_ = pSystem_->GetGlobalEye();
 
     if (!currentInstancingSize_) reserve(1, true);
 
@@ -67,24 +68,43 @@ void Particle::Update()
         }
 
         Matrix4x4 wMatrix = {};
-        Matrix4x4 scaleMatrix = Matrix4x4::ScaleMatrix(transform.scale);
-        Matrix4x4 translateMatrix = Matrix4x4::TranslateMatrix(transform.translate);
 
-        if (enableBillboard_) wMatrix = scaleMatrix * billboardMatrix_ * translateMatrix;
-        else wMatrix = Matrix4x4::AffineMatrix(transform.scale, transform.rotate, transform.translate);
+        const Matrix4x4 kAffineMatrix = Matrix4x4::AffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+        Matrix4x4 vpMatrix = {};
+        if (!ppGameEye_ || !(*ppGameEye_))
+        {
+            vpMatrix = Matrix4x4::OrthographicMatrix(0.0f, 0.0f, static_cast<float>(Window::clientWidth), static_cast<float>(Window::clientHeight), -1.0f, 1.0f);
+            wMatrix = kAffineMatrix;
+        }
+        else if ((*ppGameEye_)->IsOrthographic2d())
+        {
+            vpMatrix = (*ppGameEye_)->GetViewProjectionMatrix();
+            wMatrix = Matrix4x4::ScaleMatrix({ 1.0f, -1.0f, 1.0f }) * kAffineMatrix;
+        }
+        else
+        {
+            vpMatrix = (*ppGameEye_)->GetViewProjectionMatrix();
+            Matrix4x4 scaleMatrix = Matrix4x4::ScaleMatrix(transform.scale);
+            Matrix4x4 translateMatrix = Matrix4x4::TranslateMatrix(transform.translate);
+            if (enableBillboard_) wMatrix = scaleMatrix * billboardMatrix_ * translateMatrix;
+            else wMatrix = kAffineMatrix;
+        }
 
         instancingData_[index].world = wMatrix;
-        instancingData_[index].wvp = wMatrix * (*pGameEye_)->GetViewProjectionMatrix();
+        instancingData_[index].wvp = wMatrix * vpMatrix;
         instancingData_[index].color = currentColor;
 
         ++itr;
         ++index;
     }
 
+
+
     /// ビルボード
     if (enableBillboard_)
     {
-        billboardMatrix_ = backToFrontMatrix_ * (*pGameEye_)->GetWorldMatrix();
+        billboardMatrix_ = backToFrontMatrix_ * (*ppGameEye_)->GetWorldMatrix();
         /// 平行移動成分を除去
         for (uint32_t i = 0; i < 3; i++) billboardMatrix_.m[3][i] = 0.0f;
     }
@@ -164,7 +184,6 @@ void Particle::CreateSRV()
     srvGpuHandle_ = srvManager->GetGPUDescriptorHandle(srvIndex_);
 
     srvManager->CreateForStructuredBuffer(srvIndex_, instancingResource_.Get(), static_cast<UINT>(currentInstancingSize_), sizeof(ParticleForGPU));
-    return;
 }
 
 void Particle::GetModelData()

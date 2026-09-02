@@ -148,6 +148,7 @@ private: /// メンバ変数
     /// 変換行列
     Microsoft::WRL::ComPtr<ID3D12Resource>      transformationMatrixResource_   = nullptr;              // 変換行列リソース
     TransformationMatrix*                       transformationMatrixData_       = nullptr;              // 変換行列データ
+    Matrix4x4                                   worldMatrix_                    = {};                   // ワールド行列
 
     /// ImGui用
     #ifdef _DEBUG

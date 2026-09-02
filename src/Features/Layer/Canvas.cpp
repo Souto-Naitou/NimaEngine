@@ -128,7 +128,7 @@ void Canvas::ImGui()
     this->ImGuiPreview();
     if (params_.pGameEye)
     {
-        ImGui::Text("Camera: %s", params_.pGameEye->GetName());
+        ImGui::Text("Camera: %s", params_.pGameEye->GetName().c_str());
     }
     else
     {

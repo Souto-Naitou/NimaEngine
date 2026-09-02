@@ -140,10 +140,7 @@ void Sprite::Update()
     transform_.rotate = { 0.0f, 0.0f, rotate_ };
     transform_.translate = translate_;
 
-    /// 行列の更新
     worldMatrix_ = Matrix4x4::AffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
-    transformationMatrixData_->world = worldMatrix_;
-
 
     /// UVTransformMatrixの更新 (まだ使えない)
     //uvTransformMatrix_ = Matrix4x4::ScaleMatrix(uvTransform_.scale);
@@ -158,9 +155,27 @@ void Sprite::DrawCall(ID3D12GraphicsCommandList* cl)
     /// VP行列を適用する
     auto pCurrentCanvas = this->GetCurrentCanvas();
     auto pGameEye = pCurrentCanvas ? pCurrentCanvas->GetGameEye() : nullptr;
-    Matrix4x4 vp = pGameEye ? pGameEye->GetViewProjectionMatrix()
-        : Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(Window::clientWidth), float(Window::clientHeight), 0.0f, 100.0f);
-    transformationMatrixData_->wvp = worldMatrix_ * vp;
+
+    Matrix4x4 vp = {};
+    Matrix4x4 world = {};
+    if (!pGameEye)
+    {
+        vp = Matrix4x4::OrthographicMatrix(0.0f, 0.0f, float(Window::clientWidth), float(Window::clientHeight), -1.0f, 1.0f);
+        world = worldMatrix_;
+    }
+    else if (pGameEye->IsOrthographic2d())
+    {
+        vp = pGameEye->GetViewProjectionMatrix();
+        world = Matrix4x4::ScaleMatrix({ 1,-1,1 }) * worldMatrix_;
+    }
+    else
+    {
+        vp = pGameEye->GetViewProjectionMatrix();
+        world = worldMatrix_;
+    }
+
+    transformationMatrixData_->world = world;
+    transformationMatrixData_->wvp = world * vp;
 
     SpriteSystem::CommandListData data{};
     data.materialResource = materialResource_.Get();

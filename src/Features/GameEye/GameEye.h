@@ -48,6 +48,7 @@ public: /// Getter
     Matrix4x4               GetViewProjectionMatrix() const override    { return vpMatrix_; }
     const std::string&      GetName() const override                    { return name_; }
     Vector3                 GetPosition() const override                { return transform_.translate; }
+    bool                    IsOrthographic2d() const override           { return false; }
 
 public: /// Setter
     void SetTransform(const EulerTransform& transform)     { transform_ = transform; }

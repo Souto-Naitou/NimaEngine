@@ -46,11 +46,11 @@ void GameEye2d::Recalculation()
 
     // 正射影行列の計算
     Matrix4x4 projection = Matrix4x4::OrthographicMatrix(
-        -halfWidth, -halfHeight, halfWidth, halfHeight, -1.0f, 1.0f
+        -halfWidth, halfHeight, halfWidth, -halfHeight, -1.0f, 1.0f
     );
 
     // ビュー行列の計算
-    Matrix4x4 view = Matrix4x4::TranslateMatrix(Vector2(-position_.x, position_.y)) * Matrix4x4::RotateZMatrix(-rotation_);
+    Matrix4x4 view = Matrix4x4::TranslateMatrix(-position_) * Matrix4x4::RotateZMatrix(-rotation_);
 
     // ビュー射影行列の計算
     vpMatrix_ = view * projection;

@@ -16,6 +16,7 @@ namespace cfg
         uint32_t screen_width;
         uint32_t screen_height;
         std::string start_scene;
+        std::string particle_emitter_default_config_filename;
 
         std::list<std::string> model_paths;
         std::list<std::string> texture_paths;

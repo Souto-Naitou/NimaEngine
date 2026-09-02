@@ -27,6 +27,7 @@ public:
     Matrix4x4   GetViewProjectionMatrix() const  override   { return vpMatrix_; };
     Vector3     GetPosition() const override                { return position_; }
     Matrix4x4   GetWorldMatrix() const override             { return wMatrix_; }
+    bool        IsOrthographic2d() const override           { return true; }
 
     // 名前を設定
     void    SetName(const std::string& name)        { name_ = name; }

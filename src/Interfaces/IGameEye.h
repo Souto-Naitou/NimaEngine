@@ -13,4 +13,5 @@ public:
     virtual Vector3     GetPosition() const = 0;
     virtual Matrix4x4   GetWorldMatrix() const = 0;
     virtual const std::string& GetName() const = 0;
+    virtual bool        IsOrthographic2d() const = 0;
 };

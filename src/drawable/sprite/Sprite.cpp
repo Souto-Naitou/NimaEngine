@@ -87,8 +87,6 @@ void Sprite::Update()
     isUpdateCalled_ = true;
     #endif // _DEBUG
 
-    uint32_t clientWidth = Window::clientWidth;
-    uint32_t clientHeight = Window::clientHeight;
 
     this->UpdateMetadata();
 

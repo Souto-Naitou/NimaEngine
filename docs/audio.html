@@ -167,18 +167,20 @@ auto jumpSE = audioManager->GetNewAudio("Effect", "resources/audio/jump.wav");</
                 <div class="card">
                     <p class="class-description">個別の音声再生を制御するクラス。</p>
 
+                    <p class="text-muted">※ <code>Audio</code> インスタンスは <code>AudioManager::GetNewAudio()</code> から取得します。生成・破棄は <code>AudioManager</code> が管理するため、手動の初期化・終了処理は不要です。</p>
+
                     <h3>主要メソッド</h3>
                     <div class="method-list">
-                        <div class="method">
-                            <code>void Initialize()</code>
-                            <p>Audioインスタンスを初期化します。通常、AudioManagerによって自動的に呼ばれます。</p>
-                        </div>
                         <div class="method">
                             <code>void Play(bool isLoop = false)</code>
                             <p>音声を再生します。</p>
                             <ul>
                                 <li><code>isLoop</code> - <code>true</code>でループ再生</li>
                             </ul>
+                        </div>
+                        <div class="method">
+                            <code>void Stop()</code>
+                            <p>再生中の音声を停止します。</p>
                         </div>
                         <div class="method">
                             <code>void SetVolume(float volume)</code>
@@ -190,14 +192,6 @@ auto jumpSE = audioManager->GetNewAudio("Effect", "resources/audio/jump.wav");</
                         <div class="method">
                             <code>float GetVolume() const</code>
                             <p>現在のボリュームを取得します。</p>
-                        </div>
-                        <div class="method">
-                            <code>void Unload(SoundData* soundData)</code>
-                            <p>音声データをアンロードします。内部で使用されるメソッドです。</p>
-                        </div>
-                        <div class="method">
-                            <code>void Finalize()</code>
-                            <p>Audioリソースを解放します。</p>
                         </div>
                     </div>
 

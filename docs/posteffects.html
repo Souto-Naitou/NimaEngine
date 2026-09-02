@@ -35,12 +35,16 @@
                             <li><a href="#outline-depth">DepthBasedOutline</a></li>
                             <li><a href="#outline-prewitt">PrewittOutline</a></li>
                             <li><a href="#radialblur">RadialBlur</a></li>
-                            <li><a href="#vignette">Vignette</a></li>
                             <li><a href="#grayscale">Grayscale</a></li>
-                            <li><a href="#dissolve">Dissolve</a></li>
                             <li><a href="#random">RandomFilter</a></li>
                             <li><a href="#luminance">LuminanceOutput</a></li>
                             <li><a href="#box">BoxFilter</a></li>
+                            <li><a href="#scanline">Scanline</a></li>
+                            <li><a href="#mosaic">Mosaic</a></li>
+                            <li><a href="#chromatic">ChromaticAberration</a></li>
+                            <li><a href="#posterize">Posterize</a></li>
+                            <li><a href="#vignette">Vignette（未登録）</a></li>
+                            <li><a href="#dissolve">Dissolve（未登録）</a></li>
                         </ul>
                     </li>
                     <li><a href="#custom">カスタムエフェクトの作成</a></li>
@@ -119,34 +123,34 @@
             <section id="usage" class="section">
                 <h2>基本的な使い方</h2>
                 <div class="card">
-                    <h3>1. エフェクトの取得と有効化</h3>
-                    <pre><code>// Viewportから特定のポストエフェクトを取得
-auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
+                    <p>ポストエフェクトは <strong>Canvasごと</strong> に管理されます。<code>Canvas::GetPostEffectExecutor()</code> が返す <code>PostEffectExecutor</code> に、<code>PostEffectClassName</code> 列挙型で指定したエフェクトを追加します。</p>
+
+                    <h3>1. エフェクトの追加と有効化</h3>
+                    <pre><code>// Canvasのポストエフェクト実行器にエフェクトを追加する
+// AddEffect は基底 IPostEffect* を返す
+IPostEffect* bloom = canvas->GetPostEffectExecutor().AddEffect(
+    PostEffectClassName::GaussianBloom
+);
 
 // エフェクトを有効化
-if (bloom) {
-    bloom->Enable(true);
-}</code></pre>
+bloom->Enable(true);</code></pre>
 
                     <h3>2. パラメータの調整</h3>
-                    <pre><code>// ブルームの強度を調整
-auto& bloomOption = bloom->GetOption();
-// オプション構造体の値を変更（エフェクトにより異なる）
+                    <pre><code>// 個別パラメータは基底 IPostEffect* には無いため、
+// 具象クラスへキャストするか、デバッグUI（ImGui）から調整します。
+auto* concrete = static_cast&lt;GaussianBloom*&gt;(bloom);
+// concrete->... // 具象クラスが公開するSetter/オプションを使用
 
-// または専用のSetterメソッドを使用
-auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
-if (vignette) {
-    vignette->SetScale(0.8f);
-    vignette->SetPower(2.0f);
-}</code></pre>
+// 有効/無効の切り替えと状態取得は基底インターフェースで可能
+bloom->Enable(true);
+bool isOn = bloom->Enabled();</code></pre>
 
                     <h3>3. 複数のエフェクトの組み合わせ</h3>
-                    <pre><code>// 複数のエフェクトを有効化
-pViewport_->GetPostEffect&lt;GaussianBloom&gt;()->Enable(true);
-pViewport_->GetPostEffect&lt;Vignette&gt;()->Enable(true);
-pViewport_->GetPostEffect&lt;DepthBasedOutline&gt;()->Enable(true);
-
-// エフェクトは登録順に適用されます</code></pre>
+                    <pre><code>// 複数のエフェクトを追加（登録順に適用されます）
+auto& executor = canvas->GetPostEffectExecutor();
+executor.AddEffect(PostEffectClassName::GaussianBloom)->Enable(true);
+executor.AddEffect(PostEffectClassName::DepthBasedOutline)->Enable(true);
+executor.AddEffect(PostEffectClassName::RadialBlur)->Enable(true);</code></pre>
                 </div>
             </section>
 
@@ -173,13 +177,22 @@ pViewport_->GetPostEffect&lt;DepthBasedOutline&gt;()->Enable(true);
                             </div>
                         </div>
 
+                        <h4>主なSetter（具象クラス GaussianBloom）</h4>
+                        <div class="member-list">
+                            <div class="member">
+                                <code>void SetBloomIntensity(float) / SetKernelSize(int) / SetSigma(float) / SetThreshold(float)</code>
+                                <p>ブルーム強度・カーネルサイズ・シグマ・閾値を調整します。<code>GetOption()</code> でオプション構造体にも直接アクセスできます。</p>
+                            </div>
+                        </div>
+
                         <h4>使用例</h4>
-                        <pre><code>auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
-if (bloom) {
-    bloom->Enable(true);
-    auto& option = bloom->GetOption();
-    option.bloomIntensity = 1.5f; // 強度を1.5倍に
-}</code></pre>
+                        <pre><code>// Canvasに追加し、具象クラスへキャストしてパラメータ調整
+auto* bloom = static_cast&lt;GaussianBloom*&gt;(
+    canvas->GetPostEffectExecutor().AddEffect(PostEffectClassName::GaussianBloom)
+);
+bloom->Enable(true);
+bloom->SetBloomIntensity(1.5f);          // 強度を1.5倍に
+// もしくは bloom->GetOption().bloomIntensity = 1.5f;</code></pre>
 
                         <h4>用途</h4>
                         <ul>
@@ -277,13 +290,13 @@ if (bloom) {
                         </div>
 
                         <h4>使用例</h4>
-                        <pre><code>auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
-if (radialBlur) {
-    radialBlur->Enable(true);
-    radialBlur->SetCenter(Vector2(0.5f, 0.5f)); // 画面中央
-    radialBlur->SetSamples(24); // サンプル数を増やして滑らかに
-    radialBlur->SetBlurWidth(0.02f); // ブラー幅を設定
-}</code></pre>
+                        <pre><code>auto* radialBlur = static_cast&lt;RadialBlur*&gt;(
+    canvas->GetPostEffectExecutor().AddEffect(PostEffectClassName::RadialBlur)
+);
+radialBlur->Enable(true);
+radialBlur->GetOption().center = Vector2(0.5f, 0.5f); // 画面中央
+radialBlur->SetSamples(24);      // サンプル数を増やして滑らかに
+radialBlur->SetBlurWidth(0.02f); // ブラー幅を設定</code></pre>
 
                         <h4>用途</h4>
                         <ul>
@@ -300,7 +313,9 @@ if (radialBlur) {
                     <div class="card">
                         <p class="class-description">画面の周辺を暗くする（または特定色で染める）エフェクト。視線誘導や雰囲気作りに有効です。</p>
 
-                        <h4>パラメータ</h4>
+                        <p class="text-muted">⚠️ <strong>Vignette は実装済みですが、現在 <code>PostEffectClassName</code> に登録されていません。</strong>そのため <code>AddEffect()</code> では追加できません（利用するには列挙型とファクトリへの登録が必要です）。以下は実装クラスが公開しているパラメータです。</p>
+
+                        <h4>パラメータ（VignetteOption）</h4>
                         <div class="member-list">
                             <div class="member">
                                 <code>Vector3 color</code>
@@ -320,17 +335,13 @@ if (radialBlur) {
                             </div>
                         </div>
 
-                        <h4>使用例</h4>
-                        <pre><code>auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
-if (vignette) {
-                            vignette->Enable(true);
-    vignette->SetScale(0.8f); // スケールを設定
-    vignette->SetPower(2.0f); // 強度を設定
-    
-    // オプションで色も調整可能
-    auto& option = vignette->GetOption();
-    option.color = Vector3(0.0f, 0.0f, 0.0f); // 黒
-}</code></pre>
+                        <h4>主なSetter（具象クラス Vignette）</h4>
+                        <div class="member-list">
+                            <div class="member">
+                                <code>void SetScale(float) / SetPower(float)</code>
+                                <p>スケール・強度を設定します。色などは <code>GetOption()</code> で <code>VignetteOption</code> に直接アクセスして変更します。</p>
+                            </div>
+                        </div>
 
                         <h4>用途</h4>
                         <ul>
@@ -362,6 +373,8 @@ if (vignette) {
                     <h3>Dissolve（ディゾルブ）</h3>
                     <div class="card">
                         <p class="class-description">ノイズテクスチャを使用して画像を溶解させるエフェクト。フェードとは異なる独特の遷移を実現します。</p>
+
+                        <p class="text-muted">⚠️ <strong>Dissolve は実装済みですが、現在 <code>PostEffectClassName</code> に登録されていません。</strong>そのため <code>AddEffect()</code> では追加できません。</p>
 
                         <h4>特徴</h4>
                         <ul>
@@ -429,6 +442,58 @@ if (vignette) {
                         </ul>
                     </div>
                 </div>
+
+                <div id="scanline" class="subsection">
+                    <h3>Scanline（走査線）</h3>
+                    <div class="card">
+                        <p class="class-description">走査線状のラインを重ねるエフェクト。ブラウン管風・レトロな表現に使用します。</p>
+                        <h4>用途</h4>
+                        <ul>
+                            <li>レトロゲーム風の演出</li>
+                            <li>CRTモニター風の表現</li>
+                            <li>グリッチ・故障表現</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="mosaic" class="subsection">
+                    <h3>Mosaic（モザイク）</h3>
+                    <div class="card">
+                        <p class="class-description">画像をブロック状に量子化してモザイク化するエフェクト。</p>
+                        <h4>用途</h4>
+                        <ul>
+                            <li>検閲・伏せ字表現</li>
+                            <li>ピクセルアート風の演出</li>
+                            <li>ダメージ・ノイズ表現</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="chromatic" class="subsection">
+                    <h3>ChromaticAberration（色収差）</h3>
+                    <div class="card">
+                        <p class="class-description">RGBチャンネルをずらして色収差（にじみ）を表現するエフェクト。</p>
+                        <h4>用途</h4>
+                        <ul>
+                            <li>衝撃・ダメージ表現</li>
+                            <li>レンズ的なリアリティの付与</li>
+                            <li>幻覚・酩酊の演出</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="posterize" class="subsection">
+                    <h3>Posterize（ポスタリゼーション）</h3>
+                    <div class="card">
+                        <p class="class-description">階調数を減らして色を段階化するエフェクト。</p>
+                        <h4>用途</h4>
+                        <ul>
+                            <li>イラスト・ポスター調の表現</li>
+                            <li>トゥーン調の色数削減</li>
+                            <li>レトロな色表現</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
             <section id="custom" class="section">
@@ -470,101 +535,77 @@ public:
                 <h2>サンプルコード</h2>
                 
                 <div class="card">
-                    <h3>シンプルな使用例</h3>
-                    <pre><code>// 初期化時（NimaFramework::Initialize内など）
-// ポストエフェクトは自動的に登録されているため、取得して有効化するだけ
+                    <p class="text-muted">※ 以下の例では、シーンやオブジェクトが保持している <code>Canvas</code>（<code>canvas</code>）に対してエフェクトを追加します。追加したエフェクトのポインタはメンバに保持しておくと、後から有効/無効やパラメータを切り替えられます。</p>
 
-void MyGame::Initialize()
+                    <h3>シンプルな使用例</h3>
+                    <pre><code>// 初期化時に、Canvasにブルームを追加して有効化する
+void MyScene::Initialize()
 {
-    NimaFramework::Initialize();
-    
-    // ブルームを有効化
-    auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
-    if (bloom) {
-        bloom->Enable(true);
-    }
+    IPostEffect* bloom = canvas_->GetPostEffectExecutor().AddEffect(
+        PostEffectClassName::GaussianBloom
+    );
+    bloom->Enable(true);
 }</code></pre>
 
                     <h3>動的なパラメータ変更</h3>
-                    <pre><code>void MyGame::Update()
+                    <pre><code>// 初期化時に追加し、ポインタを保持しておく
+// GaussianBloom* pBloom_;
+void MyScene::Initialize()
 {
-    NimaFramework::Update();
-    
-    // プレイヤーのHP が低い時にビネットを強くする
-    auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
-    if (vignette) {
-        float hpRatio = player->GetHP() / player->GetMaxHP();
-        
-        if (hpRatio < 0.3f) {
-            vignette->Enable(true);
-            vignette->SetPower(3.0f * (1.0f - hpRatio)); // HPが低いほど強く
-            
-            auto& option = vignette->GetOption();
-            option.color = Vector3(1.0f, 0.0f, 0.0f); // 赤いビネット
-        } else {
-            vignette->Enable(false);
-        }
-    }
+    pBloom_ = static_cast&lt;GaussianBloom*&gt;(
+        canvas_->GetPostEffectExecutor().AddEffect(PostEffectClassName::GaussianBloom)
+    );
+}
+
+void MyScene::Update()
+{
+    // プレイヤーのHPが低いほどブルームを強くする
+    float hpRatio = player->GetHP() / player->GetMaxHP();
+    pBloom_->Enable(hpRatio &lt; 0.3f);
+    pBloom_->SetBloomIntensity(1.0f + 3.0f * (1.0f - hpRatio));
 }</code></pre>
 
                     <h3>スローモーション演出</h3>
-                    <pre><code>void GameScene::ActivateSlowMotion()
+                    <pre><code>// 初期化時に追加してポインタを保持:
+//   RadialBlur* pRadialBlur_;  Grayscale* pGrayscale_;
+void GameScene::ActivateSlowMotion()
 {
-    // 時間を遅くする
     pDeltaTimeManager_->SetTimeScale(0.3f);
-    
+
     // ラジアルブラーで視覚効果を追加
-    auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
-    if (radialBlur) {
-        radialBlur->Enable(true);
-        radialBlur->SetBlurWidth(0.015f);
-        radialBlur->SetSamples(20);
-    }
-    
+    pRadialBlur_->Enable(true);
+    pRadialBlur_->SetBlurWidth(0.015f);
+    pRadialBlur_->SetSamples(20);
+
     // グレースケールで色彩を抑える
-    auto grayscale = pViewport_->GetPostEffect&lt;Grayscale&gt;();
-    if (grayscale) {
-        grayscale->Enable(true);
-    }
+    pGrayscale_->Enable(true);
 }
 
 void GameScene::DeactivateSlowMotion()
 {
     pDeltaTimeManager_->SetTimeScale(1.0f);
-    
-    auto radialBlur = pViewport_->GetPostEffect&lt;RadialBlur&gt;();
-    if (radialBlur) radialBlur->Enable(false);
-    
-    auto grayscale = pViewport_->GetPostEffect&lt;Grayscale&gt;();
-    if (grayscale) grayscale->Enable(false);
+    pRadialBlur_->Enable(false);
+    pGrayscale_->Enable(false);
 }</code></pre>
 
                     <h3>エフェクトの組み合わせ</h3>
-                    <pre><code>// 幻想的なシーンの演出
-void CreateDreamyScene()
+                    <pre><code>// 幻想的なシーンの演出（初期化時に追加）
+void CreateDreamyScene(Canvas* canvas)
 {
+    auto& executor = canvas->GetPostEffectExecutor();
+
     // ブルームで発光効果
-    auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
-    if (bloom) {
-        bloom->Enable(true);
-        auto& option = bloom->GetOption();
-        option.bloomIntensity = 2.0f; // 強めのブルーム
-    }
-    
-    // ビネットで周辺を暗く
-    auto vignette = pViewport_->GetPostEffect&lt;Vignette&gt;();
-    if (vignette) {
-        vignette->Enable(true);
-        vignette->SetScale(0.7f);
-        vignette->SetPower(1.5f);
-    }
-    
+    auto* bloom = static_cast&lt;GaussianBloom*&gt;(
+        executor.AddEffect(PostEffectClassName::GaussianBloom)
+    );
+    bloom->Enable(true);
+    bloom->SetBloomIntensity(2.0f); // 強めのブルーム
+
     // 軽いガウシアンブラーでソフトフォーカス
-    auto blur = pViewport_->GetPostEffect&lt;SeparatedGaussianFilter&gt;();
-    if (blur) {
-        blur->Enable(true);
-        // ブラーの強さを調整（実装依存）
-    }
+    executor.AddEffect(PostEffectClassName::SeparatedGaussianFilter)->Enable(true);
+
+    // 色収差でにじみを加える
+    executor.AddEffect(PostEffectClassName::ChromaticAberration)->Enable(true);
 }</code></pre>
                 </div>
             </section>

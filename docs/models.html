@@ -132,16 +132,18 @@ Object3d::SetModel()
                 <div class="card">
                     <p class="class-description">モデルの読み込みと管理を統括するクラス。</p>
 
-                    <h3>初期化</h3>
-                    <pre><code>// NimaFrameworkによって自動的に初期化されます
-// DIコンテナから取得
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
+                    <h3>生成と初期化</h3>
+                    <p><code>ModelManager</code> はシングルトンではなく、<code>Helper::Model</code> のファクトリ関数で <strong>ローダー・ストレージと共に生成</strong> します（通常はゲーム起動時に1回だけ）。生成したインスタンスはゲーム側で保持し、必要な箇所へ渡して使用します。</p>
+                    <pre><code>// ローダー・ストレージ・マネージャを生成（初期化時に1回だけ）
+auto modelLoader  = Helper::Model::CreateLoader&lt;ModelLoaderAssimp&gt;(pDx12);
+auto modelStorage = Helper::Model::CreateStorage();
+auto modelManager = Helper::Model::CreateManager(modelLoader.get(), modelStorage.get());</code></pre>
 
                     <h3>主要メソッド</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>void Initialize()</code>
-                            <p>モデル管理の初期化を行います。</p>
+                            <code>void Initialize(IModelLoader* loader, ModelStorage* storage)</code>
+                            <p>ローダーとストレージを渡してモデル管理を初期化します。</p>
                         </div>
                         <div class="method">
                             <code>void AddSearchPath(const std::string& path)</code>
@@ -164,8 +166,8 @@ auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
                     </div>
 
                     <h3>使用例</h3>
-                    <pre><code>// DIコンテナから取得
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+                    <pre><code>// 生成済みの ModelManager を使用（ゲームが保持しているインスタンス）
+// auto modelManager = Helper::Model::CreateManager(loader, storage); で生成したもの
 
 // 検索パスを追加（初期化時）
 modelManager->AddSearchPath("resources/models/");
@@ -337,8 +339,8 @@ for (各頂点)
                 <h2>基本的な使い方</h2>
                 <div class="card">
                     <h3>1. モデルのロード</h3>
-                    <pre><code>// ModelManagerの取得（DIコンテナから）
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+                    <pre><code>// 生成済みの ModelManager を使用（起動時に Helper::Model で生成し保持したもの）
+ModelManager* modelManager = pModelManager_;
 
 // モデルをロード（この時点ではキャッシュされたオリジナル）
 auto originalModel = modelManager->Load("resources/models/player.gltf");</code></pre>
@@ -360,12 +362,12 @@ object->SetTranslate(Vector3(0, 0, 0));
 object->SetRotate(Vector3(0, 0, 0));
 object->SetScale(Vector3(1, 1, 1));</code></pre>
 
-                    <h3>4. 描画</h3>
+                    <h3>4. 更新と描画</h3>
                     <pre><code>// 更新（アニメーションの進行）
 object->Update();
 
-// 描画
-object->Draw1F();</code></pre>
+// 描画はCanvasに登録して行う（初期化時に一度だけ登録すればよい）
+// canvas->RegisterDrawable(object.get());</code></pre>
                 </div>
             </section>
 
@@ -382,11 +384,11 @@ private:
     ModelManager* pModelManager_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        // DIコンテナからModelManagerを取得
-        pModelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        pModelManager_ = pModelManager;
+
         // モデルの初期化
         ObjectsInitialize();
     }
@@ -410,23 +412,20 @@ public:
         
         // モデルを設定
         object_->SetModel(pModelSelfBody_.get());
-        
+
         // マテリアルのカスタマイズ
         auto& option = object_->GetOption();
         option.materialData->environmentCoefficient = 0.0f;
         option.materialData->color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+
+        // 描画はCanvasに登録して行う
+        // canvas->RegisterDrawable(object_.get());
     }
-    
+
     void Update()
     {
         // オブジェクトの更新（アニメーション等）
         object_->Update();
-    }
-    
-    void Draw1F()
-    {
-        // オブジェクトの描画
-        object_->Draw1F();
     }
 };</code></pre>
 
@@ -447,10 +446,11 @@ private:
     ModelManager* modelManager_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        modelManager_ = pModelManager;
+
         // 敵のオリジナルモデルをロード（1回だけ）
         enemyModelOriginal_ = modelManager_->Load("enemy.gltf");
     }
@@ -467,7 +467,9 @@ public:
         enemy.object->Initialize();
         enemy.object->SetModel(enemy.model.get());
         enemy.object->SetTranslate(position);
-        
+        // 描画はCanvasに登録して行う
+        // canvas->RegisterDrawable(enemy.object.get());
+
         enemy.position = position;
         enemy.health = 100.0f;
         
@@ -480,17 +482,9 @@ public:
         for (auto& enemy : enemies_)
         {
             enemy.object->Update();
-            
+
             // 敵のAI処理など
             // ...
-        }
-    }
-    
-    void Draw()
-    {
-        for (auto& enemy : enemies_)
-        {
-            enemy.object->Draw1F();
         }
     }
 };</code></pre>
@@ -504,24 +498,24 @@ private:
     int currentSkinIndex_ = 0;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* modelManager)
     {
-        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
-        auto textureManager = DIContainer::Resolve&lt;TextureManager&gt;();
-        
+        // modelManager はゲームが生成・保持しているインスタンス
+        auto textureManager = TextureManager::GetInstance();
+
         // キャラクターモデルのロード
         auto original = modelManager->Load("character.gltf");
         characterModel_ = original->Cloned();
         
         // 複数のスキンテクスチャをロード
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_default.png")
+            textureManager->GetSrvHandleGPU("skin_default.png")
         );
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_red.png")
+            textureManager->GetSrvHandleGPU("skin_red.png")
         );
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_blue.png")
+            textureManager->GetSrvHandleGPU("skin_blue.png")
         );
     }
     
@@ -549,10 +543,10 @@ private:
     GltfModel* gltfModel_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* modelManager)
     {
-        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // modelManager はゲームが生成・保持しているインスタンス
+
         // アニメーション付きモデルのロード
         auto original = modelManager->Load("animated_character.gltf");
         model_ = original->Cloned();
@@ -589,10 +583,11 @@ private:
     bool isLoadingComplete_ = false;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        modelManager_ = pModelManager;
+
         // 検索パスを追加
         modelManager_->AddSearchPath("resources/models/");
         modelManager_->AddSearchPath("resources/models/characters/");

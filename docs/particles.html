@@ -193,7 +193,7 @@ ParticleSystem::DrawCall()
                             <p>ビルボード（常にカメラを向く）を有効/無効にします。</p>
                         </div>
                         <div class="method">
-                            <code>void SetGameEye(GameEye** pGameEye)</code>
+                            <code>void SetGameEye(IGameEye** pGameEye)</code>
                             <p>カメラを設定します。</p>
                         </div>
                         <div class="method">
@@ -218,7 +218,8 @@ ParticleSystem::DrawCall()
                     <p class="class-description">パーティクルの発生を制御するクラス。</p>
 
                     <h3>初期化パラメータ</h3>
-                    <pre><code>struct ParticleEmitterInitParams
+                    <p><code>ParticleEmitter::Params</code>（<code>ParticleEmitter</code> のネスト構造体）を使用します。</p>
+                    <pre><code>struct ParticleEmitter::Params
 {
     Particle* particle = nullptr;  // 使用するParticleインスタンス
     std::string jsonPath = {};      // 設定JSONファイルのパス
@@ -227,7 +228,7 @@ ParticleSystem::DrawCall()
                     <h3>主要メソッド</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>void Initialize(const ParticleEmitterInitParams& params)</code>
+                            <code>void Initialize(const ParticleEmitter::Params& params)</code>
                             <p>エミッターを初期化します。JSONファイルから設定を読み込みます。</p>
                         </div>
                         <div class="method">
@@ -243,7 +244,7 @@ ParticleSystem::DrawCall()
                             <p>エミッターの状態を更新します。自動モードの場合、タイミングに応じて発生します。</p>
                         </div>
                         <div class="method">
-                            <code>void Draw()</code>
+                            <code>void Draw1F()</code>
                             <p>パーティクルの描画を行います（内部でParticle::DrawCall()を呼びます）。</p>
                         </div>
                         <div class="method">
@@ -270,7 +271,7 @@ ParticleSystem::DrawCall()
 
                     <h3>使用例</h3>
                     <pre><code>// エミッターの作成
-ParticleEmitterInitParams emitterParams = {};
+ParticleEmitter::Params emitterParams = {};
 emitterParams.particle = particleInstance;
 emitterParams.jsonPath = "resources/json/particles/explosion.json";
 
@@ -291,7 +292,7 @@ if (explosionTriggered)
 }
 
 // 描画
-emitter->Draw();</code></pre>
+emitter->Draw1F();</code></pre>
                 </div>
             </section>
 
@@ -301,76 +302,98 @@ emitter->Draw();</code></pre>
                     <h3>JSON設定ファイル</h3>
                     <p>パーティクルの挙動はJSONファイルで設定します。</p>
 
-                    <h3>主要パラメータ</h3>
+                    <p class="text-muted">※ JSONは <code>EmitterData</code>（<code>Type::ParticleEmitter::v3::Data</code>）のシリアライズ形式です。通常は<strong>エンジン内のImGuiエディタで編集・保存</strong>し、開発中はホットリロードされます。以下は実際のキー構造です（<code>ranges</code> 内の各項目は <code>Range</code> 型で、始点・終点を持ちます）。</p>
+
+                    <h3>主要パラメータ（キー構造）</h3>
                     <div class="card" style="background-color: var(--code-bg);">
-                        <h4>発生設定</h4>
+                        <h4>common（共通）</h4>
                         <ul>
-                            <li><code>emitCount</code> - 1回あたりの発生数</li>
                             <li><code>emitInterval</code> - 発生間隔（秒）</li>
-                            <li><code>emitRadius</code> - 発生半径</li>
+                            <li><code>emitNum</code> - 1回あたりの発生数</li>
+                            <li><code>emitterLifeTime</code> - エミッタの寿命（秒）</li>
+                            <li><code>particleLifeTime</code> - パーティクルの寿命（秒）</li>
+                            <li><code>scaleFixed</code> / <code>scaleDelayTime</code> - 固定スケール / スケール遅延</li>
+                            <li><code>emitPositionFixed</code> - 固定発生位置</li>
+                            <li><code>alphaDeltaValue</code> - 透明度の変化量</li>
+                            <li><code>velocityFixed</code> - 固定速度</li>
                         </ul>
 
-                        <h4>物理パラメータ</h4>
+                        <h4>ranges（範囲・始点終点）</h4>
                         <ul>
-                            <li><code>velocity</code> - 初速度の範囲（min, max）</li>
-                            <li><code>acceleration</code> - 加速度（重力など）</li>
-                            <li><code>lifeTime</code> - 寿命（秒）の範囲</li>
-                            <li><code>friction</code> - 摩擦係数</li>
+                            <li><code>scale</code> / <code>scaleRandom</code> - スケール範囲 / ランダム範囲</li>
+                            <li><code>position</code> - 発生位置範囲</li>
+                            <li><code>color</code> - 色変化（始点→終点）</li>
+                            <li><code>velocityRandom</code> / <code>velocityRandomSphere</code> - 速度ランダム範囲</li>
+                            <li><code>rotationRandom</code> - 回転ランダム範囲</li>
                         </ul>
 
-                        <h4>外観パラメータ</h4>
+                        <h4>physics（物理）</h4>
                         <ul>
-                            <li><code>colorStart</code> - 開始時の色</li>
-                            <li><code>colorEnd</code> - 終了時の色</li>
-                            <li><code>scaleStart</code> - 開始時のスケール</li>
-                            <li><code>scaleEnd</code> - 終了時のスケール</li>
+                            <li><code>gravity</code> - 重力</li>
+                            <li><code>resistance</code> - 抵抗</li>
+                            <li><code>frictionCoef</code> - 摩擦係数</li>
+                            <li><code>smoothNoisePower</code> - スムースノイズ強度</li>
                         </ul>
 
-                        <h4>床衝突設定</h4>
+                        <h4>flags（フラグ）</h4>
                         <ul>
+                            <li><code>enableRandomVelocity</code> / <code>enableRandomEmit</code> / <code>enableRandomRotation</code> / <code>enableRandomScale</code></li>
+                            <li><code>enableScaleTransition</code> - スケール遷移</li>
                             <li><code>enableCollisionFloor</code> - 床衝突の有効/無効</li>
-                            <li><code>floorHeight</code> - 床の高さ</li>
-                            <li><code>bounce</code> - 反発係数</li>
+                            <li><code>enableSmoothNoise</code> - スムースノイズ</li>
+                            <li><code>velocityDistribution</code> - 速度分布（0: Box, 1: Sphere）</li>
+                        </ul>
+
+                        <h4>collisionFloor（床衝突）</h4>
+                        <ul>
+                            <li><code>elevation</code> - 床の高さ</li>
+                            <li><code>bouncePower</code> - 反発係数</li>
                         </ul>
                     </div>
 
-                    <h3>JSON設定例</h3>
+                    <h3>JSON設定例（構造）</h3>
                     <pre><code>{
-    "emitter": {
-        "emitCount": 50,
+    "version": 3,
+    "name": "explosion",
+    "common": {
         "emitInterval": 0.1,
-        "emitRadius": 0.5,
-        "velocity": {
-            "min": { "x": -2.0, "y": 3.0, "z": -2.0 },
-            "max": { "x": 2.0, "y": 6.0, "z": 2.0 }
-        },
-        "acceleration": {
-            "x": 0.0,
-            "y": -9.8,
-            "z": 0.0
-        },
-        "lifeTime": {
-            "min": 0.5,
-            "max": 1.5
-        },
-        "colorStart": {
-            "r": 1.0,
-            "g": 0.5,
-            "b": 0.0,
-            "a": 1.0
-        },
-        "colorEnd": {
-            "r": 0.2,
-            "g": 0.2,
-            "b": 0.2,
-            "a": 0.0
-        },
-        "scaleStart": 1.0,
-        "scaleEnd": 0.2,
-        "friction": 0.95,
+        "emitNum": 50,
+        "emitterLifeTime": 2.0,
+        "particleLifeTime": 1.0,
+        "scaleFixed": { "x": 1.0, "y": 1.0, "z": 1.0 },
+        "scaleDelayTime": 0.0,
+        "emitPositionFixed": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "alphaDeltaValue": 0.02,
+        "velocityFixed": { "x": 0.0, "y": 0.0, "z": 0.0 }
+    },
+    "ranges": {
+        "scale":          { /* Range&lt;Vector3&gt; 始点/終点 */ },
+        "scaleRandom":    { /* Range&lt;Vector3&gt; */ },
+        "position":       { /* Range&lt;Vector3&gt; */ },
+        "color":          { /* Range&lt;Vector4&gt; */ },
+        "velocityRandom": { /* Range&lt;Vector3&gt; */ },
+        "rotationRandom": { /* Range&lt;Vector3&gt; */ },
+        "velocityRandomSphere": { /* Range&lt;float&gt; */ }
+    },
+    "physics": {
+        "gravity":     { "x": 0.0, "y": -9.8, "z": 0.0 },
+        "resistance":  { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "frictionCoef": 0.95,
+        "smoothNoisePower": 0.1
+    },
+    "flags": {
+        "enableRandomVelocity": true,
+        "enableRandomEmit": false,
+        "enableRandomRotation": false,
+        "enableRandomScale": false,
+        "enableScaleTransition": true,
         "enableCollisionFloor": true,
-        "floorHeight": 0.0,
-        "bounce": 0.4
+        "enableSmoothNoise": false,
+        "velocityDistribution": 0
+    },
+    "collisionFloor": {
+        "elevation": 0.0,
+        "bouncePower": 0.4
     }
 }</code></pre>
                 </div>
@@ -379,9 +402,9 @@ emitter->Draw();</code></pre>
             <section id="usage" class="section">
                 <h2>基本的な使い方</h2>
                 <div class="card">
-                    <h3>1. Particleの作成（DIコンテナから取得）</h3>
-                    <pre><code>// Particleインスタンスを取得（通常はDIコンテナから）
-auto particle = DIContainer::Resolve&lt;Particle&gt;();</code></pre>
+                    <h3>1. Particleの作成（ParticleStorageから取得）</h3>
+                    <pre><code>// Particleインスタンスを生成（ParticleStorageが所有・管理する）
+Particle* particle = ParticleStorage::GetInstance()->CreateParticle();</code></pre>
 
                     <h3>2. ParticleEmitterの初期化</h3>
                     <pre><code>class Player
@@ -394,7 +417,7 @@ public:
     void ParticleEmittersInitialize()
     {
         // 初期化パラメータの設定
-        ParticleEmitterInitParams emitterParams = {};
+        ParticleEmitter::Params emitterParams = {};
         emitterParams.particle = particle_;
         emitterParams.jsonPath = "resources/json/particles/PlayerConstant.json";
         
@@ -430,7 +453,7 @@ public:
                     <pre><code>void Player::Draw()
 {
     // エミッターの描画
-    emitterConstant_->Draw();
+    emitterConstant_->Draw1F();
 }</code></pre>
 
                     <h3>5. 終了処理</h3>
@@ -461,7 +484,7 @@ public:
     void ParticleEmittersInitialize()
     {
         // 初期化パラメータの設定
-        ParticleEmitterInitParams emitterParams = {};
+        ParticleEmitter::Params emitterParams = {};
         emitterParams.particle = particle_;
         emitterParams.jsonPath = "resources/json/particles/PlayerConstant.json";
         
@@ -491,7 +514,7 @@ public:
     void DrawLine()
     {
         // パーティクルの描画
-        emitterConstant_->Draw();
+        emitterConstant_->Draw1F();
     }
 };</code></pre>
 
@@ -511,7 +534,7 @@ public:
         position_ = position;
         
         // 爆発用のJSON設定
-        ParticleEmitterInitParams params = {};
+        ParticleEmitter::Params params = {};
         params.particle = particle_;
         params.jsonPath = "resources/json/particles/explosion.json";
         
@@ -538,7 +561,7 @@ public:
     
     void Draw()
     {
-        emitter_->Draw();
+        emitter_->Draw1F();
     }
     
     bool IsFinished() const
@@ -560,7 +583,7 @@ public:
     void InitializeParticleEmitters()
     {
         // 短いパーティクル（火花）
-        ParticleEmitterInitParams params;
+        ParticleEmitter::Params params;
         params.particle = particle_;
         params.jsonPath = "resources/json/particles/EnemyDeathShort.json";
         
@@ -595,8 +618,8 @@ public:
     
     void Draw()
     {
-        pParticleDeathShort_->Draw();
-        pParticleDeathSplatter_->Draw();
+        pParticleDeathShort_->Draw1F();
+        pParticleDeathSplatter_->Draw1F();
     }
 };</code></pre>
 
@@ -612,7 +635,7 @@ public:
     void Initialize()
     {
         // 炎のパーティクル
-        ParticleEmitterInitParams params = {};
+        ParticleEmitter::Params params = {};
         params.particle = particle_;
         params.jsonPath = "resources/json/particles/fire.json";
         
@@ -633,7 +656,7 @@ public:
     
     void Draw()
     {
-        fireEmitter_->Draw();
+        fireEmitter_->Draw1F();
     }
 };</code></pre>
 
@@ -651,7 +674,7 @@ public:
         particle_ = particle;
         
         // クリアエフェクト用JSON
-        ParticleEmitterInitParams emitterParams = {};
+        ParticleEmitter::Params emitterParams = {};
         emitterParams.particle = particle_;
         emitterParams.jsonPath = "resources/json/particles/GameClearEffect.json";
         
@@ -679,7 +702,7 @@ public:
     
     void Draw()
     {
-        pEmitter_->Draw();
+        pEmitter_->Draw1F();
     }
 };</code></pre>
                 </div>
@@ -701,13 +724,16 @@ public:
                     </ul>
 
                     <h3>3. JSON設定のチューニング</h3>
-                    <pre><code>// 爆発エフェクトの例
+                    <pre><code>// 爆発エフェクトの例（common / physics / collisionFloor に設定）
 {
-    "emitCount": 100,        // 多めに発生
-    "lifeTime": { "min": 0.3, "max": 0.8 },  // 短めの寿命
-    "velocity": { "max": { "y": 10.0 } },    // 上向きに強く
-    "acceleration": { "y": -20.0 },          // 強い重力
-    "bounce": 0.2                            // 低い反発
+    "common": {
+        "emitNum": 100,             // 多めに発生
+        "particleLifeTime": 0.6     // 短めの寿命
+    },
+    "physics": {
+        "gravity": { "x": 0.0, "y": -20.0, "z": 0.0 }  // 強い重力
+    },
+    "collisionFloor": { "bouncePower": 0.2 }           // 低い反発
 }</code></pre>
 
                     <h3>4. パフォーマンス</h3>
@@ -725,16 +751,19 @@ particle->reserve(6000, true);</code></pre>
                     <p>開発中は、JSON設定を変更すると自動的にリロードされます（reloadInterval_設定による）。</p>
 
                     <h3>7. 色のグラデーション</h3>
-                    <pre><code>// 炎の例：オレンジ → 赤 → 黒
-"colorStart": { "r": 1.0, "g": 0.5, "b": 0.0, "a": 1.0 },
-"colorEnd":   { "r": 0.1, "g": 0.1, "b": 0.1, "a": 0.0 }</code></pre>
+                    <pre><code>// 炎の例：オレンジ → 黒（ranges.color の始点→終点で指定）
+"ranges": {
+    "color": { /* 始点 (1.0, 0.5, 0.0, 1.0) → 終点 (0.1, 0.1, 0.1, 0.0) */ }
+}</code></pre>
 
                     <h3>8. 床衝突の活用</h3>
                     <pre><code>// 床で跳ね返るパーティクル
-"enableCollisionFloor": true,
-"floorHeight": 0.0,
-"bounce": 0.6,     // 反発係数
-"friction": 0.9    // 摩擦係数</code></pre>
+"flags":   { "enableCollisionFloor": true },
+"collisionFloor": {
+    "elevation": 0.0,     // 床の高さ
+    "bouncePower": 0.6    // 反発係数
+},
+"physics": { "frictionCoef": 0.9 }   // 摩擦係数</code></pre>
                 </div>
             </section>
         </main>

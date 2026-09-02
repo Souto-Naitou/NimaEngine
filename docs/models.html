@@ -132,10 +132,12 @@ Object3d::SetModel()
                 <div class="card">
                     <p class="class-description">モデルの読み込みと管理を統括するクラス。</p>
 
-                    <h3>初期化</h3>
-                    <pre><code>// NimaFrameworkによって自動的に初期化されます
-// DIコンテナから取得
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
+                    <h3>生成と初期化</h3>
+                    <p><code>ModelManager</code> はシングルトンではなく、<code>Helper::Model</code> のファクトリ関数で <strong>ローダー・ストレージと共に生成</strong> します（通常はゲーム起動時に1回だけ）。生成したインスタンスはゲーム側で保持し、必要な箇所へ渡して使用します。</p>
+                    <pre><code>// ローダー・ストレージ・マネージャを生成（初期化時に1回だけ）
+auto modelLoader  = Helper::Model::CreateLoader&lt;ModelLoaderAssimp&gt;(pDx12);
+auto modelStorage = Helper::Model::CreateStorage();
+auto modelManager = Helper::Model::CreateManager(modelLoader.get(), modelStorage.get());</code></pre>
 
                     <h3>主要メソッド</h3>
                     <div class="method-list">
@@ -164,8 +166,8 @@ auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
                     </div>
 
                     <h3>使用例</h3>
-                    <pre><code>// DIコンテナから取得
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+                    <pre><code>// 生成済みの ModelManager を使用（ゲームが保持しているインスタンス）
+// auto modelManager = Helper::Model::CreateManager(loader, storage); で生成したもの
 
 // 検索パスを追加（初期化時）
 modelManager->AddSearchPath("resources/models/");
@@ -337,8 +339,8 @@ for (各頂点)
                 <h2>基本的な使い方</h2>
                 <div class="card">
                     <h3>1. モデルのロード</h3>
-                    <pre><code>// ModelManagerの取得（DIコンテナから）
-auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
+                    <pre><code>// 生成済みの ModelManager を使用（起動時に Helper::Model で生成し保持したもの）
+ModelManager* modelManager = pModelManager_;
 
 // モデルをロード（この時点ではキャッシュされたオリジナル）
 auto originalModel = modelManager->Load("resources/models/player.gltf");</code></pre>
@@ -382,11 +384,11 @@ private:
     ModelManager* pModelManager_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        // DIコンテナからModelManagerを取得
-        pModelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        pModelManager_ = pModelManager;
+
         // モデルの初期化
         ObjectsInitialize();
     }
@@ -444,10 +446,11 @@ private:
     ModelManager* modelManager_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        modelManager_ = pModelManager;
+
         // 敵のオリジナルモデルをロード（1回だけ）
         enemyModelOriginal_ = modelManager_->Load("enemy.gltf");
     }
@@ -495,11 +498,11 @@ private:
     int currentSkinIndex_ = 0;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* modelManager)
     {
-        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
-        auto textureManager = DIContainer::Resolve&lt;TextureManager&gt;();
-        
+        // modelManager はゲームが生成・保持しているインスタンス
+        auto textureManager = TextureManager::GetInstance();
+
         // キャラクターモデルのロード
         auto original = modelManager->Load("character.gltf");
         characterModel_ = original->Cloned();
@@ -540,10 +543,10 @@ private:
     GltfModel* gltfModel_ = nullptr;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* modelManager)
     {
-        auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // modelManager はゲームが生成・保持しているインスタンス
+
         // アニメーション付きモデルのロード
         auto original = modelManager->Load("animated_character.gltf");
         model_ = original->Cloned();
@@ -580,10 +583,11 @@ private:
     bool isLoadingComplete_ = false;
     
 public:
-    void Initialize()
+    void Initialize(ModelManager* pModelManager)
     {
-        modelManager_ = DIContainer::Resolve&lt;ModelManager&gt;();
-        
+        // ゲームが生成・保持している ModelManager を受け取る
+        modelManager_ = pModelManager;
+
         // 検索パスを追加
         modelManager_->AddSearchPath("resources/models/");
         modelManager_->AddSearchPath("resources/models/characters/");

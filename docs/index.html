@@ -88,7 +88,7 @@
             <section id="overview" class="section">
                 <h2>概要</h2>
                 <div class="card">
-                    <p>NimaEngineは、DirectX12を基盤とした高性能なゲームエンジンです。コンポーネントベースのアーキテクチャと依存性注入パターンを採用し、効率的なゲーム開発を実現します。</p>
+                    <p>NimaEngineは、DirectX12を基盤とした高性能なゲームエンジンです。コンポーネントベースのアーキテクチャを採用し、効率的なゲーム開発を実現します。</p>
                     
                     <h3>主な特徴</h3>
                     <ul>
@@ -120,8 +120,8 @@
                             <p><code>SceneBase</code>派生クラスを使用し、<code>SceneManager</code>とファクトリパターン（<code>ISceneFactory</code>）で管理されます。</p>
                         </div>
                         <div class="arch-item">
-                            <h4>依存性注入</h4>
-                            <p><code>DIContainer</code>がサービスインスタンスを型ベースで登録・解決します。</p>
+                            <h4>シングルトン & 引数注入</h4>
+                            <p>主要システムはシングルトン（<code>GetInstance()</code>）として提供され、シーンへは <code>ISceneArgs</code>（<code>pArgs_</code>）を通じて必要な依存が渡されます。</p>
                         </div>
                         <div class="arch-item">
                             <h4>オブジェクトシステム</h4>
@@ -1007,7 +1007,7 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                     <p>ファイルパスの正規化と解決を行います。</p>
 
                     <h3>DIContainer (依存性注入コンテナ)</h3>
-                    <p>サービスのライフタイム管理と依存性注入を提供します。</p>
+                    <p>型ベースの依存性注入を行うユーティリティクラスです。<span class="text-muted">※ 現時点ではエンジンのコアシステム自体はシングルトンで提供されており、DIContainerには登録されていません（コアシステムの取得には <code>GetInstance()</code> を使用します）。</span></p>
 
                     <h3>RandomGenerator (乱数生成器)</h3>
                     <p>高品質な擬似乱数を生成します。シングルトン（<code>RandomGenerator::GetInstance()</code>）です。</p>

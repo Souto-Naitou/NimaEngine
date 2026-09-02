@@ -149,10 +149,7 @@ OnCollision / OnCollisionTrigger コールバック実行
                     </div>
 
                     <h3>使用例</h3>
-                    <pre><code>// CollisionManagerの取得（DIコンテナから）
-auto collisionManager = DIContainer::Resolve&lt;CollisionManager&gt;();
-
-// または直接取得
+                    <pre><code>// CollisionManagerの取得（シングルトン）
 auto collisionManager = CollisionManager::GetInstance();
 
 // 属性の発行
@@ -449,7 +446,7 @@ private:
                     <h3>2. 初期化</h3>
                     <pre><code>void Player::ColliderInitialize()
 {
-    collisionManager_ = DIContainer::Resolve&lt;CollisionManager&gt;();
+    collisionManager_ = CollisionManager::GetInstance();
     
     // コライダーの作成
     collider_ = std::make_unique&lt;Collider&gt;();
@@ -523,7 +520,7 @@ private:
 public:
     void ColliderInitialize()
     {
-        collisionManager_ = DIContainer::Resolve&lt;CollisionManager&gt;();
+        collisionManager_ = CollisionManager::GetInstance();
         
         // コライダーの初期化
         collider_ = std::make_unique&lt;Collider&gt;();
@@ -599,7 +596,7 @@ private:
 public:
     void Initialize()
     {
-        collisionManager_ = DIContainer::Resolve&lt;CollisionManager&gt;();
+        collisionManager_ = CollisionManager::GetInstance();
         
         // 球形の衝突判定
         collider_ = std::make_unique&lt;Collider&gt;();
@@ -672,7 +669,7 @@ private:
 public:
     void Initialize()
     {
-        collisionManager_ = DIContainer::Resolve&lt;CollisionManager&gt;();
+        collisionManager_ = CollisionManager::GetInstance();
         
         collider_ = std::make_unique&lt;Collider&gt;();
         collider_->SetColliderID("item");

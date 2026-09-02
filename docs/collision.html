@@ -131,7 +131,7 @@ OnCollision / OnCollisionTrigger コールバック実行
                             <p>コライダーを登録します。</p>
                         </div>
                         <div class="method">
-                            <code>void DeleteCollider(Collider* collider)</code>
+                            <code>void UnregisterCollider(Collider* collider)</code>
                             <p>コライダーを登録解除します。</p>
                         </div>
                         <div class="method">
@@ -210,12 +210,8 @@ uint32_t* enemyMask = collisionManager->GetNewMask("enemy", "bullet");</code></p
                             <p>衝突開始時に呼ばれるコールバック関数を設定します（1回のみ）。</p>
                         </div>
                         <div class="method">
-                            <code>void SetRadius(unsigned int rad)</code>
-                            <p>軽量化フィルタリング用の半径を設定します。</p>
-                        </div>
-                        <div class="method">
-                            <code>void SetEnableLighter(bool flag)</code>
-                            <p>軽量化フィルタリングを有効化します。</p>
+                            <code>void SetSphereForBroadPhase(const Sphere& sphere)</code>
+                            <p>ブロードフェーズ（広域）判定用の球体を設定し、詳細判定の前段でフィルタリングして軽量化します。</p>
                         </div>
                         <div class="method">
                             <code>void SetEnable(bool flag)</code>
@@ -226,20 +222,12 @@ uint32_t* enemyMask = collisionManager->GetNewMask("enemy", "bullet");</code></p
                     <h3>Getter</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>T* GetOwner() const</code>
+                            <code>template&lt;typename T&gt; const T* GetOwner() const</code>
                             <p>所有者オブジェクトを取得します。</p>
                         </div>
                         <div class="method">
-                            <code>AABB* GetAABB()</code>
-                            <p>AABB形状データを取得します。</p>
-                        </div>
-                        <div class="method">
-                            <code>OBB* GetOBB()</code>
-                            <p>OBB形状データを取得します。</p>
-                        </div>
-                        <div class="method">
-                            <code>Sphere* GetSphere()</code>
-                            <p>Sphere形状データを取得します。</p>
+                            <code>template&lt;typename SHAPE&gt; SHAPE* GetShapeData()</code>
+                            <p>形状データ（<code>AABB</code> / <code>OBB</code> / <code>Sphere</code>）を取得します。例: <code>GetShapeData&lt;OBB&gt;()</code>。</p>
                         </div>
                     </div>
                 </div>
@@ -253,8 +241,8 @@ uint32_t* enemyMask = collisionManager->GetNewMask("enemy", "bullet");</code></p
                         <h4>構造</h4>
                         <pre><code>struct Sphere
 {
-    Vector3 center; // 中心点
-    float radius;   // 半径
+    Vector3 center_ = {};    // 中心点
+    float   radius_ = 1.0f;  // 半径
 };</code></pre>
                         <h4>特徴</h4>
                         <ul>
@@ -264,8 +252,8 @@ uint32_t* enemyMask = collisionManager->GetNewMask("enemy", "bullet");</code></p
                         </ul>
                         <h4>使用例</h4>
                         <pre><code>Sphere sphere;
-sphere.center = Vector3(0, 0, 0);
-sphere.radius = 1.0f;
+sphere.center_ = Vector3(0, 0, 0);
+sphere.radius_ = 1.0f;
 
 collider->SetShape(Shape::Sphere);
 collider->SetShapeData(&sphere);</code></pre>
@@ -276,8 +264,8 @@ collider->SetShapeData(&sphere);</code></pre>
                         <h4>構造</h4>
                         <pre><code>class AABB
 {
-    Vector3 min; // 最小座標
-    Vector3 max; // 最大座標
+    Vector3 min_; // 最小座標
+    Vector3 max_; // 最大座標
 };</code></pre>
                         <h4>特徴</h4>
                         <ul>
@@ -298,9 +286,9 @@ collider->SetShapeData(&aabb);</code></pre>
                         <h4>構造</h4>
                         <pre><code>class OBB
 {
-    Vector3 center;           // 中心点
-    Vector3 orientations[3];  // 3軸の方向ベクトル
-    Vector3 size;             // 各軸方向のサイズ
+    Vector3 center_ = {};          // 中心点
+    Vector3 orientations_[3] = {}; // 3軸の方向ベクトル（正規化・直交）
+    Vector3 size_ = {};            // 中心から各面までの距離（サイズの半分）
 };</code></pre>
                         <h4>特徴</h4>
                         <ul>
@@ -490,10 +478,11 @@ private:
         std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1)
     );
     
-    // 軽量化の設定
-    collider_->SetRadius(2u);
-    collider_->SetEnableLighter(true);
-    
+    // 軽量化の設定（ブロードフェーズ用の球体を設定）
+    Sphere broadPhase;
+    broadPhase.radius_ = 2.0f;
+    collider_->SetSphereForBroadPhase(broadPhase);
+
     // コライダーの登録
     collisionManager_->RegisterCollider(collider_.get());
 }</code></pre>
@@ -501,12 +490,9 @@ private:
                     <h3>3. 更新</h3>
                     <pre><code>void Player::Update()
 {
-    // 形状データを更新
+    // 形状データを更新（Matrix4x4 rotateMatrix_ は回転行列）
     obb_.SetCenter(position_);
-    obb_.SetRotate(rotation_);
-    
-    // 軽量化用の位置も更新
-    collider_->SetPosition(position_);
+    obb_.SetOrientations(rotateMatrix_);
 }</code></pre>
 
                     <h3>4. デストラクタでの登録解除</h3>
@@ -515,7 +501,7 @@ private:
     // コライダーの登録解除
     if (collider_ && collisionManager_)
     {
-        collisionManager_->DeleteCollider(collider_.get());
+        collisionManager_->UnregisterCollider(collider_.get());
     }
 }</code></pre>
                 </div>
@@ -545,7 +531,6 @@ public:
         collider_->SetAttribute(collisionManager_->GetNewAttribute("player"));
         collider_->SetOwner(this);
         collider_->SetShape(Shape::OBB);
-        collider_->SetRadius(2u);
         collider_->SetMask(collisionManager_->GetNewMask("player"));
         collider_->SetOnCollision(
             std::bind(&Player::OnCollision, this, std::placeholders::_1)
@@ -553,8 +538,11 @@ public:
         collider_->SetOnCollisionTrigger(
             std::bind(&Player::OnCollisionTrigger, this, std::placeholders::_1)
         );
-        collider_->SetEnableLighter(true);
-        
+        // ブロードフェーズ用の球体で軽量化
+        Sphere broadPhase;
+        broadPhase.radius_ = 2.0f;
+        collider_->SetSphereForBroadPhase(broadPhase);
+
         // コライダーの登録
         collisionManager_->RegisterCollider(collider_.get());
     }
@@ -592,12 +580,9 @@ public:
     {
         // 形状を更新
         obb_.SetCenter(position_);
-        obb_.SetRotate(rotation_);
+        obb_.SetOrientations(rotateMatrix_);
         obb_.SetSize(Vector3(0.5f, 0.5f, 0.5f));
         collider_->SetShapeData(&obb_);
-        
-        // 軽量化用
-        collider_->SetPosition(position_);
     }
 };</code></pre>
 
@@ -622,8 +607,8 @@ public:
         collider_->SetOwner(this);
         collider_->SetShape(Shape::Sphere);
         
-        sphere_.center = position_;
-        sphere_.radius = 0.2f;
+        sphere_.center_ = position_;
+        sphere_.radius_ =0.2f;
         collider_->SetShapeData(&sphere_);
         
         // 敵とのみ衝突
@@ -659,7 +644,7 @@ public:
         position_ += velocity_ * deltaTime;
         
         // 形状を更新
-        sphere_.center = position_;
+        sphere_.center_ = position_;
         collider_->SetShapeData(&sphere_);
     }
     
@@ -667,7 +652,7 @@ public:
     {
         if (collider_ && collisionManager_)
         {
-            collisionManager_->DeleteCollider(collider_.get());
+            collisionManager_->UnregisterCollider(collider_.get());
         }
     }
     
@@ -694,8 +679,8 @@ public:
         collider_->SetOwner(this);
         collider_->SetShape(Shape::Sphere);
         
-        sphere_.center = position_;
-        sphere_.radius = 0.5f;
+        sphere_.center_ = position_;
+        sphere_.radius_ =0.5f;
         collider_->SetShapeData(&sphere_);
         
         // プレイヤーとのみ衝突
@@ -786,10 +771,11 @@ public:
                         <li><strong>OBB</strong>：回転するキャラクター、車両</li>
                     </ul>
 
-                    <h3>2. 軽量化の活用</h3>
-                    <pre><code>// 遠くのオブジェクトとの衝突判定をスキップ
-collider->SetRadius(10u);  // セル半径
-collider->SetEnableLighter(true);</code></pre>
+                    <h3>2. 軽量化の活用（ブロードフェーズ）</h3>
+                    <pre><code>// ブロードフェーズ用の球体を設定すると、詳細判定の前段でフィルタリングされる
+Sphere broadPhase;
+broadPhase.radius_ = 10.0f;   // 広域判定用の半径
+collider->SetSphereForBroadPhase(broadPhase);</code></pre>
 
                     <h3>3. コールバックの使い分け</h3>
                     <ul>
@@ -803,7 +789,7 @@ collider->SetEnableLighter(true);</code></pre>
 {
     if (collider_ && collisionManager_)
     {
-        collisionManager_->DeleteCollider(collider_.get());
+        collisionManager_->UnregisterCollider(collider_.get());
     }
 }</code></pre>
 

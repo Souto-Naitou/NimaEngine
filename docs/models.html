@@ -140,8 +140,8 @@ auto modelManager = DIContainer::Resolve&lt;ModelManager&gt;();</code></pre>
                     <h3>主要メソッド</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>void Initialize()</code>
-                            <p>モデル管理の初期化を行います。</p>
+                            <code>void Initialize(IModelLoader* loader, ModelStorage* storage)</code>
+                            <p>ローダーとストレージを渡してモデル管理を初期化します。</p>
                         </div>
                         <div class="method">
                             <code>void AddSearchPath(const std::string& path)</code>
@@ -360,12 +360,12 @@ object->SetTranslate(Vector3(0, 0, 0));
 object->SetRotate(Vector3(0, 0, 0));
 object->SetScale(Vector3(1, 1, 1));</code></pre>
 
-                    <h3>4. 描画</h3>
+                    <h3>4. 更新と描画</h3>
                     <pre><code>// 更新（アニメーションの進行）
 object->Update();
 
-// 描画
-object->Draw1F();</code></pre>
+// 描画はCanvasに登録して行う（初期化時に一度だけ登録すればよい）
+// canvas->RegisterDrawable(object.get());</code></pre>
                 </div>
             </section>
 
@@ -410,23 +410,20 @@ public:
         
         // モデルを設定
         object_->SetModel(pModelSelfBody_.get());
-        
+
         // マテリアルのカスタマイズ
         auto& option = object_->GetOption();
         option.materialData->environmentCoefficient = 0.0f;
         option.materialData->color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+
+        // 描画はCanvasに登録して行う
+        // canvas->RegisterDrawable(object_.get());
     }
-    
+
     void Update()
     {
         // オブジェクトの更新（アニメーション等）
         object_->Update();
-    }
-    
-    void Draw1F()
-    {
-        // オブジェクトの描画
-        object_->Draw1F();
     }
 };</code></pre>
 
@@ -467,7 +464,9 @@ public:
         enemy.object->Initialize();
         enemy.object->SetModel(enemy.model.get());
         enemy.object->SetTranslate(position);
-        
+        // 描画はCanvasに登録して行う
+        // canvas->RegisterDrawable(enemy.object.get());
+
         enemy.position = position;
         enemy.health = 100.0f;
         
@@ -480,17 +479,9 @@ public:
         for (auto& enemy : enemies_)
         {
             enemy.object->Update();
-            
+
             // 敵のAI処理など
             // ...
-        }
-    }
-    
-    void Draw()
-    {
-        for (auto& enemy : enemies_)
-        {
-            enemy.object->Draw1F();
         }
     }
 };</code></pre>
@@ -515,13 +506,13 @@ public:
         
         // 複数のスキンテクスチャをロード
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_default.png")
+            textureManager->GetSrvHandleGPU("skin_default.png")
         );
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_red.png")
+            textureManager->GetSrvHandleGPU("skin_red.png")
         );
         skinTextures_.push_back(
-            textureManager->GetGPUHandle("skin_blue.png")
+            textureManager->GetSrvHandleGPU("skin_blue.png")
         );
     }
     

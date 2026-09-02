@@ -102,7 +102,7 @@ SceneManager::ReserveScene("NextScene")
     ↓
 現在のシーン::Finalize()
     ↓
-ISceneFactory::CreateScene("NextScene", args)
+ISceneFactory::Create("NextScene", args)
     ↓
 新しいシーン::Initialize()
     ↓
@@ -123,7 +123,7 @@ ISceneFactory::CreateScene("NextScene", args)
                     <h3>主要メソッド</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>void Initialize(const Params& param)</code>
+                            <code>void Initialize()</code>
                             <p>SceneManagerを初期化します。フレームワークによって自動的に呼ばれます。</p>
                         </div>
                         <div class="method">
@@ -132,11 +132,7 @@ ISceneFactory::CreateScene("NextScene", args)
                         </div>
                         <div class="method">
                             <code>void SceneDraw()</code>
-                            <p>現在のシーンを描画します（テキスト以外）。</p>
-                        </div>
-                        <div class="method">
-                            <code>void SceneDrawText()</code>
-                            <p>現在のシーンのテキスト描画を行います。</p>
+                            <p>現在のシーンを描画します。</p>
                         </div>
                         <div class="method">
                             <code>void ReserveScene(const std::string& sceneName)</code>
@@ -196,11 +192,15 @@ sceneManager->ReserveScene("TitleScene", std::move(transition));</code></pre>
                         </div>
                         <div class="method">
                             <code>virtual void Draw() = 0</code>
-                            <p>シーンの描画処理（テキスト以外）。</p>
+                            <p>シーンの描画処理。毎フレーム呼ばれます。</p>
                         </div>
+                    </div>
+
+                    <h3>仮想関数（任意でオーバーライド）</h3>
+                    <div class="method-list">
                         <div class="method">
-                            <code>virtual void DrawTexts() = 0</code>
-                            <p>テキストの描画処理。Draw()の後に呼ばれます。</p>
+                            <code>virtual void OnSceneChangeReserved()</code>
+                            <p>シーン変更が予約されたときに呼ばれるコールバックです。</p>
                         </div>
                     </div>
 
@@ -211,7 +211,7 @@ sceneManager->ReserveScene("TitleScene", std::move(transition));</code></pre>
                             <p>シーンに渡された引数。エンジンの各システムへのポインタが含まれます。</p>
                         </div>
                         <div class="method">
-                            <code>Layer* pLayer_</code>
+                            <code>OrderedCanvasLayer* pLayer_</code>
                             <p>レイヤーシステムへのポインタ。</p>
                         </div>
                     </div>
@@ -227,8 +227,7 @@ public:
     void Finalize() override;
     void Update() override;
     void Draw() override;
-    void DrawTexts() override;
-    
+
 private:
     // シーン固有のメンバ変数
 };</code></pre>
@@ -299,9 +298,7 @@ Initialize() - 1回だけ呼ばれる
     ↓
 ┌─ Update() ─ 毎フレーム呼ばれる
 │   ↓
-│  Draw() ─ 毎フレーム呼ばれる
-│   ↓
-└─ DrawTexts() ─ 毎フレーム呼ばれる
+└─ Draw() ─ 毎フレーム呼ばれる
     ↓
 （シーン遷移が予約されたら）
     ↓
@@ -334,14 +331,8 @@ Finalize() - 1回だけ呼ばれる
                             <li>3Dオブジェクトの描画</li>
                             <li>スプライトの描画</li>
                             <li>パーティクルの描画</li>
+                            <li>UIテキスト・スコアなどの描画</li>
                             <li>ポストエフェクトの適用</li>
-                        </ul>
-
-                        <h4>DrawTexts()</h4>
-                        <ul>
-                            <li>UIテキストの描画</li>
-                            <li>スコア表示</li>
-                            <li>デバッグ情報</li>
                         </ul>
 
                         <h4>Finalize()</h4>
@@ -414,8 +405,7 @@ public:
     void Finalize() override;
     void Update() override;
     void Draw() override;
-    void DrawTexts() override;
-    
+
 private:
     // メンバ変数
     std::unique_ptr&lt;GameEye&gt; gameEye_;
@@ -446,7 +436,6 @@ void GameScene::Initialize()
     
     // カメラの初期化
     gameEye_ = std::make_unique&lt;GameEye&gt;();
-    gameEye_->Initialize();
     gameEye_->SetTranslate(Vector3(0, 10, -30));
     
     // Canvasの初期化
@@ -480,18 +469,13 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-    // 描画処理
-}
-
-void GameScene::DrawTexts()
-{
-    // テキスト描画
+    // 描画処理（テキスト描画もここで行います）
 }</code></pre>
 
                     <h3>3. SceneFactoryへの登録</h3>
                     <pre><code>// SceneFactory.cpp
-std::unique_ptr&lt;SceneBase&gt; SceneFactory::CreateScene(
-    const std::string& sceneName, 
+std::unique_ptr&lt;SceneBase&gt; SceneFactory::Create(
+    const std::string& sceneName,
     ISceneArgs* sceneArgs)
 {
     if (sceneName == "TitleScene")
@@ -550,11 +534,10 @@ public:
         
         // ゲームアイの初期化
         gameEye_ = std::make_unique&lt;GameEye&gt;();
-        gameEye_->Initialize();
         gameEye_->SetTranslate(Vector3(0, 0, -10));
-        
+
         // ポストエフェクトの設定
-        auto bloom = pCanvasBack_->GetPostEffectExecuter().AddEffect(
+        auto bloom = pCanvasBack_->GetPostEffectExecutor().AddEffect(
             PostEffectClassName::GaussianBloom
         );
         
@@ -593,12 +576,7 @@ public:
     
     void Draw() override
     {
-        // 描画処理
-    }
-    
-    void DrawTexts() override
-    {
-        // テキスト描画
+        // 描画処理（テキスト描画もここで行います）
     }
 };</code></pre>
 
@@ -699,7 +677,7 @@ public:
         }
     }
     
-    void DrawTexts() override
+    void Draw() override
     {
         // ローディングバーの描画
         int progress = static_cast&lt;int&gt;(loadingProgress_ * 100);

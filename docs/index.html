@@ -88,7 +88,7 @@
             <section id="overview" class="section">
                 <h2>概要</h2>
                 <div class="card">
-                    <p>NimaEngineは、DirectX12を基盤とした高性能なゲームエンジンです。コンポーネントベースのアーキテクチャと依存性注入パターンを採用し、効率的なゲーム開発を実現します。</p>
+                    <p>NimaEngineは、DirectX12を基盤とした高性能なゲームエンジンです。コンポーネントベースのアーキテクチャを採用し、効率的なゲーム開発を実現します。</p>
                     
                     <h3>主な特徴</h3>
                     <ul>
@@ -120,8 +120,8 @@
                             <p><code>SceneBase</code>派生クラスを使用し、<code>SceneManager</code>とファクトリパターン（<code>ISceneFactory</code>）で管理されます。</p>
                         </div>
                         <div class="arch-item">
-                            <h4>依存性注入</h4>
-                            <p><code>DIContainer</code>がサービスインスタンスを型ベースで登録・解決します。</p>
+                            <h4>シングルトン & 引数注入</h4>
+                            <p>主要システムはシングルトン（<code>GetInstance()</code>）として提供され、シーンへは <code>ISceneArgs</code>（<code>pArgs_</code>）を通じて必要な依存が渡されます。</p>
                         </div>
                         <div class="arch-item">
                             <h4>オブジェクトシステム</h4>
@@ -266,7 +266,7 @@ CREATE_APPLICATION(MyGame)</code></pre>
                         <h4>主要メソッド</h4>
                         <div class="method-list">
                             <div class="method">
-                                <code>void LoadTexture(const std::string& filePath)</code>
+                                <code>std::string LoadTexture(const std::string& filePath)</code>
                                 <p>指定されたファイルパスからテクスチャを読み込みます。</p>
                             </div>
                             <div class="method">
@@ -313,27 +313,27 @@ CREATE_APPLICATION(MyGame)</code></pre>
                         <h4>主要メソッド</h4>
                         <div class="method-list">
                             <div class="method">
-                                <code>bool GetKey(int keyCode)</code>
-                                <p>指定されたキーが押されているかを返します。</p>
+                                <code>bool PushKey(BYTE keyNumber) const</code>
+                                <p>指定されたキー（<code>DIK_*</code>）が押されているかを返します。</p>
                             </div>
                             <div class="method">
-                                <code>bool GetKeyDown(int keyCode)</code>
-                                <p>指定されたキーがこのフレームで押されたかを返します。</p>
+                                <code>bool TriggerKey(BYTE keyNumber) const</code>
+                                <p>指定されたキーがこのフレームで押された瞬間かを返します。</p>
                             </div>
                             <div class="method">
-                                <code>bool GetKeyUp(int keyCode)</code>
-                                <p>指定されたキーがこのフレームで離されたかを返します。</p>
+                                <code>bool ReleaseKey(BYTE keyNumber) const</code>
+                                <p>指定されたキーがこのフレームで離された瞬間かを返します。</p>
                             </div>
                             <div class="method">
-                                <code>bool GetMouse(MouseNum button)</code>
+                                <code>bool PushMouse(MouseNum mouseNum) const</code>
                                 <p>指定されたマウスボタンが押されているかを返します。</p>
                             </div>
                             <div class="method">
-                                <code>Vector2 GetMousePosition()</code>
+                                <code>POINT GetCursorPosition() const</code>
                                 <p>マウスカーソルの現在位置を返します。</p>
                             </div>
                             <div class="method">
-                                <code>float GetMouseWheel()</code>
+                                <code>int32_t GetWheelDelta() const</code>
                                 <p>マウスホイールの回転量を返します。</p>
                             </div>
                         </div>
@@ -345,7 +345,7 @@ CREATE_APPLICATION(MyGame)</code></pre>
                                 <ul>
                                     <li><code>Left</code> - 左ボタン</li>
                                     <li><code>Right</code> - 右ボタン</li>
-                                    <li><code>Middle</code> - 中央ボタン</li>
+                                    <li><code>Center</code> - 中央ボタン</li>
                                 </ul>
                             </div>
                         </div>
@@ -361,31 +361,20 @@ CREATE_APPLICATION(MyGame)</code></pre>
                         <h4>主要メソッド</h4>
                         <div class="method-list">
                             <div class="method">
-                                <code>void LoadAudio(const std::string& name, const std::string& filePath)</code>
-                                <p>音声ファイルを読み込み、名前で管理します。</p>
+                                <code>Audio* GetNewAudio(const std::string& category, const std::string& filename)</code>
+                                <p>音声ファイルを読み込み、カテゴリで管理する <code>Audio</code> インスタンスを取得します。</p>
                             </div>
                             <div class="method">
-                                <code>void PlayBGM(const std::string& name, bool loop = true)</code>
-                                <p>BGMを再生します。デフォルトではループ再生されます。</p>
-                            </div>
-                            <div class="method">
-                                <code>void PlaySE(const std::string& name)</code>
-                                <p>効果音を再生します。</p>
-                            </div>
-                            <div class="method">
-                                <code>void StopBGM()</code>
-                                <p>現在再生中のBGMを停止します。</p>
-                            </div>
-                            <div class="method">
-                                <code>void SetVolume(const std::string& name, float volume)</code>
-                                <p>指定された音声のボリュームを設定します（0.0～1.0）。</p>
+                                <code>void AddSearchPath(const std::string& path)</code>
+                                <p>音声ファイルの検索パスを追加します。</p>
                             </div>
                         </div>
 
+                        <p class="text-muted">※ 再生・停止・音量調整は取得した <code>Audio</code> インスタンス側で行います（<code>Play(bool isLoop)</code> / <code>Stop()</code> / <code>SetVolume(float)</code> / <code>GetVolume()</code>）。詳細は詳細リファレンスを参照してください。</p>
+
                         <h4>サポート形式</h4>
                         <ul>
-                            <li>WAV（推奨）</li>
-                            <li>MP3（XAudio2コーデック経由）</li>
+                            <li>WAV（非圧縮）</li>
                         </ul>
                     </div>
                 </div>
@@ -403,8 +392,12 @@ CREATE_APPLICATION(MyGame)</code></pre>
                                 <p>シーンファクトリを設定します。</p>
                             </div>
                             <div class="method">
-                                <code>void ChangeScene(const std::string& sceneName, ISceneArgs* args = nullptr)</code>
-                                <p>指定された名前のシーンに切り替えます。オプションで引数を渡すことができます。</p>
+                                <code>void ReserveScene(const std::string& sceneName)</code>
+                                <p>次フレームで遷移するシーン名を予約します。トランジションやロード画面付きのオーバーロードもあります。</p>
+                            </div>
+                            <div class="method">
+                                <code>SceneManager&amp; AddInitialArg(const std::string&amp; key, const std::any&amp; value)</code>
+                                <p>すべてのシーンに渡す初期引数を追加します。シーンへは <code>ISceneArgs</code> 経由で渡されます。</p>
                             </div>
                         </div>
 
@@ -421,15 +414,15 @@ CREATE_APPLICATION(MyGame)</code></pre>
                             </div>
                             <div class="method">
                                 <code>virtual void Draw()</code>
-                                <p>シーンのグラフィックス描画処理を実装します。</p>
-                            </div>
-                            <div class="method">
-                                <code>virtual void DrawTexts()</code>
-                                <p>シーンのテキスト描画処理を実装します（別パスで描画）。</p>
+                                <p>シーンの描画処理を実装します。</p>
                             </div>
                             <div class="method">
                                 <code>virtual void Finalize()</code>
                                 <p>シーンの終了処理を実装します。</p>
+                            </div>
+                            <div class="method">
+                                <code>virtual void OnSceneChangeReserved()</code>
+                                <p>シーン変更が予約されたときに呼ばれるコールバックです（任意でオーバーライド）。</p>
                             </div>
                         </div>
                     </div>
@@ -563,6 +556,8 @@ CREATE_APPLICATION(MyGame)</code></pre>
                             <li><code>GetProjectionMatrix()</code> - プロジェクション行列</li>
                             <li><code>GetViewProjectionMatrix()</code> - ビュープロジェクション行列</li>
                         </ul>
+
+                        <p class="text-muted">※ <code>GameEye</code> は <code>IGameEye</code> インターフェースを実装しています。2D用カメラとして <code>GameEye2d</code> も用意されています。</p>
                     </div>
                 </div>
 
@@ -571,12 +566,20 @@ CREATE_APPLICATION(MyGame)</code></pre>
                     <div class="card">
                         <p class="class-description">描画順序とポストエフェクトを管理するレイヤーシステムです。</p>
                         
-                        <h4>Layer</h4>
-                        <p>複数のCanvasをZ-order（深度順）で管理します。</p>
+                        <h4>OrderedCanvasLayer</h4>
+                        <p>複数のCanvasをZ-order（深度順）で管理します。Z-orderは自動で割り当てられます。</p>
                         <div class="method-list">
                             <div class="method">
-                                <code>uint32_t AddCanvas(Canvas* canvas, uint32_t zOrder = 0)</code>
-                                <p>Canvasを追加します。zOrderが大きいほど手前に描画されます。</p>
+                                <code>ZOrder AddCanvas(Canvas* canvas)</code>
+                                <p>Canvasを追加し、割り当てられたZ-orderを返します。後から追加したものほど手前に描画されます。</p>
+                            </div>
+                            <div class="method">
+                                <code>ZOrder AddCanvasTop(Canvas* canvas)</code>
+                                <p>Canvasを最前面グループに追加します。</p>
+                            </div>
+                            <div class="method">
+                                <code>void RemoveCanvas(Canvas* canvas)</code>
+                                <p>Canvasを削除します（<code>AddCanvas</code> したものは必ず呼び出してください）。</p>
                             </div>
                             <div class="method">
                                 <code>void ApplyPostEffects()</code>
@@ -682,8 +685,8 @@ auto bossLine = csvLoader->GetLine("enemies.csv", "boss_001");</code></pre>
                         <h4>主要メソッド</h4>
                         <div class="method-list">
                             <div class="method">
-                                <code>void SetTexture(const std::string& filePath)</code>
-                                <p>スプライトに使用するテクスチャを設定します。</p>
+                                <code>void Initialize(std::string filepath)</code>
+                                <p>使用するテクスチャのファイルパスを指定してスプライトを初期化します。</p>
                             </div>
                             <div class="method">
                                 <code>void SetPosition(const Vector2& position)</code>
@@ -708,26 +711,25 @@ auto bossLine = csvLoader->GetLine("enemies.csv", "boss_001");</code></pre>
                 <div id="object3d" class="subsection">
                     <h3>3Dオブジェクト (Object3d / Object3dSystem)</h3>
                     <div class="card">
-                        <p class="class-description">基本的な3Dプリミティブと形状の描画を行うシステムです。</p>
-                        
-                        <h4>サポート形状</h4>
-                        <ul>
-                            <li>立方体（Cube）</li>
-                            <li>球体（Sphere）</li>
-                            <li>平面（Plane）</li>
-                            <li>円柱（Cylinder）</li>
-                            <li>カスタムメッシュ</li>
-                        </ul>
+                        <p class="class-description">読み込んだモデル（<code>IModel</code>）を描画するシステムです。<code>SetModel()</code> で描画対象のモデルを設定します。</p>
 
                         <h4>主要メソッド</h4>
                         <div class="method-list">
                             <div class="method">
-                                <code>void SetTransform(const EulerTransform& transform)</code>
-                                <p>オブジェクトの位置、回転、スケールを設定します。</p>
+                                <code>void Initialize(bool enableDebugWindow = true)</code>
+                                <p>オブジェクトを初期化します。</p>
                             </div>
                             <div class="method">
-                                <code>void SetMaterial(const Material& material)</code>
-                                <p>オブジェクトのマテリアルプロパティを設定します。</p>
+                                <code>void SetModel(IModel* pModel)</code>
+                                <p>描画対象のモデルを設定します。</p>
+                            </div>
+                            <div class="method">
+                                <code>void SetTranslate(const Vector3&amp; translate) / SetRotate(const Vector3&amp;) / SetScale(const Vector3&amp;)</code>
+                                <p>オブジェクトの位置・回転・スケールを設定します。</p>
+                            </div>
+                            <div class="method">
+                                <code>Option&amp; GetOption()</code>
+                                <p>マテリアルや色などのオプションデータ（<code>materialData</code> 等）へアクセスします。</p>
                             </div>
                         </div>
                     </div>
@@ -740,19 +742,23 @@ auto bossLine = csvLoader->GetLine("enemies.csv", "boss_001");</code></pre>
                         <p><a href="particles.html" class="detail-link">📖 パーティクルシステムの詳細リファレンスはこちら</a></p>
                         
                         <h4>ParticleEmitter</h4>
-                        <p>パーティクルの発生源を管理します。</p>
+                        <p>パーティクルの発生源を管理します。挙動パラメータ（発生数・寿命・速度など）はJSONファイルで設定します。</p>
                         <div class="method-list">
                             <div class="method">
-                                <code>void SetEmissionRate(float rate)</code>
-                                <p>1秒あたりのパーティクル発生数を設定します。</p>
+                                <code>void Initialize(const Params& params)</code>
+                                <p><code>Particle*</code> と設定JSONパスを受け取り初期化します。</p>
                             </div>
                             <div class="method">
-                                <code>void SetLifetime(float min, float max)</code>
-                                <p>パーティクルの寿命範囲を設定します。</p>
+                                <code>void SetPosition(const Vector3& position)</code>
+                                <p>エミッタの位置を設定します。</p>
                             </div>
                             <div class="method">
-                                <code>void SetVelocity(const Vector3& min, const Vector3& max)</code>
-                                <p>パーティクルの初期速度範囲を設定します。</p>
+                                <code>void EnableManualMode() / DisableManualMode()</code>
+                                <p>手動発生モードと自動発生モードを切り替えます。</p>
+                            </div>
+                            <div class="method">
+                                <code>void Emit()</code>
+                                <p>1回分のパーティクルを発生させます（手動モード時）。</p>
                             </div>
                         </div>
 
@@ -891,10 +897,15 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                         <p><a href="posteffects.html" class="detail-link">📖 ポストエフェクトの詳細リファレンスはこちら</a></p>
                         
                         <h4>利用可能なエフェクト</h4>
+                        <p class="text-muted">※ <code>PostEffectClassName</code> 列挙型に登録されているエフェクト（<code>Canvas::GetPostEffectExecutor().AddEffect(...)</code> で追加可能）。</p>
                         <div class="effect-grid">
                             <div class="effect-item">
-                                <h5>GaussianBlur (ガウシアンぼかし)</h5>
-                                <p>画像をぼかすエフェクト。ブルームやDOFに使用。</p>
+                                <h5>GaussianFilter / SeparatedGaussianFilter</h5>
+                                <p>ガウシアンぼかし。分離版は水平・垂直に分けて高速化。</p>
+                            </div>
+                            <div class="effect-item">
+                                <h5>BoxFilter (ボックスフィルタ)</h5>
+                                <p>平均化による軽量なぼかし。</p>
                             </div>
                             <div class="effect-item">
                                 <h5>GaussianBloom (ブルーム)</h5>
@@ -913,16 +924,8 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                                 <p>中心から放射状にぼかすエフェクト。</p>
                             </div>
                             <div class="effect-item">
-                                <h5>Vignette (ビネット)</h5>
-                                <p>画面の周辺を暗くするエフェクト。</p>
-                            </div>
-                            <div class="effect-item">
                                 <h5>Grayscale (グレースケール)</h5>
                                 <p>画像をモノクロに変換。</p>
-                            </div>
-                            <div class="effect-item">
-                                <h5>Dissolve (ディゾルブ)</h5>
-                                <p>ノイズテクスチャを使用した溶解エフェクト。</p>
                             </div>
                             <div class="effect-item">
                                 <h5>RandomFilter (ランダムフィルタ)</h5>
@@ -931,6 +934,22 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                             <div class="effect-item">
                                 <h5>LuminanceOutput (輝度出力)</h5>
                                 <p>画像の輝度情報を抽出。</p>
+                            </div>
+                            <div class="effect-item">
+                                <h5>Scanline (走査線)</h5>
+                                <p>走査線状のラインを重ねるエフェクト。</p>
+                            </div>
+                            <div class="effect-item">
+                                <h5>Mosaic (モザイク)</h5>
+                                <p>画像をモザイク化するエフェクト。</p>
+                            </div>
+                            <div class="effect-item">
+                                <h5>ChromaticAberration (色収差)</h5>
+                                <p>RGBをずらして色収差を表現するエフェクト。</p>
+                            </div>
+                            <div class="effect-item">
+                                <h5>Posterize (ポスタリゼーション)</h5>
+                                <p>階調数を減らすエフェクト。</p>
                             </div>
                         </div>
                     </div>
@@ -988,18 +1007,14 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                     <p>ファイルパスの正規化と解決を行います。</p>
 
                     <h3>DIContainer (依存性注入コンテナ)</h3>
-                    <p>サービスのライフタイム管理と依存性注入を提供します。</p>
+                    <p>型ベースの依存性注入を行うユーティリティクラスです。<span class="text-muted">※ 現時点ではエンジンのコアシステム自体はシングルトンで提供されており、DIContainerには登録されていません（コアシステムの取得には <code>GetInstance()</code> を使用します）。</span></p>
 
                     <h3>RandomGenerator (乱数生成器)</h3>
-                    <p>高品質な擬似乱数を生成します。</p>
+                    <p>高品質な擬似乱数を生成します。シングルトン（<code>RandomGenerator::GetInstance()</code>）です。</p>
                     <div class="method-list">
                         <div class="method">
-                            <code>int GetInt(int min, int max)</code>
-                            <p>指定範囲の整数乱数を返します。</p>
-                        </div>
-                        <div class="method">
-                            <code>float GetFloat(float min, float max)</code>
-                            <p>指定範囲の浮動小数点乱数を返します。</p>
+                            <code>template&lt;typename T&gt; T Generate(T min, T max)</code>
+                            <p>指定範囲の乱数を返します。型引数で整数・浮動小数点を指定できます（例: <code>Generate&lt;int&gt;(0, 10)</code>、<code>Generate&lt;float&gt;(0.0f, 1.0f)</code>）。</p>
                         </div>
                     </div>
 
@@ -1016,32 +1031,21 @@ enemyHpBar->SetValue(enemy->GetHpRatio());</code></pre>
                     <p>ゲームの設定を読み込み、管理するシステムです。</p>
                     <div class="method-list">
                         <div class="method">
-                            <code>void LoadConfig(const std::string& filePath)</code>
+                            <code>void Initialize(const std::string& cfgPath)</code>
+                            <p>設定ファイルを読み込み初期化します。シングルトン（<code>SingletonPattern&lt;ConfigManager&gt;</code>）です。</p>
+                        </div>
+                        <div class="method">
+                            <code>void LoadConfig(const std::string& cfgPath)</code>
                             <p>設定ファイルを読み込みます。</p>
                         </div>
                         <div class="method">
-                            <code>T GetValue&lt;T&gt;(const std::string& key)</code>
-                            <p>指定キーの設定値を取得します。</p>
+                            <code>const cfg::ConfigData& GetConfigData() const</code>
+                            <p>読み込んだ設定データを取得します。</p>
                         </div>
                     </div>
 
-                    <h3>Localization (多言語対応)</h3>
-                    <p>複数言語のテキストリソースを管理するシステムです。</p>
-                    <div class="method-list">
-                        <div class="method">
-                            <code>void SetLanguage(const std::string& language)</code>
-                            <p>現在の言語を設定します（例: "ja", "en"）。</p>
-                        </div>
-                        <div class="method">
-                            <code>std::string GetText(const std::string& key)</code>
-                            <p>指定キーのローカライズされたテキストを取得します。</p>
-                        </div>
-                    </div>
-
-                    <h4>使用例</h4>
-                    <pre><code>auto localization = Localization::GetInstance();
-localization->SetLanguage("ja");
-std::string message = localization->GetText("ui.button.start"); // "スタート"</code></pre>
+                    <h3>Localization (デバッグUIラベル)</h3>
+                    <p><code>Localization</code> 名前空間は、デバッグUI（ImGui）で使用するラベル文字列を <code>LanguageData</code> 構造体群として保持します。キー引きによる汎用ローカライズシステムではありません。</p>
                 </div>
             </section>
 
@@ -1151,7 +1155,6 @@ public:
     void Initialize() override;
     void Update() override;
     void Draw() override;
-    void DrawTexts() override;
     void Finalize() override;
 };
 
@@ -1168,12 +1171,7 @@ void GameScene::Update()
 
 void GameScene::Draw()
 {
-    // グラフィックスの描画
-}
-
-void GameScene::DrawTexts()
-{
-    // テキストの描画
+    // 描画処理
 }
 
 void GameScene::Finalize()
@@ -1239,9 +1237,11 @@ object->SetScale(Vector3(1.0f, 1.0f, 1.0f));
 object->SetDirectionalLight(pDirectionalLight);
 object->SetPointLight(pPointLight);
 
-// 更新と描画
+// 更新
 object->Update();
-object->Draw1F();</code></pre>
+
+// 描画はCanvasに登録して行う（Layer/Canvasが描画を呼び出す）
+// canvas->RegisterDrawable(object.get());</code></pre>
 
                     <h3>入力処理</h3>
                     <pre><code>auto input = Input::GetInstance();
@@ -1277,10 +1277,10 @@ if (input->TriggerMouse(Input::MouseNum::Right))
 }
 
 // マウス位置の取得
-Vector2 mousePos = input->GetMousePosition();
+POINT mousePos = input->GetCursorPosition();
 
 // マウスホイールの取得
-float wheel = input->GetMouseWheel();</code></pre>
+int32_t wheel = input->GetWheelDelta();</code></pre>
 
                     <h3>オーディオ再生</h3>
                     <pre><code>auto audioManager = AudioManager::GetInstance();
@@ -1304,42 +1304,37 @@ audioBGM->SetVolume(0.5f);
 audioBGM->Stop();</code></pre>
 
                     <h3>パーティクルエフェクト</h3>
-                    <pre><code>// パーティクルストレージの取得
+                    <pre><code>// パーティクル本体を生成（ParticleStorageが管理）
 auto particleStorage = ParticleStorage::GetInstance();
+Particle* particle = particleStorage->CreateParticle();
 
-// エミッタの作成
-auto emitter = particleStorage->CreateEmitter();
+// エミッタの初期化（Particleと設定JSONパスを渡す）
+ParticleEmitter::Params params;
+params.particle = particle;
+params.jsonPath = "resources/json/particles/explosion.json";
 
-// エミッタの初期化
-emitter->Initialize();
+auto emitter = std::make_unique&lt;ParticleEmitter&gt;();
+emitter->Initialize(params);
+emitter->SetEnableBillboard(true);
 
-// パラメータの設定
+// 発生タイミングを手動で制御する場合
+emitter->EnableManualMode();
 emitter->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
-emitter->SetCount(100); // 1回あたりのパーティクル数
 
-// エミッタデータの設定（詳細パラメータ）
-EmitterData emitterData;
-emitterData.count = 10;
-emitterData.frequency = 0.1f; // 0.1秒ごとに発生
-emitterData.frequencyTime = 0.0f;
-emitterData.translate = Vector3(0.0f, 0.0f, 0.0f);
-emitterData.radius = 1.0f;
-emitterData.emit = 1; // 発生を有効化
-emitter->SetEmitterData(emitterData);
-
-// 更新とエミット
+// 毎フレーム
 emitter->Update();
-emitter->Emit(); // パーティクルを発生させる
+emitter->Emit();   // 手動モードで1回分発生
 
 // 描画
-emitter->Draw();</code></pre>
+emitter->Draw1F();</code></pre>
 
                     <h3>衝突判定</h3>
                     <pre><code>auto collisionManager = CollisionManager::GetInstance();
 
-// コライダーの初期化（OBBの例）
+// 形状データ（OBBの例）
 OBB obb;
-obb.Initialize();
+obb.SetCenter(Vector3(0.0f, 0.0f, 0.0f));
+obb.SetSize(Vector3(0.5f, 0.5f, 0.5f));
 
 // コライダーの作成と登録
 auto collider = std::make_unique&lt;Collider&gt;();
@@ -1348,11 +1343,13 @@ collider->SetAttribute(collisionManager->GetNewAttribute("player"));
 collider->SetOwner(this); // オーナーオブジェクトへのポインタ
 collider->SetShape(Shape::OBB);
 collider->SetShapeData(&obb); // 形状データを設定
-collider->SetRadius(2u); // 判定範囲の半径（セル分割用）
 collider->SetMask(collisionManager->GetNewMask("player"));
 
+// （任意）ブロードフェーズ用の球体を設定して判定を軽量化
+// collider->SetSphereForBroadPhase(Sphere{ .center_ = {}, .radius_ = 2.0f });
+
 // 衝突時のコールバックを設定
-collider->SetOnCollision([this](Collider* other) {
+collider->SetOnCollision([this](const Collider* other) {
     // 衝突時の処理
     Log("Collision with: " + other->GetColliderID());
 });
@@ -1370,25 +1367,21 @@ collider->SetShapeData(&obb);
 collisionManager->CheckAllCollision();</code></pre>
 
                     <h3>ポストエフェクトの適用</h3>
-                    <pre><code>// Viewport経由でポストエフェクトを管理
-// ※ ポストエフェクトはNimaFrameworkの初期化で自動的にセットアップされます
+                    <pre><code>// ポストエフェクトはCanvasごとに管理されます。
+// Canvasのポストエフェクト実行器（PostEffectExecutor）にエフェクトを追加します。
 
-// ポストエフェクトの有効化/無効化
-// 例: ビネットエフェクト
-pViewport_->GetPostEffect&lt;Vignette&gt;()->SetEnable(true);
+// 例: ブルームを追加して有効化
+IPostEffect* bloom = canvas->GetPostEffectExecutor().AddEffect(PostEffectClassName::GaussianBloom);
+bloom->Enable(true);
 
-// パラメータの調整
-auto bloom = pViewport_->GetPostEffect&lt;GaussianBloom&gt;();
-if (bloom) {
-    bloom->SetEnable(true);
-    // bloom->SetIntensity(1.5f); // ※ 実際のAPIは実装により異なります
-}
+// 複数のエフェクトを組み合わせる（登録順に適用されます）
+canvas->GetPostEffectExecutor().AddEffect(PostEffectClassName::DepthBasedOutline)->Enable(true);
+canvas->GetPostEffectExecutor().AddEffect(PostEffectClassName::RadialBlur)->Enable(false);
 
-// 複数のエフェクトを組み合わせる
-pViewport_->GetPostEffect&lt;DepthBasedOutline&gt;()->SetEnable(true);
-pViewport_->GetPostEffect&lt;RadialBlur&gt;()->SetEnable(false);
+// AddEffect は基底 IPostEffect* を返します。個別パラメータの調整は
+// 具象クラスへキャストするか、デバッグUI（ImGui）から行います。
 
-// 描画はフレームワークが自動的に実行</code></pre>
+// 適用（描画）は Layer / Framework 側で自動的に実行されます。</code></pre>
                 </div>
             </section>
         </main>

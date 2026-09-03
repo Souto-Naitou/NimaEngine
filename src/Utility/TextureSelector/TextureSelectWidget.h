@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef _DEBUG
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
+#endif // _DEBUG
 #include <Core/DirectX12/TextureManager.h>
 
 class TextureSelectWidget

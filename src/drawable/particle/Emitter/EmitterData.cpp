@@ -218,6 +218,7 @@ namespace Type::ParticleEmitter::v3
 
         nlohmann::json j_range;  utl::json::try_assign(j, "ranges", j_range);
         nlohmann::json j_common;  utl::json::try_assign(j, "common", j_common);
+        nlohmann::json j_tex;  utl::json::try_assign(j, "textureData", j_tex);
         nlohmann::json j_phys;  utl::json::try_assign(j, "physics", j_phys);
         nlohmann::json j_flag;  utl::json::try_assign(j, "flags", j_flag);
         nlohmann::json j_colflo; utl::json::try_assign(j, "collisionFloor", j_colflo);
@@ -236,7 +237,7 @@ namespace Type::ParticleEmitter::v3
 
         auto& d_tex = data.textureData;
 
-        utl::json::try_assign(j_common, "texturePath", d_tex.texturePath);
+        utl::json::try_assign(j_tex, "texturePath", d_tex.texturePath);
 
         auto& d_range = data.ranges;
 

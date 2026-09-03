@@ -259,45 +259,61 @@ if (wheelDelta > 0) {
             <section id="gamepad" class="section">
                 <h2>ゲームパッド入力</h2>
                 <div class="card">
-                    <h3>アナログスティック</h3>
+                    <h3>アナログスティック / トリガー</h3>
+                    <p>スティックとトリガーの値は <code>GamepadAnalogInput</code> 構造体にまとめて取得します。デッドゾーン補正済みの値が返ります。</p>
                     <div class="method-list">
                         <div class="method">
-                            <code>Vector2 GetLeftStickPosition() const</code>
-                            <p>左アナログスティックの位置を取得します。範囲は-1.0～1.0です。</p>
+                            <code>const GamepadAnalogInput&amp; GetGamepadAnalogInput() const</code>
+                            <p>スティック（<code>thumbL</code> / <code>thumbR</code>：<code>Vector2</code>、範囲 -1.0～1.0）とトリガー（<code>triggerL</code> / <code>triggerR</code>：<code>float</code>）を保持する構造体を返します。</p>
                         </div>
                         <div class="method">
-                            <code>Vector2 GetRightStickPosition() const</code>
-                            <p>右アナログスティックの位置を取得します。範囲は-1.0～1.0です。</p>
+                            <code>const XINPUT_GAMEPAD&amp; GetRawGamepadState() const</code>
+                            <p>デッドゾーン補正前の生の入力状態が必要な場合に使用します。</p>
                         </div>
                     </div>
 
                     <h4>使用例</h4>
-                    <pre><code>// 左スティックで移動
-Vector2 leftStick = input->GetLeftStickPosition();
+                    <pre><code>// スティックで移動
+const auto& pad = input->GetGamepadAnalogInput();
+Vector2 leftStick = pad.thumbL;
 if (leftStick.Length() > 0.1f) { // デッドゾーンチェック
     Vector3 moveDir(leftStick.x, 0.0f, leftStick.y);
     player->Move(moveDir);
 }
 
 // 右スティックでカメラ回転
-Vector2 rightStick = input->GetRightStickPosition();
+Vector2 rightStick = pad.thumbR;
 if (rightStick.Length() > 0.1f) {
     camera->Rotate(rightStick.x * sensitivity, rightStick.y * sensitivity);
 }</code></pre>
 
+                    <h3>ボタン入力</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>bool PushButton(WORD buttonNum) const / TriggerButton(WORD) const / ReleaseButton(WORD) const</code>
+                            <p>ゲームパッドのボタン（<code>XINPUT_GAMEPAD_*</code>）の押下・トリガー・リリースを判定します。</p>
+                        </div>
+                    </div>
+
                     <h3>デッドゾーン設定</h3>
                     <div class="method-list">
                         <div class="method">
-                            <code>void SetDeadZoneRange(float deadZoneRange)</code>
-                            <p>スティックのデッドゾーン範囲を設定します。デフォルトは0.1f（10%）です。</p>
+                            <code>Deadzone&amp; GetDeadzone()</code>
+                            <p>デッドゾーン設定構造体（<code>thumbL</code> / <code>thumbR</code> / <code>triggerL</code> / <code>triggerR</code>、各デフォルト 0.1f）への参照を返します。値を直接編集します。</p>
                         </div>
                     </div>
 
                     <h4>使用例</h4>
-                    <pre><code>// デッドゾーンを15%に設定
-input->SetDeadZoneRange(0.15f);</code></pre>
+                    <pre><code>// 左スティックのデッドゾーンを15%に設定
+input->GetDeadzone().thumbL = 0.15f;</code></pre>
 
-                    <p class="text-muted">※ ボタン入力については内部的にサポートされていますが、公開APIは実装に依存します。</p>
+                    <h3>振動</h3>
+                    <div class="method-list">
+                        <div class="method">
+                            <code>void Vibrate(float leftMotorSpeed, float rightMotorSpeed)</code>
+                            <p>ゲームパッドの左右モーターの振動を設定します。</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -403,14 +419,14 @@ void ClosePauseMenu()
         if (isSlowMotion)
         {
             pDeltaTimeManager_->SetTimeScale(0.3f);
-            // エフェクトを有効化
-            pViewport_->GetPostEffect&lt;RadialBlur&gt;()->Enable(true);
+            // エフェクトを有効化（初期化時にCanvasへAddEffectして得たポインタを保持しておく）
+            pRadialBlur_->Enable(true);
         }
         else
         {
             pDeltaTimeManager_->SetTimeScale(1.0f);
             // エフェクトを無効化
-            pViewport_->GetPostEffect&lt;RadialBlur&gt;()->Enable(false);
+            pRadialBlur_->Enable(false);
         }
     }
 }</code></pre>
@@ -449,7 +465,7 @@ void ClosePauseMenu()
     Vector3 moveDir(0.0f, 0.0f, 0.0f);
     
     // ゲームパッド入力をチェック
-    Vector2 leftStick = input->GetLeftStickPosition();
+    Vector2 leftStick = input->GetGamepadAnalogInput().thumbL;
     if (leftStick.Length() > 0.1f)
     {
         // ゲームパッドで移動
@@ -501,7 +517,8 @@ if (jumpBufferTimer > 0.0f && player->IsGrounded())
                     <h3>3. デッドゾーンの適切な設定</h3>
                     <p>コントローラーのドリフトを防ぐため、デッドゾーンを適切に設定しましょう。</p>
                     <pre><code>// 推奨デッドゾーン: 10%～20%
-input->SetDeadZoneRange(0.15f);</code></pre>
+input->GetDeadzone().thumbL = 0.15f;
+input->GetDeadzone().thumbR = 0.15f;</code></pre>
 
                     <h3>4. 入力の無効化を活用</h3>
                     <p>カットシーンやメニュー表示時は入力を無効化することで、意図しない操作を防げます。</p>

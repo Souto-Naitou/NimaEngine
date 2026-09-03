@@ -16,6 +16,7 @@
 #include <numbers>
 #include <Core/ConfigManager/ConfigManager.h>
 #include <filesystem>
+#include <Utility/TextureSelector/TextureSelectWidget.h>
 
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
@@ -71,6 +72,8 @@ void ParticleEmitter::Initialize(const ParticleEmitter::Params& params)
         emitterData_ = fromJsonData_;
     }
 
+    /// 読み込まれたエミッターデータから初期化を行う
+    this->InitTexture();
 
     if (!emitterData_.name.empty())
     {
@@ -264,6 +267,16 @@ void ParticleEmitter::InitRotation(ParticleData& datum)
     }
 }
 
+void ParticleEmitter::InitTexture()
+{
+    auto texHandle = TextureManager::GetInstance()->GetSrvHandleGPU(fromJsonData_.textureData.texturePath);
+
+    if (texHandle.ptr)
+    {
+        particle_->GetModel()->ChangeTexture(texHandle);
+    }
+}
+
 void ParticleEmitter::ImGuiSectionCommon()
 {
     #ifdef _DEBUG
@@ -309,6 +322,7 @@ void ParticleEmitter::ImGuiSectionCommon()
                     debugEntry_->SetName(particleName_);
                     particle_->SetName(particleName_);
                 }
+                this->InitTexture();
                 jsonFileExist_ = true;
             }
             else
@@ -546,6 +560,17 @@ void ParticleEmitter::ImGuiSectionDebug()
     if (ImGui::CollapsingHeader("デバッグ"))
     {
         ImGui::Checkbox("エミッタ範囲の描画", &isDrawLine_);
+        auto pTextureSelectWidget = TextureSelectWidget::GetInstance();
+
+        ImGui::Text("選択中のテクスチャ: %s", fromJsonData_.textureData.texturePath.c_str());
+        if (const TextureManager::TextureData* pData = nullptr; pTextureSelectWidget->DrawSelector(pData, 200.0f))
+        {
+            // 取得したデータがnullptrの場合、早期リターン
+            if (!pData) return;
+
+            fromJsonData_.textureData.texturePath = pData->filePath;
+            particle_->GetModel()->ChangeTexture(pData->textureResource.GetSRVHandleGPU());
+        }
         ImGui::Spacing();
     }
     #endif // _DEBUG

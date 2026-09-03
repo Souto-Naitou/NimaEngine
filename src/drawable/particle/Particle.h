@@ -62,6 +62,7 @@ public: /// Getter
     bool GetEnableBillboard() const { return enableBillboard_; }
     auto& GetParticleData() { return particleData_; }
     bool IsAbleDelete() const { return particleData_.empty(); }
+    IModel* GetModel() const { return pModel_; }
 
 
 public: /// container operator

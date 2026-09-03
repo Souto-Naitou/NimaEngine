@@ -25,6 +25,14 @@ public:
     TextureManager& operator=(const TextureManager&) = delete;
     TextureManager& operator=(const TextureManager&&) = delete;
 
+    struct TextureData
+    {
+        std::string filePath = {};
+        DirectX::TexMetadata metadata = {};
+        DX12Resource textureResource = {};
+    };
+    using TextureDataMap = std::unordered_map<std::filesystem::path, TextureData>;
+
     static TextureManager* GetInstance() { static TextureManager instance; return &instance;}
     /// <summary>
     /// テクスチャ管理を初期化します。
@@ -69,12 +77,9 @@ public: /// Getter
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& filePath);
     [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath);
     [[nodiscard]] static Vector2                GetTextureSize(const DirectX::TexMetadata& metadata);
+    [[nodiscard]] const TextureDataMap&         GetTextureDataMap() const { return textureDataMap_; }
+    [[nodiscard]] TextureDataMap&               GetTextureDataMap() { return textureDataMap_; }
 private:
-    struct TextureData
-    {
-        DirectX::TexMetadata metadata = {};
-        DX12Resource textureResource = {};
-    };
 
     enum class TextureType
     {
@@ -113,7 +118,7 @@ private:
     /// <returns>解決済みファイルパス。</returns>
     std::string ResolveFilePath(const std::string& _filePath);
 
-    std::unordered_map<std::filesystem::path, TextureData> textureDataMap_;
+    TextureDataMap textureDataMap_;
     PathResolver pathResolver_ = {};
     std::list<Microsoft::WRL::ComPtr<ID3D12Resource>> resourcesIntermediate_;
 

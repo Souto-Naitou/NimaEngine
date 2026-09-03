@@ -80,7 +80,7 @@ namespace DX12Helper
 
     [[nodiscard]]
     ComPtr<ID3D12Resource> UploadTextureData(
-        const ComPtr<ID3D12Resource>& texture,
+        DX12Resource& texture,
         const DirectX::ScratchImage& mipImages,
         const ComPtr<ID3D12Device>& device,
         const ComPtr<ID3D12GraphicsCommandList>& commandList

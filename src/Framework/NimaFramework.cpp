@@ -55,6 +55,7 @@ void NimaFramework::Initialize()
     pPSOCache_ = PSOCache::GetInstance();
     pRootSignatureCache_ = RootSignatureCache::GetInstance();
     pPostEffectInputCommon_ = PostEffectInputCommon::GetInstance();
+    pTextureSelectWidget_ = TextureSelectWidget::GetInstance();
 
     #ifdef _DEBUG
     pImGuiManager_ = std::make_unique<ImGuiManager>();
@@ -198,6 +199,9 @@ void NimaFramework::Initialize()
     pCubemapSystem_ = std::make_unique<CubemapSystem>();
     pCubemapSystem_->SetDirectX12(pDirectX_.get());
     pCubemapSystem_->Initialize();
+
+    // テクスチャ選択ウィジェットの初期化
+    pTextureSelectWidget_->SetImGuiManager(pImGuiManager_.get());
 
     /// デフォルトシーン引数の設定
     (*pSceneManager_)

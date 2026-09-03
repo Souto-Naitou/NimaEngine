@@ -35,6 +35,7 @@
 
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecutor.h>
+#include <Utility/TextureSelector/TextureSelectWidget.h>
 
 
 /// ゲーム共通のフレームワーククラス
@@ -118,6 +119,7 @@ protected:
     PSOCache*                       pPSOCache_                  = nullptr;
     RootSignatureCache*             pRootSignatureCache_        = nullptr;
     PostEffectInputCommon*          pPostEffectInputCommon_     = nullptr;
+    TextureSelectWidget*            pTextureSelectWidget_       = nullptr;
 
     bool                            isExitProgram_              = false;
 

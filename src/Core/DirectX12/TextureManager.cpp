@@ -38,12 +38,16 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
 
     TextureData& textureData = textureDataMap_[strPathResolved];
 
+    // ファイルパスを保存
+    textureData.filePath = strPathResolved;
+
     // ファイルから画像を読み込む
     DirectX::ScratchImage image{};
     std::wstring filePathW = ConvertString(strPathResolved);
     TextureType textureType = this->GetTextureType(filePathW);
     this->LoadImageFromFile(textureType, filePathW, image);
 
+    // メタデータを保存
     textureData.metadata = image.GetMetadata();
 
     auto pDevice = pDx12_->GetDevice();
@@ -63,7 +67,7 @@ std::string TextureManager::LoadTexture(const std::string& filePath)
     // アップロード用の中間リソースを作成してデータ転送
     resourcesIntermediate_.push_back(
         DX12Helper::UploadTextureData(
-            textureData.textureResource.GetResource(),
+            textureData.textureResource,
             image, 
             pDevice,
             cl
@@ -158,7 +162,7 @@ HRESULT TextureManager::LoadImageFromFile(TextureType _type, const std::wstring&
         case TextureType::kDDS:
             return DirectX::LoadFromDDSFile(_filepath.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, _image);
         case TextureType::kWIC:
-            return DirectX::LoadFromWICFile(_filepath.c_str(), DirectX::WIC_FLAGS_NONE, nullptr, _image);
+            return DirectX::LoadFromWICFile(_filepath.c_str(), DirectX::WIC_FLAGS_IGNORE_SRGB, nullptr, _image);
     }
     return E_FAIL; // Unknown type
 }

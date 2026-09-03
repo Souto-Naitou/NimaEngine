@@ -42,6 +42,7 @@ namespace Type
         namespace v3
         {
             struct Common;
+            struct TextureData;
             struct RangeData;
             struct Flags;
             struct PhysicsData;
@@ -141,6 +142,11 @@ struct Type::ParticleEmitter::v3::Common : public v2::Common
     float           radius                      = 0.0f;
 };
 
+struct Type::ParticleEmitter::v3::TextureData
+{
+    std::string     texturePath                 = {};                   // テクスチャパス
+};
+
 struct Type::ParticleEmitter::v3::RangeData : public v2::RangeData
 {
     Range<float>    velocityRandomSphere        = {};                   // SphereVelocityDistribution用のランダム範囲
@@ -174,6 +180,7 @@ struct Type::ParticleEmitter::v3::Data
     static constexpr uint32_t version           = 3;                    // バージョン番号
     std::string     name                        = {};
     Common          common                      = {};
+    TextureData     textureData                 = {};
     RangeData       ranges                      = {};
     PhysicsData     physics                     = {};
     Flags           flags                       = {};

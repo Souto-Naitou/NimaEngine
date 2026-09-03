@@ -80,7 +80,7 @@ void Particle::Update()
         else if ((*ppGameEye_)->IsOrthographic2d())
         {
             vpMatrix = (*ppGameEye_)->GetViewProjectionMatrix();
-            wMatrix = Matrix4x4::ScaleMatrix({ 1.0f, -1.0f, 1.0f }) * kAffineMatrix;
+            wMatrix = kAffineMatrix;
         }
         else
         {
@@ -209,7 +209,7 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator itr)
     bool isGround = false;
     float deltaTime = DeltaTimeManager::GetInstance()->GetDeltaTime(static_cast<uint32_t>(DeltaTimeChannelReserved::Particle));
 
-    DeltaTimeStopWatch&   timer = itr->timer;
+    DeltaTimeStopWatch& timer = itr->timer;
     EulerTransform&     transform = itr->transform;
     Vector3&            velocity = itr->velocity;
 

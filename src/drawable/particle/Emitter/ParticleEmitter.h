@@ -112,6 +112,7 @@ private:
     void InitScale(ParticleData& datum);
     void InitVelocity(ParticleData& datum);
     void InitRotation(ParticleData& datum);
+    void InitTexture();
 
     void ImGuiSectionCommon();
     void ImGuiSectionColor();

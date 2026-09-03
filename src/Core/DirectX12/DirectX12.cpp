@@ -34,14 +34,21 @@
 
 void DirectX12::Initialize()
 {
+    const bool underPix = (GetModuleHandleW(L"WinPixGpuCapturer.dll") != nullptr);
+
     /// デバッグコントローラの設定
-    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
+    #ifdef _DEBUG
+    if (!underPix)
     {
-        // デバッグレイヤーを有効化する
-        debugController_->EnableDebugLayer();
-        // GPU側もチェックする
-        debugController_->SetEnableGPUBasedValidation(TRUE);
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
+        {
+            // デバッグレイヤーを有効化する
+            debugController_->EnableDebugLayer();
+            // GPU側もチェックする
+            debugController_->SetEnableGPUBasedValidation(TRUE);
+        }
     }
+    #endif // _DEBUG
 
     pSRVManager_ = SRVManager::GetInstance();
 
@@ -72,7 +79,7 @@ void DirectX12::Initialize()
 
     /// エラー時停止処理
     //#ifdef _DEBUG
-    DX12Helper::PauseError(device_, infoQueue_);
+    if (!underPix) DX12Helper::PauseError(device_, infoQueue_);
     //#endif // _DEBUG
 
 

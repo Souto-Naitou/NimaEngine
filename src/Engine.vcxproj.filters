@@ -796,6 +796,7 @@
       <Filter>Feature\Lighting</Filter>
     </ClCompile>
     <ClCompile Include="Features\GameEye2d\GameEye2d.cpp" />
+    <ClCompile Include="Utility\TextureSelector\TextureSelectWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\define.h">
@@ -1316,6 +1317,7 @@
     <ClInclude Include="Features\GameEye2d\GameEye2d.h" />
     <ClInclude Include="Math\Transform2d.h" />
     <ClInclude Include="Interfaces\IGameEye.h" />
+    <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

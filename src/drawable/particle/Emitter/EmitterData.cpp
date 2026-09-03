@@ -234,6 +234,10 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_common, "alphaDeltaValue", d_common.alphaDeltaValue);
         utl::json::try_assign(j_common, "velocityFixed", d_common.velocityFixed);
 
+        auto& d_tex = data.textureData;
+
+        utl::json::try_assign(j_common, "texturePath", d_tex.texturePath);
+
         auto& d_range = data.ranges;
 
         utl::json::try_assign(j_range, "scale", d_range.scale);
@@ -285,6 +289,11 @@ namespace Type::ParticleEmitter::v3
         j_common["emitPositionFixed"]           = d_common.emitPositionFixed;
         j_common["alphaDeltaValue"]             = d_common.alphaDeltaValue;
         j_common["velocityFixed"]               = d_common.velocityFixed;
+
+        auto& j_tex = j["textureData"];
+        auto& d_tex = data.textureData;
+
+        j_tex["texturePath"]                    = d_tex.texturePath;
 
         auto& j_ranges = j["ranges"];
         auto& d_ranges = data.ranges;

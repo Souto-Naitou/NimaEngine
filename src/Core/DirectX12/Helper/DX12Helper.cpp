@@ -370,35 +370,35 @@ DX12Resource DX12Helper::CreateDX12ResourceForRender(
     return result;
 }
 
-ComPtr<ID3D12Resource> DX12Helper::UploadTextureData(
-    const ComPtr<ID3D12Resource>& _texture,
-    const DirectX::ScratchImage& _mipImages,
-    const ComPtr<ID3D12Device>& _device,
-    const ComPtr<ID3D12GraphicsCommandList>& _commandList
+DX12Helper::ComPtr<ID3D12Resource> DX12Helper::UploadTextureData(
+    DX12Resource& texture,
+    const DirectX::ScratchImage& mipImages,
+    const ComPtr<ID3D12Device>& device,
+    const ComPtr<ID3D12GraphicsCommandList>& commandList
 )
 {
     std::vector<D3D12_SUBRESOURCE_DATA> subresources;
-    DirectX::PrepareUpload(_device.Get(),
-        _mipImages.GetImages(), 
-        _mipImages.GetImageCount(), 
-        _mipImages.GetMetadata(), 
+    DirectX::PrepareUpload(device.Get(),
+        mipImages.GetImages(), 
+        mipImages.GetImageCount(), 
+        mipImages.GetMetadata(), 
         subresources
     );
 
     uint64_t sizeIntermediate = GetRequiredIntermediateSize(
-        _texture.Get(),
+        texture.GetResource().Get(),
         0,
         static_cast<UINT>(subresources.size())
     );
 
     ComPtr<ID3D12Resource> resourceIntermediate = DX12Helper::CreateBufferResource(
-        _device, 
+        device, 
         sizeIntermediate
     );
 
     UpdateSubresources(
-        _commandList.Get(),
-        _texture.Get(),
+        commandList.Get(),
+        texture.GetResource().Get(),
         resourceIntermediate.Get(),
         0,
         0,
@@ -407,13 +407,7 @@ ComPtr<ID3D12Resource> DX12Helper::UploadTextureData(
     );
 
     // Resourceの状態を更新
-    D3D12_RESOURCE_BARRIER barrier{};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = _texture.Get();
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-    _commandList->ResourceBarrier(1, &barrier);
+    texture.GetStateTracker().ChangeState(commandList.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
     return resourceIntermediate;
 }

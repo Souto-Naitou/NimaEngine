@@ -55,18 +55,39 @@ public:
         {
             ImGui::Indent(15.0f);
 
-            if (ImGui::Button("Play")) this->Start();
+            if (ImGui::Button("▶ Play")) this->Start();
+            ImGui::SameLine();
+            if (ImGui::Button("Add")) this->AddTween(0.0f, 1.0f, currentValue_, currentValue_);
 
             uint32_t index = 0;
-            for (auto& tween : tweens_)
+            for (auto it = tweens_.begin(); it != tweens_.end();)
             {
-                tween.ImGui("Tween " + std::to_string(index));
+                ImGui::PushID(index);
+
+                bool isErase = false;
+                ImGui::Separator();
+                if (ImGui::Button("Delete"))
+                {
+                    it = tweens_.erase(it);
+                    isErase = true;
+                }
+                else
+                {
+                    it->ImGui("Tween " + std::to_string(index));
+                }
                 ++index;
+                ImGui::Separator();
+
+                if (!isErase) ++it;
+
+                ImGui::PopID();
             }
 
             ImGui::Unindent(15.0f);
             ImGui::TreePop();
         }
+
+
 
         #endif // _DEBUG
     }
@@ -95,7 +116,7 @@ inline const ValueType& AnimationTimeline<ValueType>::Update()
         }
     }
 
-    isPlaying_ = !tweens_.back().IsFinished(time);
+    if (!tweens_.empty()) isPlaying_ = !tweens_.back().IsFinished(time);
 
     return currentValue_;
 }

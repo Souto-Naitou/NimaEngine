@@ -1318,6 +1318,7 @@
     <ClInclude Include="Math\Transform2d.h" />
     <ClInclude Include="Interfaces\IGameEye.h" />
     <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h" />
+    <ClInclude Include="Features\Animation\AnimationLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

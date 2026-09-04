@@ -1,7 +1,12 @@
 #pragma once
 #include <functional>
-#include <imgui.h>
 #include <string>
+#include <nlohmann/json.hpp>
+
+#include <imgui.h>
+#include <Utility/JSON/jsonutl.h>
+#include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
+#include <Math/Easing.h>
 
 // アニメーションの補間を管理するクラス
 //   ValueTypeはUpdate関数内で+-*を使用するため、演算子オーバーロードが必要
@@ -28,6 +33,14 @@ public:
     inline void SetTransitionFunction(const std::function<float(float)>& func)
     {
         transitionFunction_ = func;
+        easingType_ = Math::Easing::EasingType::None;
+    }
+
+    // 補間関数を設定 (EasingTypeを指定)
+    inline void SetTransitionFunction(Math::Easing::EasingType type)
+    {
+        transitionFunction_ = Math::Easing::GetEasingFunction(type);
+        easingType_ = type;
     }
 
     // アニメーション終了時のコールバック関数を設定
@@ -54,14 +67,17 @@ public:
 private:
     float           startSec_           = 0.0f;
     float           durationSec_        = 0.0f;
-    const ValueType targetValue_        = {};
-    const ValueType startValue_         = {};
+    ValueType       targetValue_        = {};
+    ValueType       startValue_         = {};
     bool            isCalledOnFinished_ = false;
 
     // 補間関数
     std::function<float(float)> transitionFunction_ = nullptr;
     // コールバック関数
     std::function<void()> onFinished_ = nullptr;
+
+    // 補間タイプ
+    Math::Easing::EasingType easingType_ = Math::Easing::EasingType::None;
 };
 
 template<typename ValueType>
@@ -102,10 +118,40 @@ inline void AnimationTween<ValueType>::ImGui(const std::string& name)
 
         ImGui::DragFloat("Start Sec", &startSec_, 0.01f, 0.0f, 100.0f, "%.2f");
         ImGui::DragFloat("Duration Sec", &durationSec_, 0.01f, 0.0f, 100.0f, "%.2f");
+        ImGuiTemplate::Drag("Start Value", &startValue_);
+        ImGuiTemplate::Drag("Target Value", &targetValue_);
+
+        if (ImGuiTemplate::ComboEnum("Easing Type", easingType_))
+        {
+            this->SetTransitionFunction(easingType_);
+        }
 
         ImGui::Unindent(15.0f);
         ImGui::TreePop();
     }
 
     #endif // _DEBUG
+}
+
+// JSONデシリアライズ
+template <typename ValueType>
+void from_json(const nlohmann::json& j, AnimationTween<ValueType>& tween)
+{
+    float startSec = 0.0f;
+    utl::json::try_assign(j, "startSec", startSec);
+    tween.SetStartSec(startSec);
+
+    utl::json::try_assign(j, "durationSec", tween.durationSec_);
+    utl::json::try_assign(j, "startValue", tween.startValue_);
+    utl::json::try_assign(j, "targetValue", tween.targetValue_);
+}
+
+// JSONシリアライズ
+template <typename ValueType>
+void to_json(nlohmann::json& j, const AnimationTween<ValueType>& tween)
+{
+    j["startSec"] = tween.startSec_;
+    j["durationSec"] = tween.durationSec_;
+    j["startValue"] = tween.startValue_;
+    j["targetValue"] = tween.targetValue_;
 }

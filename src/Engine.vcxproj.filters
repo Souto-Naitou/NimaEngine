@@ -1,631 +1,380 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Feature">
-      <UniqueIdentifier>{a77adb65-0ab2-4143-a805-264c3fa04373}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Input">
-      <UniqueIdentifier>{8803f867-4d11-4cec-883f-32df44af6c30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model">
-      <UniqueIdentifier>{cce5abac-cdc3-482f-9133-860593c9bb69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model\Helper">
-      <UniqueIdentifier>{34f07039-7af5-434d-b971-4084ae536b3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools">
-      <UniqueIdentifier>{2d966475-f2b4-417a-b53b-98a2e95ea8a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\DebugManager">
-      <UniqueIdentifier>{67c70dc1-3fc3-4b92-8745-04c264ebcfd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\Templates">
-      <UniqueIdentifier>{b53e2fc5-1d01-4842-8274-a707748c6d7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{ebae1fd8-cb01-44bc-adbe-7d51471725ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{c81e2914-fa28-4869-9546-e5505a3be28b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL">
-      <UniqueIdentifier>{0c17c647-2548-407e-b3bf-708a04226c6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\ImGuiManager">
-      <UniqueIdentifier>{e4815223-2288-4cdb-9168-0d4dca0b53d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\Logger">
-      <UniqueIdentifier>{420cec13-7fb2-48a2-a136-34ac694c006d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\ConvertString">
-      <UniqueIdentifier>{84a0e531-6976-4248-92f6-ffbc56083342}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{34ff13cd-5f52-4198-a749-0d909c9ea792}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12">
-      <UniqueIdentifier>{55c061c3-927c-45ed-a4ab-5d06972fc5bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\FPS">
-      <UniqueIdentifier>{88cff5bd-cd25-4ccd-9324-62389d1650c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\TextureManager">
-      <UniqueIdentifier>{b645dc65-bf36-43cb-90e8-e823724f366b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\Helper">
-      <UniqueIdentifier>{f3a365ef-b3a8-406d-bad8-e97f350d9e50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\GameEye">
-      <UniqueIdentifier>{ea832b38-aeb0-403c-932b-e147be7b883d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\SRVManager">
-      <UniqueIdentifier>{b8daf23f-873b-43df-af52-7b1171eeb29f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\IContainer">
-      <UniqueIdentifier>{2a1d6553-6c96-46a4-96dd-9f2f112ef441}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Audio">
-      <UniqueIdentifier>{664da578-2164-4745-a914-0d9323b4648b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common\HRESULT_ASSERT">
-      <UniqueIdentifier>{d4fcf4a9-6708-44c3-924d-0a3d5f061199}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Framework">
-      <UniqueIdentifier>{ac264289-b142-4670-8528-be08910cd5a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interface">
-      <UniqueIdentifier>{698a144f-8678-45a3-8e71-2fb257d08434}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\SceneManager">
-      <UniqueIdentifier>{58dab0a0-59c5-4cf9-95ba-19f2b051c76b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\RandomGenerator">
-      <UniqueIdentifier>{261dc65f-18f6-4c56-b64d-5c907c9c5259}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\WinSystem">
-      <UniqueIdentifier>{5c7e8f14-1bd4-48f2-80b9-2ad2124c12e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Lighting">
-      <UniqueIdentifier>{2128e531-19f2-4691-bd96-69fd85443bf2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Lighting\Manager">
-      <UniqueIdentifier>{02cc3392-7700-4b10-98af-e1bf1d321ca5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Collision">
-      <UniqueIdentifier>{8b3b583a-7857-484a-b311-3a30cccc93f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Collision\Manager">
-      <UniqueIdentifier>{ba4a3ce3-2435-4b60-99fb-6a6cbefb12c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Collision\Collider">
-      <UniqueIdentifier>{c8050890-2b06-4e5c-9f4a-c63151aecca4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\CSV">
-      <UniqueIdentifier>{041acee4-5bdd-4267-9204-84c9d7b43c7c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\DeltaTimeManager">
-      <UniqueIdentifier>{053f48ec-aa29-428d-b1db-321a274f4725}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\DIContainer">
-      <UniqueIdentifier>{d915672d-7d9f-4795-8ba7-1995c72af4b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Text">
-      <UniqueIdentifier>{b4382b62-3fb7-4f45-96f9-21e495c77e44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\GameEye\FreeLookEye">
-      <UniqueIdentifier>{c17c349e-3a19-4e0f-a99e-2d416a60926a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Viewport">
-      <UniqueIdentifier>{df1d1947-10ff-440f-aa75-24724059b1c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Audio\Manager">
-      <UniqueIdentifier>{030b04de-ede8-4d48-9db9-94abc9e9e97b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Audio\Command">
-      <UniqueIdentifier>{38ba84f9-eca5-442a-a4ee-52776a6ec517}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BaseClass">
-      <UniqueIdentifier>{6eba742e-07c6-4355-a651-8ec2446a5ca1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\NiGuiDerived">
-      <UniqueIdentifier>{f7836a96-3646-43b5-8d8a-6a7bb09b437c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\PostEffect">
-      <UniqueIdentifier>{90230bf2-8149-42f4-9564-53f4343366d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\RTVHeapCounter">
-      <UniqueIdentifier>{6c5ed3f0-48af-44cd-bbf9-d608ba01a0c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\EventTimer">
-      <UniqueIdentifier>{df5f5a1a-502e-4329-9008-38543f810d61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\JSONConvTypeFuncs">
-      <UniqueIdentifier>{0429575c-34a2-4428-96e4-79495d83d875}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\JSONIO">
-      <UniqueIdentifier>{158aa26d-4868-4d7d-a32e-aea18848c56f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\String">
-      <UniqueIdentifier>{92bf5668-a1ed-46fd-bc3e-cb0c886e6d58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\JSON">
-      <UniqueIdentifier>{e3866255-e1bd-474c-adaa-9fa7dec28d9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\ConfigManager">
-      <UniqueIdentifier>{fafd37d8-141a-4074-80f2-64b9aa3be79f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Localization">
-      <UniqueIdentifier>{6c680fa0-6d21-4b03-ade3-32265ba472ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\ResourceStateTracker">
-      <UniqueIdentifier>{589394c6-80ed-4d6d-8187-894120671dce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect">
-      <UniqueIdentifier>{b3661dd5-34ec-43fa-8d87-0f3dd4e09792}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect">
-      <UniqueIdentifier>{01d61650-8c9e-445b-a928-032122192ccf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Grayscale">
-      <UniqueIdentifier>{df05c70a-a16e-4880-a01d-f71c08a6b1fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Vignette">
-      <UniqueIdentifier>{b83890bf-4f67-4ef7-a098-3c2f12d2fc01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\BoxFilter">
-      <UniqueIdentifier>{fe20ff7d-b862-409e-be34-7f3d1e0afa90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\GaussianFilter">
-      <UniqueIdentifier>{4d490812-3ac6-4777-bd5e-55f245f08b0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\.Helper">
-      <UniqueIdentifier>{2946dbcb-0581-4d0b-af8b-3987d55efe5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\PrewittOutline">
-      <UniqueIdentifier>{25dec821-bd38-4995-8651-113363b582da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\DepthBasedOutline">
-      <UniqueIdentifier>{6f6ead96-d95d-4bce-bc76-6121ce61918d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\RadialBlur">
-      <UniqueIdentifier>{6e29f5a3-7f69-49cc-a21b-b782281dc1ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\PostEffect">
-      <UniqueIdentifier>{12c1fcab-855f-4791-a760-dbb00b16c22f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Dissolve">
-      <UniqueIdentifier>{31600556-5aed-4a75-935d-44efeec4848d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\TextureResource">
-      <UniqueIdentifier>{a0d649d6-f1f7-4d1d-bbad-3046629187cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\Debug">
-      <UniqueIdentifier>{ce80308a-e3cc-4688-a1a9-2d23bb82709a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\BlendDesc">
-      <UniqueIdentifier>{fb9d6f31-4fb9-4701-bd6d-64c85dfa071b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\StaticSamplerDesc">
-      <UniqueIdentifier>{cbbf766d-c801-48d4-9cc5-72f739ab46c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\PipelineStateObject">
-      <UniqueIdentifier>{5e8625a2-f1ce-4256-9e8d-35b424832bf4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\RandomFilter">
-      <UniqueIdentifier>{3d98c8fa-48b9-4be5-a62e-40363c273462}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model\Loader">
-      <UniqueIdentifier>{80b8eb5c-4876-4a3e-9661-2b772e2ade41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model\Storage">
-      <UniqueIdentifier>{e86362d5-04be-4fe4-8f6f-dd1bb8deb791}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\FileSystem">
-      <UniqueIdentifier>{c235e41a-279c-4804-8dd7-9468f742786e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\ThreadPool">
-      <UniqueIdentifier>{b9c54677-0800-48d8-8b8a-5afdf1b3b66a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\PathResolver">
-      <UniqueIdentifier>{30e80ed6-8006-4ad8-b828-27e9a6a6cfc1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{c0189ff3-447a-43f5-82c1-1a5a38b19bbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Args">
-      <UniqueIdentifier>{11cc3948-5543-4400-98b3-0076cd2d2db9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model\Loader\Legacy">
-      <UniqueIdentifier>{f52e4b78-be1f-4180-8ae4-acc018de9228}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Model\Loader\Assimp">
-      <UniqueIdentifier>{b0764b50-1546-47ae-9fec-d98f58289f2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\TimeMeasurer">
-      <UniqueIdentifier>{495f3d05-1ecb-471c-908f-a0a1fc1eb033}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{ec067c63-c8a9-466a-aff3-c54c9a64be1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\SeparatedGaussianFilter">
-      <UniqueIdentifier>{9fb29472-52fe-4435-a648-0459a076ef41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\GaussianBloom">
-      <UniqueIdentifier>{1421dd41-0025-4cbf-8888-7716f040598f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\LuminanceOutput">
-      <UniqueIdentifier>{f3f4df73-a540-41f0-82c0-b75a0541deb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\LevelLoader">
-      <UniqueIdentifier>{eb43caa4-c991-4307-af62-48f06e59afba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Cubemap">
-      <UniqueIdentifier>{172e37dc-77d9-42b5-bd65-180bbcca8673}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Preset">
-      <UniqueIdentifier>{24ac3fb2-898d-435b-ba40-ee217908c748}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Preset\Object3d">
-      <UniqueIdentifier>{7b20b9f7-076c-433d-8702-4f2f5e6376f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Preset\Object3d\Grid">
-      <UniqueIdentifier>{b301e74a-e41d-4a55-b4bc-e3567fa912d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DebugTools\DebugEntry">
-      <UniqueIdentifier>{758042fc-2bde-4ae2-8db7-ae2811523059}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Animation">
-      <UniqueIdentifier>{4cb28116-e61d-4a3f-8272-987cb1990ae5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Animation">
-      <UniqueIdentifier>{732f7de8-8b75-4490-b201-385c775c22e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Bar2d">
-      <UniqueIdentifier>{ba89ddb5-a4d1-493c-9e72-3b9692166820}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Bar3d">
-      <UniqueIdentifier>{96d2037a-0c4b-4b54-ad31-2f2286e1015f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Collision\CellBasedFiltering">
-      <UniqueIdentifier>{fc1f23c8-4070-41e3-8122-d17c37ddd352}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Layer">
-      <UniqueIdentifier>{977f525f-1f0e-479a-be89-aa18886e41ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{061d370c-d860-4bb7-b62c-b7870b912c88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\SceneTransition">
-      <UniqueIdentifier>{242f8ca1-959d-469a-b191-7900d166de53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\SceneTransition\FadeInOut">
-      <UniqueIdentifier>{e60ca308-66bf-4877-bedd-8da0a9c1c1dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\SceneTransition\Manager">
-      <UniqueIdentifier>{a8bd3d85-68b2-4d21-9e41-d119dee47a7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\SceneTransition\Shutter">
-      <UniqueIdentifier>{45350fa5-48c0-46e5-a4aa-2e9a2994621c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\.Factory">
-      <UniqueIdentifier>{40e3b035-9064-4e5e-91c1-d42e5242e461}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable">
-      <UniqueIdentifier>{c552dfb9-a29c-435f-a35d-5f5cc2d09e5a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Base">
-      <UniqueIdentifier>{0e1fa88e-bd99-4c3e-bd8e-01bdab010fbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Object3d">
-      <UniqueIdentifier>{e1b1b091-2477-475f-b508-9b6faaf83efc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle">
-      <UniqueIdentifier>{8e2b2b59-3920-4ac0-a9d2-0d0039b75fdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle\Emitter">
-      <UniqueIdentifier>{556acd2e-a30a-4489-86c4-bcf0c25fadd0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle\Manager">
-      <UniqueIdentifier>{82f7154a-fe86-4eeb-a603-29554c7a2cb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle\System">
-      <UniqueIdentifier>{3dd920c7-60bf-4a2c-a888-4dac7750a26f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle\Type">
-      <UniqueIdentifier>{5eaa0b5f-e515-4ae0-944e-7374dbf4ac5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Sprite">
-      <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Gauge">
-      <UniqueIdentifier>{352baa52-3f6a-440f-ad34-b776f126c4c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Event">
-      <UniqueIdentifier>{5d9bd20b-26a0-4fec-bb43-cf77d179c10f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Font">
-      <UniqueIdentifier>{3eb537d9-ae5a-41ee-9425-1299a018a97f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Screen">
-      <UniqueIdentifier>{c8d7b7c4-ddac-4900-bb24-72d05dba1b46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Font">
-      <UniqueIdentifier>{2972a9eb-a603-4dbc-84c3-c79eef9b024f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO">
-      <UniqueIdentifier>{1c516a18-2530-44f5-af79-d75c33710602}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\DirectX12\RootSignature">
-      <UniqueIdentifier>{952e4045-13d4-434b-962b-5d9b1e2b49ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Line">
-      <UniqueIdentifier>{38ab7a10-0059-445f-9cfc-905bcfd9e6ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Premitive">
-      <UniqueIdentifier>{37027ad3-d90a-4c1b-87a8-3a49b496e973}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Premitive\AABB">
-      <UniqueIdentifier>{f7dbd80f-e81d-4548-9ce0-f4c751fd5c3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Premitive\OBB">
-      <UniqueIdentifier>{4490bcaf-3130-4655-9eca-14949ee03dde}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Premitive\Ring">
-      <UniqueIdentifier>{a7ceecdd-c428-42af-a8dc-4c495cb4f039}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Feature\Premitive\Sphere">
-      <UniqueIdentifier>{7778ffde-c386-462d-b0b4-5157df45424b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Scanline">
-      <UniqueIdentifier>{ec2d8b2f-4c61-483d-937d-785c281df65b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Mosaic">
-      <UniqueIdentifier>{5a727436-e39e-48ac-8b70-8d6bf9eaf77f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\.GlobalInput">
-      <UniqueIdentifier>{577eec87-5393-487e-9e10-8b7baa71670e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Drawable\Particle\EmitterGroup">
-      <UniqueIdentifier>{c4297014-909a-4c02-85aa-ec78344c7779}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\ChromaticAberration">
-      <UniqueIdentifier>{69b31a42-820f-4246-ae21-4290f5a5569b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\Drawable">
-      <UniqueIdentifier>{d29eeb10-62be-4f9a-99ac-b390fc61b4d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Effect\PostEffect\Posterize">
-      <UniqueIdentifier>{edbd9914-4903-4d52-86c6-4fcd8c094ffc}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
-      <Filter>DebugTools\DebugManager</Filter>
+    <ClCompile Include="BaseClasses\ObjectSystemBase.cpp">
+      <Filter>BaseClasses</Filter>
     </ClCompile>
-    <ClCompile Include="DebugTools\ImGuiTemplates\ImGuiTemplates.cpp">
-      <Filter>DebugTools\Templates</Filter>
+    <ClCompile Include="Common\HRESULT_ASSERT.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ConfigManager\ConfigManager.cpp">
+      <Filter>Core\ConfigManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ConfigManager\ConfigType.cpp">
+      <Filter>Core\ConfigManager</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\BlendDesc.cpp">
-      <Filter>Core\DirectX12\BlendDesc</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\Framerate.cpp">
-      <Filter>Core\DirectX12\FPS</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\TextureManager.cpp">
-      <Filter>Core\DirectX12\TextureManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp">
-      <Filter>Core\DirectX12\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\DirectX12_Impl.cpp">
       <Filter>Core\DirectX12</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\DirectX12.cpp">
       <Filter>Core\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Input\Input.cpp">
-      <Filter>Feature\Input</Filter>
+    <ClCompile Include="Core\DirectX12\DirectX12_Impl.cpp">
+      <Filter>Core\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\Helper\ModelHelper.cpp">
-      <Filter>Feature\Model\Helper</Filter>
+    <ClCompile Include="Core\DirectX12\Framerate.cpp">
+      <Filter>Core\DirectX12</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\ObjModel.cpp">
-      <Filter>Feature\Model</Filter>
+    <ClCompile Include="Core\DirectX12\Helper\DX12Helper.cpp">
+      <Filter>Core\DirectX12\Helper</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\ModelManager.cpp">
-      <Filter>Feature\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\object3d\Object3d.cpp">
-      <Filter>Drawable\Object3d</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\object3d\Object3dSystem.cpp">
-      <Filter>Drawable\Object3d</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\sprite\Sprite.cpp">
-      <Filter>Drawable\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\sprite\SpriteSystem.cpp">
-      <Filter>Drawable\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugTools\ImGuiManager\ImGuiManager.cpp">
-      <Filter>DebugTools\ImGuiManager</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugTools\Logger\Logger.cpp">
-      <Filter>DebugTools\Logger</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Window\Window.cpp">
-      <Filter>Core\WinSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\GameEye\GameEye.cpp">
-      <Filter>Feature\GameEye</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\Particle.cpp">
-      <Filter>Drawable\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\SRVManager.cpp">
-      <Filter>Core\DirectX12\SRVManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Common\HRESULT_ASSERT.cpp">
-      <Filter>Common\HRESULT_ASSERT</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework\NimaFramework.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\SceneManager\SceneManager.cpp">
-      <Filter>Feature\SceneManager</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\ParticleSystem.cpp">
-      <Filter>Drawable\Particle\System</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\ParticleStorage.cpp">
-      <Filter>Drawable\Particle\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp">
-      <Filter>Feature\RandomGenerator</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Primitive\AABB.cpp">
-      <Filter>Feature\Premitive\AABB</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\Manager\EmitterManager.cpp">
-      <Filter>Drawable\Particle\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\Emitter\ParticleEmitter.cpp">
-      <Filter>Drawable\Particle\Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Primitive\OBB.cpp">
-      <Filter>Feature\Premitive\OBB</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
-      <Filter>Effect\SceneTransition\FadeInOut</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecutor.cpp">
-      <Filter>Effect\SceneTransition\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Collision\Manager\CollisionManager.cpp">
-      <Filter>Feature\Collision\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Collision\Collider\Collider.cpp">
-      <Filter>Feature\Collision\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\CSV\CSVLoader.cpp">
-      <Filter>Feature\CSV</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp">
-      <Filter>Feature\DeltaTimeManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Text\TextSystem.cpp">
-      <Filter>Feature\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Text\Text.cpp">
-      <Filter>Feature\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Viewport\Viewport.cpp">
-      <Filter>Feature\Viewport</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Audio\AudioManager.cpp">
-      <Filter>Feature\Audio\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Audio\Audio.cpp">
-      <Filter>Feature\Audio\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp">
-      <Filter>Feature\GameEye\FreeLookEye</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\NiGui\NiGuiDebug.cpp">
-      <Filter>Feature\NiGuiDerived</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\NiGui\NiGuiDrawer.cpp">
-      <Filter>Feature\NiGuiDerived</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp">
-      <Filter>Core\DirectX12\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp">
-      <Filter>Core\DirectX12\RTVHeapCounter</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugTools\EventTimer\EventTimer.cpp">
-      <Filter>DebugTools\EventTimer</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\JSONIO\jsonio.cpp">
-      <Filter>Utility\JSONIO</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\ConfigManager\ConfigManager.cpp">
-      <Filter>Core\ConfigManager</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugTools\ImGuiManager\ImGuiThemes.cpp">
-      <Filter>DebugTools\ImGuiManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\ConfigManager\ConfigType.cpp">
-      <Filter>Core\ConfigManager</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\Emitter\EmitterData.cpp">
-      <Filter>Drawable\Particle\Emitter</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Grayscale\Grayscale.cpp">
-      <Filter>Effect\PostEffect\Grayscale</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Vignette\Vignette.cpp">
-      <Filter>Effect\PostEffect\Vignette</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp">
-      <Filter>Effect\PostEffect\BoxFilter</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\GaussianFilter\GaussianFilter.cpp">
-      <Filter>Effect\PostEffect\GaussianFilter</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\PrewittOutline\PrewittOutline.cpp">
-      <Filter>Effect\PostEffect\PrewittOutline</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.cpp">
-      <Filter>Effect\PostEffect\DepthBasedOutline</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp">
-      <Filter>Core\DirectX12\ResourceStateTracker</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\RadialBlur\RadialBlur.cpp">
-      <Filter>Effect\PostEffect\RadialBlur</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Dissolve\Dissolve.cpp">
-      <Filter>Effect\PostEffect\Dissolve</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp">
-      <Filter>Effect\PostEffect\.Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\DX12Resource\DX12Resource.cpp">
-      <Filter>Core\DirectX12\TextureResource</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\Debug\dbgutl.cpp">
-      <Filter>Utility\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility\String\strutl.cpp">
-      <Filter>Utility\String</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp">
-      <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
+    <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp">
+      <Filter>Core\DirectX12\Helper</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOBuilder.cpp">
       <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClCompile>
+    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\PostEffectExecutor.cpp">
+      <Filter>Core\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.cpp">
+      <Filter>Core\DirectX12\ResourceStateTracker</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp">
+      <Filter>Core\DirectX12\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\RTVHeapCounter.cpp">
+      <Filter>Core\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\SRVManager.cpp">
+      <Filter>Core\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.cpp">
+      <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\TextureManager.cpp">
+      <Filter>Core\DirectX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectX12\DX12Resource\DX12Resource.cpp">
+      <Filter>Core\DirectX12\DX12Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Window\Window.cpp">
+      <Filter>Core\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\DebugManager\DebugManager.cpp">
+      <Filter>DebugTools\DebugManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\EventTimer\EventTimer.cpp">
+      <Filter>DebugTools\EventTimer</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\ImGuiManager\ImGuiManager.cpp">
+      <Filter>DebugTools\ImGuiManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\ImGuiManager\ImGuiThemes.cpp">
+      <Filter>DebugTools\ImGuiManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\ImGuiTemplates\ImGuiTemplates.cpp">
+      <Filter>DebugTools\ImGuiTemplates</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugTools\Logger\Logger.cpp">
+      <Filter>DebugTools\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\base\DrawableBase.cpp">
+      <Filter>drawable\base</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\font\NumericView.cpp">
+      <Filter>drawable\font</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp">
+      <Filter>drawable\line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\Line.cpp">
+      <Filter>drawable\line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\LineBatch.cpp">
+      <Filter>drawable\line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\line\LineSystem.cpp">
+      <Filter>drawable\line</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3dInstanced.cpp">
+      <Filter>drawable\object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3dInstancedSystem.cpp">
+      <Filter>drawable\object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\.Factory\PostEffectFactory.cpp">
+      <Filter>Effects\PostEffects\.factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\.Helper\PostEffectHelper.cpp">
+      <Filter>Effects\PostEffects\.Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\BoxFilter\BoxFilter.cpp">
+      <Filter>Effects\PostEffects\BoxFilter</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.cpp">
+      <Filter>Effects\PostEffects\ChromaticAberration</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.cpp">
+      <Filter>Effects\PostEffects\DepthBasedOutline</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Dissolve\Dissolve.cpp">
+      <Filter>Effects\PostEffects\Dissolve</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\GaussianBloom\GaussianBloom.cpp">
+      <Filter>Effects\PostEffects\GaussianBloom</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\GaussianFilter\GaussianFilter.cpp">
+      <Filter>Effects\PostEffects\GaussianFilter</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp">
+      <Filter>Effects\PostEffects\GlobalInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Grayscale\Grayscale.cpp">
+      <Filter>Effects\PostEffects\Grayscale</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.cpp">
+      <Filter>Effects\PostEffects\LuminanceOutput</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
+      <Filter>Effects\PostEffects\Mosaic</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\PostEffectBase.cpp">
+      <Filter>Effects\PostEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp">
+      <Filter>Effects\PostEffects\Posterize</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\PrewittOutline\PrewittOutline.cpp">
+      <Filter>Effects\PostEffects\PrewittOutline</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\PostEffects\RadialBlur\RadialBlur.cpp">
+      <Filter>Effects\PostEffects\RadialBlur</Filter>
+    </ClCompile>
     <ClCompile Include="Effects\PostEffects\RandomFilter\RandomFilter.cpp">
-      <Filter>Effect\PostEffect\RandomFilter</Filter>
+      <Filter>Effects\PostEffects\RandomFilter</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\ModelStorage.cpp">
-      <Filter>Feature\Model\Storage</Filter>
+    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
+      <Filter>Effects\PostEffects\ScanLine</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\FileSystem\fsutl.cpp">
-      <Filter>Utility\FileSystem</Filter>
+    <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp">
+      <Filter>Effects\PostEffects\SeparatedGaussianFilter</Filter>
     </ClCompile>
-    <ClCompile Include="Features\ThreadPool\ThreadPool.cpp">
-      <Filter>Feature\ThreadPool</Filter>
+    <ClCompile Include="Effects\PostEffects\Vignette\Vignette.cpp">
+      <Filter>Effects\PostEffects\Vignette</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\PathResolver\PathResolver.cpp">
-      <Filter>Utility\PathResolver</Filter>
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Audio\Audio.cpp">
+      <Filter>Features\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Audio\AudioManager.cpp">
+      <Filter>Features\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Bar2d\Bar2d.cpp">
+      <Filter>Features\Bar2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Bar3d\Bar3d.cpp">
+      <Filter>Features\Bar3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.cpp">
+      <Filter>Features\Collision\CellBasedFiltering</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Collision\Collider\Collider.cpp">
+      <Filter>Features\Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Collision\Manager\CollisionManager.cpp">
+      <Filter>Features\Collision\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\CSV\CSVLoader.cpp">
+      <Filter>Features\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Cubemap\CubemapSystem.cpp">
+      <Filter>Features\Cubemap</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Cubemap\Skybox.cpp">
+      <Filter>Features\Cubemap</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\DeltaTimeManager\DeltaTimeManager.cpp">
+      <Filter>Features\DeltaTimeManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Event\EventListener.cpp">
+      <Filter>Features\event</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Event\EventSubscription.cpp">
+      <Filter>Features\event</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\font\FontLayout.cpp">
+      <Filter>Features\font</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\GameEye2d\GameEye2d.cpp">
+      <Filter>Features\GameEye2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Gauge\GaugeBase.cpp">
+      <Filter>Features\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Layer\CanvasScope.h">
+      <Filter>Features\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp">
+      <Filter>Features\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Lighting\DirectionalLight.cpp">
+      <Filter>Features\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\RingModel.cpp">
+      <Filter>Features\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\SphereLine.cpp">
+      <Filter>Features\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\TimeMeasurer\DeltaTimeStopWatch.cpp">
+      <Filter>Features\TimeMeasurer</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Easing.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\GameEye\FreeLook\FreeLookEye.cpp">
+      <Filter>Features\GameEye\FreeLook</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\GameEye\GameEye.cpp">
+      <Filter>Features\GameEye</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Input\Input.cpp">
+      <Filter>Features\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Layer\Canvas.cpp">
+      <Filter>Features\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\LevelLoader\LevelData.cpp">
+      <Filter>Features\LevelLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\LevelLoader\LevelHelper.cpp">
+      <Filter>Features\LevelLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\LevelLoader\SceneObjects.cpp">
+      <Filter>Features\LevelLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Lighting\PointLight.cpp">
+      <Filter>Features\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\GltfModelSystem.cpp">
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\Helper\AnimationHelper.cpp">
+      <Filter>Features\Model\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\Helper\ModelHelper.cpp">
+      <Filter>Features\Model\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\Loader\Assimp\ModelLoaderAssimp.cpp">
+      <Filter>Features\Model\Loader\Assimp</Filter>
     </ClCompile>
     <ClCompile Include="Features\Model\Loader\ModelLoaderLegacy.cpp">
-      <Filter>Feature\Model\Loader\Legacy</Filter>
+      <Filter>Features\Model\Loader</Filter>
     </ClCompile>
     <ClCompile Include="Features\Model\GltfModel.cpp">
-      <Filter>Feature\Model</Filter>
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\ObjModel.cpp">
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\ModelManager.cpp">
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\ModelStorage.cpp">
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Model\Skeleton.cpp">
+      <Filter>Features\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\NiGui\NiGuiDebug.cpp">
+      <Filter>Features\NiGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\NiGui\NiGuiDrawer.cpp">
+      <Filter>Features\NiGui</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3d.cpp">
+      <Filter>drawable\object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\object3d\Object3dSystem.cpp">
+      <Filter>drawable\object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Emitter\EmitterData.cpp">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Emitter\ParticleEmitter.cpp">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Manager\EmitterManager.cpp">
+      <Filter>drawable\particle\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\Particle.cpp">
+      <Filter>drawable\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\ParticleStorage.cpp">
+      <Filter>drawable\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\particle\ParticleSystem.cpp">
+      <Filter>drawable\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\AABB.cpp">
+      <Filter>Features\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Primitive\OBB.cpp">
+      <Filter>Features\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\RandomGenerator\RandomGenerator.cpp">
+      <Filter>Features\RandomGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\SceneManager\SceneManager.cpp">
+      <Filter>Features\SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\SceneTransitionExecutor.cpp">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SceneTransition\TransFadeInOut.cpp">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\sprite\Sprite.cpp">
+      <Filter>drawable\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable\sprite\SpriteSystem.cpp">
+      <Filter>drawable\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Text\Text.cpp">
+      <Filter>Features\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Text\TextSystem.cpp">
+      <Filter>Features\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\ThreadPool\ThreadPool.cpp">
+      <Filter>Features\ThreadPool</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\TimeMeasurer\TimeMeasurer.cpp">
+      <Filter>Features\TimeMeasurer</Filter>
+    </ClCompile>
+    <ClCompile Include="Features\Viewport\Viewport.cpp">
+      <Filter>Features\Viewport</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\NimaFramework.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Presets\Object3d\Grid\Preset_Grid.cpp">
+      <Filter>Presets\Object3d\Grid</Filter>
     </ClCompile>
     <ClCompile Include="Scene\Args\SceneArgs.cpp">
       <Filter>Scene\Args</Filter>
@@ -633,360 +382,393 @@
     <ClCompile Include="Scene\SceneBase.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\Loader\Assimp\ModelLoaderAssimp.cpp">
-      <Filter>Feature\Model\Loader\Assimp</Filter>
+    <ClCompile Include="Utility\Debug\dbgutl.cpp">
+      <Filter>Utility\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurer.cpp">
-      <Filter>Feature\TimeMeasurer</Filter>
+    <ClCompile Include="Utility\FileSystem\fsutl.cpp">
+      <Filter>Utility\FileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\Helper\AnimationHelper.cpp">
-      <Filter>Feature\Model\Helper</Filter>
+    <ClCompile Include="Utility\JSONIO\jsonio.cpp">
+      <Filter>Utility\JSONIO</Filter>
     </ClCompile>
-    <ClCompile Include="Features\Model\Skeleton.cpp">
-      <Filter>Feature\Model</Filter>
+    <ClCompile Include="Utility\PathResolver\PathResolver.cpp">
+      <Filter>Utility\PathResolver</Filter>
     </ClCompile>
-    <ClCompile Include="BaseClasses\ObjectSystemBase.cpp">
-      <Filter>BaseClass</Filter>
+    <ClCompile Include="Utility\String\strutl.cpp">
+      <Filter>Utility\String</Filter>
     </ClCompile>
-    <ClCompile Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.cpp">
-      <Filter>Effect\PostEffect\SeparatedGaussianFilter</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\GaussianBloom\GaussianBloom.cpp">
-      <Filter>Effect\PostEffect\GaussianBloom</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.cpp">
-      <Filter>Effect\PostEffect\LuminanceOutput</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Model\GltfModelSystem.cpp">
-      <Filter>Feature\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\LevelLoader\LevelHelper.cpp">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\LevelLoader\LevelData.cpp">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\LevelLoader\SceneObjects.cpp">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Cubemap\CubemapSystem.cpp">
-      <Filter>Feature\Cubemap</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Cubemap\Skybox.cpp">
-      <Filter>Feature\Cubemap</Filter>
-    </ClCompile>
-    <ClCompile Include="Presets\Object3d\Grid\Preset_Grid.cpp">
-      <Filter>Preset\Object3d\Grid</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Bar2d\Bar2d.cpp">
-      <Filter>Feature\Bar2d</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Bar3d\Bar3d.cpp">
-      <Filter>Feature\Bar3d</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.cpp">
-      <Filter>Feature\Collision\CellBasedFiltering</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\Helper\DX12HeapHelper.cpp">
-      <Filter>Core\DirectX12\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\TransShutter.cpp">
-      <Filter>Effect\SceneTransition\Shutter</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Layer\Canvas.cpp">
-      <Filter>Feature\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\.Factory\PostEffectFactory.cpp">
-      <Filter>Effect\PostEffect\.Factory</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp">
-      <Filter>Feature\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\base\DrawableBase.cpp">
-      <Filter>Drawable\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Layer\CanvasScope.h">
-      <Filter>Feature\Layer</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\TimeMeasurer\DeltaTimeStopWatch.cpp">
-      <Filter>Feature\TimeMeasurer</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Gauge\GaugeBase.cpp">
-      <Filter>Feature\Gauge</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Primitive\RingModel.cpp">
-      <Filter>Feature\Premitive\Ring</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Event\EventListener.cpp">
-      <Filter>Feature\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Event\EventSubscription.cpp">
-      <Filter>Feature\Event</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\Easing.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\font\NumericView.cpp">
-      <Filter>Drawable\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\font\FontLayout.cpp">
-      <Filter>Feature\Font</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\STEUpdateWithLoading.cpp">
-      <Filter>Effect\SceneTransition</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\SceneTransition\STEUpdateWithoutLoading.cpp">
-      <Filter>Effect\SceneTransition</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\DirectX12\PipelineStateObject\PSOCache.cpp">
-      <Filter>Core\DirectX12\PipelineStateObject</Filter>
+    <ClCompile Include="Utility\TextureSelector\TextureSelectWidget.cpp">
+      <Filter>Utility\TextureSelector</Filter>
     </ClCompile>
     <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp">
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClCompile>
-    <ClCompile Include="Core\DirectX12\RootSignature\RootSignatureCache.cpp">
-      <Filter>Core\DirectX12\RootSignature</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\Line.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\LineBatch.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\LineSystem.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\line\AllocatedLineVertices.cpp">
-      <Filter>Drawable\Line</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\PostEffectBase.cpp">
-      <Filter>Effect\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.cpp">
-      <Filter>Effect\PostEffect\ChromaticAberration</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.cpp">
-      <Filter>Effect\PostEffect\.GlobalInput</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Primitive\SphereLine.cpp">
-      <Filter>Feature\Premitive\Sphere</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\particle\Emitter\ParticleEmitterGroup.cpp">
-      <Filter>Drawable\Particle\EmitterGroup</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\ScanLine\Scanline.cpp">
-      <Filter>Effect\PostEffect\Scanline</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Mosaic\Mosaic.cpp">
-      <Filter>Effect\PostEffect\Mosaic</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects\PostEffects\Posterize\Posterize.cpp">
-      <Filter>Effect\PostEffect\Posterize</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\object3d\Object3dInstanced.cpp">
-      <Filter>Drawable\Object3d</Filter>
-    </ClCompile>
-    <ClCompile Include="drawable\object3d\Object3dInstancedSystem.cpp">
-      <Filter>Drawable\Object3d</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Lighting\DirectionalLight.cpp">
-      <Filter>Feature\Lighting</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\Lighting\PointLight.cpp">
-      <Filter>Feature\Lighting</Filter>
-    </ClCompile>
-    <ClCompile Include="Features\GameEye2d\GameEye2d.cpp" />
-    <ClCompile Include="Utility\TextureSelector\TextureSelectWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{de395ed7-a7cc-4d21-a16f-eae5d1079f55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseClasses">
+      <UniqueIdentifier>{c392aa26-aa64-4a0b-88f8-98f75b10eca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ebae1fd8-cb01-44bc-adbe-7d51471725ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{061d370c-d860-4bb7-b62c-b7870b912c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{34ff13cd-5f52-4198-a749-0d909c9ea792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools">
+      <UniqueIdentifier>{2d966475-f2b4-417a-b53b-98a2e95ea8a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable">
+      <UniqueIdentifier>{c552dfb9-a29c-435f-a35d-5f5cc2d09e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects">
+      <UniqueIdentifier>{aac1e3d4-78e6-4426-89b4-a41181e5ea4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineResources">
+      <UniqueIdentifier>{45a2da4b-9193-4644-a36d-0085026dd86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="event">
+      <UniqueIdentifier>{d36adbba-2e77-48cf-bc32-6eac3822864d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features">
+      <UniqueIdentifier>{531abea5-5cb4-4afa-9b17-e5a45077556d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{ac264289-b142-4670-8528-be08910cd5a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{d5637e22-e96c-431a-9384-9aeb480ca4c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io">
+      <UniqueIdentifier>{1c516a18-2530-44f5-af79-d75c33710602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{ec067c63-c8a9-466a-aff3-c54c9a64be1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presets">
+      <UniqueIdentifier>{52064948-c3fa-4dcc-a902-fc697b1e1ced}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{c0189ff3-447a-43f5-82c1-1a5a38b19bbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{c81e2914-fa28-4869-9546-e5505a3be28b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\ConfigManager">
+      <UniqueIdentifier>{fafd37d8-141a-4074-80f2-64b9aa3be79f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12">
+      <UniqueIdentifier>{55c061c3-927c-45ed-a4ab-5d06972fc5bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Localization">
+      <UniqueIdentifier>{6c680fa0-6d21-4b03-ade3-32265ba472ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Window">
+      <UniqueIdentifier>{9a9f00a7-1760-4f5d-9072-f5d699357244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\DebugEntry">
+      <UniqueIdentifier>{758042fc-2bde-4ae2-8db7-ae2811523059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\DebugManager">
+      <UniqueIdentifier>{67c70dc1-3fc3-4b92-8745-04c264ebcfd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\EventTimer">
+      <UniqueIdentifier>{df5f5a1a-502e-4329-9008-38543f810d61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\ImGuiManager">
+      <UniqueIdentifier>{e4815223-2288-4cdb-9168-0d4dca0b53d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\ImGuiTemplates">
+      <UniqueIdentifier>{c901804d-5b2d-42de-bc48-09b1cd293490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DebugTools\Logger">
+      <UniqueIdentifier>{420cec13-7fb2-48a2-a136-34ac694c006d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\base">
+      <UniqueIdentifier>{0e1fa88e-bd99-4c3e-bd8e-01bdab010fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\font">
+      <UniqueIdentifier>{3eb537d9-ae5a-41ee-9425-1299a018a97f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\line">
+      <UniqueIdentifier>{38ab7a10-0059-445f-9cfc-905bcfd9e6ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\object3d">
+      <UniqueIdentifier>{e1b1b091-2477-475f-b508-9b6faaf83efc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\particle">
+      <UniqueIdentifier>{8e2b2b59-3920-4ac0-a9d2-0d0039b75fdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\sprite">
+      <UniqueIdentifier>{0bf046c0-33e6-4cba-8c94-fdb514b3af33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects">
+      <UniqueIdentifier>{19a0a3ca-9ded-4b94-85e9-0d42940e97aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\SceneTransition">
+      <UniqueIdentifier>{b9c5cdf8-e266-4303-8155-21815fed5942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineResources\Shaders">
+      <UniqueIdentifier>{e89c43e3-2cbe-45a6-82d0-1b92809b3c92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Animation">
+      <UniqueIdentifier>{d29bb48e-6b4b-41cf-81b6-775214d28a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Audio">
+      <UniqueIdentifier>{b2b93748-e15e-4e15-b283-234c154815e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Bar2d">
+      <UniqueIdentifier>{73e9c7c8-ae26-4aa6-a928-63b7a8701a3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Bar3d">
+      <UniqueIdentifier>{4dfec601-9099-46a0-a522-ff7d1f3190c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Collision">
+      <UniqueIdentifier>{1d145f15-ece8-4ae0-a19d-abe61c52b379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\CSV">
+      <UniqueIdentifier>{a98a178d-eb2b-499c-a14e-ea8c1457a1fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Cubemap">
+      <UniqueIdentifier>{2815c04b-fa4b-46de-ab95-7a3253d90421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\DeltaTimeManager">
+      <UniqueIdentifier>{02a96064-9c4a-4cf4-b849-8e0bf82e1d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\event">
+      <UniqueIdentifier>{cfb81899-dbf0-4bc3-83fb-e2bc6d6404c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\font">
+      <UniqueIdentifier>{e5c44192-4d50-40a4-ac3f-eb12476620d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\GameEye">
+      <UniqueIdentifier>{79439846-f43d-4314-aafa-46e025788166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\GameEye2d">
+      <UniqueIdentifier>{adaedd3b-2e2e-49ca-a836-480ff0ae4812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Gauge">
+      <UniqueIdentifier>{7ea7df85-166b-43e1-8352-cbcec8e4c5c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\IContainer">
+      <UniqueIdentifier>{6adc438f-df89-4059-8603-1fb7f4c9dade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Input">
+      <UniqueIdentifier>{255e0127-c6f0-4ebe-b082-6ec0ab510cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Layer">
+      <UniqueIdentifier>{b217caf5-9c39-498d-a0b7-e152628e1655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\LevelLoader">
+      <UniqueIdentifier>{d53c384d-3fd0-4c9d-9732-bb49d79cd717}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Lighting">
+      <UniqueIdentifier>{252292cc-f680-46f5-9646-b79d5c50675d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Model">
+      <UniqueIdentifier>{7c81ec5f-065e-4c1e-adc4-bac2150beb06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\NiGui">
+      <UniqueIdentifier>{0cada64d-33af-4d5c-9018-415d4c13c60f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Primitive">
+      <UniqueIdentifier>{fb90f9f5-81ad-482a-a734-8459060afcab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\RandomGenerator">
+      <UniqueIdentifier>{a4b42fd4-1acc-4b8f-958f-20e029e8f5ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\SceneManager">
+      <UniqueIdentifier>{aec16485-78d5-488d-83da-75cda27782b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\screen">
+      <UniqueIdentifier>{6a750fef-469b-4fb5-ad97-d321467cd2ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Text">
+      <UniqueIdentifier>{45d21c6e-cdbc-443d-89df-8d21d530eb9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ThreadPool">
+      <UniqueIdentifier>{0cc03e62-6910-406a-bf6b-2066738ff702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\TimeMeasurer">
+      <UniqueIdentifier>{76410f92-17c2-4532-85b0-c2b093c60533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Viewport">
+      <UniqueIdentifier>{f0c72eed-cb45-4e10-a1d4-49613a13247d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="io\loader">
+      <UniqueIdentifier>{d0a58a46-04e6-4fb1-ae36-193f9dc59f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presets\Object3d">
+      <UniqueIdentifier>{db1baf90-182d-43c1-ac37-0a0e2f4a5ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Args">
+      <UniqueIdentifier>{11cc3948-5543-4400-98b3-0076cd2d2db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\ConvertString">
+      <UniqueIdentifier>{84a0e531-6976-4248-92f6-ffbc56083342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Debug">
+      <UniqueIdentifier>{ce80308a-e3cc-4688-a1a9-2d23bb82709a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\DIContainer">
+      <UniqueIdentifier>{d915672d-7d9f-4795-8ba7-1995c72af4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\FileSystem">
+      <UniqueIdentifier>{c235e41a-279c-4804-8dd7-9468f742786e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\JSON">
+      <UniqueIdentifier>{e3866255-e1bd-474c-adaa-9fa7dec28d9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\JSONConvTypeFuncs">
+      <UniqueIdentifier>{0429575c-34a2-4428-96e4-79495d83d875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\JSONIO">
+      <UniqueIdentifier>{158aa26d-4868-4d7d-a32e-aea18848c56f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\PathResolver">
+      <UniqueIdentifier>{30e80ed6-8006-4ad8-b828-27e9a6a6cfc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\String">
+      <UniqueIdentifier>{92bf5668-a1ed-46fd-bc3e-cb0c886e6d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\TextureSelector">
+      <UniqueIdentifier>{d95b1524-5da1-4147-8712-96a24e0bbb68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\DX12Resource">
+      <UniqueIdentifier>{a4a0f6e1-cf81-4d64-993f-03360cc304bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\Helper">
+      <UniqueIdentifier>{f3a365ef-b3a8-406d-bad8-e97f350d9e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\PipelineStateObject">
+      <UniqueIdentifier>{5e8625a2-f1ce-4256-9e8d-35b424832bf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\ResourceStateTracker">
+      <UniqueIdentifier>{589394c6-80ed-4d6d-8187-894120671dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\RootSignature">
+      <UniqueIdentifier>{952e4045-13d4-434b-962b-5d9b1e2b49ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DirectX12\StaticSamplerDesc">
+      <UniqueIdentifier>{cbbf766d-c801-48d4-9cc5-72f739ab46c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\particle\Emitter">
+      <UniqueIdentifier>{556acd2e-a30a-4489-86c4-bcf0c25fadd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\particle\Manager">
+      <UniqueIdentifier>{82f7154a-fe86-4eeb-a603-29554c7a2cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="drawable\particle\Type">
+      <UniqueIdentifier>{5eaa0b5f-e515-4ae0-944e-7374dbf4ac5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\.factory">
+      <UniqueIdentifier>{a1a06933-56d0-490f-92d6-a7fa7b1e827f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\.Helper">
+      <UniqueIdentifier>{090715d8-dc44-4051-bd4a-e92250be6a64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\BoxFilter">
+      <UniqueIdentifier>{547f365c-9f49-4869-a8ef-d8a6cee0bf42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\ChromaticAberration">
+      <UniqueIdentifier>{aeda0681-b06b-4be2-9893-89e25bfc0d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\DepthBasedOutline">
+      <UniqueIdentifier>{e24c4763-ed14-449f-b11d-9c49298bed9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\Dissolve">
+      <UniqueIdentifier>{24d8a1b7-9998-4d6e-8834-f5e7d79e15ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\GaussianBloom">
+      <UniqueIdentifier>{3c321465-caaf-455c-8bf2-ee7e49057a2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\GaussianFilter">
+      <UniqueIdentifier>{d83cdd57-e623-4d67-92d9-54a20b2ce063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\GlobalInput">
+      <UniqueIdentifier>{5952e6ad-0b4d-4ffe-b20b-5b35653f7dc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\Grayscale">
+      <UniqueIdentifier>{967ab5a0-8e98-4409-8bd3-34fe7e394951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\LuminanceOutput">
+      <UniqueIdentifier>{aa3b88c0-9be8-406b-bff9-22504eeb4525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\Mosaic">
+      <UniqueIdentifier>{9e20a3f6-a90e-4159-bc4d-5916ae27a193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\Posterize">
+      <UniqueIdentifier>{35ca44c2-846e-4cae-98f9-21418c675cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\PrewittOutline">
+      <UniqueIdentifier>{397b1866-e8dc-49c1-b74c-0777ed6cf287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\RadialBlur">
+      <UniqueIdentifier>{38999691-6cff-49c4-b1fb-8a82fe1733c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\RandomFilter">
+      <UniqueIdentifier>{30e2d30b-b6ea-4e63-8ebf-de26db417652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\ScanLine">
+      <UniqueIdentifier>{23bbff28-558f-42c4-8ae1-9387003b4f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\SeparatedGaussianFilter">
+      <UniqueIdentifier>{f3bde087-a056-45f6-b921-01f52e68c754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects\PostEffects\Vignette">
+      <UniqueIdentifier>{11394c09-0415-40eb-ac4d-313ebb24e655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Collision\CellBasedFiltering">
+      <UniqueIdentifier>{aedde391-752b-4ba7-8bb8-cb0d2f0bb69f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Collision\Collider">
+      <UniqueIdentifier>{e621d341-9506-4994-8789-14fd16b02f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Collision\Manager">
+      <UniqueIdentifier>{fccee191-d527-452b-85f5-757101c49e23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\CSV\csvStructure">
+      <UniqueIdentifier>{dfe6a2f6-bf6d-4d29-b583-080ba9748332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\GameEye\FreeLook">
+      <UniqueIdentifier>{20b602a3-6a56-45a1-9ce9-92bb2a00ceb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Model\Helper">
+      <UniqueIdentifier>{f0421427-af7f-4e22-b5cf-42af4b75f2ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Model\Loader">
+      <UniqueIdentifier>{6a88d33d-34d4-46c1-9fa2-73c132266a5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presets\Object3d\Grid">
+      <UniqueIdentifier>{7593d2bf-6829-4022-ae79-bec12d9a16c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Model\Loader\Assimp">
+      <UniqueIdentifier>{11449768-11fb-447e-8815-bcfe05f0f6b8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseClasses\ObjectSystemBase.h">
+      <Filter>BaseClasses</Filter>
+    </ClInclude>
     <ClInclude Include="Common\define.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HRESULT_ASSERT.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\SingletonPattern.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Common\structs.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="DebugTools\DebugManager\DebugManager.h">
-      <Filter>DebugTools\DebugManager</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h">
-      <Filter>DebugTools\Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\BlendDesc.h">
-      <Filter>Core\DirectX12\BlendDesc</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\Framerate.h">
-      <Filter>Core\DirectX12\FPS</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\TextureManager.h">
-      <Filter>Core\DirectX12\TextureManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h">
-      <Filter>Core\DirectX12\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\DirectX12.h">
-      <Filter>Core\DirectX12</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Input\Input.h">
-      <Filter>Feature\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Helper\ModelHelper.h">
-      <Filter>Feature\Model\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\ObjModel.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\ModelManager.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\object3d\Object3d.h">
-      <Filter>Drawable\Object3d</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\object3d\Object3dSystem.h">
-      <Filter>Drawable\Object3d</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\sprite\Sprite.h">
-      <Filter>Drawable\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\sprite\SpriteSystem.h">
-      <Filter>Drawable\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\ImGuiManager\ImGuiManager.h">
-      <Filter>DebugTools\ImGuiManager</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\Logger\Logger.h">
-      <Filter>DebugTools\Logger</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\LeakChecker.h">
-      <Filter>DebugTools</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\ConvertString\ConvertString.h">
-      <Filter>Utility\ConvertString</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Window\Window.h">
-      <Filter>Core\WinSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\GameEye\GameEye.h">
-      <Filter>Feature\GameEye</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\Particle.h">
-      <Filter>Drawable\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\SRVManager.h">
-      <Filter>Core\DirectX12\SRVManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\IContainer\ListContainer.h">
-      <Filter>Feature\IContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\IContainer\VectorContainer.h">
-      <Filter>Feature\IContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\HRESULT_ASSERT.h">
-      <Filter>Common\HRESULT_ASSERT</Filter>
-    </ClInclude>
-    <ClInclude Include="Framework\NimaFramework.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\SceneManager\SceneManager.h">
-      <Filter>Feature\SceneManager</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\ParticleSystem.h">
-      <Filter>Drawable\Particle\System</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\ParticleStorage.h">
-      <Filter>Drawable\Particle\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Interfaces\ISceneFactory.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\RandomGenerator\RandomGenerator.h">
-      <Filter>Feature\RandomGenerator</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Primitive\AABB.h">
-      <Filter>Feature\Premitive\AABB</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\Manager\EmitterManager.h">
-      <Filter>Drawable\Particle\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\Emitter\ParticleEmitter.h">
-      <Filter>Drawable\Particle\Emitter</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Lighting\LightRepository.h">
-      <Filter>Feature\Lighting\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Primitive\OBB.h">
-      <Filter>Feature\Premitive\OBB</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
-      <Filter>Effect\SceneTransition\FadeInOut</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecutor.h">
-      <Filter>Effect\SceneTransition\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Collision\Manager\CollisionManager.h">
-      <Filter>Feature\Collision\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Collision\Collider\Collider.h">
-      <Filter>Feature\Collision\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Collision\Shape.h">
-      <Filter>Feature\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\CSV\CSVLoader.h">
-      <Filter>Feature\CSV</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\CSV\csvStructure\CSVData.h">
-      <Filter>Feature\CSV</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h">
-      <Filter>Feature\DeltaTimeManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\DIContainer\DIContainer.h">
-      <Filter>Utility\DIContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Text\Text.h">
-      <Filter>Feature\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Text\TextSystem.h">
-      <Filter>Feature\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h">
-      <Filter>Feature\GameEye\FreeLookEye</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Viewport\Viewport.h">
-      <Filter>Feature\Viewport</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Audio\AudioManager.h">
-      <Filter>Feature\Audio\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Audio\Audio.h">
-      <Filter>Feature\Audio\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\NiGui\NiGuiDrawer.h">
-      <Filter>Feature\NiGuiDerived</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\NiGui\NiGuiDebug.h">
-      <Filter>Feature\NiGuiDerived</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\PostEffectExecutor.h">
-      <Filter>Core\DirectX12\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\RTVHeapCounter.h">
-      <Filter>Core\DirectX12\RTVHeapCounter</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\EventTimer\EventTimer.h">
-      <Filter>DebugTools\EventTimer</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\JSONConvTypeFuncs\JSONConvTypeFuncs.h">
-      <Filter>Utility\JSONConvTypeFuncs</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\JSONIO\jsonio.h">
-      <Filter>Utility\JSONIO</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\String\strutl.h">
-      <Filter>Utility\String</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\JSON\jsonutl.h">
-      <Filter>Utility\JSON</Filter>
+    <ClInclude Include="config\EngineSetting.h">
+      <Filter>config</Filter>
     </ClInclude>
     <ClInclude Include="Core\ConfigManager\ConfigManager.h">
       <Filter>Core\ConfigManager</Filter>
@@ -994,248 +776,32 @@
     <ClInclude Include="Core\ConfigManager\ConfigType.h">
       <Filter>Core\ConfigManager</Filter>
     </ClInclude>
-    <ClInclude Include="drawable\particle\Type\ParticleType.h">
-      <Filter>Drawable\Particle\Type</Filter>
+    <ClInclude Include="Core\DirectX12\BlendDesc.h">
+      <Filter>Core\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Localization\LanguageData.h">
-      <Filter>Core\Localization</Filter>
+    <ClInclude Include="Core\DirectX12\DirectX12.h">
+      <Filter>Core\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h">
-      <Filter>Core\DirectX12\ResourceStateTracker</Filter>
+    <ClInclude Include="Core\DirectX12\Framerate.h">
+      <Filter>Core\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="drawable\particle\Emitter\EmitterData.h">
-      <Filter>Drawable\Particle\Emitter</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\IPostEffect.h">
-      <Filter>Core\DirectX12\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Grayscale\Grayscale.h">
-      <Filter>Effect\PostEffect\Grayscale</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h">
-      <Filter>Effect\PostEffect\Vignette</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\BoxFilter\BoxFilter.h">
-      <Filter>Effect\PostEffect\BoxFilter</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\GaussianFilter\GaussianFilter.h">
-      <Filter>Effect\PostEffect\GaussianFilter</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\PrewittOutline\PrewittOutline.h">
-      <Filter>Effect\PostEffect\PrewittOutline</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.h">
-      <Filter>Effect\PostEffect\DepthBasedOutline</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\RadialBlur\RadialBlur.h">
-      <Filter>Effect\PostEffect\RadialBlur</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Dissolve\Dissolve.h">
-      <Filter>Effect\PostEffect\Dissolve</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\DX12Resource\DX12Resource.h">
-      <Filter>Core\DirectX12\TextureResource</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h">
-      <Filter>Effect\PostEffect\.Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\Debug\dbgutl.h">
-      <Filter>Utility\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h">
-      <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOBuilder.h">
-      <Filter>Core\DirectX12\PipelineStateObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h">
-      <Filter>Effect\PostEffect\RandomFilter</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\IModel.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\ModelStorage.h">
-      <Filter>Feature\Model\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Loader\IModelLoader.h">
-      <Filter>Feature\Model\Loader</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\FileSystem\fsutl.h">
-      <Filter>Utility\FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\ThreadPool\ThreadPool.h">
-      <Filter>Feature\ThreadPool</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\PathResolver\PathResolver.h">
-      <Filter>Utility\PathResolver</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\SceneBase.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Interfaces\ISceneArgs.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\Args\SceneArgs.h">
-      <Filter>Scene\Args</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\GltfModel.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Loader\ModelLoaderLegacy.h">
-      <Filter>Feature\Model\Loader\Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Loader\Assimp\ModelLoaderAssimp.h">
-      <Filter>Feature\Model\Loader\Assimp</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\ModelData.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurer.h">
-      <Filter>Feature\TimeMeasurer</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Animation.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Helper\AnimationHelper.h">
-      <Filter>Feature\Model\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Transform.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\Skeleton.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\SkinCluster.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Model\GltfModelSystem.h">
-      <Filter>Feature\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseClasses\ObjectSystemBase.h">
-      <Filter>BaseClass</Filter>
-    </ClInclude>
-    <ClInclude Include="Interfaces\IObjectSystem.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h">
-      <Filter>Effect\PostEffect\SeparatedGaussianFilter</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Functions.hpp">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\GaussianBloom\GaussianBloom.h">
-      <Filter>Effect\PostEffect\GaussianBloom</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.h">
-      <Filter>Effect\PostEffect\LuminanceOutput</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\LevelLoader\LevelHelper.h">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\LevelLoader\LevelData.h">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\LevelLoader\ISceneObjects.h">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\LevelLoader\SceneObjects.h">
-      <Filter>Feature\LevelLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Cubemap\CubemapSystem.h">
-      <Filter>Feature\Cubemap</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Cubemap\Skybox.h">
-      <Filter>Feature\Cubemap</Filter>
-    </ClInclude>
-    <ClInclude Include="Presets\Object3d\Grid\Preset_Grid.h">
-      <Filter>Preset\Object3d\Grid</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugTools\DebugEntry\DebugEntry.h">
-      <Filter>DebugTools\DebugEntry</Filter>
-    </ClInclude>
-    <ClInclude Include="Interfaces\IEntityStats.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\SingletonPattern.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Animation\AnimationTimeline.hpp">
-      <Filter>Feature\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Animation\AnimationTween.hpp">
-      <Filter>Feature\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Bar2d\Bar2d.h">
-      <Filter>Feature\Bar2d</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Bar3d\Bar3d.h">
-      <Filter>Feature\Bar3d</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.h">
-      <Filter>Feature\Collision\CellBasedFiltering</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Layer\Canvas.h">
-      <Filter>Feature\Layer</Filter>
+    <ClInclude Include="Core\DirectX12\Helper\DX12Helper.h">
+      <Filter>Core\DirectX12\Helper</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\Helper\DX12HeapHelper.h">
       <Filter>Core\DirectX12\Helper</Filter>
     </ClInclude>
-    <ClInclude Include="config\EngineSetting.h">
-      <Filter>Config</Filter>
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOBuilder.h">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\TransBase.h">
-      <Filter>Effect\SceneTransition</Filter>
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSODesc.h">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\SceneTransition\TransShutter.h">
-      <Filter>Effect\SceneTransition\Shutter</Filter>
+    <ClInclude Include="Core\DirectX12\PostEffectExecutor.h">
+      <Filter>Core\DirectX12</Filter>
     </ClInclude>
-    <ClInclude Include="Effects\PostEffects\.Factory\PostEffectFactory.h">
-      <Filter>Effect\PostEffect\.Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Layer\OrderedCanvasLayer.h">
-      <Filter>Feature\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\base\DrawableBase.h">
-      <Filter>Drawable\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Layer\CurrentCanvas.h">
-      <Filter>Feature\Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\TimeMeasurer\DeltaTimeStopWatch.h">
-      <Filter>Feature\TimeMeasurer</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Gauge\GaugeBase.h">
-      <Filter>Feature\Gauge</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Primitive\RingModel.h">
-      <Filter>Feature\Premitive\Ring</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Event\EventListener.h">
-      <Filter>Feature\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Event\EventSubscription.h">
-      <Filter>Feature\Event</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Easing.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\font\NumericView.h">
-      <Filter>Drawable\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\screen\IntermediateScreenBase.h">
-      <Filter>Feature\Screen</Filter>
-    </ClInclude>
-    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\font\FontLayout.h">
-      <Filter>Feature\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="io\loader\TaskExecutor.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\ViewportUnits.hpp">
-      <Filter>Math</Filter>
+    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
+      <Filter>Core\DirectX12\PipelineStateObject</Filter>
     </ClInclude>
     <ClInclude Include="Core\DirectX12\RootSignature\RootParameters.h">
       <Filter>Core\DirectX12\RootSignature</Filter>
@@ -1246,238 +812,641 @@
     <ClInclude Include="Core\DirectX12\RootSignature\RootSignatureDesc.h">
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClInclude>
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSODesc.h">
-      <Filter>Core\DirectX12\PipelineStateObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DirectX12\PipelineStateObject\PSOCache.h">
-      <Filter>Core\DirectX12\PipelineStateObject</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
-      <Filter>HLSL\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\line\LineSystem.h">
-      <Filter>Drawable\Line</Filter>
+    <ClInclude Include="drawable\line\AllocatedLineVertices.h">
+      <Filter>drawable\line</Filter>
     </ClInclude>
     <ClInclude Include="drawable\line\Line.h">
-      <Filter>Drawable\Line</Filter>
+      <Filter>drawable\line</Filter>
     </ClInclude>
     <ClInclude Include="drawable\line\LineBatch.h">
-      <Filter>Drawable\Line</Filter>
+      <Filter>drawable\line</Filter>
     </ClInclude>
-    <ClInclude Include="drawable\line\AllocatedLineVertices.h">
-      <Filter>Drawable\Line</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\PostEffectBase.h">
-      <Filter>Effect\PostEffect</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h">
-      <Filter>Effect\PostEffect\ChromaticAberration</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
-      <Filter>Effect\PostEffect\.GlobalInput</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Primitive\SphereLine.h">
-      <Filter>Feature\Premitive\Sphere</Filter>
-    </ClInclude>
-    <ClInclude Include="Features\Primitive\Sphere.h">
-      <Filter>Feature\Premitive\Sphere</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h">
-      <Filter>Drawable\Particle\EmitterGroup</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
-      <Filter>Effect\PostEffect\Scanline</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
-      <Filter>Effect\PostEffect\Mosaic</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h">
-      <Filter>Effect\PostEffect\Posterize</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\object3d\Object3dInstanced.h">
-      <Filter>Drawable\Object3d</Filter>
-    </ClInclude>
-    <ClInclude Include="drawable\object3d\Object3dInstancedSystem.h">
-      <Filter>Drawable\Object3d</Filter>
+    <ClInclude Include="drawable\line\LineSystem.h">
+      <Filter>drawable\line</Filter>
     </ClInclude>
     <ClInclude Include="drawable\object3d\Material.h">
-      <Filter>Drawable\Object3d</Filter>
+      <Filter>drawable\object3d</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Lighting\LightingType.h">
-      <Filter>Drawable\Object3d</Filter>
+    <ClInclude Include="drawable\object3d\Object3dInstanced.h">
+      <Filter>drawable\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\object3d\Object3dInstancedSystem.h">
+      <Filter>drawable\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitterGroup.h">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ChromaticAberration\ChromaticAberration.h">
+      <Filter>Effects\PostEffects\ChromaticAberration</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\GlobalInput\PostEffectInputCommon.h">
+      <Filter>Effects\PostEffects\GlobalInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\IPostEffect.h">
+      <Filter>Effects\PostEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\ResourceStateTracker\ResourceStateTracker.h">
+      <Filter>Core\DirectX12\ResourceStateTracker</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\RTVHeapCounter.h">
+      <Filter>Core\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\SRVManager.h">
+      <Filter>Core\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\StaticSamplerDesc\StaticSamplerDesc.h">
+      <Filter>Core\DirectX12\StaticSamplerDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\TextureManager.h">
+      <Filter>Core\DirectX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectX12\DX12Resource\DX12Resource.h">
+      <Filter>Core\DirectX12\DX12Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Localization\LanguageData.h">
+      <Filter>Core\Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Window\Window.h">
+      <Filter>Core\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\DebugEntry\DebugEntry.h">
+      <Filter>DebugTools\DebugEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\DebugManager\DebugManager.h">
+      <Filter>DebugTools\DebugManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\EventTimer\EventTimer.h">
+      <Filter>DebugTools\EventTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\ImGuiManager\ImGuiManager.h">
+      <Filter>DebugTools\ImGuiManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\ImGuiTemplates\ImGuiTemplates.h">
+      <Filter>DebugTools\ImGuiTemplates</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\Logger\Logger.h">
+      <Filter>DebugTools\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugTools\LeakChecker.h">
+      <Filter>DebugTools</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\base\DrawableBase.h">
+      <Filter>drawable\base</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\font\NumericView.h">
+      <Filter>drawable\font</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\.Factory\PostEffectFactory.h">
+      <Filter>Effects\PostEffects\.factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\.Helper\PostEffectHelper.h">
+      <Filter>Effects\PostEffects\.Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\BoxFilter\BoxFilter.h">
+      <Filter>Effects\PostEffects\BoxFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\DepthBasedOutline\DepthBasedOutline.h">
+      <Filter>Effects\PostEffects\DepthBasedOutline</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Dissolve\Dissolve.h">
+      <Filter>Effects\PostEffects\Dissolve</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\GaussianBloom\GaussianBloom.h">
+      <Filter>Effects\PostEffects\GaussianBloom</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\GaussianFilter\GaussianFilter.h">
+      <Filter>Effects\PostEffects\GaussianFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Grayscale\Grayscale.h">
+      <Filter>Effects\PostEffects\Grayscale</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\LuminanceOutput\LuminanceOutput.h">
+      <Filter>Effects\PostEffects\LuminanceOutput</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Mosaic\Mosaic.h">
+      <Filter>Effects\PostEffects\Mosaic</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\PostEffectBase.h">
+      <Filter>Effects\PostEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Posterize\Posterize.h">
+      <Filter>Effects\PostEffects\Posterize</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\PrewittOutline\PrewittOutline.h">
+      <Filter>Effects\PostEffects\PrewittOutline</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\RadialBlur\RadialBlur.h">
+      <Filter>Effects\PostEffects\RadialBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\RandomFilter\RandomFilter.h">
+      <Filter>Effects\PostEffects\RandomFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\ScanLine\Scanline.h">
+      <Filter>Effects\PostEffects\ScanLine</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\SeparatedGaussianFilter\SeparatedGaussianFilter.h">
+      <Filter>Effects\PostEffects\SeparatedGaussianFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\PostEffects\Vignette\Vignette.h">
+      <Filter>Effects\PostEffects\Vignette</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\TransShutter.h">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli">
+      <Filter>EngineResources\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="event\InputCallbackEvent.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Animation\AnimationLoader.hpp">
+      <Filter>Features\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Animation\AnimationTimeline.hpp">
+      <Filter>Features\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Animation\AnimationTween.hpp">
+      <Filter>Features\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Audio\Audio.h">
+      <Filter>Features\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Audio\AudioManager.h">
+      <Filter>Features\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Bar2d\Bar2d.h">
+      <Filter>Features\Bar2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Bar3d\Bar3d.h">
+      <Filter>Features\Bar3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Collision\CellBasedFiltering\CellBasedFiltering.h">
+      <Filter>Features\Collision\CellBasedFiltering</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Collision\Collider\Collider.h">
+      <Filter>Features\Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Collision\Manager\CollisionManager.h">
+      <Filter>Features\Collision\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Collision\Shape.h">
+      <Filter>Features\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\CSV\CSVLoader.h">
+      <Filter>Features\CSV</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\CSV\csvStructure\CSVData.h">
+      <Filter>Features\CSV\csvStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Cubemap\CubemapSystem.h">
+      <Filter>Features\Cubemap</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Cubemap\Skybox.h">
+      <Filter>Features\Cubemap</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\DeltaTimeManager\DeltaTimeManager.h">
+      <Filter>Features\DeltaTimeManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Event\EventListener.h">
+      <Filter>Features\event</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Event\EventSubscription.h">
+      <Filter>Features\event</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\font\FontLayout.h">
+      <Filter>Features\font</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\GameEye2d\GameEye2d.h">
+      <Filter>Features\GameEye2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Gauge\GaugeBase.h">
+      <Filter>Features\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Input\InputMapper.hpp">
+      <Filter>Features\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Layer\CurrentCanvas.h">
+      <Filter>Features\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Layer\OrderedCanvasLayer.h">
+      <Filter>Features\Layer</Filter>
     </ClInclude>
     <ClInclude Include="Features\Lighting\DirectionalLight.h">
-      <Filter>Feature\Lighting</Filter>
+      <Filter>Features\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Lighting\LightingType.h">
+      <Filter>Features\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\RingModel.h">
+      <Filter>Features\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\Sphere.h">
+      <Filter>Features\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\SphereLine.h">
+      <Filter>Features\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\screen\IntermediateScreenBase.h">
+      <Filter>Features\screen</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TimeMeasurer\DeltaTimeStopWatch.h">
+      <Filter>Features\TimeMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IGameEye.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IIntermediateScreenFactory.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="io\loader\TaskExecutor.h">
+      <Filter>io\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Easing.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\GameEye\FreeLook\FreeLookEye.h">
+      <Filter>Features\GameEye\FreeLook</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\GameEye\GameEye.h">
+      <Filter>Features\GameEye</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\IContainer\ListContainer.h">
+      <Filter>Features\IContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\IContainer\VectorContainer.h">
+      <Filter>Features\IContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Input\Input.h">
+      <Filter>Features\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Layer\Canvas.h">
+      <Filter>Features\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\LevelLoader\ISceneObjects.h">
+      <Filter>Features\LevelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\LevelLoader\LevelData.h">
+      <Filter>Features\LevelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\LevelLoader\LevelHelper.h">
+      <Filter>Features\LevelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\LevelLoader\SceneObjects.h">
+      <Filter>Features\LevelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Lighting\LightRepository.h">
+      <Filter>Features\Lighting</Filter>
     </ClInclude>
     <ClInclude Include="Features\Lighting\PointLight.h">
-      <Filter>Feature\Lighting</Filter>
+      <Filter>Features\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="event\InputCallbackEvent.h" />
-    <ClInclude Include="Features\Input\InputMapper.hpp" />
-    <ClInclude Include="Features\GameEye2d\GameEye2d.h" />
-    <ClInclude Include="Math\Transform2d.h" />
-    <ClInclude Include="Interfaces\IGameEye.h" />
-    <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h" />
-    <ClInclude Include="Features\Animation\AnimationLoader.h" />
+    <ClInclude Include="Features\Model\Animation.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\GltfModelSystem.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Helper\AnimationHelper.h">
+      <Filter>Features\Model\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Helper\ModelHelper.h">
+      <Filter>Features\Model\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\IModel.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Loader\Assimp\ModelLoaderAssimp.h">
+      <Filter>Features\Model\Loader\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Loader\IModelLoader.h">
+      <Filter>Features\Model\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Loader\ModelLoaderLegacy.h">
+      <Filter>Features\Model\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\GltfModel.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\ModelData.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\ObjModel.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\ModelManager.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\ModelStorage.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\Skeleton.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Model\SkinCluster.h">
+      <Filter>Features\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\NiGui\NiGuiDebug.h">
+      <Filter>Features\NiGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\NiGui\NiGuiDrawer.h">
+      <Filter>Features\NiGui</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\object3d\Object3d.h">
+      <Filter>drawable\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\object3d\Object3dSystem.h">
+      <Filter>drawable\object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Emitter\EmitterData.h">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Emitter\ParticleEmitter.h">
+      <Filter>drawable\particle\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Manager\EmitterManager.h">
+      <Filter>drawable\particle\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Particle.h">
+      <Filter>drawable\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\ParticleStorage.h">
+      <Filter>drawable\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\ParticleSystem.h">
+      <Filter>drawable\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\particle\Type\ParticleType.h">
+      <Filter>drawable\particle\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\AABB.h">
+      <Filter>Features\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Primitive\OBB.h">
+      <Filter>Features\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\RandomGenerator\RandomGenerator.h">
+      <Filter>Features\RandomGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\SceneManager\SceneManager.h">
+      <Filter>Features\SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\SceneTransitionExecutor.h">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\TransBase.h">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SceneTransition\TransFadeInOut.h">
+      <Filter>Effects\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\sprite\Sprite.h">
+      <Filter>drawable\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable\sprite\SpriteSystem.h">
+      <Filter>drawable\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Text\Text.h">
+      <Filter>Features\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Text\TextSystem.h">
+      <Filter>Features\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\ThreadPool\ThreadPool.h">
+      <Filter>Features\ThreadPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\TimeMeasurer\TimeMeasurer.h">
+      <Filter>Features\TimeMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Viewport\Viewport.h">
+      <Filter>Features\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\NimaFramework.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IEntityStats.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\IObjectSystem.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\ISceneArgs.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interfaces\ISceneFactory.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Functions.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Transform2d.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\ViewportUnits.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Presets\Object3d\Grid\Preset_Grid.h">
+      <Filter>Presets\Object3d\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Args\SceneArgs.h">
+      <Filter>Scene\Args</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneBase.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ConvertString\ConvertString.h">
+      <Filter>Utility\ConvertString</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Debug\dbgutl.h">
+      <Filter>Utility\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\DIContainer\DIContainer.h">
+      <Filter>Utility\DIContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\FileSystem\fsutl.h">
+      <Filter>Utility\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\JSONConvTypeFuncs\JSONConvTypeFuncs.h">
+      <Filter>Utility\JSONConvTypeFuncs</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\JSONIO\jsonio.h">
+      <Filter>Utility\JSONIO</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\JSON\jsonutl.h">
+      <Filter>Utility\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\PathResolver\PathResolver.h">
+      <Filter>Utility\PathResolver</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\String\strutl.h">
+      <Filter>Utility\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h">
+      <Filter>Utility\TextureSelector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
-    <None Include="..\ClassDiagram.md" />
-    <None Include="EngineResources\Shaders\Fullscreen.hlsli">
-      <Filter>HLSL\PostEffect</Filter>
+    <None Include="..\ClassDiagram.md">
+      <Filter>..</Filter>
     </None>
+    <None Include=".editorconfig" />
     <None Include="ClassDiagram.cd" />
     <None Include="EngineResources\Shaders\Line.hlsli">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </None>
     <None Include="EngineResources\Shaders\Object3d.hlsli">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
+    </None>
+    <None Include="EngineResources\Shaders\Fullscreen.hlsli">
+      <Filter>EngineResources\Shaders</Filter>
     </None>
     <None Include="EngineResources\Shaders\Particle.hlsli">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </None>
     <None Include="EngineResources\Shaders\Skybox.hlsli">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </None>
     <None Include="EngineResources\Shaders\Sprite.hlsli">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="EngineResources\Shaders\Grayscale.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
     <FxCompile Include="EngineResources\Shaders\BoxFilter.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\BoxFilter.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\DepthBasedOutline.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\DepthBasedOutline.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Fullscreen.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Fullscreen.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\GaussianFilter.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\GaussianFilter.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Grayscale.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\PrewittOutline.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\PrewittOutline.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\RadialBlur.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\RadialBlur.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Vignette.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Vignette.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Dissolve.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Dissolve.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\RandomFilter.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\RandomFilter.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\GaussianBloom.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\GaussianBloom.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\LuminanceOutput.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\LuminanceOutput.VS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\ChromaticAberration.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Mosaic.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+    <FxCompile Include="EngineResources\Shaders\DepthBasedOutline.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\DepthBasedOutline.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Line.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\Dissolve.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Object3d.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\Dissolve.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Object3d.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\GaussianBloom.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Particle.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\GaussianBloom.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Particle.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\GaussianFilter.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\GaussianFilter.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Skinning.CS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+    <FxCompile Include="EngineResources\Shaders\Grayscale.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Skybox.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Skybox.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Sprite.PS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Sprite.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\WithoutAlpha.CS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
-    </FxCompile>
-    <FxCompile Include="EngineResources\Shaders\Posterize.PS.hlsl">
-      <Filter>HLSL\PostEffect</Filter>
+    <FxCompile Include="EngineResources\Shaders\Grayscale.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="EngineResources\Shaders\InstancedObject3d.VS.hlsl">
-      <Filter>HLSL\Drawable</Filter>
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Line.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Line.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\LuminanceOutput.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\LuminanceOutput.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Mosaic.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Object3d.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Fullscreen.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Object3d.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Fullscreen.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Particle.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Particle.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Posterize.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\PrewittOutline.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\PrewittOutline.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\RadialBlur.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\RadialBlur.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\RandomFilter.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\RandomFilter.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Scanline.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SeparatedGaussianFilter.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Skinning.CS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\SkinningObject3d.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Skybox.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Skybox.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Sprite.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Sprite.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Vignette.PS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\Vignette.VS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="EngineResources\Shaders\WithoutAlpha.CS.hlsl">
+      <Filter>EngineResources\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

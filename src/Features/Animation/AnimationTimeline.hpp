@@ -55,7 +55,7 @@ public:
         {
             ImGui::Indent(15.0f);
 
-            if (ImGui::Button("▶ Play")) this->Start();
+            if (ImGui::Button("Play")) this->Start();
             ImGui::SameLine();
             if (ImGui::Button("Add")) this->AddTween(0.0f, 1.0f, currentValue_, currentValue_);
 
@@ -73,6 +73,7 @@ public:
                 }
                 else
                 {
+                    ImGui::SameLine();
                     it->ImGui("Tween " + std::to_string(index));
                 }
                 ++index;

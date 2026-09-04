@@ -132,26 +132,3 @@ inline void AnimationTween<ValueType>::ImGui(const std::string& name)
 
     #endif // _DEBUG
 }
-
-// JSONデシリアライズ
-template <typename ValueType>
-void from_json(const nlohmann::json& j, AnimationTween<ValueType>& tween)
-{
-    float startSec = 0.0f;
-    utl::json::try_assign(j, "startSec", startSec);
-    tween.SetStartSec(startSec);
-
-    utl::json::try_assign(j, "durationSec", tween.durationSec_);
-    utl::json::try_assign(j, "startValue", tween.startValue_);
-    utl::json::try_assign(j, "targetValue", tween.targetValue_);
-}
-
-// JSONシリアライズ
-template <typename ValueType>
-void to_json(nlohmann::json& j, const AnimationTween<ValueType>& tween)
-{
-    j["startSec"] = tween.startSec_;
-    j["durationSec"] = tween.durationSec_;
-    j["startValue"] = tween.startValue_;
-    j["targetValue"] = tween.targetValue_;
-}

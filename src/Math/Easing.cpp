@@ -4,6 +4,8 @@
 #include "Easing.h"
 #include <cmath>
 #include <numbers>
+#include <unordered_map>
+#include <cassert>
 
 float pi_float = static_cast<float>(std::numbers::pi);
 
@@ -298,5 +300,7 @@ std::function<float(float)> Easing::GetEasingFunction(EasingType type)
         { EasingType::InOutBounce, EaseInOutBounce }
     };
 
-    return easingFunctions.at(type);
+    assert(type != EasingType::COUNT && "Invalid EasingType");
+    const auto it = easingFunctions.find(type);
+    return (it != easingFunctions.end()) ? it->second : nullptr;
 }

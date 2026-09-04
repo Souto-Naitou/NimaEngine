@@ -9,6 +9,7 @@
 
 class AnimationLoader
 {
+public:
     template <typename ValueType>
     static AnimationTimeline<ValueType> Load(const std::string& path);
 

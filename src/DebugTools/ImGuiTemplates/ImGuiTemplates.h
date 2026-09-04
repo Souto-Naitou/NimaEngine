@@ -2,8 +2,6 @@
 
 #ifdef _DEBUG
 
-#include <string>
-#include <type_traits>
 
 #include <functional>
 #include <Vector2.h>
@@ -11,7 +9,10 @@
 #include <Vector4.h>
 
 #include <imgui.h>
+#include <string>
+#include <type_traits>
 #include <concepts>
+#include <vector>
 
 /// <summary>
 /// ImGuiテンプレート群

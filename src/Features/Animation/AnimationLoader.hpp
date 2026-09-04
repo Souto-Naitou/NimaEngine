@@ -17,7 +17,7 @@ class AnimationLoader
 };
 
 template <typename ValueType>
-static AnimationTimeline<ValueType>
+AnimationTimeline<ValueType>
 AnimationLoader::Load(const std::string& path)
 {
     // JSONIOを使用してJSONファイルをロード
@@ -28,7 +28,7 @@ AnimationLoader::Load(const std::string& path)
 }
 
 template <typename ValueType>
-static AnimationTimeline<ValueType>
+AnimationTimeline<ValueType>
 AnimationLoader::LoadFromJson(const nlohmann::json& j)
 {
     AnimationTimeline<ValueType> timeline;
@@ -36,16 +36,16 @@ AnimationLoader::LoadFromJson(const nlohmann::json& j)
     {
         float start, duration;
         ValueType startV, targetV;
-        uint32_t easeingType;
+        uint32_t easingType;
 
         utl::json::try_assign(jTween, "startSec", start);
         utl::json::try_assign(jTween, "durationSec", duration);
         utl::json::try_assign(jTween, "startValue", startV);
         utl::json::try_assign(jTween, "targetValue", targetV);
-        utl::json::try_assign(jTween, "easingType", easeingType);
+        utl::json::try_assign(jTween, "easingType", easingType);
 
         auto animationTween = AnimationTween<ValueType>(start, duration, startV, targetV);
-        animationTween.SetTransitionFunction(static_cast<Easing::EasingType>(easeingType));
+        animationTween.SetTransitionFunction(static_cast<Easing::EasingType>(easingType));
         timeline.AddTween(animationTween);
     }
 

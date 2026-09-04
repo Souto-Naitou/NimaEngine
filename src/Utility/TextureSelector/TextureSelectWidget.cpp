@@ -65,5 +65,8 @@ bool TextureSelectWidget::DrawSelector(const TextureManager::TextureData*& outTe
 
     ImGui::EndChild();
     return isSelected;
+    #else
+    outTextureData;
+    maxWidth;
     #endif // _DEBUG
 }

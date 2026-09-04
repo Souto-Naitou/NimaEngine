@@ -16,11 +16,17 @@ public:
     TextureSelectWidget(TextureSelectWidget&&) = delete;
     TextureSelectWidget& operator=(TextureSelectWidget&&) = delete;
 
+    #ifdef _DEBUG
     void SetImGuiManager(ImGuiManager* pImGuiManager) { pImGuiManager_ = pImGuiManager; }
+    #else
+    void SetImGuiManager(void*) {}
+    #endif // _DEBUG
 
     bool DrawSelector(const TextureManager::TextureData*& outTextureData, float maxWidth);
 
 private:
+    #ifdef _DEBUG
     ImVec2 buttonSizeMax_ = { 64.0f, 64.0f };
     ImGuiManager* pImGuiManager_ = nullptr;
+    #endif // _DEBUG
 };

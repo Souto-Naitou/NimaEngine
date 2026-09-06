@@ -49,9 +49,6 @@ public:
         onFinished_ = func;
     }
 
-    // アニメーションの開始時間を取得
-    inline float GetStartSec() const { return startSec_; }
-
     // アニメーションが終了したかどうかを判定
     bool IsFinished(float currentTime) const
     {
@@ -63,6 +60,21 @@ public:
 
     // ImGuiでの表示
     void ImGui(const std::string& name);
+
+    // アニメーションの開始時間を取得
+    inline float GetStartSec() const { return startSec_; }
+
+    // アニメーションの継続時間を取得
+    inline float GetDurationSec() const { return durationSec_; }
+
+    // アニメーションの開始値を取得
+    ValueType GetStartValue() const { return startValue_; }
+
+    // アニメーションの終了値を取得
+    ValueType GetTargetValue() const { return targetValue_; }
+
+    // アニメーションの補間タイプを取得
+    Math::Easing::EasingType GetEasingType() const { return easingType_; }
 
 private:
     float           startSec_           = 0.0f;

@@ -483,7 +483,7 @@
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
     <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="event\InputCallbackEvent.h" />
-    <ClInclude Include="Features\Animation\AnimationLoader.hpp" />
+    <ClInclude Include="Features\Animation\AnimationSerializer.hpp" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />

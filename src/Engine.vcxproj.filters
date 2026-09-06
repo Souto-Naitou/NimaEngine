@@ -959,7 +959,7 @@
     <ClInclude Include="event\InputCallbackEvent.h">
       <Filter>event</Filter>
     </ClInclude>
-    <ClInclude Include="Features\Animation\AnimationLoader.hpp">
+    <ClInclude Include="Features\Animation\AnimationSerializer.hpp">
       <Filter>Features\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp">

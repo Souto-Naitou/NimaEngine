@@ -12,11 +12,7 @@ template <typename ValueType>
 class AnimationTimeline
 {
 public:
-    inline AnimationTimeline()
-    {
-        currentTime_ = std::make_unique<TimeMeasurer>();
-    }
-
+    AnimationTimeline() = default;
     ~AnimationTimeline() = default;
 
     // Tweenを追加
@@ -38,7 +34,6 @@ public:
 
     void Start(ValueType initValue = {})
     {
-        if (!currentTime_) return;
         currentTime_->Reset();
         currentTime_->Start();
         currentValue_ = initValue;
@@ -95,8 +90,12 @@ public:
 
     bool IsPlaying() const { return isPlaying_; }
 
+    // Tweenのリストを取得
+    std::vector<AnimationTween<ValueType>>& GetTweens() { return tweens_; }
+    const std::vector<AnimationTween<ValueType>>& GetTweens() const { return tweens_; }
+
 private:
-    std::unique_ptr<TimeMeasurer> currentTime_ = {};
+    TimeMeasurer currentTime_ = {};
     std::vector<AnimationTween<ValueType>> tweens_ = {};
     ValueType currentValue_ = {};
     bool isPlaying_ = false;
@@ -105,9 +104,7 @@ private:
 template<typename ValueType>
 inline const ValueType& AnimationTimeline<ValueType>::Update()
 {
-    if (!currentTime_) return currentValue_;
-
-    float time = currentTime_->GetNow<float>();
+    float time = currentTime_.GetNow<float>();
     for (auto& tween : tweens_)
     {
         tween.Update(time, currentValue_);

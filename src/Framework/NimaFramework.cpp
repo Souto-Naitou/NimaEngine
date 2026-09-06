@@ -201,7 +201,9 @@ void NimaFramework::Initialize()
     pCubemapSystem_->Initialize();
 
     // テクスチャ選択ウィジェットの初期化
+    #ifdef _DEBUG
     pTextureSelectWidget_->SetImGuiManager(pImGuiManager_.get());
+    #endif // _DEBUG
 
     /// デフォルトシーン引数の設定
     (*pSceneManager_)

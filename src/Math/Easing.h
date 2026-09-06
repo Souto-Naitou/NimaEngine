@@ -2,9 +2,69 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 #pragma once
+#include <functional>
 
 namespace Math::Easing
 {
+    enum class EasingType
+    {
+        None,
+        InSine,
+        OutSine,
+        InOutSine,
+        InQuad,
+        OutQuad,
+        InOutQuad,
+        InCubic,
+        OutCubic,
+        InOutCubic,
+        InQuart,
+        OutQuart,
+        InOutQuart,
+        InBack,
+        OutBack,
+        InOutBack,
+        InElastic,
+        OutElastic,
+        InOutElastic,
+        InBounce,
+        OutBounce,
+        InOutBounce,
+        COUNT
+    };
+
+    constexpr const char* ToString(EasingType type)
+    {
+        switch (type)
+        {
+        case EasingType::None:          return "None";
+        case EasingType::InSine:        return "InSine";
+        case EasingType::OutSine:       return "OutSine";
+        case EasingType::InOutSine:     return "InOutSine";
+        case EasingType::InQuad:        return "InQuad";
+        case EasingType::OutQuad:       return "OutQuad";
+        case EasingType::InOutQuad:     return "InOutQuad";
+        case EasingType::InCubic:       return "InCubic";
+        case EasingType::OutCubic:      return "OutCubic";
+        case EasingType::InOutCubic:    return "InOutCubic";
+        case EasingType::InQuart:       return "InQuart";
+        case EasingType::OutQuart:      return "OutQuart";
+        case EasingType::InOutQuart:    return "InOutQuart";
+        case EasingType::InBack:        return "InBack";
+        case EasingType::OutBack:       return "OutBack";
+        case EasingType::InOutBack:     return "InOutBack";
+        case EasingType::InElastic:     return "InElastic";
+        case EasingType::OutElastic:    return "OutElastic";
+        case EasingType::InOutElastic:  return "InOutElastic";
+        case EasingType::InBounce:      return "InBounce";
+        case EasingType::OutBounce:     return "OutBounce";
+        case EasingType::InOutBounce:   return "InOutBounce";
+        default: return "";
+        }
+    }
+
+    std::function<float(float)> GetEasingFunction(EasingType type);
+
     /// イージング関数郡
     float EaseNone(float t);
 

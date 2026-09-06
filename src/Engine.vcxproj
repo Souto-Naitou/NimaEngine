@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="AddressSanitizer|x64">
@@ -483,6 +483,7 @@
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
     <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="event\InputCallbackEvent.h" />
+    <ClInclude Include="Features\Animation\AnimationSerializer.hpp" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />

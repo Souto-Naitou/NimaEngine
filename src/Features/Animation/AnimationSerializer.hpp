@@ -1,4 +1,5 @@
 #pragma once
+#include <utility/JSONConvTypeFuncs/JSONConvTypeFuncs.h>
 #include "AnimationTimeline.hpp"
 #include "AnimationTween.hpp"
 #include <nlohmann/json.hpp>
@@ -8,7 +9,7 @@
 #include <string>
 #include <string_view>
 #include <DebugTools/Logger/Logger.h>
-#include <stdexcept>
+
 
 class AnimationSerializer
 {
@@ -24,7 +25,6 @@ public:
 
     template <typename ValueType>
     static nlohmann::json ToJson(const AnimationTimeline<ValueType>& timeline);
-
 };
 
 template <typename ValueType>
@@ -85,7 +85,6 @@ nlohmann::json AnimationSerializer::ToJson(const AnimationTimeline<ValueType>& t
     auto& j_tweens = j["tweens"];
 
     j_tweens = nlohmann::json::array();
-
     const auto& tweens = timeline.GetTweens();
 
     for (const auto& tween : tweens)

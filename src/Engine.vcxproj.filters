@@ -403,6 +403,7 @@
     <ClCompile Include="Core\DirectX12\RootSignature\RootParameters.cpp">
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClCompile>
+    <ClCompile Include="Utility\Layout\FlexContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="..">
@@ -1286,6 +1287,11 @@
     <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h">
       <Filter>Utility\TextureSelector</Filter>
     </ClInclude>
+    <ClInclude Include="Features\Animation\AnimationEditor.hpp">
+      <Filter>Features\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\Layout\FlexContainer.h" />
+    <ClInclude Include="Utility\Layout\FlexTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ClassDiagram.md">

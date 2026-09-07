@@ -1,10 +1,8 @@
 #pragma once
 #include <functional>
 #include <string>
-#include <nlohmann/json.hpp>
 
 #include <imgui.h>
-#include <Utility/JSON/jsonutl.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #include <Math/Easing.h>
 
@@ -128,8 +126,8 @@ inline void AnimationTween<ValueType>::ImGui(const std::string& name)
     {
         ImGui::Indent(15.0f);
 
-        ImGui::DragFloat("Start Sec", &startSec_, 0.01f, 0.0f, 100.0f, "%.2f");
-        ImGui::DragFloat("Duration Sec", &durationSec_, 0.01f, 0.0f, 100.0f, "%.2f");
+        ImGui::DragFloat("Start Sec", &startSec_, 0.01f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+        ImGui::DragFloat("Duration Sec", &durationSec_, 0.01f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
         ImGuiTemplate::Drag("Start Value", &startValue_);
         ImGuiTemplate::Drag("Target Value", &targetValue_);
 

@@ -31,31 +31,10 @@ void NimaFramework::Run()
 void NimaFramework::Initialize()
 {
     /// システムクラスの初期化
-    pConfigManager_ = ConfigManager::GetInstance();
-    pLogger_ = Logger::GetInstance();
     pDirectX_ = std::make_unique<DirectX12>();
 
-    pDebugManager_ = DebugManager::GetInstance();
-    pWinSystem_ = Window::GetInstance();
-    pSpriteSystem_ = SpriteSystem::GetInstance();
-    pObject3dSystem_ = Object3dSystem::GetInstance();
-    pObject3dInstancedSystem_ = Object3dInstancedSystem::GetInstance();
-    pParticleSystem_ = ParticleSystem::GetInstance();
-    pTextureManager_ = TextureManager::GetInstance();
-    pSRVManager_ = SRVManager::GetInstance();
-    pEventListener_ = EventListener::GetInstance();
-    pSceneManager_ = SceneManager::GetInstance();
-    pParticleStorage_ = ParticleStorage::GetInstance();
-    pLineSystem_ = LineSystem::GetInstance();
-    pInput_ = Input::GetInstance();
-    pRandomGenerator_ = RandomGenerator::GetInstance();
-    pTextSystem_ = TextSystem::GetInstance();
-    pAudioManager_ = AudioManager::GetInstance();
-    pEventTimer_ = EventTimer::GetInstance();
-    pPSOCache_ = PSOCache::GetInstance();
-    pRootSignatureCache_ = RootSignatureCache::GetInstance();
-    pPostEffectInputCommon_ = PostEffectInputCommon::GetInstance();
-    pTextureSelectWidget_ = TextureSelectWidget::GetInstance();
+    // インスタンスを取得
+    GetInstances();
 
     #ifdef _DEBUG
     pImGuiManager_ = std::make_unique<ImGuiManager>();
@@ -380,4 +359,32 @@ void NimaFramework::InitializeObject3dSystems()
     pObject3dInstancedSystem_->SetDirectX12(pDirectX_.get());
     pObject3dInstancedSystem_->Initialize();
     pObject3dInstancedSystem_->SetEnvironmentTexture(envTexture);
+}
+
+void NimaFramework::GetInstances()
+{
+    pConfigManager_ = ConfigManager::GetInstance();
+    pLogger_ = Logger::GetInstance();
+    pDebugManager_ = DebugManager::GetInstance();
+    pWinSystem_ = Window::GetInstance();
+    pSpriteSystem_ = SpriteSystem::GetInstance();
+    pObject3dSystem_ = Object3dSystem::GetInstance();
+    pObject3dInstancedSystem_ = Object3dInstancedSystem::GetInstance();
+    pParticleSystem_ = ParticleSystem::GetInstance();
+    pTextureManager_ = TextureManager::GetInstance();
+    pSRVManager_ = SRVManager::GetInstance();
+    pEventListener_ = EventListener::GetInstance();
+    pSceneManager_ = SceneManager::GetInstance();
+    pParticleStorage_ = ParticleStorage::GetInstance();
+    pLineSystem_ = LineSystem::GetInstance();
+    pInput_ = Input::GetInstance();
+    pRandomGenerator_ = RandomGenerator::GetInstance();
+    pTextSystem_ = TextSystem::GetInstance();
+    pAudioManager_ = AudioManager::GetInstance();
+    pEventTimer_ = EventTimer::GetInstance();
+    pPSOCache_ = PSOCache::GetInstance();
+    pRootSignatureCache_ = RootSignatureCache::GetInstance();
+    pPostEffectInputCommon_ = PostEffectInputCommon::GetInstance();
+    pTextureSelectWidget_ = TextureSelectWidget::GetInstance();
+    pAnimationEditor_ = AnimationEditor::GetInstance();
 }

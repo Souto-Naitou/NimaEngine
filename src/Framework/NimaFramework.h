@@ -36,6 +36,7 @@
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecutor.h>
 #include <Utility/TextureSelector/TextureSelectWidget.h>
+#include <Features/Animation/AnimationEditor.hpp>
 
 
 /// ゲーム共通のフレームワーククラス
@@ -120,11 +121,13 @@ protected:
     RootSignatureCache*             pRootSignatureCache_        = nullptr;
     PostEffectInputCommon*          pPostEffectInputCommon_     = nullptr;
     TextureSelectWidget*            pTextureSelectWidget_       = nullptr;
+    AnimationEditor*                pAnimationEditor_           = nullptr;
 
     bool                            isExitProgram_              = false;
 
 private:
     void InitializeObject3dSystems();
+    void GetInstances();
 };
 
 #define CREATE_APPLICATION(class) \

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="AddressSanitizer|x64">
@@ -409,6 +409,7 @@
     <ClCompile Include="Utility\Debug\dbgutl.cpp" />
     <ClCompile Include="Utility\FileSystem\fsutl.cpp" />
     <ClCompile Include="Utility\JSONIO\jsonio.cpp" />
+    <ClCompile Include="Utility\Layout\FlexContainer.cpp" />
     <ClCompile Include="Utility\PathResolver\PathResolver.cpp" />
     <ClCompile Include="Utility\String\strutl.cpp" />
     <ClCompile Include="Utility\TextureSelector\TextureSelectWidget.cpp" />
@@ -483,6 +484,8 @@
     <ClInclude Include="Effects\SceneTransition\TransShutter.h" />
     <ClInclude Include="EngineResources\Shaders\RuntimeData.hlsli" />
     <ClInclude Include="event\InputCallbackEvent.h" />
+    <ClInclude Include="Features\Animation\AnimationEditor.hpp" />
+    <ClInclude Include="Features\Animation\AnimationSerializer.hpp" />
     <ClInclude Include="Features\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="Features\Animation\AnimationTween.hpp" />
     <ClInclude Include="Features\Audio\Audio.h" />
@@ -588,6 +591,8 @@
     <ClInclude Include="Utility\JSONConvTypeFuncs\JSONConvTypeFuncs.h" />
     <ClInclude Include="Utility\JSONIO\jsonio.h" />
     <ClInclude Include="Utility\JSON\jsonutl.h" />
+    <ClInclude Include="Utility\Layout\FlexContainer.h" />
+    <ClInclude Include="Utility\Layout\FlexTypes.h" />
     <ClInclude Include="Utility\PathResolver\PathResolver.h" />
     <ClInclude Include="Utility\String\strutl.h" />
     <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h" />

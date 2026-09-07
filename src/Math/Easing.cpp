@@ -4,6 +4,8 @@
 #include "Easing.h"
 #include <cmath>
 #include <numbers>
+#include <unordered_map>
+#include <cassert>
 
 float pi_float = static_cast<float>(std::numbers::pi);
 
@@ -269,4 +271,36 @@ float Easing::EaseInOutBounce(float t)
         return (1.0f + t) / 2.0f;
     }
 
+}
+
+std::function<float(float)> Easing::GetEasingFunction(EasingType type)
+{
+    static const std::unordered_map<EasingType, std::function<float(float)>> easingFunctions = {
+        { EasingType::None, EaseNone },
+        { EasingType::InSine, EaseInSine },
+        { EasingType::OutSine, EaseOutSine },
+        { EasingType::InOutSine, EaseInOutSine },
+        { EasingType::InQuad, EaseInQuad },
+        { EasingType::OutQuad, EaseOutQuad },
+        { EasingType::InOutQuad, EaseInOutQuad },
+        { EasingType::InCubic, EaseInCubic },
+        { EasingType::OutCubic, EaseOutCubic },
+        { EasingType::InOutCubic, EaseInOutCubic },
+        { EasingType::InQuart, EaseInQuart },
+        { EasingType::OutQuart, EaseOutQuart },
+        { EasingType::InOutQuart, EaseInOutQuart },
+        { EasingType::InBack, EaseInBack },
+        { EasingType::OutBack, EaseOutBack },
+        { EasingType::InOutBack, EaseInOutBack },
+        { EasingType::InElastic, EaseInElastic },
+        { EasingType::OutElastic, EaseOutElastic },
+        { EasingType::InOutElastic, EaseInOutElastic },
+        { EasingType::InBounce, EaseInBounce },
+        { EasingType::OutBounce, EaseOutBounce },
+        { EasingType::InOutBounce, EaseInOutBounce }
+    };
+
+    assert(type != EasingType::COUNT && "Invalid EasingType");
+    const auto it = easingFunctions.find(type);
+    return (it != easingFunctions.end()) ? it->second : nullptr;
 }

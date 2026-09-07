@@ -1,0 +1,12 @@
+{
+  "DefaultProfile": "NimaEngine",
+  "Profiles": {
+    "NimaEngine": {
+      "VcxprojPath": "..\\src\\Engine.vcxproj",
+      "StripPrefixes": [],
+      "RootFileNames": [
+        "main.cpp"
+      ]
+    }
+  }
+}

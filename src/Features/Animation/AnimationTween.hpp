@@ -1,7 +1,10 @@
 #pragma once
 #include <functional>
-#include <imgui.h>
 #include <string>
+
+#include <imgui.h>
+#include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
+#include <Math/Easing.h>
 
 // アニメーションの補間を管理するクラス
 //   ValueTypeはUpdate関数内で+-*を使用するため、演算子オーバーロードが必要
@@ -28,6 +31,14 @@ public:
     inline void SetTransitionFunction(const std::function<float(float)>& func)
     {
         transitionFunction_ = func;
+        easingType_ = Math::Easing::EasingType::None;
+    }
+
+    // 補間関数を設定 (EasingTypeを指定)
+    inline void SetTransitionFunction(Math::Easing::EasingType type)
+    {
+        transitionFunction_ = Math::Easing::GetEasingFunction(type);
+        easingType_ = type;
     }
 
     // アニメーション終了時のコールバック関数を設定
@@ -35,9 +46,6 @@ public:
     {
         onFinished_ = func;
     }
-
-    // アニメーションの開始時間を取得
-    inline float GetStartSec() const { return startSec_; }
 
     // アニメーションが終了したかどうかを判定
     bool IsFinished(float currentTime) const
@@ -51,17 +59,35 @@ public:
     // ImGuiでの表示
     void ImGui(const std::string& name);
 
+    // アニメーションの開始時間を取得
+    inline float GetStartSec() const { return startSec_; }
+
+    // アニメーションの継続時間を取得
+    inline float GetDurationSec() const { return durationSec_; }
+
+    // アニメーションの開始値を取得
+    ValueType GetStartValue() const { return startValue_; }
+
+    // アニメーションの終了値を取得
+    ValueType GetTargetValue() const { return targetValue_; }
+
+    // アニメーションの補間タイプを取得
+    Math::Easing::EasingType GetEasingType() const { return easingType_; }
+
 private:
     float           startSec_           = 0.0f;
     float           durationSec_        = 0.0f;
-    const ValueType targetValue_        = {};
-    const ValueType startValue_         = {};
+    ValueType       targetValue_        = {};
+    ValueType       startValue_         = {};
     bool            isCalledOnFinished_ = false;
 
     // 補間関数
     std::function<float(float)> transitionFunction_ = nullptr;
     // コールバック関数
     std::function<void()> onFinished_ = nullptr;
+
+    // 補間タイプ
+    Math::Easing::EasingType easingType_ = Math::Easing::EasingType::None;
 };
 
 template<typename ValueType>
@@ -100,8 +126,15 @@ inline void AnimationTween<ValueType>::ImGui(const std::string& name)
     {
         ImGui::Indent(15.0f);
 
-        ImGui::DragFloat("Start Sec", &startSec_, 0.01f, 0.0f, 100.0f, "%.2f");
-        ImGui::DragFloat("Duration Sec", &durationSec_, 0.01f, 0.0f, 100.0f, "%.2f");
+        ImGui::DragFloat("Start Sec", &startSec_, 0.01f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+        ImGui::DragFloat("Duration Sec", &durationSec_, 0.01f, 0.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+        ImGuiTemplate::Drag("Start Value", &startValue_);
+        ImGuiTemplate::Drag("Target Value", &targetValue_);
+
+        if (ImGuiTemplate::ComboEnum("Easing Type", easingType_))
+        {
+            this->SetTransitionFunction(easingType_);
+        }
 
         ImGui::Unindent(15.0f);
         ImGui::TreePop();

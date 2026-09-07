@@ -36,6 +36,7 @@
 #include <memory> /// std::unique_ptr
 #include <Core/DirectX12/PostEffectExecutor.h>
 #include <Utility/TextureSelector/TextureSelectWidget.h>
+#include <Features/Animation/AnimationEditor.hpp>
 
 
 /// ゲーム共通のフレームワーククラス
@@ -94,6 +95,7 @@ protected:
 
     #ifdef _DEBUG
     std::unique_ptr<ImGuiManager>   pImGuiManager_              = nullptr;
+    AnimationEditor*                pAnimationEditor_           = nullptr;
     #endif // _DEBUG
 
     /// 他クラスのインスタンス
@@ -125,6 +127,7 @@ protected:
 
 private:
     void InitializeObject3dSystems();
+    void GetInstances();
 };
 
 #define CREATE_APPLICATION(class) \

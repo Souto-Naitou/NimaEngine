@@ -1,10 +1,22 @@
 #pragma once
 
+#include <Vector2.h>
 #include <Vector3.h>
 #include <Vector4.h>
 #include <Range.h>
 
 #include <nlohmann/json.hpp>
+
+inline void from_json(const nlohmann::json& j, Vector2& v)
+{
+    j.at("x").get_to(v.x);
+    j.at("y").get_to(v.y);
+}
+
+inline void to_json(nlohmann::json& j, const Vector2& v)
+{
+    j = nlohmann::json{ {"x", v.x}, {"y", v.y} };
+}
 
 inline void from_json(const nlohmann::json& j, Vector3& v)
 {

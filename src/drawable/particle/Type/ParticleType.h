@@ -16,7 +16,7 @@ enum class ParticleDeleteCondition
 
 struct ParticleData
 {
-    DeltaTimeStopWatch                timer                       = {};
+    DeltaTimeStopWatch              timer                       = {};
     EulerTransform                  transform                   = {};
     Vector3                         direction                   = {};
     float                           speed_                      = 0.0f;
@@ -37,7 +37,9 @@ struct ParticleData
     bool                            enableDirectionByVelocity   = false;
     bool                            enableCollisionFloor        = false;
     bool                            enableSmoothRandom          = false;
+    bool                            enableAttractor             = false;
     float                           radius                      = 0.0f;
     v3::CollisionFloor              collisionFloor              = {};
+    v3::AttractorData               attractorData               = {};
     ParticleDeleteCondition         deleteCondition             = ParticleDeleteCondition::LifeTime;
 };

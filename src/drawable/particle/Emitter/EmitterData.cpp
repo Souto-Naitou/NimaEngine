@@ -78,28 +78,28 @@ namespace Type::ParticleEmitter::v2
 {
     Data::Data(const Type::ParticleEmitter::v1::Data& rv)
     {
-        name = rv.name_;
-        common.scaleFixed = rv.scaleFixed_;
-        common.emitInterval = rv.emitInterval_;
-        common.emitNum = rv.emitNum_;
-        common.emitterLifeTime = rv.emitterLifeTime_;
-        common.particleLifeTime = rv.particleLifeTime_;
-        common.scaleDelayTime = rv.scaleDelayTime_;
-        common.emitPositionFixed = rv.emitPositionFixed_;
-        common.alphaDeltaValue = rv.alphaDeltaValue_;
-        common.velocityFixed = rv.velocityFixed_;
-        ranges.scale = rv.scaleRange_;
-        ranges.scaleRandom = rv.scaleRandomRange_;
-        ranges.position = rv.positionRange_;
-        ranges.color = rv.colorRange_;
-        ranges.velocityRandom = rv.velocityRandomRange_;
-        ranges.rotationRandom = rv.rotationRandomRange_;
-        physics.gravity = rv.gravity_;
-        physics.resistance = rv.resistance_;
-        flags.enableRandomVelocity = rv.enableRandomVelocity_;
-        flags.enableRandomEmit = rv.enableRandomEmit_;
-        flags.enableRandomRotation = rv.enableRandomRotation_;
-        flags.enableRandomScale = rv.enableRandomScale_;
+        name                        = rv.name_;
+        common.scaleFixed           = rv.scaleFixed_;
+        common.emitInterval         = rv.emitInterval_;
+        common.emitNum              = rv.emitNum_;
+        common.emitterLifeTime      = rv.emitterLifeTime_;
+        common.particleLifeTime     = rv.particleLifeTime_;
+        common.scaleDelayTime       = rv.scaleDelayTime_;
+        common.emitPositionFixed    = rv.emitPositionFixed_;
+        common.alphaDeltaValue      = rv.alphaDeltaValue_;
+        common.velocityFixed        = rv.velocityFixed_;
+        ranges.scale                = rv.scaleRange_;
+        ranges.scaleRandom          = rv.scaleRandomRange_;
+        ranges.position             = rv.positionRange_;
+        ranges.color                = rv.colorRange_;
+        ranges.velocityRandom       = rv.velocityRandomRange_;
+        ranges.rotationRandom       = rv.rotationRandomRange_;
+        physics.gravity             = rv.gravity_;
+        physics.resistance          = rv.resistance_;
+        flags.enableRandomVelocity  = rv.enableRandomVelocity_;
+        flags.enableRandomEmit      = rv.enableRandomEmit_;
+        flags.enableRandomRotation  = rv.enableRandomRotation_;
+        flags.enableRandomScale     = rv.enableRandomScale_;
         flags.enableScaleTransition = rv.enableScaleTransition_;
     }
 
@@ -222,6 +222,7 @@ namespace Type::ParticleEmitter::v3
         nlohmann::json j_phys;  utl::json::try_assign(j, "physics", j_phys);
         nlohmann::json j_flag;  utl::json::try_assign(j, "flags", j_flag);
         nlohmann::json j_colflo; utl::json::try_assign(j, "collisionFloor", j_colflo);
+        nlohmann::json j_attr; utl::json::try_assign(j, "attractorData", j_attr);
 
         auto& d_common = data.common;
 
@@ -234,6 +235,8 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_common, "emitPositionFixed", d_common.emitPositionFixed);
         utl::json::try_assign(j_common, "alphaDeltaValue", d_common.alphaDeltaValue);
         utl::json::try_assign(j_common, "velocityFixed", d_common.velocityFixed);
+        utl::json::try_assign(j_common, "radius", d_common.radius);
+        utl::json::try_assign(j_common, "hueRotateSpeed", d_common.hueRotateSpeed);
 
         auto& d_tex = data.textureData;
 
@@ -266,11 +269,24 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_flag, "enableCollisionFloor", d_flag.enableCollisionFloor);
         utl::json::try_assign(j_flag, "velocityDistribution", d_flag.velocityDistribution);
         utl::json::try_assign(j_flag, "enableSmoothNoise", d_flag.enableSmoothNoise);
+        utl::json::try_assign(j_flag, "hueMode", d_flag.hueMode);
+        utl::json::try_assign(j_flag, "hueModeTarget", d_flag.hueModeTarget);
+        utl::json::try_assign(j_flag, "enableAttractor", d_flag.enableAttractor);
 
         auto& d_colFloor = data.collisionFloor;
 
         utl::json::try_assign(j_colflo, "elevation", d_colFloor.elevation);
         utl::json::try_assign(j_colflo, "bouncePower", d_colFloor.bounce_power);
+
+        auto& d_attractor = data.attractorData;
+
+        utl::json::try_assign(j_attr, "mode", d_attractor.mode);
+        utl::json::try_assign(j_attr, "target", d_attractor.target);
+        utl::json::try_assign(j_attr, "dampingCoef", d_attractor.dampingCoef);
+        utl::json::try_assign(j_attr, "stiffness", d_attractor.stiffness);
+        utl::json::try_assign(j_attr, "slowRadius", d_attractor.slowRadius);
+        utl::json::try_assign(j_attr, "maxSpeed", d_attractor.maxSpeed);
+        utl::json::try_assign(j_attr, "responsiveness", d_attractor.responsiveness);
     }
 
     void to_json(nlohmann::json& j, const Data& data)
@@ -290,6 +306,8 @@ namespace Type::ParticleEmitter::v3
         j_common["emitPositionFixed"]           = d_common.emitPositionFixed;
         j_common["alphaDeltaValue"]             = d_common.alphaDeltaValue;
         j_common["velocityFixed"]               = d_common.velocityFixed;
+        j_common["radius"]                      = d_common.radius;
+        j_common["hueRotateSpeed"]              = d_common.hueRotateSpeed;
 
         auto& j_tex = j["textureData"];
         auto& d_tex = data.textureData;
@@ -326,11 +344,59 @@ namespace Type::ParticleEmitter::v3
         j_flag["enableCollisionFloor"]          = d_flag.enableCollisionFloor;
         j_flag["velocityDistribution"]          = d_flag.velocityDistribution;
         j_flag["enableSmoothNoise"]             = d_flag.enableSmoothNoise;
+        j_flag["hueMode"]                       = d_flag.hueMode;
+        j_flag["hueModeTarget"]                 = d_flag.hueModeTarget;
+        j_flag["enableAttractor"]               = d_flag.enableAttractor;
 
         auto& j_colflo = j["collisionFloor"];
         auto& d_colflo = data.collisionFloor;
 
         j_colflo["elevation"]                   = d_colflo.elevation;
         j_colflo["bouncePower"]                 = d_colflo.bounce_power;
+
+        auto& j_attr = j["attractorData"];
+        auto& d_attr = data.attractorData;
+
+        j_attr["mode"]                          = d_attr.mode;
+        j_attr["target"]                        = d_attr.target;
+        j_attr["dampingCoef"]                   = d_attr.dampingCoef;
+        j_attr["stiffness"]                     = d_attr.stiffness;
+        j_attr["slowRadius"]                    = d_attr.slowRadius;
+        j_attr["maxSpeed"]                      = d_attr.maxSpeed;
+        j_attr["responsiveness"]                = d_attr.responsiveness;
     }
+
+    const char* ToString(HueMode hueMode)
+    {
+        switch (hueMode)
+        {
+        case HueMode::None: return "無効";
+        case HueMode::Rotate: return "回転";
+        case HueMode::Randomize: return "ランダマイズ";
+        }
+        return "Unknown";
+    }
+
+    const char* ToString(AttractorMode attractorMode)
+    {
+        switch (attractorMode)
+        {
+        case AttractorMode::Spring: return "Spring";
+        case AttractorMode::Arrival: return "Arrival";
+        }
+        return "Unknown";
+    }
+
+    const char* ToString(HueModeTarget hueModeTarget)
+    {
+        switch (hueModeTarget)
+        {
+        case HueModeTarget::Start: return "開始色";
+        case HueModeTarget::End: return "終了色";
+        case HueModeTarget::BothShared: return "両方 (共通)";
+        case HueModeTarget::BothSeparate: return "両方 (分離)";
+        }
+        return "Unknown";
+    }
+
 }

@@ -41,16 +41,36 @@ namespace Type
 
         namespace v3
         {
+            enum class HueMode
+            {
+                None, Rotate, Randomize, COUNT
+            };
+
+            enum class HueModeTarget
+            {
+                Start, End, BothShared, BothSeparate,COUNT
+            };
+
+            enum class AttractorMode
+            {
+                Spring, Arrival, COUNT
+            };
+
             struct Common;
             struct TextureData;
             struct RangeData;
             struct Flags;
             struct PhysicsData;
             struct CollisionFloor;
+            struct AttractorData;
             struct Data;
 
             void from_json(const nlohmann::json& j, Data& data);
             void to_json(nlohmann::json& j, const Data& data);
+
+            const char* ToString(HueMode hueMode);
+            const char* ToString(HueModeTarget hueModeTarget);
+            const char* ToString(AttractorMode attractorMode);
         }
     }
 }
@@ -140,6 +160,7 @@ struct Type::ParticleEmitter::v2::Data
 struct Type::ParticleEmitter::v3::Common : public v2::Common
 {
     float           radius                      = 0.0f;
+    float           hueRotateSpeed              = 0.0f;                 // 色相回転速度
 };
 
 struct Type::ParticleEmitter::v3::TextureData
@@ -160,9 +181,12 @@ struct Type::ParticleEmitter::v3::PhysicsData : public v2::PhysicsData
 
 struct Type::ParticleEmitter::v3::Flags : v2::Flags
 {
-    bool            enableCollisionFloor        = {};                   // 衝突床
-    bool            enableSmoothNoise           = false;                // スムースノイズ
-    VelocityDistribution velocityDistribution   = VelocityDistribution::Box; // 速度分布タイプ
+    bool            enableCollisionFloor        = {};                           // 衝突床
+    bool            enableSmoothNoise           = false;                        // スムースノイズ
+    bool            enableAttractor             = false;                        // 収束
+    VelocityDistribution velocityDistribution   = VelocityDistribution::Box;    // 速度分布タイプ
+    HueMode         hueMode                     = HueMode::None;                // 色相モード
+    HueModeTarget   hueModeTarget               = HueModeTarget::Start;         // 色相モード対象
 };
 
 struct Type::ParticleEmitter::v3::CollisionFloor
@@ -171,18 +195,30 @@ struct Type::ParticleEmitter::v3::CollisionFloor
     float           bounce_power                = 0.0f;
 };
 
+struct Type::ParticleEmitter::v3::AttractorData
+{
+    AttractorMode   mode                        = AttractorMode::Spring;
+    Vector3         target                      = {};       // 収束先座標
+    float           dampingCoef                 = 0.0f;     // 減衰係数 (静止させるために使うとよい)
+    float           stiffness                   = 0.0f;     // バネ定数 (大きいほど強く引き寄せる)
+    float           slowRadius                  = 0.0f;     // 遅くなる半径 (この半径に入ると減速する)
+    float           maxSpeed                    = 0.0f;     // 最大速度 (この速度を超えると減速する)
+    float           responsiveness              = 0.0f;     // 応答性 (大きいほど強く引き寄せる)
+};
+
 struct Type::ParticleEmitter::v3::Data
 {
     Data() = default;
     Data(const Type::ParticleEmitter::v2::Data& rv);
     Data(const Type::ParticleEmitter::v1::Data& rv);
     
-    static constexpr uint32_t version           = 3;                    // バージョン番号
+    static constexpr uint32_t version           = 3;        // バージョン番号
     std::string     name                        = {};
     Common          common                      = {};
     TextureData     textureData                 = {};
     RangeData       ranges                      = {};
     PhysicsData     physics                     = {};
     Flags           flags                       = {};
-    CollisionFloor  collisionFloor              = {};                   // 衝突床データ
+    CollisionFloor  collisionFloor              = {};       // 衝突床データ
+    AttractorData   attractorData               = {};       // 収束データ
 };

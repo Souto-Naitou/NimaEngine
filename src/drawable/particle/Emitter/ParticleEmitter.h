@@ -95,6 +95,7 @@ private:
     bool                        isEmitRequest_          = false;
     Vector3                     position_               = {};
     bool                        isDrawLine_             = false;
+    float                       currentAdditionalHue_   = 0.0f;
 
     /// [ Pointers ]
     WinTools*                   winTools_               = nullptr;
@@ -112,6 +113,7 @@ private:
     void InitScale(ParticleData& datum);
     void InitVelocity(ParticleData& datum);
     void InitRotation(ParticleData& datum);
+    void InitColor(ParticleData& datum);
     void InitTexture();
 
     void ImGuiSectionCommon();
@@ -121,6 +123,7 @@ private:
     void ImGuiSectionVelocity();
     void ImGuiSectionPhysics();
     void ImGuiSectionCollisionFloor();
+    void ImGuiSectionAttractor();
     void ImGuiSectionDebug();
 
     /// <summary>

@@ -386,5 +386,7 @@ void NimaFramework::GetInstances()
     pRootSignatureCache_ = RootSignatureCache::GetInstance();
     pPostEffectInputCommon_ = PostEffectInputCommon::GetInstance();
     pTextureSelectWidget_ = TextureSelectWidget::GetInstance();
+#ifdef _DEBUG
     pAnimationEditor_ = AnimationEditor::GetInstance();
+#endif // _DEBUG
 }

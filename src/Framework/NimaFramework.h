@@ -95,6 +95,7 @@ protected:
 
     #ifdef _DEBUG
     std::unique_ptr<ImGuiManager>   pImGuiManager_              = nullptr;
+    AnimationEditor*                pAnimationEditor_           = nullptr;
     #endif // _DEBUG
 
     /// 他クラスのインスタンス
@@ -121,7 +122,6 @@ protected:
     RootSignatureCache*             pRootSignatureCache_        = nullptr;
     PostEffectInputCommon*          pPostEffectInputCommon_     = nullptr;
     TextureSelectWidget*            pTextureSelectWidget_       = nullptr;
-    AnimationEditor*                pAnimationEditor_           = nullptr;
 
     bool                            isExitProgram_              = false;
 

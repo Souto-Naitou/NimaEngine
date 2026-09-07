@@ -1,4 +1,7 @@
 #pragma once
+
+#ifdef _DEBUG
+
 #include <memory>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Features/Animation/AnimationTimeline.hpp>
@@ -168,3 +171,5 @@ void AnimationEditor::DrawTimeline(const std::string& name, AnimationTimeline<Va
 
     #endif // _DEBUG
 }
+
+#endif // _DEBUG

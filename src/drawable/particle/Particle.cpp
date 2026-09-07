@@ -11,6 +11,7 @@
 #include <Math/Functions.hpp>
 #include <mathExtension.h>
 #include <Core/Window/Window.h>
+#include <algorithm>
 
 using namespace Type::ParticleEmitter;
 
@@ -259,13 +260,17 @@ void Particle::ParticleDataUpdate(std::list<ParticleData>::iterator itr)
 
 void Particle::ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, float deltaTime)
 {
+    using AttractorMode = Type::ParticleEmitter::v3::AttractorMode;
+
     EulerTransform& transform = itr->transform;
     Vector3& velocity = itr->velocity;
     Vector3& acceleration = itr->acceleration;
     Vector3& gravity = itr->accGravity;
     Vector3& resistance = itr->accResistance;
+    auto& attractorData = itr->attractorData;
     bool& enableDirectionByVelocity = itr->enableDirectionByVelocity;
     bool& enableSmoothRandom = itr->enableSmoothRandom;
+    bool& enableAttractor = itr->enableAttractor;
     float seed = itr->seed;
     float smoothPower = itr->smoothPower;
     float time = itr->timer.GetNow<float>();
@@ -300,6 +305,37 @@ void Particle::ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, fl
             Vector3 dirNorm = velocity.Normalized();
             dirNorm = Math::TransformNormal(dirNorm, rot);
             velocity = dirNorm * speedLen;
+        }
+    }
+
+    /// 収束の実装
+    if (enableAttractor)
+    {
+
+        Vector3 target    = attractorData.target;
+        Vector3 toTarget  = target - transform.translate;
+        float dampingCoef = attractorData.dampingCoef;
+
+        if (attractorData.mode == AttractorMode::Spring)
+        {
+            float stiffness = attractorData.stiffness;
+            acceleration += toTarget * stiffness - velocity * dampingCoef;
+        }
+        else if (attractorData.mode == AttractorMode::Arrival)
+        {
+            float slowRadius     = attractorData.slowRadius;
+            float maxSpeed       = attractorData.maxSpeed;
+            float responsiveness = attractorData.responsiveness;
+            float distance       = toTarget.Length();
+            float desiredSpeed   = maxSpeed * std::min(1.0f, distance / slowRadius);
+
+            Vector3 desiredVelocity = {};
+            if (distance > 0)
+            {
+                desiredVelocity = toTarget.Normalized() * desiredSpeed;
+            }
+            
+            acceleration += (desiredVelocity - velocity) * responsiveness;
         }
     }
 

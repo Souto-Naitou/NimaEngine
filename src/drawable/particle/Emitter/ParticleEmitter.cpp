@@ -1,12 +1,9 @@
 #include "ParticleEmitter.h"
 
 #ifdef _DEBUG
-#include <DebugTools/DebugManager/DebugManager.h>
 #include <imgui.h>
-#include <Utility/String/strutl.h>
 #endif // _DEBUG
 
-#include <drawable/particle/ParticleStorage.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <drawable/particle/Manager/EmitterManager.h>
 #include <Core/ConfigManager/ConfigManager.h>
@@ -14,9 +11,10 @@
 #include <WinTools/WinTools.h>
 #include <Range.h>
 #include <numbers>
-#include <Core/ConfigManager/ConfigManager.h>
 #include <filesystem>
 #include <Utility/TextureSelector/TextureSelectWidget.h>
+#include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
+#include <Color.h>
 
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
@@ -159,7 +157,7 @@ void ParticleEmitter::EmitParticle()
     this->InitRotation(datum);
 
     // 色範囲
-    datum.colorRange = emitterData_.ranges.color;
+    this->InitColor(datum);
 
     // アルファ値の変化量
     datum.alphaDeltaValue = emitterData_.common.alphaDeltaValue;
@@ -175,6 +173,10 @@ void ParticleEmitter::EmitParticle()
     datum.enableCollisionFloor = emitterData_.flags.enableCollisionFloor;
     datum.collisionFloor = emitterData_.collisionFloor;
     datum.enableSmoothRandom = emitterData_.flags.enableSmoothNoise;
+    
+    // アトラクタ
+    datum.enableAttractor = emitterData_.flags.enableAttractor;
+    datum.attractorData = emitterData_.attractorData;
 
     aabb_->SetMinMax(emitterData_.ranges.position.start, emitterData_.ranges.position.end);
 }
@@ -264,6 +266,85 @@ void ParticleEmitter::InitRotation(ParticleData& datum)
     else
     {
         datum.transform.rotate = {};
+    }
+}
+
+void ParticleEmitter::InitColor(ParticleData& datum)
+{
+    using HueMode = Type::ParticleEmitter::v3::HueMode;
+    using HueModeTarget = Type::ParticleEmitter::v3::HueModeTarget;
+    const auto& kColors = emitterData_.ranges.color;
+    auto& colors = datum.colorRange;
+
+    colors = kColors;
+
+    if (emitterData_.flags.hueMode == HueMode::None)
+    {
+        // 上で代入してるのでココでは何もしない。
+        return;
+    }
+    else if (emitterData_.flags.hueMode == HueMode::Rotate)
+    {
+        if (emitterData_.flags.hueModeTarget == HueModeTarget::Start)
+        {
+            /// HSVに変換して色相を回転させる
+            HSV hsv = RGBA(kColors.start).to_HSV();
+            hsv.h() += currentAdditionalHue_;
+            colors.start = hsv.to_RGB().to_Vector4(kColors.start.w);
+        }
+        else if (emitterData_.flags.hueModeTarget == HueModeTarget::End)
+        {
+            HSV hsv = RGBA(kColors.end).to_HSV();
+            hsv.h() += currentAdditionalHue_;
+            colors.end = hsv.to_RGB().to_Vector4(kColors.end.w);
+        }
+        else if (emitterData_.flags.hueModeTarget == HueModeTarget::BothShared ||
+            emitterData_.flags.hueModeTarget == HueModeTarget::BothSeparate)
+        {
+            /// BothSharedとBothSeparateは同じ処理を行う
+            HSV hsv = RGBA(kColors.start).to_HSV();
+            hsv.h() += currentAdditionalHue_;
+            colors.start = hsv.to_RGB().to_Vector4(kColors.start.w);
+
+            hsv = RGBA(kColors.end).to_HSV();
+            hsv.h() += currentAdditionalHue_;
+            colors.end = hsv.to_RGB().to_Vector4(kColors.end.w);
+        }
+
+        // 色相の回転速度を加算
+        currentAdditionalHue_ += emitterData_.common.hueRotateSpeed;
+    }
+    else if (emitterData_.flags.hueMode == HueMode::Randomize)
+    {
+        float randomHueStart = pRandGen_->Generate(0.0f, 360.0f);
+        float randomHueEnd = pRandGen_->Generate(0.0f, 360.0f);
+        HSV hsvStart = RGBA(kColors.start).to_HSV();
+        HSV hsvEnd = RGBA(kColors.end).to_HSV();
+
+        if (emitterData_.flags.hueModeTarget == HueModeTarget::Start)
+        {
+            hsvStart.h() = randomHueStart;
+            colors.start = hsvStart.to_RGB().to_Vector4(kColors.start.w);
+        }
+        else if (emitterData_.flags.hueModeTarget == HueModeTarget::End)
+        {
+            hsvEnd.h() = randomHueEnd;
+            colors.end = hsvEnd.to_RGB().to_Vector4(kColors.end.w);
+        }
+        else if (emitterData_.flags.hueModeTarget == HueModeTarget::BothShared)
+        {
+            hsvStart.h() = randomHueStart;
+            hsvEnd.h() = randomHueStart;
+            colors.start = hsvStart.to_RGB().to_Vector4(kColors.start.w);
+            colors.end = hsvEnd.to_RGB().to_Vector4(kColors.end.w);
+        }
+        else if (emitterData_.flags.hueModeTarget == HueModeTarget::BothSeparate)
+        {
+            hsvStart.h() = randomHueStart;
+            hsvEnd.h() = randomHueEnd;
+            colors.start = hsvStart.to_RGB().to_Vector4(kColors.start.w);
+            colors.end = hsvEnd.to_RGB().to_Vector4(kColors.end.w);
+        }
     }
 }
 
@@ -380,6 +461,18 @@ void ParticleEmitter::ImGuiSectionColor()
         if (ImGui::Button("同期##Color"))
         {
             fromJsonData_.ranges.color.end = fromJsonData_.ranges.color.start;
+        }
+
+        ImGuiTemplate::ComboEnum("Hueモード", fromJsonData_.flags.hueMode);
+
+        bool isHueModeActive = (fromJsonData_.flags.hueMode != Type::ParticleEmitter::v3::HueMode::None);
+        if (isHueModeActive)
+        {
+            ImGuiTemplate::ComboEnum("Hueモード対象", fromJsonData_.flags.hueModeTarget);
+            if (fromJsonData_.flags.hueMode == Type::ParticleEmitter::v3::HueMode::Rotate)
+            {
+                ImGui::DragFloat("色相回転速度", &fromJsonData_.common.hueRotateSpeed, 0.1f, -360.0f, 360.0f);
+            }
         }
 
         ImGui::SliderFloat("透明度の変化量", &fromJsonData_.common.alphaDeltaValue, -0.2f, 0.0f);
@@ -554,6 +647,41 @@ void ParticleEmitter::ImGuiSectionCollisionFloor()
 #endif // _DEBUG
 }
 
+void ParticleEmitter::ImGuiSectionAttractor()
+{
+    #ifdef _DEBUG
+
+    using AttractorMode = Type::ParticleEmitter::v3::AttractorMode;
+
+    if (ImGui::CollapsingHeader("収束"))
+    {
+        ImGui::Checkbox("収束の有効化", &fromJsonData_.flags.enableAttractor);
+
+        ImGuiTemplate::ComboEnum("収束モード", fromJsonData_.attractorData.mode);
+
+        if (fromJsonData_.flags.enableAttractor)
+        {
+            ImGui::DragFloat3("目標", &fromJsonData_.attractorData.target.x, 0.01f);
+
+            if (fromJsonData_.attractorData.mode == AttractorMode::Spring)
+            {
+                ImGui::DragFloat("バネ定数", &fromJsonData_.attractorData.stiffness, 0.01f);
+                ImGui::DragFloat("減衰係数", &fromJsonData_.attractorData.dampingCoef, 0.01f);
+            }
+            else if (fromJsonData_.attractorData.mode == AttractorMode::Arrival)
+            {
+                ImGui::DragFloat("遅くなる半径", &fromJsonData_.attractorData.slowRadius, 0.01f);
+                ImGui::DragFloat("最大速さ", &fromJsonData_.attractorData.maxSpeed, 0.01f);
+                ImGui::DragFloat("応答性", &fromJsonData_.attractorData.responsiveness, 0.01f);
+            }
+            
+        }
+        ImGui::Spacing();
+    }
+
+    #endif // _DEBUG
+}
+
 void ParticleEmitter::ImGuiSectionDebug()
 {
     #ifdef _DEBUG
@@ -608,6 +736,8 @@ void ParticleEmitter::ImGui()
     this->ImGuiSectionCollisionFloor();
 
     this->ImGuiSectionPhysics();
+
+    this->ImGuiSectionAttractor();
 
     this->ImGuiSectionDebug();
 

@@ -71,7 +71,7 @@ std::vector<FlexResult> FlexContainer::Calculate(const FlexBox& containerBox, st
     {
         float itemCrossSize = itemCrossSizes[i];
         float containerCrossSize = CrossOf(containerBox.size);
-        auto crossAlignResult = ApplyCrossAlign(itemCrossSize, containerCrossSize, items[i]);
+        auto crossAlignResult = ApplyCrossAlign(itemCrossSize, containerCrossSize);
         results[i].position = ToVec2(itemPositions[i], crossAlignResult.position);
         results[i].size = ToVec2(itemMainSizes[i], crossAlignResult.size);
     }
@@ -85,7 +85,7 @@ std::vector<FlexResult> FlexContainer::Calculate(const FlexBox& containerBox, st
     return results;
 }
 
-Vector2 FlexContainer::ContainerSize(std::span<FlexItem> items) const
+FlexContainer::Vec2 FlexContainer::ContainerSize(std::span<FlexItem> items) const
 {
     if (items.empty()) return Vector2();
 
@@ -195,7 +195,7 @@ void FlexContainer::ApplyJustify(float freeSpace, std::span<const float> itemMai
     }
 }
 
-CrossAlignResult FlexContainer::ApplyCrossAlign(float itemCross, float containerCross, const FlexItem& item) const
+CrossAlignResult FlexContainer::ApplyCrossAlign(float itemCross, float containerCross) const
 {
     if (alignItems_ == AlignItems::FlexStart)
     {

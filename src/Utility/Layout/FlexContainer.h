@@ -24,12 +24,14 @@ public:
 
     std::vector<FlexResult> Calculate(const FlexBox& containerBox, std::span<const FlexItem> items) const;
 
-    Vector2 ContainerSize(std::span<FlexItem> items) const;
+    Vec2 ContainerSize(std::span<FlexItem> items) const;
 
     void SetName(const std::string& name)
     { 
         #ifdef _DEBUG
         pDebugEntry_->SetName(name);
+        #else
+        name;
         #endif // _DEBUG
     }
 
@@ -40,5 +42,5 @@ private:
     float CrossOf(const Vec2& v) const;
     Vec2 ToVec2(float main, float cross) const;
     void ApplyJustify(float freeSpace, std::span<const float> itemMainSizes, std::vector<float>& outPosition) const;
-    CrossAlignResult ApplyCrossAlign(float itemCross, float containerCross, const FlexItem& item) const;
+    CrossAlignResult ApplyCrossAlign(float itemCross, float containerCross) const;
 };

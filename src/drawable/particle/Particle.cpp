@@ -327,7 +327,7 @@ void Particle::ParticlePositionUpdate(std::list<ParticleData>::iterator& itr, fl
             float maxSpeed       = attractorData.maxSpeed;
             float responsiveness = attractorData.responsiveness;
             float distance       = toTarget.Length();
-            float desiredSpeed   = maxSpeed * std::min(1.0f, distance / slowRadius);
+            float desiredSpeed   = slowRadius != 0.0f ? maxSpeed * std::min(1.0f, distance / slowRadius) : 0.0f;
 
             Vector3 desiredVelocity = {};
             if (distance > 0)

@@ -270,6 +270,7 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_flag, "velocityDistribution", d_flag.velocityDistribution);
         utl::json::try_assign(j_flag, "enableSmoothNoise", d_flag.enableSmoothNoise);
         utl::json::try_assign(j_flag, "hueMode", d_flag.hueMode);
+        utl::json::try_assign(j_flag, "hueModeTarget", d_flag.hueModeTarget);
         utl::json::try_assign(j_flag, "enableAttractor", d_flag.enableAttractor);
 
         auto& d_colFloor = data.collisionFloor;
@@ -283,6 +284,9 @@ namespace Type::ParticleEmitter::v3
         utl::json::try_assign(j_attr, "target", d_attractor.target);
         utl::json::try_assign(j_attr, "dampingCoef", d_attractor.dampingCoef);
         utl::json::try_assign(j_attr, "stiffness", d_attractor.stiffness);
+        utl::json::try_assign(j_attr, "slowRadius", d_attractor.slowRadius);
+        utl::json::try_assign(j_attr, "maxSpeed", d_attractor.maxSpeed);
+        utl::json::try_assign(j_attr, "responsiveness", d_attractor.responsiveness);
     }
 
     void to_json(nlohmann::json& j, const Data& data)
@@ -341,6 +345,7 @@ namespace Type::ParticleEmitter::v3
         j_flag["velocityDistribution"]          = d_flag.velocityDistribution;
         j_flag["enableSmoothNoise"]             = d_flag.enableSmoothNoise;
         j_flag["hueMode"]                       = d_flag.hueMode;
+        j_flag["hueModeTarget"]                 = d_flag.hueModeTarget;
         j_flag["enableAttractor"]               = d_flag.enableAttractor;
 
         auto& j_colflo = j["collisionFloor"];
@@ -356,6 +361,9 @@ namespace Type::ParticleEmitter::v3
         j_attr["target"]                        = d_attr.target;
         j_attr["dampingCoef"]                   = d_attr.dampingCoef;
         j_attr["stiffness"]                     = d_attr.stiffness;
+        j_attr["slowRadius"]                    = d_attr.slowRadius;
+        j_attr["maxSpeed"]                      = d_attr.maxSpeed;
+        j_attr["responsiveness"]                = d_attr.responsiveness;
     }
 
     const char* ToString(HueMode hueMode)

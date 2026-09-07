@@ -15,6 +15,7 @@
 #include <Utility/TextureSelector/TextureSelectWidget.h>
 #include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 #include <Color.h>
+#include <cmath>
 
 
 const uint32_t ParticleEmitter::kDefaultReserveCount_;
@@ -313,6 +314,7 @@ void ParticleEmitter::InitColor(ParticleData& datum)
 
         // 色相の回転速度を加算
         currentAdditionalHue_ += emitterData_.common.hueRotateSpeed;
+        currentAdditionalHue_ = std::fmod(currentAdditionalHue_, 360.0f); // 360度でループ
     }
     else if (emitterData_.flags.hueMode == HueMode::Randomize)
     {

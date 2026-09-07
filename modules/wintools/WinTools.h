@@ -16,9 +16,12 @@ public:
         return &instance;
     }
 
-    std::string OpenFileDialog();
+    std::string OpenFileDialog(const std::string& defaultPath = {});
+    std::string OpenFolderDialog(const std::string& defaultPath = {});
 
 private:
+    std::string ShowOpenDialog(const std::string& defaultPath, bool isFolderDialog);
+
     WinTools();
     ~WinTools();
 

@@ -36,6 +36,28 @@ namespace ImGuiTemplate
     template <HasEnumCount E>
     bool ComboEnum(const char* label, E& v);
 
+    class FileWidget
+    {
+    public:
+        FileWidget() = default;
+        ~FileWidget() = default;
+
+        void ImGui(const std::string& label);
+
+        void SetOnLoad(std::function<void(const std::string&)> onLoad) { pOnLoad_ = onLoad; }
+        void SetOnSave(std::function<void(const std::string&)> onSave) { pOnSave_ = onSave; }
+        void SetMessageMissing(const std::string& message) { messageMissing_ = message; }
+
+    private:
+        std::function<void(const std::string&)> pOnLoad_ = nullptr;
+        std::function<void(const std::string&)> pOnSave_ = nullptr;
+        std::string messageMissing_ = "指定されたパスは存在しません。";
+        std::string filePath_ = "";
+
+        // ImGui用のキャッシュ
+        bool isFileExist_ = false;
+    };
+
     /// Implements
 
     template <typename T>

@@ -1,6 +1,6 @@
 #include "./StaticSamplerDesc.h"
 
-using _me = StaticSamplerDesc;
+using reference = StaticSamplerDesc&;
 
 StaticSamplerDesc::StaticSamplerDesc()
 {
@@ -14,31 +14,31 @@ StaticSamplerDesc::StaticSamplerDesc()
 
 #pragma region "Setters"
 
-    _me& StaticSamplerDesc::SetFilter(D3D12_FILTER _filter)
+    reference StaticSamplerDesc::SetFilter(D3D12_FILTER _filter)
     {
         desc_.Filter = _filter;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetAddressU(D3D12_TEXTURE_ADDRESS_MODE _addressU)
+    reference StaticSamplerDesc::SetAddressU(D3D12_TEXTURE_ADDRESS_MODE _addressU)
     {
         desc_.AddressU = _addressU;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetAddressV(D3D12_TEXTURE_ADDRESS_MODE _addressV)
+    reference StaticSamplerDesc::SetAddressV(D3D12_TEXTURE_ADDRESS_MODE _addressV)
     {
         desc_.AddressV = _addressV;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetAddressW(D3D12_TEXTURE_ADDRESS_MODE _addressW)
+    reference StaticSamplerDesc::SetAddressW(D3D12_TEXTURE_ADDRESS_MODE _addressW)
     {
         desc_.AddressW = _addressW;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE _addressUVW)
+    reference StaticSamplerDesc::SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE _addressUVW)
     {
         desc_.AddressU = _addressUVW;
         desc_.AddressV = _addressUVW;
@@ -46,55 +46,55 @@ StaticSamplerDesc::StaticSamplerDesc()
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetMipLODBias(float _mipLODBias)
+    reference StaticSamplerDesc::SetMipLODBias(float _mipLODBias)
     {
         desc_.MipLODBias = _mipLODBias;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetMaxAnisotropy(UINT _maxAnisotropy)
+    reference StaticSamplerDesc::SetMaxAnisotropy(UINT _maxAnisotropy)
     {
         desc_.MaxAnisotropy = _maxAnisotropy;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetComparisonFunc(D3D12_COMPARISON_FUNC _comparisonFunc)
+    reference StaticSamplerDesc::SetComparisonFunc(D3D12_COMPARISON_FUNC _comparisonFunc)
     {
         desc_.ComparisonFunc = _comparisonFunc;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetBorderColor(D3D12_STATIC_BORDER_COLOR _color)
+    reference StaticSamplerDesc::SetBorderColor(D3D12_STATIC_BORDER_COLOR _color)
     {
         desc_.BorderColor = _color;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetMinLOD(float _minLOD)
+    reference StaticSamplerDesc::SetMinLOD(float _minLOD)
     {
         desc_.MinLOD = _minLOD;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetMaxLOD(float _maxLOD)
+    reference StaticSamplerDesc::SetMaxLOD(float _maxLOD)
     {
         desc_.MaxLOD = _maxLOD;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetShaderRegister(UINT _shaderRegister)
+    reference StaticSamplerDesc::SetShaderRegister(UINT _shaderRegister)
     {
         desc_.ShaderRegister = _shaderRegister;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetRegisterSpace(UINT _registerSpace)
+    reference StaticSamplerDesc::SetRegisterSpace(UINT _registerSpace)
     {
         desc_.RegisterSpace = _registerSpace;
         return *this;
     }
 
-    _me& StaticSamplerDesc::SetShaderVisibility(D3D12_SHADER_VISIBILITY _shaderVisibility)
+    reference StaticSamplerDesc::SetShaderVisibility(D3D12_SHADER_VISIBILITY _shaderVisibility)
     {
         desc_.ShaderVisibility = _shaderVisibility;
         return *this;
@@ -104,25 +104,25 @@ StaticSamplerDesc::StaticSamplerDesc()
 
 #pragma region "Presets"
 
-    _me& StaticSamplerDesc::PresetLinearClamp()
+    reference StaticSamplerDesc::PresetLinearClamp()
     {
         return SetFilter(D3D12_FILTER_MIN_MAG_MIP_LINEAR)
             .SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
     }
 
-    _me& StaticSamplerDesc::PresetLinearWrap()
+    reference StaticSamplerDesc::PresetLinearWrap()
     {
         return SetFilter(D3D12_FILTER_MIN_MAG_MIP_LINEAR)
             .SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE_WRAP);
     }
 
-    _me& StaticSamplerDesc::PresetPointClamp()
+    reference StaticSamplerDesc::PresetPointClamp()
     {
         return SetFilter(D3D12_FILTER_MIN_MAG_MIP_POINT)
             .SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
     }
 
-    _me& StaticSamplerDesc::PresetPointWrap()
+    reference StaticSamplerDesc::PresetPointWrap()
     {
         return SetFilter(D3D12_FILTER_MIN_MAG_MIP_POINT)
             .SetAddressUVW(D3D12_TEXTURE_ADDRESS_MODE_WRAP);

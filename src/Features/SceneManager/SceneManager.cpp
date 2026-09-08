@@ -139,13 +139,31 @@ void SceneManager::ImGui()
 #ifdef _DEBUG
 
     bool isConfirmed = false;
-    isConfirmed = ImGui::InputText("Next Scene Name", buffer, 128, ImGuiInputTextFlags_EnterReturnsTrue);
+    auto sceneNames = pSceneFactory_->GetSceneNames();
+
+    if (ImGui::BeginCombo("##combo", sceneNames[comboCurrentIndex_].c_str()))
+    {
+        for (size_t i = 0; i < sceneNames.size(); ++i)
+        {
+            bool isSelected = (comboCurrentIndex_ == i);
+            if (ImGui::Selectable(sceneNames[i].c_str(), isSelected))
+            {
+                comboCurrentIndex_ = static_cast<uint32_t>(i);
+            }
+            if (isSelected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     ImGui::SameLine();
     isConfirmed = ImGui::Button("Change");
 
     if (isConfirmed)
     {
-        this->ReserveScene(buffer);
+        this->ReserveScene(sceneNames[comboCurrentIndex_]);
     }
 
 #endif // _DEBUG

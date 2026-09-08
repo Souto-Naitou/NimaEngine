@@ -145,7 +145,7 @@ private:
     void PackSceneArgs();
 
     std::string name_ = "SceneManager";
-    char buffer[128] = {};
+    uint32_t comboCurrentIndex_ = 0;
 
     bool isReserveScene_ = false;
 

@@ -5,6 +5,7 @@
 
 #include <memory>
 #include "./ISceneArgs.h"
+#include <vector>
 
 /// <summary>
 /// シーンファクトリ インターフェース
@@ -29,4 +30,16 @@ public:
     /// <param name="pArgs">シーンの作成に使用する引数へのポインタ。</param>
     /// <returns>作成された読み込み可能なシーンへの unique_ptr。</returns>
     virtual std::unique_ptr<ILoadableScene> CreateLoadable(const std::string& sceneName, ISceneArgs* pArgs) = 0;
+
+    /// <summary>
+    /// 登録されているシーンの数を取得します。
+    /// </summary>
+    /// <returns>登録されているシーンの数</returns>
+    virtual size_t GetSceneCount() const = 0;
+
+    /// <summary>
+    /// 登録されているシーンの名前を取得します。
+    /// </summary>
+    /// <returns>名前の配列</returns>
+    virtual std::vector<std::string> GetSceneNames() = 0;
 };

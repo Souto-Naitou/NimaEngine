@@ -11,6 +11,8 @@
 #include <functional>
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <memory>
+#include <Core/DirectX12/PipelineStateObject/PSOCache.h>
+#include <Core/DirectX12/RootSignature/RootSignatureCache.h>
 
 struct IDxcBlob;
 
@@ -125,12 +127,12 @@ private:
     /// <summary>
     /// ルートシグネチャを作成します。
     /// </summary>
-    void CreateRootSignature();
+    void RegisterRootSignature();
     
     /// <summary>
     /// パイプラインステートを作成します。
     /// </summary>
-    void CreatePipelineState(IDxcBlob* pBlobVS, IDxcBlob* pBlobPS);
+    void RegisterPipelineState();
     
     /// <summary>
     /// 描画用コマンドリストを作成します。
@@ -151,6 +153,8 @@ private:
 
 
 private:
+    const PSOID                             kPSOId_             = "PostEffectExecutor";
+    const RootSignatureID                   kRootSignatureId_   = "PostEffectExecutor";
     RTVHeapCounter*                         rtvHeapCounter_     = nullptr;
     ID3D12Device*                           pDevice_            = nullptr;
     SRVManager*                             pSRVManager_        = nullptr;

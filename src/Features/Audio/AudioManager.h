@@ -59,6 +59,11 @@ public:
     /// <returns>作成された Audio。</returns>
     Audio* GetNewAudio(const std::string& category , const std::string& filename);
 
+    /// <summary>
+    /// マスターボリュームを設定します。
+    /// </summary>
+    /// <param name="v"></param>
+    void SetVolume(float v);
 
 private:
     HRESULT_ASSERT hr_ = {};

@@ -127,16 +127,65 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
     return {};
 }
 
-const DX12Resource& TextureManager::GetTextureResource(const std::string& _filePath)
+const DX12Resource& TextureManager::GetTextureResource(const std::string& _filePath) const
 {
     std::string resolvedPath = this->ResolveFilePath(_filePath);
-    const TextureData& textureData = textureDataMap_[resolvedPath];
-    return textureData.textureResource;
+    auto it = textureDataMap_.find(_filePath);
+    if (it != textureDataMap_.end())
+    {
+        return it->second.textureResource;
+    }
+
+    assert(false && "テクスチャが見つかりません");
+    static DX12Resource emptyResource{};
+    return emptyResource;
+}
+
+DX12Resource& TextureManager::GetTextureResource(const std::string& filePath)
+{
+    std::string resolvedPath = this->ResolveFilePath(filePath);
+    auto it = textureDataMap_.find(resolvedPath);
+    if (it != textureDataMap_.end())
+    {
+        return it->second.textureResource;
+    }
+
+    assert(false && "テクスチャが見つかりません");
+    static DX12Resource emptyResource{};
+    return emptyResource;
 }
 
 Vector2 TextureManager::GetTextureSize(const DirectX::TexMetadata& metadata)
 {
     return Vector2(static_cast<float>(metadata.width), static_cast<float>(metadata.height));
+}
+
+const TextureManager::TextureData& TextureManager::GetTextureData(const std::string& filePath) const
+{
+    std::string resolvedPath = this->ResolveFilePath(filePath);
+    auto it = textureDataMap_.find(resolvedPath);
+    if (it != textureDataMap_.end())
+    {
+        return it->second;
+    }
+
+    assert(false && "テクスチャが見つかりません");
+    static TextureData emptyData{};
+    return emptyData;
+}
+
+TextureManager::TextureData& TextureManager::GetTextureData(const std::string& filePath)
+{
+    std::string resolvedPath = this->ResolveFilePath(filePath);
+    auto it = textureDataMap_.find(resolvedPath);
+    if (it != textureDataMap_.end())
+    {
+        return it->second;
+    }
+
+    assert(false && "テクスチャが見つかりません");
+    static TextureData emptyData{};
+    return emptyData;
 }
 
 TextureManager::TextureType TextureManager::GetTextureType(const std::wstring& _filePath) const
@@ -189,7 +238,7 @@ void TextureManager::CreateSRV(const TextureData& _textureData)
     }
 }
 
-std::string TextureManager::ResolveFilePath(const std::string& filePath)
+std::string TextureManager::ResolveFilePath(const std::string& filePath) const
 {
     std::string result = pathResolver_.GetFilePath(filePath);
     if (result.empty())

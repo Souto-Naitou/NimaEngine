@@ -18,6 +18,7 @@ enum class PostEffectClassName
     Grayscale,
     BoxFilter,
     RadialBlur,
+    Vignette,
     LuminanceOutput,
     PrewittOutline,
     DepthBasedOutline,

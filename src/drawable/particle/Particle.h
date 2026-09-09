@@ -17,6 +17,7 @@
 #include <DebugTools/DebugEntry/DebugEntry.h>
 #include <Features/DeltaTimeManager/DeltaTimeManager.h>
 #include <memory>
+#include <Features/RandomGenerator/RandomGenerator.h>
 
 /// <summary>
 /// パーティクルクラス

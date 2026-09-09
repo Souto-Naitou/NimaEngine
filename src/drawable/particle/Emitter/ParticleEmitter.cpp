@@ -24,7 +24,24 @@ void ParticleEmitter::Initialize(const ParticleEmitter::Params& params)
 {
     debugEntry_ = std::make_unique<DebugEntry<ParticleEmitter>>("ParticleEmitter", "ParticleEmitter", this, false);
 
-    winTools_ = WinTools::GetInstance();
+    pFileWidget_ = std::make_unique<ImGuiTemplate::FileWidget>();
+    pFileWidget_->SetOnSave([this](const std::string& path)
+    {
+        EmitterManager::GetInstance()->SaveFile(path, fromJsonData_);
+    });
+
+    pFileWidget_->SetOnLoad([this](const std::string& path)
+    {
+        fromJsonData_ = EmitterManager::GetInstance()->ReloadFile(path);
+        /// 名前が空でないなら
+        if (!fromJsonData_.name.empty())
+        {
+            particleName_ = fromJsonData_.name;
+            debugEntry_->SetName(particleName_);
+            particle_->SetName(particleName_);
+        }
+        this->InitTexture();
+    });
 
     /// JSONファイルパスの設定
     const std::filesystem::path pathDirectory = ConfigManager::GetInstance()->GetConfigData().particle_emitter_paths.back();
@@ -352,7 +369,9 @@ void ParticleEmitter::InitColor(ParticleData& datum)
 
 void ParticleEmitter::InitTexture()
 {
-    auto texHandle = TextureManager::GetInstance()->GetSrvHandleGPU(fromJsonData_.textureData.texturePath);
+    auto tm = TextureManager::GetInstance();
+    tm->LoadTexture(fromJsonData_.textureData.texturePath);
+    auto texHandle = tm->GetSrvHandleGPU(fromJsonData_.textureData.texturePath);
 
     if (texHandle.ptr)
     {
@@ -383,52 +402,8 @@ void ParticleEmitter::ImGuiSectionCommon()
         {
             Emit();
         }
-        if (ImGui::InputText("ファイルパス", path, sizeof(path)))
-        {
-            jsonFileExist_ = std::filesystem::exists(path);
-        }
 
-        if (ImGui::Button("保存"))
-        {
-            EmitterManager::GetInstance()->SaveFile(path, fromJsonData_);
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("読み込み"))
-        {
-            if (std::filesystem::directory_entry(path).exists())
-            {
-                fromJsonData_ = EmitterManager::GetInstance()->ReloadFile(path);
-                /// 名前が空でないなら
-                if (!fromJsonData_.name.empty())
-                {
-                    particleName_ = fromJsonData_.name;
-                    debugEntry_->SetName(particleName_);
-                    particle_->SetName(particleName_);
-                }
-                this->InitTexture();
-                jsonFileExist_ = true;
-            }
-            else
-            {
-                jsonFileExist_ = false;
-            }
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("参照"))
-        {
-            std::string temp = winTools_->OpenFileDialog();
-            if (!temp.empty() && std::filesystem::path(temp).extension() == ".json")
-            {
-                strncpy_s(path, sizeof(path), temp.c_str(), _TRUNCATE);
-                jsonFileExist_ = true;
-            }
-            else jsonFileExist_ = false;
-        }
-        if (!jsonFileExist_)
-        {
-            ImGui::SameLine();
-            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "ファイルが存在しないか、拡張子がjsonではありません。");
-        }
+        pFileWidget_->ImGui("ParticleEmitter");
 
         ImGui::DragFloat("パーティクル寿命", &fromJsonData_.common.particleLifeTime, 0.1f, 0.0f, FLT_MAX);
 
@@ -698,7 +673,7 @@ void ParticleEmitter::ImGuiSectionDebug()
             // 取得したデータがnullptrの場合、早期リターン
             if (!pData) return;
 
-            fromJsonData_.textureData.texturePath = pData->filePath;
+            fromJsonData_.textureData.texturePath = std::filesystem::relative(pData->filePath).string();
             particle_->GetModel()->ChangeTexture(pData->textureResource.GetSRVHandleGPU());
         }
         ImGui::Spacing();

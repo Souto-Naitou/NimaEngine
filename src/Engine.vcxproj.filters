@@ -220,7 +220,7 @@
     <ClCompile Include="Features\font\FontLayout.cpp">
       <Filter>Features\font</Filter>
     </ClCompile>
-    <ClCompile Include="Features\GameEye2d\GameEye2d.cpp">
+    <ClCompile Include="Features\GameEye\GameEye2d.cpp">
       <Filter>Features\GameEye2d</Filter>
     </ClCompile>
     <ClCompile Include="Features\Gauge\GaugeBase.cpp">
@@ -1018,7 +1018,7 @@
     <ClInclude Include="Features\font\FontLayout.h">
       <Filter>Features\font</Filter>
     </ClInclude>
-    <ClInclude Include="Features\GameEye2d\GameEye2d.h">
+    <ClInclude Include="Features\GameEye\GameEye2d.h">
       <Filter>Features\GameEye2d</Filter>
     </ClInclude>
     <ClInclude Include="Features\Gauge\GaugeBase.h">
@@ -1294,6 +1294,7 @@
     <ClInclude Include="Utility\Layout\FlexContainer.h" />
     <ClInclude Include="Utility\Layout\FlexTypes.h" />
     <ClInclude Include="Utility\Layout\FlexTypesConverter.h" />
+    <ClInclude Include="Features\GameEye\GameEyeDelivery.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ClassDiagram.md">

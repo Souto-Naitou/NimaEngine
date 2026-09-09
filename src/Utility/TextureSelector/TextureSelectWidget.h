@@ -4,6 +4,9 @@
 #include <DebugTools/ImGuiManager/ImGuiManager.h>
 #endif // _DEBUG
 #include <Core/DirectX12/TextureManager.h>
+#include <filesystem>
+#include <string>
+#include <vector>
 
 class TextureSelectWidget
 {
@@ -16,6 +19,8 @@ public:
     TextureSelectWidget(TextureSelectWidget&&) = delete;
     TextureSelectWidget& operator=(TextureSelectWidget&&) = delete;
 
+    void Initialize();
+
     #ifdef _DEBUG
     void SetImGuiManager(ImGuiManager* pImGuiManager) { pImGuiManager_ = pImGuiManager; }
     #else
@@ -26,6 +31,15 @@ public:
 
 private:
     #ifdef _DEBUG
+
+    void PreloadDirectory(const std::filesystem::path& directoryPath);
+    void MoveToParentDirectory();
+
+    // ディレクトリキャッシュ <ディレクトリパス, 読み込み済みフラグ>
+    std::unordered_map<std::filesystem::path, bool> directoryCacheMap_ = {};
+
+    std::filesystem::path currentDirectory_ = {};
+
     ImVec2 buttonSizeMax_ = { 64.0f, 64.0f };
     ImGuiManager* pImGuiManager_ = nullptr;
     #endif // _DEBUG

@@ -5,15 +5,16 @@
 #include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <drawable/particle/Particle.h>
 #include <WinTools/WinTools.h>
-#include <Features/GameEye/GameEye.h>
 #include <drawable/particle/Emitter/EmitterData.h>
 #include <Features/RandomGenerator/RandomGenerator.h>
 #include <Features/Primitive/AABB.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
+#include <Interfaces/IGameEye.h>
 #include <Vector3.h>
 #include <string>
 #include <cstdint>
 #include <memory>
+#include <DebugTools/ImGuiTemplates/ImGuiTemplates.h>
 
 /// <summary>
 /// パーティクルエミッタ
@@ -83,8 +84,8 @@ private:
     static constexpr uint32_t   kDefaultReserveCount_   = 6000u;
     std::string                 particleName_           = {};               // 名前
     std::filesystem::path       jsonPath_               = {};               // JSONファイルパス
-    HiResoStopWatch                timer_                  = {};               // 計測用タイマー
-    HiResoStopWatch                reloadTimer_            = {};               // リロード用タイマー
+    HiResoStopWatch             timer_ = {};               // 計測用タイマー
+    HiResoStopWatch             reloadTimer_ = {};               // リロード用タイマー
     double                      reloadInterval_         = 1.0;              // リロード間隔
     EmitterData                 emitterData_            = {};               // エミッタデータ
     EmitterData                 fromJsonData_           = {};
@@ -97,8 +98,9 @@ private:
     bool                        isDrawLine_             = false;
     float                       currentAdditionalHue_   = 0.0f;
 
+    std::unique_ptr<ImGuiTemplate::FileWidget> pFileWidget_ = nullptr;
+    
     /// [ Pointers ]
-    WinTools*                   winTools_               = nullptr;
     RandomGenerator*            pRandGen_               = RandomGenerator::GetInstance();
 
 

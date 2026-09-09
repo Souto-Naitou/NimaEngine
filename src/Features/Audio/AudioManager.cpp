@@ -59,6 +59,11 @@ Audio* AudioManager::GetNewAudio(const std::string& category, const std::string&
     return pAudio;
 }
 
+void AudioManager::SetVolume(float v)
+{
+    pMasteringVoice_->SetVolume(v);
+}
+
 SoundData& AudioManager::LoadWave(const char* filename)
 {
     // すでに読み込まれている場合はキャッシュを返す

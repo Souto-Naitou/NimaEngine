@@ -352,7 +352,7 @@
     <ClCompile Include="Features\Event\EventListener.cpp" />
     <ClCompile Include="Features\Event\EventSubscription.cpp" />
     <ClCompile Include="Features\font\FontLayout.cpp" />
-    <ClCompile Include="Features\GameEye2d\GameEye2d.cpp" />
+    <ClCompile Include="Features\GameEye\GameEye2d.cpp" />
     <ClCompile Include="Features\Gauge\GaugeBase.cpp" />
     <ClCompile Include="Features\Layer\CanvasScope.h" />
     <ClCompile Include="Features\Layer\OrderedCanvasLayer.cpp" />
@@ -505,7 +505,8 @@
     <ClInclude Include="Features\Event\EventListener.h" />
     <ClInclude Include="Features\Event\EventSubscription.h" />
     <ClInclude Include="Features\font\FontLayout.h" />
-    <ClInclude Include="Features\GameEye2d\GameEye2d.h" />
+    <ClInclude Include="Features\GameEye\GameEye2d.h" />
+    <ClInclude Include="Features\GameEye\GameEyeDelivery.h" />
     <ClInclude Include="Features\Gauge\GaugeBase.h" />
     <ClInclude Include="Features\Input\InputMapper.hpp" />
     <ClInclude Include="Features\Layer\CurrentCanvas.h" />

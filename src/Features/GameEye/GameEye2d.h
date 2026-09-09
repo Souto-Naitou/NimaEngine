@@ -6,6 +6,7 @@
 #include <vectormatrix/math/Vector2.h>
 #include <string>
 #include <memory>
+#include "GameEyeDelivery.h"
 
 
 /// <summary>
@@ -15,7 +16,7 @@ class GameEye2d : public IGameEye
 {
 public:
     GameEye2d();
-    virtual ~GameEye2d() = default;
+    virtual ~GameEye2d();
 
     // ビュー射影行列の更新
     void Update() override;
@@ -24,7 +25,7 @@ public:
     void ImGui();
 
     // ビュー射影行列を取得
-    Matrix4x4   GetViewProjectionMatrix() const  override   { return vpMatrix_; };
+    Matrix4x4   GetViewProjectionMatrix() const  override   { return vpMatrix_; }
     Vector3     GetPosition() const override                { return position_; }
     Matrix4x4   GetWorldMatrix() const override             { return wMatrix_; }
     bool        IsOrthographic2d() const override           { return true; }
@@ -90,4 +91,7 @@ private:
 
     // ワールド行列
     Matrix4x4   wMatrix_        = Matrix4x4::Identity();
+
+    // GameEyeDelivery のインスタンス
+    std::unique_ptr<GameEyeDelivery> pDelivery_ = nullptr;
 };

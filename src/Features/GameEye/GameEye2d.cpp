@@ -8,6 +8,13 @@ GameEye2d::GameEye2d()
     pDebugEntry_ = std::make_unique<DebugEntry<GameEye2d>>("GameEye2d", name_, this);
     width_ = static_cast<float>(Window::clientWidth);
     height_ = static_cast<float>(Window::clientHeight);
+
+    pDelivery_ = std::make_unique<GameEyeDelivery>(this);
+}
+
+GameEye2d::~GameEye2d()
+{
+
 }
 
 void GameEye2d::Update()

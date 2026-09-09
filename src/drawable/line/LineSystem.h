@@ -41,7 +41,7 @@ public:
     /// </summary>
     void DrawSetting(ID3D12GraphicsCommandList* cl);
 
-    void    DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data);
+    void DrawSingle(ID3D12GraphicsCommandList* commandList, CommandListData& data);
 
 private:
     LineSystem() = default;

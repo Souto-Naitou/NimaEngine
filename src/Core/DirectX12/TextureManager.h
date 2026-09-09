@@ -75,10 +75,13 @@ public: /// Getter
     [[nodiscard]] const DirectX::TexMetadata&   GetMetaData(D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle);
     [[nodiscard]] uint32_t                      GetSrvIndex(const std::string& filePath);
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE   GetSrvHandleGPU(const std::string& filePath);
-    [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath);
+    [[nodiscard]] const DX12Resource&           GetTextureResource(const std::string& filePath) const;
+    [[nodiscard]] DX12Resource&                 GetTextureResource(const std::string& filePath);
     [[nodiscard]] static Vector2                GetTextureSize(const DirectX::TexMetadata& metadata);
     [[nodiscard]] const TextureDataMap&         GetTextureDataMap() const { return textureDataMap_; }
     [[nodiscard]] TextureDataMap&               GetTextureDataMap() { return textureDataMap_; }
+    [[nodiscard]] const TextureData&            GetTextureData(const std::string& filePath) const;
+    [[nodiscard]] TextureData&                  GetTextureData(const std::string& filePath);
 private:
 
     enum class TextureType
@@ -116,7 +119,7 @@ private:
     /// </summary>
     /// <param name="_filePath">元のファイルパス。</param>
     /// <returns>解決済みファイルパス。</returns>
-    std::string ResolveFilePath(const std::string& _filePath);
+    std::string ResolveFilePath(const std::string& _filePath) const;
 
     TextureDataMap textureDataMap_;
     PathResolver pathResolver_ = {};

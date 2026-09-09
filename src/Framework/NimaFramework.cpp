@@ -71,6 +71,9 @@ void NimaFramework::Initialize()
     pTextureManager_->SetDirectX12(pDirectX_.get());
     pTextureManager_->Initialize(pSRVManager_);
 
+    // テクスチャ選択ウィジェットの初期化
+    pTextureSelectWidget_->Initialize();
+
     /// ルートシグネチャキャッシュの初期化
     pRootSignatureCache_->Initialize(pDirectX_->GetDevice());
 

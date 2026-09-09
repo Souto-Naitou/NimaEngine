@@ -49,7 +49,7 @@ std::string PathResolver::GetParentPath(const std::string& fileName)
     return directoryPath.string();
 }
 
-std::string PathResolver::GetFilePath(const std::string& fileName)
+std::string PathResolver::GetFilePath(const std::string& fileName) const
 {
     fs::path filePath = {};
     if (!fs::exists(fileName) && !fileName.empty())
@@ -69,5 +69,10 @@ std::string PathResolver::GetFilePath(const std::string& fileName)
         filePath = fs::path(fileName);
     }
 
-    return filePath.string();
+    if (filePath.empty())
+    {
+        return {};
+    }
+
+    return fs::absolute(filePath).string();
 }

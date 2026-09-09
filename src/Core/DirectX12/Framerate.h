@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 
 /// <summary>
 /// フレームレート管理クラス
@@ -29,18 +29,28 @@ public:
     /// </summary>
     void    MeasureFPS();
 
-    void    SetIntervalCalcurationFPS(double interval) { intervalCalcurationFPS_ = interval; }
+    void    SetIntervalCalculationFPS(double interval) { intervalCalculationFPS_ = interval; }
     double  GetFPS() const { return fps_; }
+
+    /// <summary>
+    /// フレームレート管理の有効/無効を設定します。
+    /// </summary>
+    /// <param name="flag"></param>
+    void    Enable(bool flag) { enable_ = flag; }
+    bool    IsEnable() const { return enable_; }
 
 private:
     FrameRate() = default;
     ~FrameRate() = default;
     std::chrono::steady_clock::time_point reference_;
 
-    TimeMeasurer timer_ = {};
+    HiResoStopWatch timer_ = {};
 
+    bool            enable_                 = true;
+
+    const double    kTargetFPS_             = 60.0;
     double          fps_                    = 0.0;
     unsigned int    frameCount_             = 0u;
-    double          elapsedFrameCount_      = 0.0;
-    double          intervalCalcurationFPS_ = 2.0;
+    double          windowStartTime_        = 0.0;
+    double          intervalCalculationFPS_ = 2.0;
 };

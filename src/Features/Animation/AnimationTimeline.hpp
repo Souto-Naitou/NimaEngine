@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "./AnimationTween.hpp"
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <algorithm>
 
 /// <summary>
@@ -60,7 +60,7 @@ public:
     const std::vector<AnimationTween<ValueType>>& GetTweens() const { return tweens_; }
 
 private:
-    TimeMeasurer currentTime_ = {};
+    HiResoStopWatch currentTime_ = {};
     std::vector<AnimationTween<ValueType>> tweens_ = {};
     ValueType currentValue_ = {};
     bool isPlaying_ = false;

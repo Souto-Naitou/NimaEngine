@@ -2,7 +2,7 @@
 
 #include <Core/Localization/LanguageData.h>
 #include <Core/DirectX12/DirectX12.h>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 
 #include <functional>
 #include <list>
@@ -14,6 +14,7 @@
 #include <Features/Viewport/Viewport.h>
 #include <DebugTools/Logger/Logger.h>
 #include <DebugTools/EventTimer/EventTimer.h>
+#include <Core/DirectX12/Framerate.h>
 
 class Input;
 
@@ -57,6 +58,8 @@ public:
     void    SetLoggerWindow(Logger* pLogger);
     /// イベントタイマーのインスタンスを登録
     void    SetEventTimerWindow(EventTimer* pEventTimer);
+    /// フレームレート管理のインスタンスを登録
+    void    SetFrameRate(FrameRate* pFramerate) { pFramerate_ = pFramerate; }
 
     void    DeleteComponent(const std::string& _name);
     void    DeleteComponent(const std::string& _category, const std::string& _name);
@@ -103,10 +106,11 @@ private:
     EventTimer*                 pEventTimer_    = nullptr;
 
     // Timing utilities for frame measurement
-    TimeMeasurer                timer_          = {};
-    TimeMeasurer                frameTimer_     = {};
+    HiResoStopWatch                timer_          = {};
+    HiResoStopWatch                frameTimer_     = {};
 
     // FPS calculation data
+    FrameRate*                  pFramerate_     = nullptr;
     double                      elapsedFrameCount_ = 0.0;
     double                      fps_            = 0.0;
     std::array<float, 120>      fpsList_        = {};

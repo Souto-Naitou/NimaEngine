@@ -7,7 +7,7 @@
 void PostEffectInputCommon::Initialize(ID3D12Device* pDevice)
 {
     pDevice_ = pDevice;
-    pTimeMeasurer_ = std::make_unique<TimeMeasurer>();
+    pTimeMeasurer_ = std::make_unique<HiResoStopWatch>();
     pTimeMeasurer_->Start();
     this->CreateBufferResource();
 }

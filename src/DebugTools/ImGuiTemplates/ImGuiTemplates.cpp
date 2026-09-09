@@ -30,9 +30,27 @@ void ImGuiTemplate::VariableTable(const std::string& stringID, std::function<voi
 void ImGuiTemplate::FileWidget::ImGui(const std::string& id)
 {
     ImGui::PushID(id.c_str());
+
+    if (stopwatch_.GetIsStart())
+    {
+        auto currentTime = stopwatch_.GetNow<float>();
+        if (currentTime < kStatusTextDisplayDuration_)
+        {
+            if (wasSaved_)
+            {
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "保存しました。");
+            }
+            else if (wasLoaded_)
+            {
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "読み込みました。");
+            }
+        }
+    }
+
     char path[512] = "";
     strncpy_s(path, sizeof(path), filePath_.c_str(), _TRUNCATE);
-
     if (ImGui::InputText("ファイルパス", path, sizeof(path)))
     {
         isFileExist_ = std::filesystem::exists(path);
@@ -45,6 +63,9 @@ void ImGuiTemplate::FileWidget::ImGui(const std::string& id)
         {
             pOnSave_(path);
         }
+        wasLoaded_ = false;
+        wasSaved_ = true;
+        stopwatch_.Restart();
     }
     
     ImGui::SameLine();
@@ -64,6 +85,9 @@ void ImGuiTemplate::FileWidget::ImGui(const std::string& id)
         {
             isFileExist_ = false;
         }
+        wasLoaded_ = true;
+        wasSaved_ = false;
+        stopwatch_.Restart();
     }
     
     ImGui::SameLine();

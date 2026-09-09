@@ -7,7 +7,7 @@
 #include <Features/Model/Skeleton.h>
 #include <Features/Model/SkinCluster.h>
 #include <wrl/client.h>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include "SkinCluster.h"
 
 /// <summary>
@@ -55,7 +55,7 @@ private:
     bool                                    isReadyDraw_            = false;
     GltfModel*                              pCloneSrc_              = nullptr;  //< クローン元のインスタンス
     bool                                    isOverwroteTexture_     = false;    //< テクスチャを上書きしたかどうか
-    TimeMeasurer                            timer_                  = {};       //< タイマー
+    HiResoStopWatch                            timer_                  = {};       //< タイマー
     D3D12_GPU_DESCRIPTOR_HANDLE             textureSrvHandleGPU_    = {};
 
     // SRV

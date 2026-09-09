@@ -7,7 +7,7 @@
 #include <wrl.h>
 #include <Vector2.h>
 #include <DebugTools/DebugEntry/DebugEntry.h>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <cstdint>
 #include <memory>
 
@@ -185,7 +185,7 @@ private:
     bool    isPadMode_          = false;    // ゲームパッドモードかどうか。ゲームパッドの入力があったときにtrue、キーボードやマウスの入力があったときにfalseになる
 
     // コントローラの入力が最後に更新されてからの時間を測るためのタイマー
-    TimeMeasurer            timePadNonUpdate_       = {};
+    HiResoStopWatch            timePadNonUpdate_       = {};
 
     // Logical input data
     BYTE                    key_[256]               = {};

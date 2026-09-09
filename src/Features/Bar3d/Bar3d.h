@@ -3,7 +3,7 @@
 #include <drawable/sprite/Sprite.h>
 #include <Color.h>
 #include <memory>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <Features/GameEye/GameEye.h>
 
 /// <summary>
@@ -70,7 +70,7 @@ private:
     float                   valueMax_       = 0.0f;
     float                   valueCurrent_   = 0.0f;
 
-    TimeMeasurer            timerDisplay_   = {};
+    HiResoStopWatch            timerDisplay_   = {};
     bool                    isDisplay_      = false;
     bool                    enableTimer_    = true;
     float                   displayTime_    = 0.0f;

@@ -32,6 +32,8 @@ DebugManager::DebugManager()
         { WindowType::EventTimer,       { false, [](DebugManager& m) {m;} } },
         { WindowType::NiGuiDebug,       { false, [](DebugManager& m) { m; NiGui::DrawDebug(); } } },
     };
+
+    pFramerate_ = FrameRate::GetInstance();
 }
 
 DebugManager::~DebugManager()
@@ -70,18 +72,11 @@ void DebugManager::OverlayFPS() const
 
 void DebugManager::MeasureFPS()
 {
-    if (!timer_.GetIsStart())
+    if (pFramerate_)
     {
-        timer_.Start();
+        pFramerate_->MeasureFPS();
+        fps_ = pFramerate_->GetFPS();
     }
-    /// フレームレート計算
-    if (timer_.GetNow<double>() - elapsedFrameCount_ >= 0.1)
-    {
-        fps_ = frameCount_ * 1.0 / (timer_.GetNow<double>() - elapsedFrameCount_);
-        frameCount_ = 0;
-        elapsedFrameCount_ = timer_.GetNow<double>();
-    }
-    frameCount_++;
 
     std::rotate(fpsList_.begin(), fpsList_.begin() + 1, fpsList_.end());
     fpsList_.back() = static_cast<float>(fps_);
@@ -471,6 +466,15 @@ void DebugManager::Window_DebugInfoBar() const
 
     if (ImGui::Begin("DebugInfoBar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar))
     {
+        if (pFramerate_)
+        {
+            bool isEnable = pFramerate_->IsEnable();
+            if (ImGui::Checkbox("##fr", &isEnable))
+            {
+                pFramerate_->Enable(isEnable);
+            }
+        }
+        ImGui::SameLine();
         ImGui::Text("%.2lfFPS", fps_);
         ImGui::SameLine();
         ImGui::ProgressBar(static_cast<float>(fps_) / 60.0f, ImVec2(200, 0), "");

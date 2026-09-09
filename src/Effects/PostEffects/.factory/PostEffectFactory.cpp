@@ -13,6 +13,7 @@
 #include <Effects/PostEffects/Mosaic/Mosaic.h>
 #include <Effects/PostEffects/ChromaticAberration/ChromaticAberration.h>
 #include <Effects/PostEffects/Posterize/Posterize.h>
+#include <Effects/PostEffects/Vignette/Vignette.h>
 
 const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
 {
@@ -20,6 +21,7 @@ const std::map<PostEffectClassName, std::string> PostEffectFactory::nameMap_
     { PostEffectClassName::Grayscale,               "Grayscale" },
     { PostEffectClassName::BoxFilter,               "BoxFilter" },
     { PostEffectClassName::RadialBlur,              "RadialBlur" },
+    { PostEffectClassName::Vignette,                "Vignette" },
     { PostEffectClassName::LuminanceOutput,         "LuminanceOutput" },
     { PostEffectClassName::PrewittOutline,          "PrewittOutline" },
     { PostEffectClassName::DepthBasedOutline,       "DepthBasedOutline" },
@@ -51,6 +53,7 @@ void PostEffectFactory::RegisterCreators()
     creators_[PostEffectClassName::Grayscale]               = [this]() { return std::make_unique<Grayscale>();};
     creators_[PostEffectClassName::BoxFilter]               = [this]() { return std::make_unique<BoxFilter>(); };
     creators_[PostEffectClassName::RadialBlur]              = [this]() { return std::make_unique<RadialBlur>(); };
+    creators_[PostEffectClassName::Vignette]                = [this]() { return std::make_unique<Vignette>(); };
     creators_[PostEffectClassName::LuminanceOutput]         = [this]() { return std::make_unique<LuminanceOutput>(); };
     creators_[PostEffectClassName::PrewittOutline]          = [this]() { return std::make_unique<PrewittOutline>(); };
     creators_[PostEffectClassName::DepthBasedOutline]       = [this]() { return std::make_unique<DepthBasedOutline>(); };

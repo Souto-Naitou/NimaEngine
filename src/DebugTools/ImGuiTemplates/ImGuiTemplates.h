@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <concepts>
 #include <vector>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 
 /// <summary>
 /// ImGuiテンプレート群
@@ -49,6 +50,8 @@ namespace ImGuiTemplate
         void SetMessageMissing(const std::string& message) { messageMissing_ = message; }
 
     private:
+        const float kStatusTextDisplayDuration_ = 2.0f; // ステータステキストの表示時間（秒）
+
         std::function<void(const std::string&)> pOnLoad_ = nullptr;
         std::function<void(const std::string&)> pOnSave_ = nullptr;
         std::string messageMissing_ = "指定されたパスは存在しません。";
@@ -56,6 +59,9 @@ namespace ImGuiTemplate
 
         // ImGui用のキャッシュ
         bool isFileExist_ = false;
+        bool wasSaved_ = false;
+        bool wasLoaded_ = false;
+        HiResoStopWatch stopwatch_;
     };
 
     /// Implements

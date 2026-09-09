@@ -4,13 +4,13 @@
 #include <Windows.h>
 
 /// <summary>
-/// 時間計測クラス
+/// 時間計測クラス (High Resolution Stop Watch)
 /// </summary>
-class TimeMeasurer
+class HiResoStopWatch
 {
 public:
-    TimeMeasurer();
-    ~TimeMeasurer() = default;
+    HiResoStopWatch();
+    ~HiResoStopWatch() = default;
     /// <summary>
     /// 計測を開始します。
     /// </summary>
@@ -25,6 +25,11 @@ public:
     /// 計測値をリセットします。
     /// </summary>
     void Reset();
+
+    /// <summary>
+    /// 計測を初めからやり直します。(Reset + Start)
+    /// </summary>
+    void Restart();
 
     template <typename T>
     /// <summary>
@@ -45,7 +50,7 @@ private:
 };
 
 template <typename T>
-inline T TimeMeasurer::GetNow()
+inline T HiResoStopWatch::GetNow()
 {
     // 停止しているとき
     if (isStart_ && !isRunning_) return static_cast<T>(now_ + nowBeforeStop_);

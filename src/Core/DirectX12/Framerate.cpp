@@ -13,21 +13,35 @@ void FrameRate::Initialize()
 
 void FrameRate::FixFramerate()
 {
-    const std::chrono::microseconds kMinTime(static_cast<uint64_t>(1e6 / 60.0f));
-    const std::chrono::microseconds kMinCheckTime(static_cast<uint64_t>(1e6 / 65.0f));
+    if (!enable_) return;
 
-    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-    std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+    const auto kFrameDuration =
+        std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+            std::chrono::duration<double>(1.0 / kTargetFPS_));
 
-    if (elapsed < kMinCheckTime)
+    const auto target = reference_ + kFrameDuration;
+    const auto now = std::chrono::steady_clock::now();
+
+    // 目標時間を過ぎている場合は、次のフレームの基準時間を更新して終了
+    if (now >= target)
     {
-        while (std::chrono::steady_clock::now() - reference_ < kMinTime)
-        {
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
-        }
+        reference_ = now;
+        return;
     }
 
-    reference_ = std::chrono::steady_clock::now();
+    constexpr auto kSpinMargin = std::chrono::milliseconds(1);
+
+    if (target - now > kSpinMargin)
+    {
+        std::this_thread::sleep_until(target - kSpinMargin);
+    }
+
+    while (std::chrono::steady_clock::now() < target)
+    {
+        std::this_thread::yield();
+    }
+
+    reference_ = target;
 }
 
 void FrameRate::MeasureFPS()
@@ -36,13 +50,17 @@ void FrameRate::MeasureFPS()
     {
         timer_.Start();
     }
-    /// フレームレート計算
-    if (timer_.GetNow<double>() - elapsedFrameCount_ >= intervalCalcurationFPS_)
-    {
-        fps_ = frameCount_ * 1.0 / (timer_.GetNow<double>() - elapsedFrameCount_);
 
-        frameCount_ = 0;
-        elapsedFrameCount_ = timer_.GetNow<double>();
+    ++frameCount_;
+
+    auto    now     = timer_.GetNow<double>();
+    double  elapsed = now - windowStartTime_;
+
+    /// フレームレート計算
+    if (elapsed >= intervalCalculationFPS_)
+    {
+        fps_             = frameCount_ / elapsed;
+        frameCount_      = 0;
+        windowStartTime_ = now;
     }
-    frameCount_++;
 }

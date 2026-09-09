@@ -400,7 +400,7 @@
     <ClCompile Include="Features\Text\Text.cpp" />
     <ClCompile Include="Features\Text\TextSystem.cpp" />
     <ClCompile Include="Features\ThreadPool\ThreadPool.cpp" />
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurer.cpp" />
+    <ClCompile Include="Features\TimeMeasurer\HiResoStopWatch.cpp" />
     <ClCompile Include="Features\Viewport\Viewport.cpp" />
     <ClCompile Include="Framework\NimaFramework.cpp" />
     <ClCompile Include="Presets\Object3d\Grid\Preset_Grid.cpp" />
@@ -410,6 +410,7 @@
     <ClCompile Include="Utility\FileSystem\fsutl.cpp" />
     <ClCompile Include="Utility\JSONIO\jsonio.cpp" />
     <ClCompile Include="Utility\Layout\FlexContainer.cpp" />
+    <ClCompile Include="Utility\Layout\FlexTypesConverter.cpp" />
     <ClCompile Include="Utility\PathResolver\PathResolver.cpp" />
     <ClCompile Include="Utility\String\strutl.cpp" />
     <ClCompile Include="Utility\TextureSelector\TextureSelectWidget.cpp" />
@@ -570,7 +571,7 @@
     <ClInclude Include="Features\Text\Text.h" />
     <ClInclude Include="Features\Text\TextSystem.h" />
     <ClInclude Include="Features\ThreadPool\ThreadPool.h" />
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurer.h" />
+    <ClInclude Include="Features\TimeMeasurer\HiResoStopWatch.h" />
     <ClInclude Include="Features\Viewport\Viewport.h" />
     <ClInclude Include="Framework\NimaFramework.h" />
     <ClInclude Include="Interfaces\IEntityStats.h" />
@@ -593,6 +594,7 @@
     <ClInclude Include="Utility\JSON\jsonutl.h" />
     <ClInclude Include="Utility\Layout\FlexContainer.h" />
     <ClInclude Include="Utility\Layout\FlexTypes.h" />
+    <ClInclude Include="Utility\Layout\FlexTypesConverter.h" />
     <ClInclude Include="Utility\PathResolver\PathResolver.h" />
     <ClInclude Include="Utility\String\strutl.h" />
     <ClInclude Include="Utility\TextureSelector\TextureSelectWidget.h" />

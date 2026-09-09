@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <string>
 #include <unordered_map>
 #include <functional>
@@ -38,12 +38,12 @@ private:
     ~EventTimer() = default;
 
 private:
-    TimeMeasurer globalTimer_;
+    HiResoStopWatch globalTimer_;
     float deltaTime_ = 0.0f;
     int durationMaxTimeDisplay_ = 3;
     std::unordered_map<std::string, float> events_;
-    std::unordered_map<std::string, TimeMeasurer> timers_;
+    std::unordered_map<std::string, HiResoStopWatch> timers_;
     std::unordered_map<std::string, float> maxTime_;
-    std::unordered_map<std::string, TimeMeasurer> maxTimeResetTimers_;
+    std::unordered_map<std::string, HiResoStopWatch> maxTimeResetTimers_;
     bool isDisplayProgressBar_ = true;
 };

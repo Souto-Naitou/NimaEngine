@@ -2,7 +2,7 @@
 
 #pragma warning(disable: 4324) // 構造体のメンバがアライメントのためにパディングされる
 
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <drawable/particle/Particle.h>
 #include <WinTools/WinTools.h>
 #include <Features/GameEye/GameEye.h>
@@ -83,8 +83,8 @@ private:
     static constexpr uint32_t   kDefaultReserveCount_   = 6000u;
     std::string                 particleName_           = {};               // 名前
     std::filesystem::path       jsonPath_               = {};               // JSONファイルパス
-    TimeMeasurer                timer_                  = {};               // 計測用タイマー
-    TimeMeasurer                reloadTimer_            = {};               // リロード用タイマー
+    HiResoStopWatch                timer_                  = {};               // 計測用タイマー
+    HiResoStopWatch                reloadTimer_            = {};               // リロード用タイマー
     double                      reloadInterval_         = 1.0;              // リロード間隔
     EmitterData                 emitterData_            = {};               // エミッタデータ
     EmitterData                 fromJsonData_           = {};

@@ -1,11 +1,11 @@
-#include "./TimeMeasurer.h"
+#include "./HiResoStopWatch.h"
 
-TimeMeasurer::TimeMeasurer()
+HiResoStopWatch::HiResoStopWatch()
 {
     QueryPerformanceFrequency(&mFreq_);
 }
 
-void TimeMeasurer::Start()
+void HiResoStopWatch::Start()
 {
     if (isRunning_) return;
 
@@ -14,7 +14,7 @@ void TimeMeasurer::Start()
     isRunning_ = true;
 }
 
-void TimeMeasurer::Stop()
+void HiResoStopWatch::Stop()
 {
     if (!isRunning_) return;
 
@@ -23,11 +23,17 @@ void TimeMeasurer::Stop()
     isRunning_ = false;
 }
 
-void TimeMeasurer::Reset()
+void HiResoStopWatch::Reset()
 {
     mStart_ = {};
     now_ = 0.0;
     nowBeforeStop_ = 0.0;
     isStart_ = false;
     isRunning_ = false;
+}
+
+void HiResoStopWatch::Restart()
+{
+    Reset();
+    Start();
 }

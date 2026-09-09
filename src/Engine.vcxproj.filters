@@ -364,7 +364,7 @@
     <ClCompile Include="Features\ThreadPool\ThreadPool.cpp">
       <Filter>Features\ThreadPool</Filter>
     </ClCompile>
-    <ClCompile Include="Features\TimeMeasurer\TimeMeasurer.cpp">
+    <ClCompile Include="Features\TimeMeasurer\HiResoStopWatch.cpp">
       <Filter>Features\TimeMeasurer</Filter>
     </ClCompile>
     <ClCompile Include="Features\Viewport\Viewport.cpp">
@@ -404,6 +404,7 @@
       <Filter>Core\DirectX12\RootSignature</Filter>
     </ClCompile>
     <ClCompile Include="Utility\Layout\FlexContainer.cpp" />
+    <ClCompile Include="Utility\Layout\FlexTypesConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="..">
@@ -1215,7 +1216,7 @@
     <ClInclude Include="Features\ThreadPool\ThreadPool.h">
       <Filter>Features\ThreadPool</Filter>
     </ClInclude>
-    <ClInclude Include="Features\TimeMeasurer\TimeMeasurer.h">
+    <ClInclude Include="Features\TimeMeasurer\HiResoStopWatch.h">
       <Filter>Features\TimeMeasurer</Filter>
     </ClInclude>
     <ClInclude Include="Features\Viewport\Viewport.h">
@@ -1292,6 +1293,7 @@
     </ClInclude>
     <ClInclude Include="Utility\Layout\FlexContainer.h" />
     <ClInclude Include="Utility\Layout\FlexTypes.h" />
+    <ClInclude Include="Utility\Layout\FlexTypesConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\ClassDiagram.md">

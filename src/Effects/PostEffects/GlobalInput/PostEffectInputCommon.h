@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <Vector2.h>
 #include <memory>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 
 struct RuntimeDataCommonGPU
 {
@@ -35,6 +35,6 @@ private:
 
     ID3D12Device*                           pDevice_            = nullptr;
     Microsoft::WRL::ComPtr<ID3D12Resource>  pBufferResource_    = nullptr;
-    std::unique_ptr<TimeMeasurer>           pTimeMeasurer_      = nullptr;
+    std::unique_ptr<HiResoStopWatch>           pTimeMeasurer_      = nullptr;
     RuntimeDataCommonGPU*                   pMappedData_        = nullptr;
 };

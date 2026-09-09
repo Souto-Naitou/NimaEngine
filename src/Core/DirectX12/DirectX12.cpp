@@ -188,7 +188,7 @@ void DirectX12::DisplayFrame()
     /// (Direct2dで行われる)
 
     /// GPUとISに画面の交換を行うよう通知する
-    swapChain_->Present(1, 0);
+    swapChain_->Present(0, 0);
 
     // バックバッファのインデックスを取得
     backBufferIndex_ = swapChain_->GetCurrentBackBufferIndex();

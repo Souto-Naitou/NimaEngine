@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <Features/TimeMeasurer/TimeMeasurer.h>
+#include <Features/TimeMeasurer/HiResoStopWatch.h>
 #include <Features/Layer/Canvas.h>
 
 
@@ -52,7 +52,7 @@ public:
     void Reset() { isEnd_ = false; isPlayed_ = false; timer_.Reset(); }
 
 protected:
-    TimeMeasurer timer_;
+    HiResoStopWatch timer_;
     bool isEnd_ = false;
     bool isPlayed_ = false;
 };
